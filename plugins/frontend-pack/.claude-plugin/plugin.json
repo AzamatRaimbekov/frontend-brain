@@ -1,6 +1,6 @@
 {
   "name": "frontend-pack",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Mdigital React frontend standards: new project setup, page UX design, component architecture, DRY, data fetching and caching, UI, UX, error handling, with architect and reviewer agents.",
   "author": {
     "name": "Mdigital"
@@ -12,5 +12,5 @@
     "tanstack-query",
     "architecture"
   ],
-  "repository": "https://gitlab.mdigital.kg/front-end-deport/ai-tools"
+  "repository": "https://github.com/AzamatRaimbekov/frontend-brain"
 }

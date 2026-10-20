@@ -1,6 +1,6 @@
 {
   "name": "frontend-pack",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Mdigital React frontend standards with mandatory Vercel and shadcn/ui practices plus Web Interface Guidelines.",
   "author": {
     "name": "Mdigital"
@@ -13,6 +13,10 @@
     "longDescription": "Create and update React projects using Mdigital UI and UX standards, Vercel performance practices, and project-aware shadcn/ui guidance.",
     "developerName": "Mdigital",
     "category": "Developer tools",
-    "capabilities": ["Read", "Write"]
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use $frontend to build or change this React frontend by the Mdigital standards."
   }
 }

@@ -13,5 +13,8 @@
       },
       "category": "Developer tools"
     }
-  ]
+  ],
+  "interface": {
+    "displayName": "Mdigital Frontend"
+  }
 }
