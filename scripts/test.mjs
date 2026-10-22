@@ -49,7 +49,7 @@ const tests = {
   },
   'relative links in skills, agents and references resolve'() {
     const broken = [];
-    for (const dir of ['skills', 'agents', 'references']) {
+    for (const dir of ['skills', 'agents', 'references', 'knowledge']) {
       for (const file of markdownFiles(join(PLUGIN, dir))) {
         if (file.includes('vercel-react-best-practices')) continue; // vendored as is
         for (const [, target] of readFileSync(file, 'utf8').matchAll(/\]\(([^)#\s]+)(#[^)]*)?\)/g)) {
@@ -59,6 +59,24 @@ const tests = {
       }
     }
     assert.deepEqual(broken, []);
+  },
+  'knowledge entries are valid and INDEX.md is up to date'() {
+    const result = spawnSync(process.execPath, [join(PLUGIN, 'scripts', 'knowledge.mjs'), 'check'], { encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stdout);
+  },
+  'knowledge check rejects an entry without required fields'() {
+    const area = join(PLUGIN, 'knowledge', 'testing');
+    const created = !existsSync(area);
+    const file = join(area, 'zz-invalid-entry.md');
+    mkdirSync(area, { recursive: true });
+    try {
+      writeFileSync(file, '---\ntitle: broken\ntype: idea\nstack: [angular]\n---\n\ntext\n');
+      const out = spawnSync(process.execPath, [join(PLUGIN, 'scripts', 'knowledge.mjs'), 'check'], { encoding: 'utf8' }).stdout;
+      for (const problem of ['type must be', 'stack must be', 'author', 'updated must be', '## Решение'])
+        assert.ok(out.includes(problem), `expected "${problem}" in:\n${out}`);
+    } finally {
+      rmSync(created ? area : file, { recursive: true, force: true });
+    }
   },
   'check-file-size blocks a component over 150 lines and allows a small one'() {
     const dir = mkdtempSync(join(tmpdir(), 'frontend-brain-'));

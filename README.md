@@ -1,6 +1,6 @@
-# Мозг фронтенда — frontend-pack для Claude Code
+# Мозг фронтенда Mdigital — frontend-pack для Claude Code
 
-Плагин для [Claude Code](https://claude.com/claude-code) (и Codex), который учит агента писать React так, как принято во фронтенд-команде Mdigital: архитектура, UX, UI, загрузка данных, обработка ошибок, ревью. Здесь хранятся все правила разработки — агент работает строго по ним.
+Плагин для [Claude Code](https://claude.com/claude-code) (и Codex), который учит агента писать React так, как принято во фронтенд-команде Mdigital: архитектура, UX, UI, загрузка данных, обработка ошибок, ревью. Здесь хранятся все правила разработки и общая база знаний — агент работает строго по ним, а каждый фронтендер может пополнять мозг через PR.
 
 Стек: React 19 + TypeScript, Vite + TanStack Router или Next.js App Router, shadcn/ui, Tailwind v4, TanStack Query v5, React Hook Form + Zod.
 
@@ -17,7 +17,7 @@
    - Git ref: оставь пустым
    - Выборочные пути: оставь пустыми
 4. Нажми «Добавить маркетплейс».
-5. Выбери каталог **Mdigital Frontend**.
+5. Выбери каталог **Mdigital Frontend Hub**.
 6. Открой плагин **frontend-pack** и нажми «Установить».
 
 Из терминала то же самое: `codex plugin marketplace add AzamatRaimbekov/frontend-brain`, затем `codex plugin add frontend-pack@frontend-brain`.
@@ -35,7 +35,7 @@ claude plugin install frontend-pack@frontend-brain
 
 ## 2. Начать работу
 
-Открой папку фронтенд-проекта и создай новый чат. В Codex введи `$frontend` и опиши задачу обычными словами, либо нажми `@` и выбери **Mdigital Frontend**. В Claude Code достаточно описать задачу: нужные правила подгрузятся сами (или вызови `/frontend-pack:frontend`).
+Открой папку фронтенд-проекта и создай новый чат. В Codex введи `$frontend` и опиши задачу обычными словами, либо нажми `@` и выбери **Mdigital Frontend Hub**. В Claude Code достаточно описать задачу: нужные правила подгрузятся сами (или вызови `/frontend-pack:frontend`).
 
 Для нового проекта папка может быть пустой.
 
@@ -69,6 +69,16 @@ $frontend Добавь форму создания заявки с валида�
 $frontend Проверь фронтенд в этой ветке перед merge request.
 ```
 
+## 5. Пополнить мозг
+
+Наступил на ловушку, нашёл рецепт или решение, которое пригодится всем? Скажи агенту в любом проекте:
+
+```text
+Добавь в мозг: <что узнал и почему это важно>
+```
+
+Агент найдёт похожие статьи, напишет новую по шаблону, прогонит проверки, покажет diff и после твоего «да» откроет PR. Мейнтейнер проверит и выпустит релиз. Подробно: [CONTRIBUTING.md](CONTRIBUTING.md).
+
 Плагин пишет и проверяет код по правилам команды, но не пушит, не создаёт merge request и не добавляет библиотеки вне белого списка без прямой просьбы.
 
 ## Что внутри
@@ -86,6 +96,9 @@ $frontend Проверь фронтенд в этой ветке перед merg
 | `react-ui` | shadcn, токены Tailwind, варианты, доступность |
 | `react-ux` | Состояния загрузки, пустые и ошибки, формы, тосты, состояние в URL |
 | `react-error-handling` | ApiError, error boundaries, сообщения пользователю |
+| `frontend-contribute` | Пополнить мозг: статья в базе знаний или правка правила через PR |
+
+База знаний: `plugins/frontend-pack/knowledge/` — короткие статьи (правило, рецепт, решение, ловушка) по областям и стекам, оглавление в [knowledge/INDEX.md](plugins/frontend-pack/knowledge/INDEX.md). Агент ищет в ней перед работой: `node plugins/frontend-pack/scripts/knowledge.mjs search <слова> --stack vite`.
 
 Агенты: `frontend-architect` (планирует фичу до кода), `frontend-reviewer` (ревью кода, только читает).
 
@@ -109,10 +122,14 @@ $frontend Проверь фронтенд в этой ветке перед merg
 plugins/frontend-pack/            сам плагин
   skills/<скилл>/SKILL.md         правила и маршрутизация
   rules/libraries.json            белый и чёрный список библиотек
+  knowledge/<область>/*.md        база знаний команды, INDEX.md генерируется
   agents/                         frontend-architect, frontend-reviewer
-  hooks/, scripts/                хуки UX-бриф и 150 строк
+  hooks/, scripts/                хуки UX-бриф и 150 строк, knowledge.mjs (поиск, индекс, проверка)
+.github/                          CI (npm test на каждом PR), CODEOWNERS, шаблон PR
 docs/reports/                     отчёты (A/B-тест UX-брифа)
 scripts/test.mjs                  проверки репозитория: npm test
+scripts/release.mjs               релиз: одна версия во всех манифестах
+CONTRIBUTING.md                   как пополнять мозг
 ```
 
 Сторонние материалы и лицензии: [NOTICE.md](NOTICE.md).
