@@ -51,6 +51,8 @@ After installing:
 - `@/` must resolve to `src/` in `tsconfig` paths and the bundler alias (all files import `@/shared/lib/utils`).
 - Keep the kit's `utils.ts`: it extends tailwind-merge with `text-2xs`, `text-caption`, `text-md`. With plain `twMerge` those classes get dropped next to `text-<colour>`.
 - Replacing an existing `button`/`badge` changes the API (e.g. Badge `tone` uses the Figma status roles `neutral | accent | success | warning | error | info | clear`, so `danger` becomes `error`). Run `tsc` and fix the callers.
+- Vite projects lint with `react-refresh/only-export-components`, which errors on kit files that export `cva` variants (`buttonVariants`, `badgeVariants`). Turn it off for `src/shared/ui/**` only, see `react-architecture` references/eslint-config.md.
+- Radix `Select` has no empty value: use a sentinel such as `"all"` for «Все» and map it to `undefined` in the filter.
 - Put `.dark` and `data-brand` on `<html>`, not on a wrapper div: dialogs, menus and tooltips render in a portal under `<body>` and only inherit tokens from `<html>`.
 
 ## Token rules

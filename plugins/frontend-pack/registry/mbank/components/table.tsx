@@ -62,7 +62,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-11 px-4 text-left align-middle text-xs font-medium whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0",
+        "h-11 px-3 text-left align-middle text-xs font-medium whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0",
         className,
       )}
       {...props}
@@ -74,7 +74,8 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       data-slot="table-cell"
-      className={cn("h-14 px-4 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0", className)}
+      // Figma CRM UI KIT `item/cell/basic`: px 4+8, py 12, body/s 14/20, tnum -> 44px row.
+      className={cn("h-11 px-3 py-3 align-middle text-sm leading-5 whitespace-nowrap tabular-nums [&:has([role=checkbox])]:pr-0", className)}
       {...props}
     />
   )
