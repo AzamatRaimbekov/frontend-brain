@@ -27,6 +27,22 @@ function markdownFiles(dir, out = []) {
   return out;
 }
 
+// Every plugin folder under plugins/ (frontend-pack, figma-pack, ...).
+const plugins = () =>
+  readdirSync(join(ROOT, 'plugins'))
+    .map((name) => join(ROOT, 'plugins', name))
+    .filter((dir) => existsSync(join(dir, '.claude-plugin', 'plugin.json')));
+const allSkills = () =>
+  plugins().flatMap((dir) =>
+    existsSync(join(dir, 'skills')) ? readdirSync(join(dir, 'skills')).map((skill) => ({ dir, skill })) : [],
+  );
+const unitTests = () =>
+  plugins().flatMap((dir) =>
+    existsSync(join(dir, 'scripts'))
+      ? readdirSync(join(dir, 'scripts')).filter((f) => f.endsWith('.test.mjs')).map((f) => join(dir, 'scripts', f))
+      : [],
+  );
+
 const tests = {
   'manifests are valid and versions match'() {
     const claude = json(join(PLUGIN, '.claude-plugin', 'plugin.json'));
@@ -41,16 +57,17 @@ const tests = {
     json(join(PLUGIN, 'rules', 'libraries.json'));
   },
   'every skill has name and description frontmatter'() {
-    for (const skill of readdirSync(join(PLUGIN, 'skills'))) {
-      const text = readFileSync(join(PLUGIN, 'skills', skill, 'SKILL.md'), 'utf8');
+    for (const { dir, skill } of allSkills()) {
+      const text = readFileSync(join(dir, 'skills', skill, 'SKILL.md'), 'utf8');
       assert.match(text, new RegExp(`^---\\n(.*\\n)*?name: ${skill}\\n`), `${skill}: name`);
       assert.match(text, /^---\n(.*\n)*?description: \S/, `${skill}: description`);
     }
   },
   'relative links in skills, agents and references resolve'() {
     const broken = [];
-    for (const dir of ['skills', 'agents', 'references', 'knowledge']) {
-      for (const file of markdownFiles(join(PLUGIN, dir))) {
+    for (const dir of plugins().flatMap((p) => ['skills', 'agents', 'references', 'knowledge'].map((d) => join(p, d)))) {
+      if (!existsSync(dir)) continue;
+      for (const file of markdownFiles(dir)) {
         if (file.includes('vercel-react-best-practices')) continue; // vendored as is
         for (const [, target] of readFileSync(file, 'utf8').matchAll(/\]\(([^)#\s]+)(#[^)]*)?\)/g)) {
           if (/^[a-z]+:/i.test(target)) continue;
@@ -59,6 +76,22 @@ const tests = {
       }
     }
     assert.deepEqual(broken, []);
+  },
+  'every plugin in the marketplaces exists and has a valid manifest'() {
+    const market = json(join(ROOT, '.claude-plugin', 'marketplace.json'));
+    const codex = json(join(ROOT, '.agents', 'plugins', 'marketplace.json'));
+    for (const entry of market.plugins) {
+      const manifest = json(join(ROOT, entry.source, '.claude-plugin', 'plugin.json'));
+      assert.equal(manifest.name, entry.name);
+      assert.equal(manifest.version, entry.version, `${entry.name}: marketplace version`);
+      assert.ok(codex.plugins.some((p) => p.name === entry.name), `${entry.name}: listed for Codex`);
+    }
+  },
+  'plugin unit tests pass (node --test plugins/*/scripts/*.test.mjs)'() {
+    const files = unitTests();
+    if (!files.length) return;
+    const result = spawnSync(process.execPath, ['--test', ...files], { encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stdout + result.stderr);
   },
   'knowledge entries are valid and INDEX.md is up to date'() {
     const result = spawnSync(process.execPath, [join(PLUGIN, 'scripts', 'knowledge.mjs'), 'check'], { encoding: 'utf8' });
