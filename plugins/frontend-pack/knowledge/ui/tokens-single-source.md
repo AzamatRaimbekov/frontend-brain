@@ -28,9 +28,20 @@ CSS-переменные. Роль, выбранная по имени (`on-acce
 ```css
 @theme {
   --color-*: initial;   /* bg-red-500 больше не соберётся */
+  --color-white: #fff;  /* сброс убирает и white/black: text-white, bg-black/50 в shared/ui */
+  --color-black: #000;
+}
+@theme inline {         /* значения-ссылки на переменные — только в inline */
   --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  /* ...остальные роли */
 }
 ```
+
+   Сброс `--color-*` удаляет всю палитру, включая `white` и `black`. Заново объяви каждый цвет палитры,
+   который ещё используют `shared/ui` (`grep -rEo "(bg|text|border)-(white|black)" src/shared/ui`), затем
+   `vite build` и визуальная проверка Dialog/AlertDialog (оверлей `bg-black/50`) и `bg-destructive text-white`:
+   пропавший класс не даёт ошибки, стиль просто исчезает.
 
 4. **Проверки в тестах сборки:** невалидное имя токена — ошибка; в таблице маппинга нет «?», если выгрузка
    полная; каждая пара фон/текст проходит контраст 4.5:1 в light и dark, непрошедшие уходят дизайнерам.

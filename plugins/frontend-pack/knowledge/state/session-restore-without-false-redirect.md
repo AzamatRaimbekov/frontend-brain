@@ -20,21 +20,24 @@ updated: 2026-10-24
 
 ## Решение
 
-1. Токен в синхронном хранилище — читай его в инициализаторе стора, а не в эффекте:
+1. **Только для существующего проекта, где токен уже лежит в `sessionStorage`.** В новом проекте токен в
+   web storage не храним — см. [token-storage-bff](../security/token-storage-bff.md) и сразу шаг 2.
+   Для легаси: читай токен в инициализаторе стора, а не в эффекте:
 
 ```ts
 const initial = safeRead(TOKEN_KEY)   // try/catch вокруг sessionStorage
 export const useAuth = create<AuthState>()(() => ({ token: initial, isAuthenticated: !!initial }))
 ```
 
-2. Сессия проверяется запросом (`/me`, refresh-cookie) — гард читает только состояние запроса,
-   а таймаут живёт в самом fetch:
+2. **По умолчанию** сессия проверяется запросом (`/me`, refresh-cookie) — гард читает только состояние
+   запроса, а таймаут живёт в самом fetch (3–5 с, как в [single-flight-token-refresh](../security/single-flight-token-refresh.md):
+   стартовый экран дольше не держим):
 
 ```ts
 export const meQueries = {
   current: () => queryOptions({
     queryKey: ['me'], retry: false, staleTime: 5 * 60_000,
-    queryFn: ({ signal }) => http('/me', { schema: meSchema, signal, timeoutMs: 8000 }),
+    queryFn: ({ signal }) => http('/me', { schema: meSchema, signal, timeoutMs: 5000 }),
   }),
 }
 export function RequireAuth({ children }: { children: ReactNode }) {
@@ -47,7 +50,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 ```
 
 3. Страница `/login` уводит уже вошедшего пользователя на `from` или `/`.
-4. Тест: положить токен в storage, отрендерить `<App />` на защищённом маршруте, контент виден.
+4. Тест: подставить успешный ответ `/me` (легаси — токен в storage), отрендерить `<App />` на защищённом маршруте, контент виден.
 
 В TanStack Router то же делается в `beforeLoad`: [tanstack-router-auth-guards](../architecture/tanstack-router-auth-guards.md).
 

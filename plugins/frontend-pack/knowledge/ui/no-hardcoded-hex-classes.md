@@ -18,14 +18,17 @@ updated: 2026-10-24
 
 - Цвет из макета сначала становится токеном, в разметке — утилита: `bg-primary`, `text-success`,
   `border-border`. Прозрачность — `bg-primary/10`, а не новый hex.
-- Arbitrary-значения цвета (`[#...]`, `[rgb(...)]`, `[var(--x)]`) запрещены. Токена нет — добавь его по
+- Arbitrary-значения цвета (`[#...]`, `[rgb(...)]`, `[var(--x)]`, сокращение v4 `bg-(--x)`) запрещены в
+  любой утилите, включая `shadow-`, `outline-`, `divide-`, `placeholder-`, `decoration-`, `caret-`, `accent-`. Токена нет — добавь его по
   [tokens-and-theming.md](../../skills/react-ui/references/tokens-and-theming.md).
 - Проверка в CI, пока нет линтера классов:
 
 ```bash
-! grep -rEn "(bg|text|border|fill|stroke|ring|from|to|via)-\[(#|rgb|hsl|oklch|var\()" src --include=*.tsx
+! grep -rEn "[a-z]-\[(#|rgba?\(|hsla?\(|oklch\(|var\()|[a-z]-\(--" src --include=*.tsx
 ```
 
+  Шаблон ловит и не-цветовые `w-(--sidebar-width)`, `h-[var(--x)]`: такие строки исключай точечно
+  (`| grep -v -E "\b(w|h|min-w|max-w|min-h|max-h|size|top|left|inset)-"`), а не ослабляй шаблон.
 - Миграция старого проекта: собери частотный список hex (`grep -roE "\[#[0-9a-fA-F]{3,8}\]" src | sort | uniq -c | sort -rn`),
   заведи токены на топ-10, замени их скриптом, остальное — по мере правок.
 

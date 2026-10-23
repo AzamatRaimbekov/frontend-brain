@@ -28,7 +28,21 @@ updated: 2026-10-24
   сеть/5xx — до 2 раз. В запросах `retry` пишут только как осознанное исключение.
 - Ключи — через фабрику `orderQueries.*` и `queryOptions`, не константой `['products']`.
 
+`toApiError` — тот же блок, что строит `ApiError` внутри `http.ts` в api-errors.md, вынесенный в
+`shared/api/errors.ts`, чтобы им пользовались и `http.ts`, и `unwrap` (тело ответа уже разобрано):
+
 ```ts
+export function toApiError(res: Response, raw?: unknown): ApiError {
+  const parsed = errorBodySchema.safeParse(raw)
+  const body = parsed.success ? parsed.data : {}
+  const kind = body.errors && (res.status === 400 || res.status === 422) ? 'validation' : 'http'
+  const url = new URL(res.url).pathname
+  return new ApiError(kind, `${url} -> ${res.status}`, {
+    url, status: res.status, code: body.code, fieldErrors: body.errors,
+    requestId: body.requestId ?? res.headers.get('x-request-id') ?? undefined,
+  })
+}
+
 export async function unwrap<T>(p: Promise<{ data?: T; error?: unknown; response: Response }>): Promise<T> {
   const { data, error, response } = await p
   if (error !== undefined || !response.ok) throw toApiError(response, error)

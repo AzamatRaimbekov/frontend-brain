@@ -28,9 +28,13 @@ const skipAuthRetry = AUTH_PATHS.some((p) => path.startsWith(p))
 if (res.status === 401 && !skipAuthRetry) {
   // refresh -> один повтор, иначе onSessionExpired()
 }
-if (!res.ok) throw await toApiError(res)   // login получит обычный ApiError со status 401
+if (!res.ok) {
+  const raw: unknown = await res.json().catch(() => undefined)
+  throw toApiError(res, raw)   // login получит обычный ApiError со status 401
+}
 ```
 
+- `toApiError(res, raw)` — общий хелпер из [shared-api-layer-not-in-feature](../architecture/shared-api-layer-not-in-feature.md).
 - Форма входа показывает ошибку через `setError('root.server', ...)` по `status`/`code`.
 - Переход на `/login` после истечения сессии — через роутер (`navigate`/`redirect`) или подписку на
   событие, не через `location.href`: полная перезагрузка стирает состояние и тосты.

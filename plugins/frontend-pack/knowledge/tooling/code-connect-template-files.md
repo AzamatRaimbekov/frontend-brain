@@ -1,5 +1,5 @@
 ---
-title: Code Connect — template files вместо legacy-парсера React, публикация только через CLI в CI
+title: Code Connect — template files вместо legacy-парсера React, CLI из CI по умолчанию
 type: gotcha
 stack: [react, vite, next]
 tags: [figma, code-connect, design-system, ci, cli]
@@ -19,14 +19,19 @@ framework-парсером React, а это теперь legacy.
   Figma. Интеграции React/HTML/SwiftUI/Compose помечены как legacy.
 - Файлы Code Connect не исполняются: тернарники попадают в сниппет дословно, `figma.connect` нельзя
   генерировать в цикле. Одна связь — один явный вызов.
-- Публикация: `npx figma connect publish` из CI, токен — переменная `FIGMA_ACCESS_TOKEN` в настройках CI,
+- Кто пишет связи: для связей, которые живут в коде, по умолчанию CLI из CI; MCP
+  `send_code_connect_mappings` (агент figma-designer, см. figma-pack `figma-core/references/design-system-sync.md`)
+  допустим для связей через UI. Для одного компонента два способа не смешивай.
+- Публикация CLI: `npx figma connect publish` из CI, токен — переменная `FIGMA_ACCESS_TOKEN` в настройках CI,
   не в репозитории. На MR — `--dry-run --exit-on-unreadable-files`.
 - Связи, созданные через CLI, в интерфейсе Figma только просматриваются — правь их в коде.
-- Ограничения: Dev или Full seat на Professional, Organization или Enterprise. На Professional — одна
-  активная библиотека и один фреймворк; первая публикация фиксирует фреймворк, связи старого перестают
-  отдаваться MCP.
-- Имена вариантов `cva` совпадают со значениями свойств компонента в Figma — тогда маппинг props
-  тривиален ([design-system-code-kit](../ui/design-system-code-kit.md)).
+- Тарифы и места: каноничное место — figma-pack `figma-core/references/design-system-sync.md`. Документация
+  Figma на 2026-10-24: «Dev or Full seat on the Professional, Organization, and Enterprise plans»; на
+  Professional — одна активная библиотека и один фреймворк. figma-pack пока пишет «Organization/Enterprise» —
+  расхождение передано владельцу figma-pack; до правки ориентируйся на документацию Figma.
+- Props в шаблонах маппятся через таблицу «значение Figma → значение cva» из figma-pack
+  `mbank-design-system/references/code-mapping.md` (`flat` → `ghost`, `Size=m` → `size="md"`); имена cva —
+  семантические по react-ui ([design-system-code-kit](../ui/design-system-code-kit.md)).
 
 ## Почему
 

@@ -36,9 +36,11 @@ updated: 2026-10-24
 
   `REGISTRY_TOKEN` — в `.env.local`, вне git. Только HTTPS. Установка: `npx shadcn@latest add @ds/button`,
   перед установкой — `view @ds/button`. Тот же registry видит shadcn MCP.
-- Имена вариантов `cva` = значения свойств компонента в Figma (`Type=primary` → `variant="primary"`,
-  `Size=m` → `size="m"`). Опечатки и разночтения Figma (`negotive` → `destructive`) фиксируются в одной
-  таблице маппинга, а не в каждом проекте.
+- Имена вариантов `cva` — по [react-ui](../../skills/react-ui/SKILL.md): семантические, совместимые с shadcn.
+  Перевод «значение в Figma → значение cva» живёт в одной таблице — figma-pack
+  `mbank-design-system/references/code-mapping.md`, раздел Component mapping (например, `flat` → `ghost`,
+  `flat filled` → `soft`, `positive` → `success`, `negative` → `destructive`, `Size=m` → `size="md"`).
+  Code Connect-шаблоны маппят props через эту таблицу; в проектах её не дублируют.
 - После публикации кита — пути компонентов в каталог дизайн-системы и связи Code Connect
   ([code-connect-template-files](../tooling/code-connect-template-files.md)).
 - Шаблоны новых проектов ставят тему кита первым шагом после `shadcn init`.

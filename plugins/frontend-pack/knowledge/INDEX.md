@@ -69,7 +69,7 @@
 | Статья | Тип | Стек | Обновлено |
 |---|---|---|---|
 | [Контент — это данные, а не код — уроки и словари грузи по требованию, монолиты дели реестром](performance/content-out-of-bundle.md) | rule | react, vite, next | 2026-10-24 |
-| [PWA через vite-plugin-pwa — одна регистрация SW, sw.js без кэша, prompt вместо autoUpdate в формах](performance/pwa-service-worker-gotchas.md) | gotcha | vite | 2026-10-24 |
+| [PWA через vite-plugin-pwa — одна регистрация SW, sw.js без кэша, prompt вместо autoUpdate в приложениях с вводом](performance/pwa-service-worker-gotchas.md) | gotcha | vite | 2026-10-24 |
 | [React Compiler в Vite 8 — plugin-react 6 больше не принимает babel-опцию](performance/react-compiler-vite8.md) | gotcha | vite, react | 2026-10-24 |
 
 ## security
@@ -91,7 +91,7 @@
 
 | Статья | Тип | Стек | Обновлено |
 |---|---|---|---|
-| [Code Connect — template files вместо legacy-парсера React, публикация только через CLI в CI](tooling/code-connect-template-files.md) | gotcha | react, vite, next | 2026-10-24 |
+| [Code Connect — template files вместо legacy-парсера React, CLI из CI по умолчанию](tooling/code-connect-template-files.md) | gotcha | react, vite, next | 2026-10-24 |
 | [Лишние и запрещённые пакеты в package.json — агент начинает ими пользоваться, ловим в CI](tooling/dependency-hygiene.md) | gotcha | react, vite, next | 2026-10-24 |
 | [Макет Figma → код — порядок вызовов Figma MCP, ответ MCP это референс, а не код](tooling/figma-mcp-design-to-code-order.md) | recipe | react, vite, next | 2026-10-24 |
 | [Конвейер Figma MCP молча ломается на правах — seat, доступ к файлу и шрифты организации](tooling/figma-mcp-seats-and-access.md) | gotcha | all | 2026-10-24 |

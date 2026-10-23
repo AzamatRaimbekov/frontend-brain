@@ -1,5 +1,5 @@
 ---
-title: PWA через vite-plugin-pwa — одна регистрация SW, sw.js без кэша, prompt вместо autoUpdate в формах
+title: PWA через vite-plugin-pwa — одна регистрация SW, sw.js без кэша, prompt вместо autoUpdate в приложениях с вводом
 type: gotcha
 stack: [vite]
 tags: [pwa, service-worker, workbox, vite-plugin-pwa, nginx, cache]
@@ -16,10 +16,13 @@ service worker, а в `main.tsx` есть ещё ручной `navigator.service
 
 ## Решение
 
+`vite-plugin-pwa` в `rules/libraries.json` пока нет — только для проектов, где он уже подключён; в новый
+проект — согласуй с лидом.
+
 - Регистрация одна: либо `injectRegister: 'auto'` без ручного `register`, либо `injectRegister: false` и
   `registerSW` из `virtual:pwa-register` с понятным UX «Доступно обновление → Обновить» (тост sonner с действием).
-- `registerType: 'prompt'` там, где пользователь что-то вводит (формы, уроки, кабинет). `autoUpdate` —
-  только для контентных страниц.
+- `registerType` — одна настройка на всё приложение. Приложение с формами, уроками, кабинетом — `prompt`;
+  `autoUpdate` — только если в приложении вообще нет пользовательского ввода.
 - nginx:
 
 ```nginx

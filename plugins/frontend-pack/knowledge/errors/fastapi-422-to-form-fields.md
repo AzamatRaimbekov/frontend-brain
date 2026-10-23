@@ -21,7 +21,11 @@ updated: 2026-10-24
 `ApiError.kind === 'validation'` + `applyServerErrors` заработают без изменений.
 
 ```ts
-const pydanticItem = z.looseObject({ loc: z.array(z.union([z.string(), z.number()])), msg: z.string() })
+const pydanticItem = z.looseObject({
+  loc: z.array(z.union([z.string(), z.number()])), msg: z.string(), type: z.string(),
+})
+// true только если бэкенд письменно гарантирует русский и безопасный msg
+const SERVER_MSG_IS_SAFE = false
 
 export function normalizeErrorBody(raw: unknown): ErrorBody {
   const fastapi = z.looseObject({ detail: z.array(pydanticItem) }).safeParse(raw)
@@ -32,22 +36,29 @@ export function normalizeErrorBody(raw: unknown): ErrorBody {
   const errors: Record<string, string[]> = {}
   for (const item of fastapi.data.detail) {
     const field = String(item.loc.at(-1) ?? '')          // первый элемент всегда 'body'/'query'
-    const msg = item.msg.replace(/^Value error, /, '')     // префикс кастомных валидаторов pydantic
+    const msg = SERVER_MSG_IS_SAFE
+      ? item.msg.replace(/^Value error, /, '')             // префикс кастомных валидаторов pydantic
+      : t(`api.validation.${item.type}`, { defaultValue: t('api.validation.generic') })
     ;(errors[field] ??= []).push(msg)
   }
   return { errors }
 }
 ```
 
-В `http.ts` вместо `errorBodySchema.safeParse(raw)` вызывай `normalizeErrorBody(raw)`.
+В `http.ts` вместо `errorBodySchema.safeParse(raw)` вызывай `normalizeErrorBody(raw)`. `t` — функция i18n
+проекта; ключи `api.validation.<type>` (`missing`, `string_too_short`, `value_error`, ...) заводятся в словаре.
+
+```ts
+onError: (error) => applyServerErrors(error, form.setError, formSchema.keyof().options),
+```
 
 - `knownFields` передаёт форма (`formSchema.keyof().options`): ошибка поля с другого шага не теряется
   в невидимом поле, а уходит в `root.server`.
 - 409 и другие доменные отказы («заявка уже существует») маппь по `code` в `onError` мутации, а не
   через поля.
-- Текст `msg` от pydantic показывай, только если бэкенд гарантирует, что он на русском и безопасен.
-  Иначе маппь по `type` на i18n-ключ: правило скилла «серверный detail пользователю не показываем»
-  остаётся в силе.
+- Текст `msg` от pydantic показывается только при `SERVER_MSG_IS_SAFE = true` (гарантия бэкенда, что он
+  на русском и безопасен). По умолчанию — i18n-ключ по `type`: правило скилла «серверный detail
+  пользователю не показываем» остаётся в силе.
 
 ## Почему
 

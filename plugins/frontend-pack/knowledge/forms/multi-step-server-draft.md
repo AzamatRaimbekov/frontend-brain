@@ -27,7 +27,8 @@ updated: 2026-10-24
 - На каждый шаг свой `useForm` со своей Zod-схемой. «Далее» = мутация `PUT /drafts/:token/steps/:n`,
   в `onSuccess` — `queryClient.setQueryData(draftKey, fresh)`.
 - Ссылка «продолжить позже» `?draft=<token>`: токен читается один раз и сразу убирается из адреса
-  (`setSearchParams(next, { replace: true })`), чтобы не попасть в историю и на скриншоты.
+  (TanStack Router: `navigate({ search: (s) => ({ ...s, draft: undefined }), replace: true })`; Next.js + nuqs:
+  `setDraft(null, { history: 'replace' })`), чтобы не попасть в историю и на скриншоты.
 - Если сервер ротирует токен (например, после подтверждения почты), обнови его **и** в хранилище,
   **и** в кэше запроса — иначе следующий запрос уйдёт со старым токеном.
 - После отправки токен забывай и черновик заново не запрашивай.
