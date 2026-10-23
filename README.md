@@ -125,7 +125,7 @@ plugins/frontend-pack/            сам плагин
   knowledge/<область>/*.md        база знаний команды, INDEX.md генерируется
   agents/                         frontend-architect, frontend-reviewer
   hooks/, scripts/                хуки UX-бриф и 150 строк, knowledge.mjs (поиск, индекс, проверка)
-.github/                          CI (npm test на каждом PR), CODEOWNERS, шаблон PR
+.github/                          CODEOWNERS, шаблон PR; CI-файл лежит в docs/ci/test.yml — перенести в .github/workflows/ после выдачи gh права workflow
 docs/reports/                     отчёты (A/B-тест UX-брифа)
 scripts/test.mjs                  проверки репозитория: npm test
 scripts/release.mjs               релиз: одна версия во всех манифестах
