@@ -74,16 +74,34 @@ function projectDependencies(root) {
   return new Set([...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})]);
 }
 
-function cssImportHint(root, tokensFile) {
+function importPath(fromDir, file) {
+  const rel = relative(fromDir, file).split(sep).join('/');
+  return rel.startsWith('.') ? rel : `./${rel}`;
+}
+
+// shadcn init writes :root/.dark/@theme inline after the imports; they override mbank-tokens.css.
+const SHADCN_THEME = /--primary\s*:|oklch\(|@theme\s+inline/;
+
+export function cssImportHint(root, tokensFile) {
   const entry = CSS_ENTRIES.map((p) => join(root, p)).find((p) => existsSync(p));
-  if (!entry) return `Add to your global CSS after @import "tailwindcss": @import "<path to ${basename(tokensFile)}>";`;
-  let rel = relative(dirname(entry), tokensFile).split(sep).join('/');
-  if (!rel.startsWith('.')) rel = `./${rel}`;
+  if (!entry) {
+    const rel = importPath(join(root, 'src'), tokensFile);
+    return `No global CSS found (${CSS_ENTRIES.join(', ')}). In your global CSS (paths relative to src/):\n` +
+      `@import "tailwindcss";\n@import "tw-animate-css";\n@import "${rel}";`;
+  }
   const text = readFileSync(entry, 'utf8');
   const where = relative(root, entry);
-  if (text.includes(basename(tokensFile))) return `${where} already imports ${basename(tokensFile)}.`;
-  const anim = text.includes('tw-animate-css') ? '' : '@import "tw-animate-css";\n';
-  return `Add to ${where} after @import "tailwindcss":\n${anim}@import "${rel}";`;
+  const lines = [];
+  if (text.includes(basename(tokensFile))) lines.push(`${where} already imports ${basename(tokensFile)}.`);
+  else {
+    const anim = text.includes('tw-animate-css') ? '' : '@import "tw-animate-css";\n';
+    lines.push(`Add to ${where} after @import "tailwindcss":\n${anim}@import "${importPath(dirname(entry), tokensFile)}";`);
+  }
+  if (SHADCN_THEME.test(text)) {
+    lines.push(`WARNING: ${where} still has a shadcn theme (--primary / oklch( / @theme inline). It overrides the Mbank tokens.`,
+      'Delete the :root, .dark, @theme inline, @custom-variant dark and @layer base blocks; keep only the imports.');
+  }
+  return lines.join('\n');
 }
 
 export function run(opts, log = console.log) {

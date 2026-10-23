@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { loadRegistry, parseArgs, resolveItems, run } from './add-ui.mjs';
+import { cssImportHint, loadRegistry, parseArgs, resolveItems, run } from './add-ui.mjs';
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), 'add-ui.mjs');
 const REGISTRY = join(dirname(SCRIPT), '..', 'registry', 'mbank');
@@ -62,6 +62,31 @@ test('--dry-run writes nothing and reports the plan', () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('cssImportHint: full block without entry, warns about a leftover shadcn theme', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'add-ui-'));
+  try {
+    const tokens = join(dir, 'src', 'styles', 'mbank-tokens.css');
+    const none = cssImportHint(dir, tokens);
+    assert.match(none, /@import "tailwindcss";\n@import "tw-animate-css";\n@import "\.\/styles\/mbank-tokens\.css";/);
+    mkdirSync(join(dir, 'src'));
+    const css = join(dir, 'src', 'index.css');
+    writeFileSync(css, '@import "tailwindcss";\n@import "tw-animate-css";\n@import "./styles/mbank-tokens.css";\n');
+    assert.doesNotMatch(cssImportHint(dir, tokens), /WARNING/);
+    writeFileSync(css, `${readFileSync(css, 'utf8')}:root { --primary: oklch(0.205 0 0); }\n@theme inline { --radius-md: 1px; }\n`);
+    assert.match(cssImportHint(dir, tokens), /already imports[\s\S]*WARNING: .*shadcn theme/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('portal content (Select, DropdownMenu) sits above Dialog: z-popover > z-modal', () => {
+  const css = readFileSync(join(REGISTRY, 'tokens.css'), 'utf8');
+  const z = (name) => Number(css.match(new RegExp(`--z-${name}:\\s*(\\d+)`))[1]);
+  assert.ok(z('popover') > z('modal') && z('modal') > z('overlay'));
+  for (const file of ['select.tsx', 'dropdown-menu.tsx'])
+    assert.match(readFileSync(join(REGISTRY, 'components', file), 'utf8'), /z-\(--z-popover\)/, file);
 });
 
 test('copies files, never overwrites without --force, CLI exits 0', () => {
