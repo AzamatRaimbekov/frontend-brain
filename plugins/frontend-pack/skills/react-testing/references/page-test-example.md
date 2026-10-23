@@ -2,14 +2,14 @@
 
 A Vite + TanStack Router page `OrdersPage` with a list (query) and a create form (mutation). The handler layout, `server.ts` and `renderWithClient` are owned by `react-data-fetching` [testing.md](../../react-data-fetching/references/testing.md); this file adds the routed render helper, the i18n guard and the four state tests.
 
-## src/test/setup.ts
+## vitest.setup.ts
 
 ```ts
 import '@testing-library/jest-dom/vitest'
 import { afterAll, afterEach, beforeAll, expect } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { i18n } from '@/shared/config/i18n'
-import { server } from './server'
+import { server } from './src/test/server'
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterEach(() => {
@@ -19,7 +19,9 @@ afterEach(() => {
 afterAll(() => server.close())
 
 // Fail the test that rendered a key missing from the ru resources.
-// The 'missingKey' event fires only with saveMissing: true (set in the test i18n init).
+// The 'missingKey' event fires only with saveMissing: true. It is switched on here, after the app's
+// init, by mutating the shared instance's options: the translator reads the same options object.
+// Keys use the pack's one-namespace form (t('orders.empty.title')), see react-security-i18n i18n.md.
 const missingKeys: string[] = []
 i18n.options.saveMissing = true
 i18n.on('missingKey', (_lngs, _ns, key) => missingKeys.push(key))
@@ -29,7 +31,7 @@ afterEach(() => {
 })
 ```
 
-`cleanup()` is explicit because `globals: false` disables Testing Library's auto-cleanup. The i18n instance and its `ru` default come from `react-security-i18n` [i18n.md](../../react-security-i18n/references/i18n.md).
+`cleanup()` is explicit because `globals: false` disables Testing Library's auto-cleanup. File name and MSW lines match `react-data-fetching` [testing.md](../../react-data-fetching/references/testing.md) (`vitest.setup.ts`). The i18n instance, its `ru` default and the one-namespace key form (`orders.*`, `errors.*`, `common.*` all in `translation`) come from `react-security-i18n` [i18n.md](../../react-security-i18n/references/i18n.md).
 
 ## src/test/render.tsx (routed render)
 

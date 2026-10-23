@@ -24,7 +24,7 @@ Do not put frequently changing values in context: every consumer re-renders. Tha
 
 ## Zustand store (conditional library)
 
-Write down the reason in the PR: which features share it and why URL, lifting and context do not fit.
+Allowed only for truly global, client-only UI state (`rules/libraries.json`). Write down the reason in the PR: why URL, lifting and context do not fit.
 
 ```ts
 // src/shared/hooks/useSidebar.ts - domain-agnostic, cross-feature UI state
@@ -55,15 +55,9 @@ import { useShallow } from 'zustand/react/shallow'
 const { open, pinned } = useLayoutStore(useShallow((s) => ({ open: s.open, pinned: s.pinned })))
 ```
 
-### Store value that feeds a query
+### Values that feed a query are not store state
 
-```ts
-// features/reports/hooks/useReportScopeStore.ts
-const scope = useReportScope()                         // e.g. { branchId } chosen in a side panel
-const report = useQuery(reportQueries.summary(scope))  // scope is part of the query key
-```
-
-The store holds the **parameter**; the query cache holds the **data**. If the parameter should be shareable in a link, move it to the URL instead.
+A filter or scope chosen in a side panel for one feature (`branchId` for a report) goes to the URL (`react-ux` url-state.md) or is lifted to the page that renders both the panel and the query. Zustand is only for truly global UI state (`rules/libraries.json`), so `features/<f>/hooks/use<Name>Store.ts` is not a valid place for a store.
 
 ### Persisted UI preferences
 

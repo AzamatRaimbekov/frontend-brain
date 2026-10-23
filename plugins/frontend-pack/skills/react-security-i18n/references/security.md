@@ -56,7 +56,7 @@ If a BFF is impossible (decided by the backend lead, written in the project `CLA
 add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.example.kg; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" always;
 ```
 
-- `style-src 'unsafe-inline'` is often needed for runtime inline styles (virtualized lists, some primitives); scripts stay strict.
+- `style-src 'unsafe-inline'` is allowed only when runtime inline styles require it (virtualized lists, some primitives); keep a comment in the server config naming the reason, and drop it if nothing needs it. `script-src` never gets `'unsafe-inline'` or `'unsafe-eval'` in production (SKILL.md A3).
 - Remove inline scripts from `index.html` (the dark-mode pre-paint script from `react-ui` needs a hash: `script-src 'self' 'sha256-...'`).
 - Ship `Content-Security-Policy-Report-Only` with the same value on staging first.
 

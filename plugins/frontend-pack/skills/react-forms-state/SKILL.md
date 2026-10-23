@@ -1,6 +1,6 @@
 ---
 name: react-forms-state
-description: Mdigital rules for complex forms and client state in React 19 + TypeScript - multi-step wizards, dynamic field arrays, dependent and conditional fields, async validation, server errors through applyServerErrors, Zod 4 schemas shared between form and API (input vs output types, coerce, transform), and where client state lives (URL, local, context, Zustand for cross-feature UI state only, never server data) with a decision table. Use when building a form beyond a few plain fields, a wizard, a repeatable list of fields, fields that depend on each other, or when deciding where a piece of state belongs or whether to add a store. Triggers - "сложная форма", "многошаговая форма", "визард", "динамические поля", "массив полей", "зависимые поля", "асинхронная валидация", "zod схема", "где хранить состояние", "zustand", "стор", "глобальное состояние", "multi-step form", "wizard", "field array", "dependent fields", "async validation", "where to keep state", "global store".
+description: Mdigital rules for complex forms and client state in React 19 + TypeScript - multi-step wizards, dynamic field arrays, dependent and conditional fields, async validation, server errors through applyServerErrors, Zod 4 schemas shared between form and API (input vs output types, coerce, transform), and where client state lives (URL, local, context, Zustand only for truly global UI state, never server data) with a decision table. Use when building a form beyond a few plain fields, a wizard, a repeatable list of fields, fields that depend on each other, or when deciding where a piece of state belongs or whether to add a store. Triggers - "сложная форма", "многошаговая форма", "визард", "динамические поля", "массив полей", "зависимые поля", "асинхронная валидация", "zod схема", "где хранить состояние", "zustand", "стор", "глобальное состояние", "multi-step form", "wizard", "field array", "dependent fields", "async validation", "where to keep state", "global store".
 ---
 
 # Complex forms and client state (Mdigital)
@@ -65,7 +65,7 @@ Server data is never client state: it stays in the TanStack Query cache (`react-
 | is a form value or form status | **React Hook Form** | field values, dirty, submitting |
 | belongs to one component or a small subtree | **`useState` / `useReducer`**, lifted to the nearest common parent | open dialog, selected rows in one table, hover |
 | is app-wide, rarely changes, read by many | **Context** | theme, session user id, locale |
-| is client-only UI state shared by several features that are not in one subtree, changes often | **Zustand** (conditional) | sidebar collapsed, global command palette open, a cross-feature selection basket |
+| is truly global client-only UI state that URL, context and the query cache cannot hold (`rules/libraries.json`), changes often | **Zustand** (conditional) | sidebar collapsed, global command palette open, a cross-feature selection basket |
 | must persist across sessions on this device | Zustand `persist` or a tiny `localStorage` wrapper with a Zod schema, **only** for UI preferences | table density, dismissed hints |
 
 If none of the Zustand conditions is true, Zustand is the wrong answer. Never: server data in a store, a store that mirrors the URL, a store per form.
@@ -74,11 +74,12 @@ If none of the Zustand conditions is true, Zustand is the wrong answer. Never: s
 
 Code: [references/client-state.md](references/client-state.md).
 
-- One small store per concern, never one global store. Placement follows the `react-architecture` folder layout (no new folders): a store is stateful logic, so it lives in `features/<f>/hooks/use<Name>Store.ts` and other features reach it only through that feature's `index.ts`; a domain-agnostic store (sidebar, command palette) lives in `src/shared/hooks/`.
+- Scope is exactly `rules/libraries.json`: **truly global, client-only UI state that URL, context and the query cache cannot hold** (sidebar, command palette, app-wide layout preferences). Feature-scoped state is lifted state or context, not a store.
+- One small store per concern, never one global store. It lives in `src/shared/hooks/use<Name>.ts` (`react-architecture` layout, no new folders).
 - Do not export the store; export hooks: `useSidebarOpen()`, `useSidebarActions()`.
 - Atomic selectors (`useStore((s) => s.open)`); when you need several values, `useShallow`.
 - Actions live in one `actions` object that never changes identity, so `useXActions()` never re-renders.
-- Values that feed a query (a filter chosen in a side panel) may live in a store only if they must not be in the URL; they then become part of the query key. If the value belongs in a link, it is URL state.
+- A value that feeds a query (a filter, a scope chosen in a side panel) is never store state: it is URL state, or state lifted to the page that owns both the panel and the query.
 - `persist` stores only UI preferences; version them (`version`, `migrate`) and never persist tokens, PII or server data.
 
 ## Anti-patterns (reject in review)

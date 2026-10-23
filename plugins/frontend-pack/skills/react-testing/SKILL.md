@@ -73,7 +73,7 @@ src/features/orders/
   api/__mocks__/order.handlers.ts    # MSW handlers + fixtures for this feature
   components/OrderForm.test.tsx      # integration
 src/pages/orders/OrdersPage.test.tsx # page integration
-src/test/                            # setup.ts, server.ts, render.tsx (renderWithClient, renderRoute)
+src/test/                            # server.ts, render.tsx (renderWithClient, renderRoute)
 e2e/                                 # Playwright specs or Scenario Lab scenarios, outside src/
 ```
 
@@ -83,7 +83,7 @@ e2e/                                 # Playwright specs or Scenario Lab scenario
 
 ## 6. Config and CI
 
-`vitest.config.ts` (or the `test` block of `vite.config.ts`): `environment: 'jsdom'`, `setupFiles: ['src/test/setup.ts']`, `globals: false`, `restoreMocks: true`. `setup.ts` imports `@testing-library/jest-dom/vitest`, starts the MSW server with `onUnhandledRequest: 'error'` and resets handlers after each test (code in [references/page-test-example.md](references/page-test-example.md)).
+`vitest.config.ts` (or the `test` block of `vite.config.ts`): `environment: 'jsdom'`, `setupFiles: ['./vitest.setup.ts']`, `globals: false`, `restoreMocks: true`. `vitest.setup.ts` (project root, same name as in `react-data-fetching` testing.md) imports `@testing-library/jest-dom/vitest`, starts the MSW server with `onUnhandledRequest: 'error'` and resets handlers after each test (code in [references/page-test-example.md](references/page-test-example.md)).
 
 CI order (GitLab), each step must pass:
 

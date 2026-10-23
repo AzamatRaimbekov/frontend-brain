@@ -31,6 +31,10 @@ validateSearch: z.object({ step: z.enum(['contact', 'delivery', 'confirm']).catc
 
 ```tsx
 // features/orders/hooks/useOrderWizard.ts
+import { getRouteApi } from '@tanstack/react-router'
+
+const route = getRouteApi('/orders/new') // typed search params of the route that hosts the wizard
+
 export function useOrderWizard() {
   const { step } = route.useSearch()
   const navigate = route.useNavigate()

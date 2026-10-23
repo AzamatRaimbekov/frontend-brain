@@ -39,7 +39,7 @@ Owners this skill builds on (do not restate them differently):
 
 ### A3. Content Security Policy
 
-- Vite SPA: CSP is an HTTP header set by the web server or CDN serving `index.html` (not a `<meta>` tag): `default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'` plus the API origin in `connect-src`. No `'unsafe-inline'` or `'unsafe-eval'` in production.
+- Vite SPA: CSP is an HTTP header set by the web server or CDN serving `index.html` (not a `<meta>` tag): `default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'` plus the API origin in `connect-src`. No `'unsafe-inline'` or `'unsafe-eval'` in `script-src` in production; `style-src 'unsafe-inline'` is allowed only when runtime inline styles require it, with a comment saying which.
 - Next.js: nonce-based CSP from `proxy.ts` (strict, makes every page dynamic) or SRI for static pages. Trade-offs and code: [references/security.md](references/security.md).
 - Start in `Content-Security-Policy-Report-Only` on staging, fix violations, then enforce.
 
@@ -61,7 +61,7 @@ Owners this skill builds on (do not restate them differently):
 
 ### B1. Setup
 
-`react-i18next` (allowed) with `i18next`. Default and fallback language `ru`; supported `ru`, `ky`, `en`. One instance in `src/shared/config/i18n.ts`, resources in `src/shared/config/locales/<lng>/<namespace>.json`, typed keys via `i18next.d.ts`. Full code, Next.js variant and CI key check: [references/i18n.md](references/i18n.md).
+`react-i18next` (allowed) with `i18next`. Default and fallback language `ru`; supported `ru`, `ky`, `en`. One instance in `src/shared/config/i18n.ts`, resources in `src/shared/config/locales/<lng>/<feature>.json` merged into one namespace, typed keys via `i18next.d.ts`. Full code, Next.js variant and CI key check: [references/i18n.md](references/i18n.md).
 
 - RTL is not needed (ru, ky, en are all left-to-right); do not add `dir` logic.
 - `<html lang>` follows the active language.
@@ -69,8 +69,9 @@ Owners this skill builds on (do not restate them differently):
 
 ### B2. Keys
 
-- Namespaces by feature: `common` (buttons, generic states), `errors`, `<feature>` (`orders`, `users`).
-- Key shape `<feature>.<screen or component>.<element>[.<state>]`: `orders.form.email.label`, `orders.empty.title`, `errors.loadFailed.title`.
+- **One namespace** (i18next default `translation`); the first key segment is the area: `common` (buttons, generic states), `errors`, `<feature>` (`orders`, `users`). Call `t('orders.empty.title')` and `useTranslation()` without a namespace; never `t('orders:...')` or `useTranslation('orders')`.
+- On disk one file per area, `locales/<lng>/<area>.json`, holding a single top-level key equal to the file name; `i18n.ts` merges them ([references/i18n.md](references/i18n.md)).
+- Key shape `<feature>.<screen or component>.<element>[.<state>]`: `orders.form.email.label`, `orders.empty.title`, `errors.loadFailed.title`, `common.retry`.
 - Keys describe meaning, not text: `orders.create`, not `orders.createOrderButtonText`. Never use the Russian sentence as the key.
 - No concatenation: `t('orders.deleted', { number })`, not `t('orders.deleted') + number`. Markup inside text with `<Trans>` components.
 - `ru` is the source of truth: every key exists in `ru` first; `ky` and `en` may lag, falling back to `ru`.
@@ -101,7 +102,7 @@ The `react-ux` phrase "ICU plurals" means these CLDR categories; i18next uses su
 - `dangerouslySetInnerHTML` without DOMPurify; `href={user.website}` without a protocol check.
 - Tokens in `localStorage`/`sessionStorage`; reading auth cookies in JS; tokens in URLs or logs.
 - Secrets in `VITE_*` / `NEXT_PUBLIC_*`; `envPrefix: ''`; committed `.env.local`.
-- CSP with `'unsafe-inline'` / `'unsafe-eval'` in production; CSP as `<meta>` only.
+- CSP with `'unsafe-inline'` / `'unsafe-eval'` in `script-src` in production; `style-src 'unsafe-inline'` without a note why; CSP as `<meta>` only.
 - Hard-coded Russian strings in JSX; string concatenation of translations; only `_one`/`_other` for `ru`.
 - Plural without `count`; dates as `${d}.${m}.${y}`; currency as `amount + ' сом'`.
 
