@@ -88,7 +88,7 @@
     {
       "category": "ui",
       "name": "lucide-react",
-      "use_for": "The only icon set",
+      "use_for": "The only icon set, except Mbank products: Mbank Icons SVG from the kit in shared/ui/icons (skills/mbank-ui)",
       "reason": "shadcn default, consistent stroke style"
     },
     {
@@ -440,7 +440,7 @@
     {
       "category": "ui",
       "name": "react-icons, FontAwesome, Heroicons, MUI icons",
-      "instead": "lucide-react (custom SVG in shared/ui/icons if missing)",
+      "instead": "lucide-react (custom SVG in shared/ui/icons if missing); Mbank products: kit icons (skills/mbank-ui)",
       "reason": "One icon set only"
     },
     {
@@ -482,7 +482,7 @@
     {
       "category": "ux",
       "name": "react-spinners and other spinner packs",
-      "instead": "lucide Loader2 with animate-spin under motion-safe",
+      "instead": "lucide Loader2 with animate-spin under motion-safe; Mbank products: kit Spinner (skills/mbank-ui)",
       "reason": "Unneeded dependency"
     },
     {

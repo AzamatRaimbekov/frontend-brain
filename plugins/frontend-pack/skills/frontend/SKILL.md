@@ -24,6 +24,12 @@ description: Entry point to the Mdigital frontend brain. Use when a user invokes
 | Новая страница, экран, раздел, форма | [react-page-ux](../react-page-ux/SKILL.md) (сначала `UX.md`), [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md) |
 | Запросы к API, кэш, мутации | [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md) |
 | Вёрстка, стили, тема, адаптив | [react-ui](../react-ui/SKILL.md), [shadcn](../shadcn/SKILL.md) при `components.json` |
+| Продукт Mbank (банк, касса, travel, artwin, koko) или экран из Mbank Figma | [mbank-ui](../mbank-ui/SKILL.md): кодовый UI-кит и токены, ставится `add-ui.mjs`; плюс [react-ui](../react-ui/SKILL.md) |
+| Ссылка на Figma, «по макету», «сделай в фигме и сверстай», передача в разработку | [design-to-code](../design-to-code/SKILL.md): этапы бриф → Figma → утверждение → спека → код → сверка; агенты `design-lead`, `design-qa` и плагин figma-pack |
+| Тесты: юнит, компонент, страница, e2e, моки MSW | [react-testing](../react-testing/SKILL.md) |
+| Сложная форма, мастер из шагов, где хранить состояние | [react-forms-state](../react-forms-state/SKILL.md) (UX форм — в [react-ux](../react-ux/SKILL.md)) |
+| Медленная страница, размер бандла, аудит доступности | [react-performance-a11y](../react-performance-a11y/SKILL.md) |
+| Авторизация, токены, env, CSP, переводы, формат денег и дат | [react-security-i18n](../react-security-i18n/SKILL.md) |
 | Загрузка, пустые состояния, формы, тосты | [react-ux](../react-ux/SKILL.md) |
 | Ошибки, белый экран, error boundary | [react-error-handling](../react-error-handling/SKILL.md) |
 | Большой компонент, структура папок | [react-architecture](../react-architecture/SKILL.md) |

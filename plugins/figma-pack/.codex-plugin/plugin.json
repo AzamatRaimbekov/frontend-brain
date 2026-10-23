@@ -1,6 +1,6 @@
 {
   "name": "figma-pack",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Mdigital Figma workflow: connect a design system by one link, design layouts in Figma with our components, and turn designs into React (web), React Native or Flutter code.",
   "author": {
     "name": "Mdigital"

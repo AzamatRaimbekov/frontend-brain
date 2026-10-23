@@ -86,6 +86,10 @@ const tests = {
       assert.equal(manifest.version, entry.version, `${entry.name}: marketplace version`);
       assert.ok(codex.plugins.some((p) => p.name === entry.name), `${entry.name}: listed for Codex`);
     }
+    for (const dir of plugins()) {
+      const name = json(join(dir, '.claude-plugin', 'plugin.json')).name;
+      assert.ok(market.plugins.some((p) => p.name === name), `${name}: plugin folder is not listed in the marketplace`);
+    }
   },
   'plugin unit tests pass (node --test plugins/*/scripts/*.test.mjs)'() {
     const files = unitTests();

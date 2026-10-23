@@ -27,6 +27,7 @@
 ```bash
 claude plugin marketplace add AzamatRaimbekov/frontend-brain
 claude plugin install frontend-pack@frontend-brain
+claude plugin install figma-pack@frontend-brain
 ```
 
 Перезапусти Claude Code. Обновление: `claude plugin marketplace update frontend-brain` (в Codex: `codex plugin marketplace upgrade`).
@@ -96,11 +97,19 @@ $frontend Проверь фронтенд в этой ветке перед merg
 | `react-ui` | shadcn, токены Tailwind, варианты, доступность |
 | `react-ux` | Состояния загрузки, пустые и ошибки, формы, тосты, состояние в URL |
 | `react-error-handling` | ApiError, error boundaries, сообщения пользователю |
+| `mbank-ui` | Кодовый UI-кит Mbank: токены (светлая/тёмная тема, 5 брендов) и 20 компонентов, ставится `node plugins/frontend-pack/scripts/add-ui.mjs <имена\|all>` |
+| `design-to-code` | Процесс «бриф → Figma из дизайн-системы → утверждение → спека → код → сверка с макетом» |
+| `react-testing` | Vitest + Testing Library + MSW, что тестировать на каждом слое, e2e |
+| `react-forms-state` | Сложные формы, мастера из шагов, где хранить состояние |
+| `react-performance-a11y` | Скорость, бандл, виртуализация, WCAG 2.2 AA |
+| `react-security-i18n` | XSS, токены, env, CSP, переводы ru/ky/en, формат денег и дат |
 | `frontend-contribute` | Пополнить мозг: статья в базе знаний или правка правила через PR |
 
 База знаний: `plugins/frontend-pack/knowledge/` — короткие статьи (правило, рецепт, решение, ловушка) по областям и стекам, оглавление в [knowledge/INDEX.md](plugins/frontend-pack/knowledge/INDEX.md). Агент ищет в ней перед работой: `node plugins/frontend-pack/scripts/knowledge.mjs search <слова> --stack vite`.
 
-Агенты: `frontend-architect` (планирует фичу до кода), `frontend-reviewer` (ревью кода, только читает).
+Агенты: `frontend-architect` (планирует фичу до кода), `frontend-reviewer` (ревью кода, только читает), `design-lead` (ведёт фичу от брифа и Figma до кода, сам код не пишет), `design-qa` (сверяет готовую страницу с макетом).
+
+Второй плагин **figma-pack**: каталог дизайн-системы Mbank, рисование экранов в Figma только из компонентов системы (агент `figma-designer`, нужно Full-место), чтение макета в спеку (агент `figma-reader`, хватает Dev-места), код для React, React Native и Flutter. Установка: `claude plugin install figma-pack@frontend-brain`.
 
 Белый и чёрный список библиотек — один файл: `plugins/frontend-pack/rules/libraries.json`.
 
@@ -119,10 +128,12 @@ $frontend Проверь фронтенд в этой ветке перед merg
 ```
 .claude-plugin/marketplace.json   маркетплейс frontend-brain (Claude Code)
 .agents/plugins/marketplace.json  маркетплейс для Codex
-plugins/frontend-pack/            сам плагин
+plugins/figma-pack/               плагин Figma: дизайн-система Mbank, макеты, design-to-code
+plugins/frontend-pack/            плагин фронтенда
   skills/<скилл>/SKILL.md         правила и маршрутизация
   rules/libraries.json            белый и чёрный список библиотек
   knowledge/<область>/*.md        база знаний команды, INDEX.md генерируется
+  registry/mbank/                 UI-кит Mbank: tokens.css, компоненты, registry.json
   agents/                         frontend-architect, frontend-reviewer
   hooks/, scripts/                хуки UX-бриф и 150 строк, knowledge.mjs (поиск, индекс, проверка)
 .github/                          CODEOWNERS, шаблон PR; CI-файл лежит в docs/ci/test.yml — перенести в .github/workflows/ после выдачи gh права workflow

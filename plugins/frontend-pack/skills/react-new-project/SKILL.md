@@ -71,7 +71,10 @@ Create these files, taking the code from the owning skill. Do not invent alterna
 | Router with `defaultPreload: 'intent'` and `defaultErrorComponent` (Vite) | `react-data-fetching` references/nextjs.md |
 | `shared/config/env.ts`: parse `import.meta.env` (Vite) or `process.env` (Next.js) with a Zod schema, export typed `env` | this skill |
 | `eslint.config.js` (max-lines 150, hooks, query, import boundaries) | `react-architecture` references/eslint-config.md |
-| i18n setup with `ru` as default locale | `react-ux` |
+| i18n setup with `ru` as default locale | `react-security-i18n` references/i18n.md |
+| `shared/lib/format.ts`, `shared/lib/safeUrl.ts`, `shared/components/SafeHtml.tsx` | `react-security-i18n` |
+| `vitest.setup.ts`, `src/mocks/` with MSW handlers | `react-testing` |
+| Mbank product: tokens and UI kit via `node <frontend-pack>/scripts/add-ui.mjs all` (replaces the shadcn theme) | `mbank-ui` |
 
 Remove the scaffold's demo code (counter, logos, default page content).
 
