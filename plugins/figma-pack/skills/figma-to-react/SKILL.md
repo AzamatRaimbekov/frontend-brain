@@ -12,7 +12,7 @@ Figma says what the screen looks like. `frontend-pack` says how the code is writ
 ## 0. Preconditions
 
 1. **frontend-pack installed.** The skills `frontend-pack:react-page-ux`, `react-ui`, `react-architecture` and the agents `frontend-architect`, `frontend-reviewer` must be available. If not, tell the user: "frontend-pack не установлен: `claude plugin install frontend-pack@frontend-brain`, затем перезапустить Claude Code". Until then follow its rules from the repository (`https://github.com/AzamatRaimbekov/frontend-brain`, `plugins/frontend-pack`) and say in the final report that the pack was not loaded.
-   **Mbank / MDigital product** (Mbank Tokens kits in the mockup, or Mbank, kassa, travel, artwin, koko) -> also `frontend-pack:mbank-ui` (the coded Mbank kit, `plugins/frontend-pack/skills/mbank-ui/SKILL.md`) and `figma-pack:mbank-design-system`. The Mbank branch in `references/mbank-web.md` replaces the generic component, token, font and icon rules of section 2.
+   **Mbank / MDigital product** (Mbank Tokens kits in the mockup, or Mbank, kassa, travel, artwin, koko) -> also `frontend-pack:mbank-ui` when the installed frontend-pack has it (the coded Mbank kit; absent -> fallback in `references/mbank-web.md` section 1) and `figma-pack:mbank-design-system`. The Mbank branch in `references/mbank-web.md` replaces the generic component, token, font and icon rules of section 2.
 2. **Seat check.** `whoami` (free). View/Collab seat = 6 reads per month (20 on Starter); a screen needs 4-10. Tell the user the estimate and ask for a Dev/Full seat before spending calls. Details: `../figma-core/references/figma-tools.md`.
 3. **Node link.** `figma.com/design/<fileKey>/...?node-id=1-2` -> `1:2`. No `node-id` -> ask for a frame link. Never guess IDs.
 
@@ -34,7 +34,7 @@ Full rules with examples: `references/translation-rules.md`.
 
 - **Generated code is reference only.** `get_design_context` returns React + Tailwind as a "non-interactive prototype": read it for structure, values and asset URLs; never paste it. Rewrite in our stack.
 - **Components first.** A Code Connect mapping is authoritative: use the mapped component at that node. Otherwise map by role via the catalog to `src/shared/ui` (shadcn) or `src/shared/components`. Missing primitive -> `npx shadcn@latest add <name>`; custom only if shadcn has none (`react-ui` section 1). A detached instance that looks like a Button is a `Button`.
-  **Mbank:** components come from the coded kit: `node <frontend-pack>/scripts/add-ui.mjs <names>` (names from `mbank-ui`), props by the lookup order of `references/mbank-web.md` section 3 (Code Connect -> catalog `code.web`/`props` -> `mbank-ui` -> `code-mapping.md` section 7). Never `npx shadcn@latest add` with the default theme in an Mbank project.
+  **Mbank:** components come from the coded kit: `node <frontend-pack>/scripts/add-ui.mjs <names>` (names from `mbank-ui`); if the kit or the script is absent, build from `code-mapping.md` section 7 and report it (`references/mbank-web.md` section 1); props by the lookup order of `references/mbank-web.md` section 3 (Code Connect -> catalog `code.web`/`props` -> `mbank-ui` -> `code-mapping.md` section 7). Never `npx shadcn@latest add` with the default theme in an Mbank project.
 - **Variants.** Figma variant properties -> existing `cva` variants. A new visual variant goes into the `shared/ui` file as a variant, never a local restyle.
 - **Tokens.** Every value goes Figma -> catalog token -> class (`../figma-core/references/token-mapping.md`, web section). No hex/rgb, no `text-[15px]`, `p-[13px]`, `w-[1280px]`, no `style={{}}` for static values.
 - **Layout.** Auto layout -> flex/grid + `gap-*`: direction -> `flex-row`/`flex-col`; spacing -> `gap-*` (never margins between siblings); padding -> `p-*`; fill -> `flex-1`/`w-full`/`min-w-0`; hug -> no width; wrap -> `flex-wrap`; Figma grid -> `grid grid-cols-*`. Constraints left/right -> full width with padding; center -> `mx-auto`.
@@ -98,7 +98,7 @@ Token-perfect, not pixel-perfect. Procedure: `references/visual-verification.md`
 - [ ] Figma components mapped to `shared/ui` / `shared/components` (Code Connect respected); nothing pasted from generated code
 - [ ] Layout flex/grid + gap, mobile-first, no absolute positioning except overlays; files <= 150 lines
 - [ ] Copy as i18n keys; sample data in MSW fixtures; icons from lucide or `shared/ui/icons`; no Figma URLs in code
-- [ ] Mbank: `mbank-ui` loaded, kit installed with `add-ui.mjs`, no lucide, no default shadcn palette (`references/mbank-web.md` section 6)
+- [ ] Mbank: `mbank-ui` loaded and kit installed with `add-ui.mjs` (or their absence reported and code-mapping section 7 used), no lucide, no default shadcn palette (`references/mbank-web.md` section 6)
 - [ ] Visual check at 1280 and 375 (plus 768 once) against Figma; difference table reported
 - [ ] `frontend-reviewer` run on changed files
 

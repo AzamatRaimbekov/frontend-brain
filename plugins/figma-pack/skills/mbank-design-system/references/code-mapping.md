@@ -71,9 +71,9 @@ Status roles: `neutral` (Figma `default`), `info`, `clear`, `error`, `accent`, `
 
 The product brand is a theme switch, never a recolour in components. Each `1.brand` mode (bank, kassa, travel, artwin, koko; confirmed 2026-10-09, values in `mbank-figma-patterns/references/tokens.md` section 4) becomes one theme that overrides only the `brand*` tokens:
 
-- **Web:** `<html data-brand="kassa">` (light/dark stays on `.dark`). `:root` holds the bank values; `[data-brand="kassa"] { --brand: ...; --brand-hover: ...; --brand-active: ...; }` and the same for artwin and travel. A project for one product sets the attribute once in the root layout.
+- **Web:** `<html data-brand="kassa">` (light/dark stays on `.dark`). `:root` holds the bank values; `[data-brand="kassa"] { --brand: ...; --brand-hover: ...; --brand-active: ...; }` and the same for artwin, travel and koko. A project for one product sets the attribute once in the root layout.
 - **React Native (Unistyles):** themes `light`, `dark` x brand: build them with a `makeTheme(mode, brand)` helper in `themes.ts`; switch with `UnistylesRuntime.setTheme`. Only `colors.brand*` differ between brands.
-- **Flutter:** `AppColors` gets `brand`, `brandHover`, `brandActive`, `onBrand`; `AppTheme.light(brand: Brand.kassa)` picks the instance; `enum Brand { bank, kassa, artwin, travel }`.
+- **Flutter:** `AppColors` gets `brand`, `brandHover`, `brandActive`, `onBrand`; `AppTheme.light(brand: Brand.kassa)` picks the instance; `enum Brand { bank, kassa, artwin, travel, koko }`.
 
 The fixed `brand/{bank,kassa,artwin,travel}/*` variables of 2.theme map to `--brand-bank`, `--brand-kassa`, ... and are used only where several products appear together (product switcher, partner logos).
 

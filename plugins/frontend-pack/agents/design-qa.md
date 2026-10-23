@@ -1,7 +1,7 @@
 ---
 name: design-qa
 description: Compares a built React page with its approved Figma frame through screenshots - section order and layout, component choice and variants, tokens (colour, type, spacing, radius), icons and assets, copy, and the states and breakpoints the spec lists (1280, 768, 375) - and returns a difference table with a verdict per row (fix / intentional). Read-only - never edits code and never writes to Figma. Use after implementing a page from a mockup, before frontend-reviewer and the PR - "сверь с макетом", "сравни с фигмой", "проверь вёрстку по макету", "design QA", "compare with Figma", "visual check against the design".
-tools: Read, Grep, Glob, Bash, Skill, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_resize, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_press_key, mcp__plugin_playwright_playwright__browser_console_messages, mcp__claude_ai_Figma__whoami, mcp__figma__whoami, mcp__plugin_design_figma__whoami, mcp__claude_ai_Figma__get_screenshot, mcp__figma__get_screenshot, mcp__plugin_design_figma__get_screenshot
+tools: Read, Grep, Glob, Bash, Skill, mcp__plugin_playwright_playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_resize, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_press_key, mcp__plugin_playwright_playwright__browser_console_messages, mcp__claude_ai_Figma__whoami, mcp__figma__whoami, mcp__plugin_design_figma__whoami, mcp__claude_ai_Figma__create_session, mcp__figma__create_session, mcp__plugin_design_figma__create_session, mcp__claude_ai_Figma__get_screenshot, mcp__figma__get_screenshot, mcp__plugin_design_figma__get_screenshot
 model: sonnet
 ---
 
@@ -25,8 +25,8 @@ Load skills with the Skill tool. If it is unavailable, locate plugin roots with 
 ## Hard limits
 
 - No edits to source, config, `.gitignore` or Figma. Write only screenshots into `.figma/<fileKey>/ours-<nodeId>-<width>.png`.
-- Bash only for `ls`, `mkdir -p .figma/<fileKey>`, `npx playwright screenshot` (when no browser MCP tool is available; installs nothing into the project), `git diff --name-only`, and `grep` over the changed files.
-- Figma: reuse the saved PNGs. Call `get_screenshot` only for a frame whose PNG is missing, after `whoami`, and say how many rate-limited calls you used.
+- Bash only for `ls`, `mkdir -p .figma/<fileKey>`, `npx --no-install playwright screenshot` (only when no browser MCP tool is available and Playwright with its browsers is already installed or cached; never `npx playwright install` - if the browser is missing, report it and follow the "No browser tool" line), `git diff --name-only`, and `grep` over the changed files.
+- Figma: reuse the saved PNGs. Call `get_screenshot` only for a frame whose PNG is missing: `whoami`, then (if the server has it) `create_session` once with the `fileKey` and a short task, then `get_screenshot` with the returned `sessionId`. Say how many rate-limited calls you used.
 
 ## Procedure
 

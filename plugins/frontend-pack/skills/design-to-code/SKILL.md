@@ -21,7 +21,7 @@ description: End-to-end team process from a Figma design to merged React code at
 | View / Collab | 6 чтений в месяц | стоп: назови оценку вызовов и попроси Dev или Full |
 
    На файл нужен доступ **can edit**: с can view MCP отказывает даже в чтении (`figma-core`, раздел 2).
-3. **Продукт.** Mbank / MDigital (киты Mbank Tokens; Mbank, kassa, travel, artwin, koko) — в коде кодовый кит `frontend-pack:mbank-ui` и `figma-pack:mbank-design-system`; иначе каталог проекта `.figma/design-system.json`.
+3. **Продукт.** Mbank / MDigital (киты Mbank Tokens; Mbank, kassa, travel, artwin, koko) — в коде `figma-pack:mbank-design-system` и кодовый кит `frontend-pack:mbank-ui`, если он есть в установленном плагине (иначе code-mapping §7 и пометка в отчёте); иначе каталог проекта `.figma/design-system.json`.
 4. **Шрифт (G03).** Web components, Hero Section и CRM UI KIT используют Inter Mbank. Пока админ не загрузил его как шрифт организации, агент рисует web/CRM только черновик `[draft]` на Inter и только с согласия пользователя (`mbank-figma-patterns`, `references/crm-screen.md`). Mobile KIT (Nunito) рисуется полностью.
 
 ## 1. Этапы
@@ -34,7 +34,7 @@ description: End-to-end team process from a Figma design to merged React code at
 | 4 | Спека | агент `figma-reader` | ссылка на утверждённый фрейм с `node-id` | спека по `spec-template` (12 разделов), скриншоты `.figma/<fileKey>/<nodeId>.png` | разделы 1–11 есть, вопросы раздела 11 закрыты или стали допущениями |
 | 5 | UX.md | [react-page-ux](../react-page-ux/SKILL.md) | спека (разделы 8 и 11 → состояния и допущения) | `src/pages/<route>/UX.md` | ворота B |
 | 6 | План файлов | агент [frontend-architect](../../agents/frontend-architect.md) | спека + UX.md | дерево файлов, данные, состояния | у каждого файла одна ответственность, оценка ≤ 150 строк |
-| 7 | Код | основная сессия: `figma-pack:figma-to-react` + [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md), [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md), [react-dry](../react-dry/SKILL.md); для Mbank `mbank-ui` | план, спека, UX.md | ветка с кодом | ворота C |
+| 7 | Код | основная сессия: `figma-pack:figma-to-react` + [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md), [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md), [react-dry](../react-dry/SKILL.md); для Mbank `mbank-ui` (если установлен, иначе code-mapping §7) | план, спека, UX.md | ветка с кодом | ворота C |
 | 8 | Визуальная сверка | агент [design-qa](../../agents/design-qa.md) | URL страницы, скриншоты Figma | таблица отличий 1280 / 768 / 375 | нет отличий с пометкой «исправить» |
 | 9 | Ревью | агент [frontend-reviewer](../../agents/frontend-reviewer.md) | изменённые файлы | список нарушений | 0 блокирующих |
 | 10 | QA и PR | основная сессия: `react-page-ux` §5 (состояния через MSW, клавиатура, консоль) | ветка | PR с отчётом | ворота D |
@@ -45,7 +45,7 @@ description: End-to-end team process from a Figma design to merged React code at
 
 - **A. Дизайн утверждён человеком.** Код пишется только по фрейму, который дизайнер утвердил: в имени нет `[draft]` (видно в `get_metadata`), и дизайнер подтвердил Ready for dev в ответе. Агент не утверждает свои черновики и не снимает `[draft]` сам. Черновик можно взять в код только по прямой просьбе пользователя — тогда PR помечается «по неутверждённому макету».
 - **B. UX.md до кода.** Хук `check-ux-brief` блокирует новую страницу без `UX.md`. Бриф показан пользователю (в `claude -p` — повторён в начале отчёта).
-- **C. Код по стандарту.** Каждый файл компонента ≤ 150 строк (`node <plugin-root>/scripts/check-file-size.mjs <файлы>`), нет hex и произвольных `[..]` значений, компоненты из `shared/ui` (для Mbank — из кита через `add-ui.mjs`), строки — ключи i18n, типы и линтер проходят.
+- **C. Код по стандарту.** Каждый файл компонента ≤ 150 строк (`node <plugin-root>/scripts/check-file-size.mjs <файлы>`), нет hex и произвольных `[..]` значений, компоненты из `shared/ui` (для Mbank — из кита через `add-ui.mjs`; если скилла `mbank-ui` или скрипта `add-ui.mjs` нет в установленном frontend-pack — компоненты по `figma-pack` `mbank-design-system/references/code-mapping.md` §7, и отсутствие кита указано в плане и в отчёте PR), строки — ключи i18n, типы и линтер проходят.
 - **D. Перед PR.** `design-qa` без незакрытых отличий, `frontend-reviewer` без блокирующих замечаний, состояния загрузки, пусто, ошибки проверены в браузере или тестами.
 
 Если ворота не пройдены, процесс стоит: верни этап исполнителю с конкретным списком, что исправить.
@@ -90,7 +90,7 @@ design-lead ── ворота и следующий шаг, кода не пи
 - [ ] Ворота A: фрейм утверждён дизайнером
 - [ ] Спека сохранена в `.figma/<fileKey>/<nodeId>-spec.md`; скриншоты на месте
 - [ ] `UX.md` написан и показан
-- [ ] План файлов; код по скиллам, ≤ 150 строк, Mbank — кит `mbank-ui`
+- [ ] План файлов; код по скиллам, ≤ 150 строк, Mbank — кит `mbank-ui` или, без него, code-mapping §7 с пометкой в отчёте
 - [ ] `design-qa`: таблица отличий закрыта; `frontend-reviewer`: 0 блокирующих
 - [ ] PR с артефактами раздела 3
 

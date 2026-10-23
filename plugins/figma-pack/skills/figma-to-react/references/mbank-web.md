@@ -8,11 +8,11 @@ Applies when the mockup uses the Mbank Tokens kits (Web components, Hero Section
 2. `frontend-pack:mbank-ui` - the coded Mbank UI kit: its install command, component list, props and theme file. File in the frontend-brain repository: `plugins/frontend-pack/skills/mbank-ui/SKILL.md`. If the Skill tool is unavailable, locate the plugin root with `find ~/.claude/plugins . -path '*frontend-pack/.claude-plugin/plugin.json' 2>/dev/null | head -1` and read `skills/mbank-ui/SKILL.md`.
 3. `../../mbank-design-system/references/code-mapping.md` - Figma token -> CSS variable / class, fonts, icons, component mapping. Values: `../../mbank-figma-patterns/references/tokens.md` wins over any `?` left in code-mapping.
 
-`mbank-ui` not installed or not found -> say so in the plan and the final report, build with the code-mapping tables, and do not invent a parallel kit in the project.
+`mbank-ui` or `scripts/add-ui.mjs` not installed or not found (check: `ls <frontend-pack>/skills/mbank-ui/SKILL.md <frontend-pack>/scripts/add-ui.mjs`) -> say so in the plan and the final report, skip section 2, build with the code-mapping tables (section 7 for components), and do not invent a parallel kit in the project.
 
 ## 2. Install the kit into the project
 
-Components come from the coded kit, never from `npx shadcn@latest add` with the default theme:
+Only when the section 1 check found both `mbank-ui` and `add-ui.mjs`. Components come from the coded kit, never from `npx shadcn@latest add` with the default theme:
 
 ```bash
 node <frontend-pack>/scripts/add-ui.mjs <names>
@@ -26,7 +26,7 @@ For every Figma instance in the spec (section "components"):
 
 1. Code Connect mapping on the node (catalog `codeConnect`; today 0 are mapped, gap G15).
 2. Catalog `components[].code.web` and its `props` dictionary ("Figma property=value -> code prop") when filled. Today `code.web` is `null` in the shipped catalog; when it is filled, use it as is, without guessing.
-3. `mbank-ui` component list and props.
+3. `mbank-ui` component list and props (skip when it is absent).
 4. `code-mapping.md` section 7 (suggested mapping: cva variant names such as `Button` `variant` primary / brand / secondary / destructive / ghost / soft / outline / static / success, `size` xs..xl).
 
 A Figma variant that has no prop in code is a mismatch row (spec section 9): ask, do not add a one-off class.
@@ -44,7 +44,7 @@ Mbank Icons, not `lucide-react` (overrides `translation-rules.md` section 6 and 
 
 ## 6. Checklist additions
 
-- [ ] `mbank-ui` loaded (or its absence reported); kit components installed with `add-ui.mjs`, none hand-built
+- [ ] `mbank-ui` loaded and kit components installed with `add-ui.mjs`, none hand-built - or their absence reported and code-mapping section 7 used
 - [ ] Props taken by the lookup order of section 3; unmapped variants asked as mismatch rows
 - [ ] No hex, no default shadcn palette, no `lucide-react`; brand via `data-brand`
 - [ ] Font through `--font-sans`; missing Inter Mbank files reported (G03)
