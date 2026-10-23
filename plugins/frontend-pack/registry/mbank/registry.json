@@ -1,0 +1,404 @@
+{
+  "name": "mbank",
+  "homepage": "../../skills/mbank-ui/SKILL.md",
+  "description": "Coded Mbank UI kit for React 19 + Tailwind v4 + Radix (shadcn-style). Install with plugins/frontend-pack/scripts/add-ui.mjs.",
+  "source": "figma-pack mbank-figma-patterns/references/tokens.md (2026-10-09) + mbank-design-system/references/code-mapping.md",
+  "targets": {
+    "ui": "--dir (default src/shared/ui)",
+    "components": "--components-dir (default src/shared/components)",
+    "lib": "--lib-dir (default src/shared/lib)",
+    "tokens": "--tokens (default src/styles/mbank-tokens.css)"
+  },
+  "items": [
+    {
+      "name": "tokens",
+      "type": "registry:style",
+      "description": "Mbank design tokens: light/dark, 5 brand modes, radius, typography, shadows, z-index, @theme inline mapping (Tailwind v4)",
+      "files": [
+        {
+          "path": "tokens.css",
+          "target": "tokens"
+        }
+      ],
+      "dependencies": [
+        "tailwindcss"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "description": "cn() = clsx + tailwind-merge extended with the Mbank font sizes",
+      "files": [
+        {
+          "path": "lib/utils.ts",
+          "target": "lib"
+        }
+      ],
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "icons",
+      "type": "registry:ui",
+      "description": "Temporary inline glyphs (check, minus, chevron-down, close) until the Mbank Icons SVGs are exported",
+      "files": [
+        {
+          "path": "components/icons.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "description": "Figma spinner; colour from currentColor",
+      "files": [
+        {
+          "path": "components/spinner.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "description": "Figma button/default: primary, brand, secondary, destructive, success, soft, ghost, outline, static, link; sizes xs-lg + icon; loading",
+      "files": [
+        {
+          "path": "components/button.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "spinner"
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "description": "Figma input/default: sizes sm 36 / md 44 / lg 56; hover, focus, invalid, disabled",
+      "files": [
+        {
+          "path": "components/input.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "description": "Figma TextArea",
+      "files": [
+        {
+          "path": "components/textarea.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "description": "Field label (Label Outside=on)",
+      "files": [
+        {
+          "path": "components/label.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "description": "Figma Badge-status: tone (status roles), fill ghost/solid, shape, size",
+      "files": [
+        {
+          "path": "components/badge.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "description": "Card surface with header, title, description, action, content, footer",
+      "files": [
+        {
+          "path": "components/card.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "description": "Figma Switchers - Check, Type=Checkbox (+ indeterminate)",
+      "files": [
+        {
+          "path": "components/checkbox.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "description": "Figma Switchers - Check, Type=Toggle",
+      "files": [
+        {
+          "path": "components/switch.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "description": "Figma segment / tab-outline / tabLine as Tabs variants",
+      "files": [
+        {
+          "path": "components/tabs.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "description": "Figma dialogInfo / dialogForm",
+      "files": [
+        {
+          "path": "components/dialog.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "description": "Figma input/dropdown + Item / dropdown / default",
+      "files": [
+        {
+          "path": "components/select.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "description": "Loading placeholder",
+      "files": [
+        {
+          "path": "components/skeleton.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "description": "CRM TableSection / TableCell as semantic table parts",
+      "files": [
+        {
+          "path": "components/table.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "description": "Figma alert-text: clear, accent, info, success, warning, error",
+      "files": [
+        {
+          "path": "components/alert.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "description": "Figma Avatars: sizes xs-xl, image + initials fallback",
+      "files": [
+        {
+          "path": "components/avatar.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "description": "Figma tooltip (inverted)",
+      "files": [
+        {
+          "path": "components/tooltip.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "description": "Figma Item / dropdown / simple: action menu with checkbox items",
+      "files": [
+        {
+          "path": "components/dropdown-menu.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:component",
+      "description": "Shared EmptyState composite (react-ux API) styled with Mbank tokens",
+      "files": [
+        {
+          "path": "components/EmptyState.tsx",
+          "target": "components"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    }
+  ]
+}

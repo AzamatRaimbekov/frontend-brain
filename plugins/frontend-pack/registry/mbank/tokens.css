@@ -1,0 +1,460 @@
+/*
+ * Mbank design tokens for Tailwind CSS v4 + shadcn/ui.
+ * Source: figma-pack mbank-figma-patterns/references/tokens.md (Full-seat read 2026-10-09)
+ * and mbank-design-system/references/code-mapping.md (token names).
+ * Values are copied from Figma as hex, unchanged. Do not edit values by hand: update tokens.md first.
+ *
+ * Usage (src/index.css or src/app/globals.css):
+ *   @import "tailwindcss";
+ *   @import "tw-animate-css";
+ *   @import "./styles/mbank-tokens.css";
+ *
+ * Theme: light on :root, dark on .dark (class on <html>).
+ * Product brand: <html data-brand="bank|kassa|travel|artwin|koko"> (default bank). Only --brand* change.
+ * Font: Inter Mbank is not distributed yet (gap G03). Self-host the woff2 files when the brand team
+ * supplies them; until then the stack falls back to Inter / system-ui.
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces and text (2.theme, light) */
+  --background: #ffffff;               /* background/surface/light */
+  --foreground: #0e0f11;               /* text/default */
+  --muted: #f4f6f7;                    /* background/surface/soft */
+  --muted-foreground: #768793;         /* text/muted */
+  --soft-foreground: #40474f;          /* text/soft */
+  --disabled-foreground: #a9b4bc;      /* text/disabled */
+  --inverse-foreground: #f4f6f7;       /* text/inverse */
+  --card: #ffffff;                     /* background/onsurface/0 */
+  --surface-0: #ffffff;                /* background/onsurface/0 */
+  --surface-1: #f4f6f7;                /* background/onsurface/1 */
+  --surface-2: #eaeef0;                /* background/onsurface/2 */
+  --surface-3: #d7dce1;                /* background/onsurface/3 */
+  --surface-4: #cad1d7;                /* background/onsurface/4 */
+  --surface-5: #a9b4bc;                /* background/onsurface/5 */
+  --surface-6: #768793;                /* background/onsurface/6 */
+  --surface-inverse: #0e0f11;          /* background/onsurface/0-inverse */
+  --accent: #eaeef0;                   /* background/global/soft/hover */
+  --accent-active: #eaeef0;            /* background/global/soft/active */
+
+  /* Borders */
+  --border: #e0e5e8;                   /* border/divider/primary */
+  --border-secondary: #d7dce1;         /* border/divider/secondary */
+  --border-subtle: #cad1d7;            /* border/divider/tetriary */
+  --input: #d7dce1;                    /* border/global/soft/default */
+  --input-hover: #768793;              /* border/global/soft/hover */
+  --input-active: #a9b4bc;             /* border/global/soft/active */
+  --input-disabled: #eaeef0;           /* border/global/soft/disabled */
+  --border-destructive: #ef4444;       /* border/accent/danger */
+  --border-warning: #f97316;           /* border/accent/warning */
+  --border-success: #0fa976;           /* border/accent/positive */
+
+  /* Primary = yellow accent button (accent/primary) */
+  --primary: #fddb2b;
+  --primary-hover: #f7c21c;
+  --primary-active: #fddb2b;
+  --primary-foreground: #0e0f11;
+  --primary-foreground-muted: #0e0f11;
+  --primary-muted: #fef08a;            /* accent/primary/container-muted */
+
+  /* Secondary = near-black neutral button (neutral/primary) */
+  --secondary: #17191d;
+  --secondary-hover: #26292e;
+  --secondary-active: #17191d;
+  /* TODO(G04): Figma neutral/primary/on-accent is #0e0f11f2 (dark text on #17191d, unreadable).
+     Uses static/light until the designers fix the pair. */
+  --secondary-foreground: var(--static-light);
+  --secondary-muted: #f0f3f4;          /* neutral/primary/container-muted */
+
+  /* Neutral flat buttons (neutral/secondary/*) */
+  --soft: #e0e5e8;                     /* flat filled/default */
+  --soft-hover: #d7dce1;
+  --soft-foreground-strong: #0e0f11;   /* flat filled/on-accent */
+  --ghost: #ffffff00;                  /* flat/default */
+  --ghost-hover: #d7dce1;
+  --ghost-foreground: #0e0f11;         /* flat/on-accent */
+  --outline: #e0e5e8;                  /* outline/default (border) */
+  --outline-hover: #cad1d7;
+  --outline-foreground: #0e0f11;       /* outline/on-accent */
+  --neutral-flat: #e0e5e8;             /* flat default/default */
+  --neutral-flat-hover: #d7dce1;
+
+  /* Static (accent/static), success (accent/positive), destructive (accent/negative) */
+  --static: #ffffff;
+  --static-hover: #d7dce1;
+  --static-active: #ffffff;
+  --static-foreground: #0e0f11;
+  --static-muted: #f0f3f4;             /* neutral/static/container-muted */
+  --static-light: #ffffff;             /* static/light */
+  --static-dark: #0e0f11;              /* static/dark */
+  --success: #0fa976;
+  --success-hover: #059669;
+  --success-active: #0fa976;
+  --success-foreground: #0e0f11f2;
+  --destructive: #ef4444;
+  --destructive-hover: #b91c1c;
+  --destructive-active: #ef4444;
+  --destructive-foreground: #0e0f11f2;
+  --destructive-soft: #feebeb;         /* neutral/negative/default */
+  --destructive-soft-hover: #fee2e2;
+  --destructive-soft-foreground: #ef4444;
+
+  /* Text roles */
+  --link: #3b82f6;                     /* text/link */
+  --destructive-text: #ef4444;         /* text/danger */
+  --warning-text: #f97316;             /* text/warning */
+  --success-text: #0fa976;             /* text/positive */
+
+  /* Status (Badge Appearance, toast state): filled bg, ghost bg, ghost text */
+  --status-neutral: #5d6c79;  --status-neutral-muted: #cad1d7;  --status-neutral-foreground: #1b1e22;
+  --status-accent: #fddb2b;   --status-accent-muted: #fef7b4;   --status-accent-foreground: #713f12;
+  --status-success: #10b981;  --status-success-muted: #dcfce7;  --status-success-foreground: #033a29;
+  --status-warning: #ea580c;  --status-warning-muted: #ffedd5;  --status-warning-foreground: #7c2d12;
+  --status-error: #e11d48;    --status-error-muted: #fee2e2;    --status-error-foreground: #881337;
+  --status-info: #2563eb;     --status-info-muted: #e0f2fe;     --status-info-foreground: #1e3a8a;
+  --status-clear: #dde2e6;    --status-clear-muted: #f4f6f7;    --status-clear-foreground: #1b1e22;
+  --status-filled-foreground: #0e0f11f2;        /* status/filled/text/default */
+  --status-filled-foreground-inverse: #0e0f11;  /* status/filled/text/default-inverse */
+
+  /* Supportive (charts, avatars, tags) */
+  --supportive-1: #5d6c79; --supportive-2: #f7c21c; --supportive-3: #10b981; --supportive-4: #ea580c;
+  --supportive-5: #e11d48; --supportive-6: #2563eb; --supportive-7: #7c3aed; --supportive-8: #4f46e5;
+  --supportive-9: #db2777; --supportive-10: #0f766b;
+  --supportive-ghost-1: #e7e9eb; --supportive-ghost-2: #f2ebd4; --supportive-ghost-3: #dff1ec;
+  --supportive-ghost-4: #f4e7e0; --supportive-ghost-5: #f4e1e6; --supportive-ghost-6: #e1e8f7;
+  --supportive-ghost-7: #e9e4f7; --supportive-ghost-8: #e5e5f6; --supportive-ghost-9: #f3e2eb;
+  --supportive-ghost-10: #deeded;
+
+  --overlay: #000000bf;                /* misc/overlay/default */
+
+  /* Fixed product colours (2.theme brand/<product>/default): product switcher, logos only */
+  --brand-bank: #16a34a; --brand-kassa: #2563eb; --brand-travel: #60a5fa; --brand-artwin: #fddb2b;
+
+  /* Brand (1.brand, mode bank). text/brand and border/accent/brand follow the brand mode. */
+  --brand: #16a34a; --brand-hover: #189547; --brand-active: #16a34a;
+  --brand-foreground: #ffffff; --brand-foreground-muted: #a9b4bc; --brand-container-muted: #f0f3f4;
+  --brand-ghost: #f0fdf4; --brand-ghost-hover: #e8fcee; --brand-ghost-active: #f0fdf4;
+  --brand-ghost-foreground: #16a34a; --brand-ghost-foreground-muted: #86efac; --brand-muted: #f0fdf4;
+  /* text/brand, border/accent/brand (ring) and popover/card-foreground are aliases mapped in @theme inline */
+
+  /* Radius (1.brand radius/*, web scale). --radius = radius/m, the control radius */
+  --radius: 12px;
+
+  /* Shadows: geometry from Web components effect styles.
+     TODO(G06): shadow colour/opacity was not read from Figma; placeholder below, replace after G06. */
+  --shadow-color: rgb(14 15 17 / 0.08);
+
+  /* Z-index (Foundation page Z-Index) */
+  --z-hide: -1; --z-default: 0; --z-dropdown: 1000; --z-sticky: 1100; --z-fab: 1200;
+  --z-overlay: 1300; --z-loader: 1400; --z-modal: 1500; --z-toast: 1600; --z-popover: 1700; --z-tooltip: 1800;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0e0f11; --foreground: #f0f3f4; --muted: #17191d; --muted-foreground: #768793;
+  --soft-foreground: #d7dce1; --disabled-foreground: #5d6c79; --inverse-foreground: #0e0f11;
+  --card: #26292e;
+  --surface-0: #26292e; --surface-1: #2e3238; --surface-2: #3a3c41; --surface-3: #3f4146;
+  --surface-4: #40474f; --surface-5: #464e58; --surface-6: #4d5661; --surface-inverse: #f4f6f7;
+  --accent: #40474f; --accent-active: #373c42;
+  --border: #3a3c41; --border-secondary: #40474f; --border-subtle: #464e58;
+  --input: #4d5661; --input-hover: #515c69; --input-active: #515c69; --input-disabled: #26292e;
+  --border-destructive: #dc2626; --border-warning: #f97316; --border-success: #0fa976;
+  --primary: #f7c21c; --primary-hover: #fddb2b; --primary-active: #fddb2b;
+  --primary-foreground: #0e0f11; --primary-foreground-muted: #0e0f11; --primary-muted: #fef08a;
+  --secondary: #26292e; --secondary-hover: #464e58; --secondary-active: #464e58;
+  --secondary-foreground: var(--static-light); /* TODO(G04): Figma dark value #0e0f11 is dark on dark */
+  --secondary-muted: #3a3c41;
+  --soft: #26292e; --soft-hover: #202327; --soft-foreground-strong: #f0f3f4;
+  --ghost: #26292e; --ghost-hover: #20232700; --ghost-foreground: #f0f3f4;
+  /* TODO(G04): Figma neutral/secondary/outline/on-accent dark is #202327 (dark on dark); uses text/default */
+  --outline: #26292e; --outline-hover: #202327; --outline-foreground: #f0f3f4;
+  --neutral-flat: #26292e; --neutral-flat-hover: #1d2024;
+  --static: #ffffff; --static-hover: #d7dce1; --static-active: #cad1d7; --static-foreground: #0e0f11;
+  --static-muted: #f0f3f4;
+  --success: #0fa976; --success-hover: #059669; --success-active: #10b981; --success-foreground: #0e0f11f2;
+  --destructive: #b91c1c; --destructive-hover: #b91c1c; --destructive-active: #b91c1c;
+  --destructive-foreground: #0e0f11f2;
+  --destructive-soft: #b91c1c; --destructive-soft-hover: #b91c1c;
+  --destructive-soft-foreground: #fca5a5; /* TODO(G04): Figma on-accent dark is #0e0f11f2; uses container-muted */
+  --link: #3b82f6; --destructive-text: #b91c1c; --warning-text: #ea580c; --success-text: #059669;
+  --status-neutral: #a9b4bc;  --status-neutral-muted: #4d5661;  --status-neutral-foreground: #dde2e6;
+  --status-accent: #fddb2b;   --status-accent-muted: #492c12;   --status-accent-foreground: #d9a607;
+  --status-success: #10b981;  --status-success-muted: #093429;  --status-success-foreground: #10b981;
+  --status-warning: #ea580c;  --status-warning-muted: #542212;  --status-warning-foreground: #f97316;
+  --status-error: #e11d48;    --status-error-muted: #4b1124;    --status-error-foreground: #f43f5e;
+  --status-info: #2563eb;     --status-info-muted: #14234e;     --status-info-foreground: #60a5fa;
+  --status-clear: #54606d;    --status-clear-muted: #1f2326;    --status-clear-foreground: #a9b4bc;
+  --status-filled-foreground: #0e0f11f2; --status-filled-foreground-inverse: #f0f3f4;
+  --supportive-3: #059669;
+  --supportive-ghost-1: #2e3236; --supportive-ghost-2: #433b1e; --supportive-ghost-3: #1a3f37;
+  --supportive-ghost-4: #462b1f; --supportive-ghost-5: #441f2b; --supportive-ghost-6: #1f2d4c;
+  --supportive-ghost-7: #30254c; --supportive-ghost-8: #2a2a54; --supportive-ghost-9: #432135;
+  --supportive-ghost-10: #1a3738;
+  --overlay: #ffffff7a;
+  --brand-bank: #189547; --brand-kassa: #3b82f6; --brand-travel: #3b82f6; --brand-artwin: #f7c21c;
+  /* Brand bank, dark (2.theme brand/bank/*) */
+  --brand: #189547; --brand-hover: #22c55e; --brand-active: #22c55e;
+  --brand-foreground: #ffffff; --brand-foreground-muted: #a9b4bc; --brand-container-muted: #3f4146;
+  --brand-ghost: #16a34a1a; --brand-ghost-hover: #16a34a1a; --brand-ghost-active: #16a34a1a;
+  --brand-ghost-foreground: #189547; --brand-ghost-foreground-muted: #16a34a1a; --brand-muted: #16a34a1a;
+}
+
+
+/* Product brands (1.brand modes). Put data-brand and .dark on <html>. Light: 1.brand values.
+   Dark: 2.theme brand/<product>/* values. */
+[data-brand="bank"] {
+  --brand: #16a34a; --brand-hover: #189547; --brand-active: #16a34a; --brand-foreground: #ffffff;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #f0f3f4; --brand-ghost: #f0fdf4; --brand-ghost-hover: #e8fcee;
+  --brand-ghost-active: #f0fdf4; --brand-ghost-foreground-muted: #86efac; --brand-muted: #f0fdf4; --brand-ghost-foreground: #16a34a;
+}
+[data-brand="kassa"] {
+  --brand: #2563eb; --brand-hover: #1d4ed8; --brand-active: #1d4ed8; --brand-foreground: #ffffff;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #f0f3f4; --brand-ghost: #dbeafe; --brand-ghost-hover: #bfdbfe;
+  --brand-ghost-active: #dbeafe; --brand-ghost-foreground-muted: #3b82f6; --brand-muted: #eff6ff; --brand-ghost-foreground: #1d4ed8;
+}
+[data-brand="travel"] {
+  --brand: #60a5fa; --brand-hover: #4d9af9; --brand-active: #60a5fa; --brand-foreground: #ffffff;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #f0f3f4; --brand-ghost: #eff6ff; --brand-ghost-hover: #e5f1ff;
+  --brand-ghost-active: #eff6ff; --brand-ghost-foreground-muted: #93c5fd; --brand-muted: #eff6ff; --brand-ghost-foreground: #60a5fa;
+}
+[data-brand="artwin"] {
+  --brand: #fddb2b; --brand-hover: #f7c21c; --brand-active: #fddb2b; --brand-foreground: #0e0f11;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #f0f3f4; --brand-ghost: #fef7b4; --brand-ghost-hover: #fef08a;
+  --brand-ghost-active: #fef7b4; --brand-ghost-foreground-muted: #f7c21c; --brand-muted: #fefce8; --brand-ghost-foreground: #d9a607;
+}
+[data-brand="koko"] {
+  --brand: #da78f2; --brand-hover: #f7c21c; --brand-active: #fddb2b; --brand-foreground: #0e0f11;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #f0f3f4; --brand-ghost: #fef7b4; --brand-ghost-hover: #fef08a;
+  --brand-ghost-active: #fef7b4; --brand-ghost-foreground-muted: #f7c21c; --brand-muted: #fefce8; --brand-ghost-foreground: #d9a607;
+}
+.dark[data-brand="bank"],
+.dark [data-brand="bank"] {
+  --brand: #189547; --brand-hover: #22c55e; --brand-active: #22c55e; --brand-foreground: #ffffff;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #3f4146; --brand-ghost: #16a34a1a; --brand-ghost-hover: #16a34a1a;
+  --brand-ghost-active: #16a34a1a; --brand-ghost-foreground-muted: #16a34a1a; --brand-muted: #16a34a1a; --brand-ghost-foreground: #189547;
+}
+.dark[data-brand="kassa"],
+.dark [data-brand="kassa"] {
+  --brand: #3b82f6; --brand-hover: #1d4ed8; --brand-active: #2563eb; --brand-foreground: #ffffff;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #3f4146; --brand-ghost: #13203d; --brand-ghost-hover: #162c5d;
+  --brand-ghost-active: #173168; --brand-ghost-foreground-muted: #60a5fa; --brand-muted: #101727; --brand-ghost-foreground: #2563eb;
+}
+.dark[data-brand="travel"],
+.dark [data-brand="travel"] {
+  /* TODO(G04): Figma dark ghost-* = #2563eb33 (blue) and on-accent look wrong; copied as is */
+  --brand: #3b82f6; --brand-hover: #3b82f6; --brand-active: #60a5fa; --brand-foreground: #ffffff;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #3f4146; --brand-ghost: #2563eb33; --brand-ghost-hover: #2563eb33;
+  --brand-ghost-active: #2563eb33; --brand-ghost-foreground-muted: #2563eb33; --brand-muted: #2563eb33; --brand-ghost-foreground: #2563eb33;
+}
+.dark[data-brand="artwin"],
+.dark [data-brand="artwin"] {
+  /* TODO(G04): Figma dark ghost-* = #2563eb33 (blue) and on-accent look wrong; copied as is */
+  --brand: #f7c21c; --brand-hover: #fddb2b; --brand-active: #fddb2b; --brand-foreground: #a9b4bc;
+  --brand-foreground-muted: #3f4146; --brand-container-muted: #f0f3f4; --brand-ghost: #2563eb33; --brand-ghost-hover: #2563eb33;
+  --brand-ghost-active: #2563eb33; --brand-ghost-foreground-muted: #2563eb33; --brand-muted: #2563eb33; --brand-ghost-foreground: #2563eb33;
+}
+.dark[data-brand="koko"],
+.dark [data-brand="koko"] {
+  /* TODO(G04): no dark values for koko in Figma (no 2.theme brand/koko/*); light 1.brand values reused */
+  --brand: #da78f2; --brand-hover: #f7c21c; --brand-active: #fddb2b; --brand-foreground: #0e0f11;
+  --brand-foreground-muted: #a9b4bc; --brand-container-muted: #f0f3f4; --brand-ghost: #fef7b4; --brand-ghost-hover: #fef08a;
+  --brand-ghost-active: #fef7b4; --brand-ghost-foreground-muted: #f7c21c; --brand-muted: #fefce8; --brand-ghost-foreground: #d9a607;
+}
+
+/* Tailwind theme: utilities bg-*, text-*, border-*, ring-* for every token above. */
+@theme inline {
+  --font-sans: "Inter Mbank", "Inter", ui-sans-serif, system-ui, sans-serif; /* G03: Inter Mbank files pending */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-soft-foreground: var(--soft-foreground);
+  --color-disabled-foreground: var(--disabled-foreground);
+  --color-inverse-foreground: var(--inverse-foreground);
+  --color-card: var(--card);
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-4: var(--surface-4);
+  --color-surface-5: var(--surface-5);
+  --color-surface-6: var(--surface-6);
+  --color-surface-inverse: var(--surface-inverse);
+  --color-accent: var(--accent);
+  --color-accent-active: var(--accent-active);
+  --color-border: var(--border);
+  --color-border-secondary: var(--border-secondary);
+  --color-border-subtle: var(--border-subtle);
+  --color-input: var(--input);
+  --color-input-hover: var(--input-hover);
+  --color-input-active: var(--input-active);
+  --color-input-disabled: var(--input-disabled);
+  --color-border-destructive: var(--border-destructive);
+  --color-border-warning: var(--border-warning);
+  --color-border-success: var(--border-success);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-foreground-muted: var(--primary-foreground-muted);
+  --color-primary-muted: var(--primary-muted);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-active: var(--secondary-active);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-muted: var(--secondary-muted);
+  --color-soft: var(--soft);
+  --color-soft-hover: var(--soft-hover);
+  --color-soft-foreground-strong: var(--soft-foreground-strong);
+  --color-ghost: var(--ghost);
+  --color-ghost-hover: var(--ghost-hover);
+  --color-ghost-foreground: var(--ghost-foreground);
+  --color-outline: var(--outline);
+  --color-outline-hover: var(--outline-hover);
+  --color-outline-foreground: var(--outline-foreground);
+  --color-neutral-flat: var(--neutral-flat);
+  --color-neutral-flat-hover: var(--neutral-flat-hover);
+  --color-static: var(--static);
+  --color-static-hover: var(--static-hover);
+  --color-static-active: var(--static-active);
+  --color-static-foreground: var(--static-foreground);
+  --color-static-muted: var(--static-muted);
+  --color-static-light: var(--static-light);
+  --color-static-dark: var(--static-dark);
+  --color-success: var(--success);
+  --color-success-hover: var(--success-hover);
+  --color-success-active: var(--success-active);
+  --color-success-foreground: var(--success-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-active: var(--destructive-active);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-destructive-soft-hover: var(--destructive-soft-hover);
+  --color-destructive-soft-foreground: var(--destructive-soft-foreground);
+  --color-link: var(--link);
+  --color-destructive-text: var(--destructive-text);
+  --color-warning-text: var(--warning-text);
+  --color-success-text: var(--success-text);
+  --color-status-neutral: var(--status-neutral);
+  --color-status-neutral-muted: var(--status-neutral-muted);
+  --color-status-neutral-foreground: var(--status-neutral-foreground);
+  --color-status-accent: var(--status-accent);
+  --color-status-accent-muted: var(--status-accent-muted);
+  --color-status-accent-foreground: var(--status-accent-foreground);
+  --color-status-success: var(--status-success);
+  --color-status-success-muted: var(--status-success-muted);
+  --color-status-success-foreground: var(--status-success-foreground);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-muted: var(--status-warning-muted);
+  --color-status-warning-foreground: var(--status-warning-foreground);
+  --color-status-error: var(--status-error);
+  --color-status-error-muted: var(--status-error-muted);
+  --color-status-error-foreground: var(--status-error-foreground);
+  --color-status-info: var(--status-info);
+  --color-status-info-muted: var(--status-info-muted);
+  --color-status-info-foreground: var(--status-info-foreground);
+  --color-status-clear: var(--status-clear);
+  --color-status-clear-muted: var(--status-clear-muted);
+  --color-status-clear-foreground: var(--status-clear-foreground);
+  --color-status-filled-foreground: var(--status-filled-foreground);
+  --color-status-filled-foreground-inverse: var(--status-filled-foreground-inverse);
+  --color-supportive-1: var(--supportive-1);
+  --color-supportive-2: var(--supportive-2);
+  --color-supportive-3: var(--supportive-3);
+  --color-supportive-4: var(--supportive-4);
+  --color-supportive-5: var(--supportive-5);
+  --color-supportive-6: var(--supportive-6);
+  --color-supportive-7: var(--supportive-7);
+  --color-supportive-8: var(--supportive-8);
+  --color-supportive-9: var(--supportive-9);
+  --color-supportive-10: var(--supportive-10);
+  --color-supportive-ghost-1: var(--supportive-ghost-1);
+  --color-supportive-ghost-2: var(--supportive-ghost-2);
+  --color-supportive-ghost-3: var(--supportive-ghost-3);
+  --color-supportive-ghost-4: var(--supportive-ghost-4);
+  --color-supportive-ghost-5: var(--supportive-ghost-5);
+  --color-supportive-ghost-6: var(--supportive-ghost-6);
+  --color-supportive-ghost-7: var(--supportive-ghost-7);
+  --color-supportive-ghost-8: var(--supportive-ghost-8);
+  --color-supportive-ghost-9: var(--supportive-ghost-9);
+  --color-supportive-ghost-10: var(--supportive-ghost-10);
+  --color-overlay: var(--overlay);
+  --color-brand-bank: var(--brand-bank);
+  --color-brand-kassa: var(--brand-kassa);
+  --color-brand-travel: var(--brand-travel);
+  --color-brand-artwin: var(--brand-artwin);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-active: var(--brand-active);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-foreground-muted: var(--brand-foreground-muted);
+  --color-brand-container-muted: var(--brand-container-muted);
+  --color-brand-ghost: var(--brand-ghost);
+  --color-brand-ghost-hover: var(--brand-ghost-hover);
+  --color-brand-ghost-active: var(--brand-ghost-active);
+  --color-brand-ghost-foreground: var(--brand-ghost-foreground);
+  --color-brand-ghost-foreground-muted: var(--brand-ghost-foreground-muted);
+  --color-brand-muted: var(--brand-muted);
+  /* Aliases (resolved at the element, so nested .dark / data-brand work) */
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--foreground);
+  --color-accent-foreground: var(--foreground);
+  --color-brand-text: var(--brand);       /* text/brand */
+  --color-ring: var(--brand);             /* border/accent/brand */
+
+  /* Shadows: Web components effect styles (geometry verified, colour TODO(G06)) */
+  --shadow-xs: 0 2px 2px var(--shadow-color), 0 0 1px var(--shadow-color);                 /* shadow/bottom/controls */
+  --shadow-sm: 0 2px 4px var(--shadow-color), 0 0 8px var(--shadow-color);                 /* shadow/bottom/s */
+  --shadow-md: 0 4px 8px var(--shadow-color), 0 0 16px var(--shadow-color);                /* shadow/bottom/m */
+  --shadow-lg: 0 12px 20px var(--shadow-color), 0 0 20px var(--shadow-color);              /* shadow/bottom/l */
+  --shadow-xl: 0 32px 32px var(--shadow-color), 0 0 32px var(--shadow-color);              /* shadow/bottom/xl */
+  --shadow-default: 0 4px 24px var(--shadow-color);                                         /* shadow/Default */
+  --shadow-default-hover: 0 12px 36px var(--shadow-color);                                  /* shadow/Default-hover */
+  --shadow-dropdown: 0 3px 6px var(--shadow-color), 0 11px 11px var(--shadow-color), 0 15px 35px var(--shadow-color); /* shadow/dropdown */
+  --shadow-notification: 0 8px 16px var(--shadow-color);                                   /* shadow/notification */
+  --shadow-modal: 0 18px 30px var(--shadow-color);                                          /* shadow/modal */
+  --shadow-tooltip: 0 4px 6px var(--shadow-color), 0 12px 12px var(--shadow-color), 0 24px 16px var(--shadow-color), 0 0 2px var(--shadow-color); /* shadow/tooltip */
+}
+
+/* Static scales: radius (1.brand radius/*, web) and text (Web components font/*). */
+@theme {
+  --radius-2xs: 2px;   /* radius/xss */
+  --radius-xs: 4px;    /* radius/xs */
+  --radius-sm: 8px;    /* radius/s */
+  --radius-md: 12px;   /* radius/m (controls) */
+  --radius-lg: 16px;   /* radius/l */
+  --radius-xl: 20px;   /* radius/xl */
+  --radius-2xl: 24px;  /* radius/xl-2 */
+  --radius-3xl: 32px;  /* radius/xl-3 */
+  --radius-4xl: 40px;  /* radius/xl-4 */
+
+  --text-2xs: 11px;  --text-2xs--line-height: 14px;   /* font/Label/s, description/s */
+  --text-caption: 12px;  --text-caption--line-height: 16px; /* font/Label/m, description/m */
+  --text-xs: 13px;   --text-xs--line-height: 16px;    /* font/Body/xs */
+  --text-sm: 14px;   --text-sm--line-height: 20px;    /* font/Body/s */
+  --text-md: 15px;   --text-md--line-height: 22px;    /* font/Body/m */
+  --text-base: 16px; --text-base--line-height: 24px;  /* font/Body/l, Heading/h6 */
+  --text-lg: 18px;   --text-lg--line-height: 26px;    /* font/Body/xl */
+  --text-xl: 20px;   --text-xl--line-height: 28px;    /* font/Heading/h5 */
+  --text-2xl: 24px;  --text-2xl--line-height: 32px;   /* font/Heading/h4 */
+  --text-3xl: 32px;  --text-3xl--line-height: 40px;   /* font/Heading/h3 */
+  --text-4xl: 44px;  --text-4xl--line-height: 52px;   /* font/Heading/h1, h2 (same in Figma, G05) */
+  --text-5xl: 48px;  --text-5xl--line-height: 56px;   /* font/Display/s */
+  --text-6xl: 56px;  --text-6xl--line-height: 68px;   /* font/Display/m */
+  --text-7xl: 72px;  --text-7xl--line-height: 88px;   /* font/Display/l */
+}
+
+/* Spacing: Mbank web spacing sits on the 4px grid, so Tailwind's default --spacing (4px) applies:
+   spacing/xs 4 = 1, s-3 8 = 2, s-1 12 = 3, m-2-base 16 = 4, m-1 20 = 5, l-2 24 = 6, l-1 28 = 7, xl-2 32 = 8,
+   xl-1 36 = 9, xxl-2 40 = 10, xxl-1 48 = 12. spacing/s-2 (10px) is off-grid (G07): use 2.5 only if a design needs it. */
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground font-sans antialiased; }
+}
