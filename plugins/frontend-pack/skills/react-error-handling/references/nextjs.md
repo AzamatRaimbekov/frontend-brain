@@ -1,6 +1,6 @@
 # Next.js App Router error handling
 
-Verified against Next.js 16.3 docs. Next.js splits errors into **expected errors** (return them as values) and **uncaught exceptions** (throw; caught by `error.tsx`).
+Verified against Next.js 16.4.3 docs (2026-10-25). This file owns error UI and action results; the rest of Next.js (caching, Server Action security, proxy, self-hosting, upgrades) is in the [nextjs skill](../../nextjs/SKILL.md). Next.js splits errors into **expected errors** (return them as values) and **uncaught exceptions** (throw; caught by `error.tsx`).
 
 ## File conventions
 
@@ -15,7 +15,7 @@ Place `error.tsx` at least in `app/` (below root layout) and in each major secti
 
 ## error.tsx
 
-Since Next.js 16.3 the recovery prop is `retry` (re-fetches and re-renders the segment). `reset` still exists but only clears state without re-fetching. On Next.js 15 / < 16.2 use `reset`; on 16.2 it was `unstable_retry`. Check the project's `next` version before writing it.
+Since Next.js 16.3 the recovery prop is `retry` (stable; re-fetches and re-renders the segment). `reset` still exists but only clears state without re-fetching. On Next.js 15 / < 16.2 use `reset`; on 16.2 it was `unstable_retry`. Check the project's `next` version before writing it.
 
 ```tsx
 // app/(dashboard)/error.tsx
@@ -80,7 +80,7 @@ Keep it dependency-free (inline styles, no providers, no shadcn) - it renders wh
 ## notFound()
 
 ```tsx
-// app/orders/[id]/page.tsx
+// app/orders/[id]/page.tsx (the segment has loading.tsx: with Cache Components `await params` needs a Suspense boundary)
 import { notFound } from 'next/navigation'
 import { isApiError } from '@/shared/api/errors'
 
@@ -101,14 +101,20 @@ A 404 is expected: do not let it reach `error.tsx`.
 Do not throw for validation or business errors in server actions - return a typed result. Throw only for unexpected failures (goes to `error.tsx`).
 
 ```ts
-// src/features/users/api/user.actions.ts
-'use server'
-
+// src/shared/api/actionResult.ts - one shape for every action
 export type ActionResult<T> =
   | { ok: true; data: T }
   | { ok: false; message: string; fieldErrors?: Record<string, string[]> }
+```
+
+```ts
+// src/features/users/api/user.actions.ts
+'use server'
+
+import type { ActionResult } from '@/shared/api/actionResult'
 
 export async function createUserAction(input: unknown): Promise<ActionResult<{ id: string }>> {
+  await requireUser() // auth + authorization first: nextjs skill references/server-actions.md
   const parsed = createUserSchema.safeParse(input)
   if (!parsed.success) {
     return { ok: false, message: 'Check the form fields.', fieldErrors: z.flattenError(parsed.error).fieldErrors }
