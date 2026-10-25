@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Мозг фронтенда Mdigital для Claude Code: правила React-разработки, база знаний команды, UX, UI, данные, ошибки, архитектура. Пополняется через PR.",
-    "version": "0.11.0"
+    "version": "0.12.0"
   },
   "plugins": [
     {
       "name": "frontend-pack",
       "source": "./plugins/frontend-pack",
       "description": "Mdigital React frontend standards: React brain with Vercel rules and Web Interface Guidelines, Mbank UI kit, design-to-code pipeline, knowledge base, page UX brief, architecture, data fetching, UI, UX, errors, testing, forms and state, performance and a11y, security and i18n, contribution through PRs.",
-      "version": "0.11.0",
+      "version": "0.12.0",
       "category": "development",
       "keywords": [
         "react",

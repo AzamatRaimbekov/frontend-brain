@@ -82,6 +82,17 @@ $frontend Проверь фронтенд в этой ветке перед merg
 
 Плагин пишет и проверяет код по правилам команды, но не пушит, не создаёт merge request и не добавляет библиотеки вне белого списка без прямой просьбы.
 
+## 6. Мозг обновляется сам
+
+Мейнтейнер (или расписание) раз в неделю говорит агенту «обнови мозг». Скилл `brain-update`:
+
+- `node plugins/frontend-pack/scripts/brain-watch.mjs` — что вышло нового в 17 источниках с прошлой проверки и какие скиллы это затрагивает;
+- агент читает новое, сам правит безопасное (статьи, правила, версии), спорное помечает для мейнтейнера;
+- `node plugins/frontend-pack/scripts/brain-metrics.mjs [--projects <папки>]` — здоровье мозга, статистика по задачам из `.frontend/tasks` и предложения, что улучшить;
+- один PR с таблицей изменений и метриками; мерджит и выпускает релиз мейнтейнер.
+
+Как поставить на расписание — `plugins/frontend-pack/skills/brain-update/references/schedule.md`.
+
 ## Что внутри
 
 | Скилл | За что отвечает |
@@ -103,6 +114,9 @@ $frontend Проверь фронтенд в этой ветке перед merg
 | `react-forms-state` | Сложные формы, мастера из шагов, где хранить состояние |
 | `react-performance-a11y` | Скорость, бандл, виртуализация, WCAG 2.2 AA |
 | `react-security-i18n` | XSS, токены, env, CSP, переводы ru/ky/en, формат денег и дат |
+| `nextjs` | Next.js по nextjs.org: 377 практик по темам, хронология версий 13 → 16.4, бюллетени безопасности, официальные скиллы Next.js; свежие новости и советы под проект: `node plugins/frontend-pack/scripts/nextjs-news.mjs --project <папка>` |
+| `mbank-crm` | CRM и админки на Mbank: 11 блоков из Figma (меню, шапка, KPI, канбан, карточки, степпер, скоринг, история), новый проект одной командой `node plugins/frontend-pack/scripts/new-crm.mjs <папка>` |
+| `brain-update` | Мозг обновляется сам: следит за 17 источниками (Next.js, React, TanStack, shadcn, Tailwind, Vite, MSW, Zod, Figma…), считает метрики здоровья и работы в проектах, открывает PR с обновлениями |
 | `frontend-contribute` | Пополнить мозг: статья в базе знаний или правка правила через PR |
 
 База знаний: `plugins/frontend-pack/knowledge/` — короткие статьи (правило, рецепт, решение, ловушка) по областям и стекам, оглавление в [knowledge/INDEX.md](plugins/frontend-pack/knowledge/INDEX.md). Агент ищет в ней перед работой: `node plugins/frontend-pack/scripts/knowledge.mjs search <слова> --stack vite`.

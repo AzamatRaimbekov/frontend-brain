@@ -85,6 +85,8 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | Сложная форма, мастер из шагов, где хранить состояние | [react-forms-state](../react-forms-state/SKILL.md) (UX форм — в [react-ux](../react-ux/SKILL.md)) |
 | Медленная страница, размер бандла, аудит доступности | [react-performance-a11y](../react-performance-a11y/SKILL.md) |
 | Авторизация, токены, env, CSP, переводы, формат денег и дат | [react-security-i18n](../react-security-i18n/SKILL.md) |
+| Проект на Next.js: App Router, кэш, Server Actions, SEO, свой хостинг; «что нового в Next», «обновить Next» | [nextjs](../nextjs/SKILL.md): практики с nextjs.org, новости и советы под проект — `node <plugin-root>/scripts/nextjs-news.mjs --project .` |
+| «Обнови мозг», «метрики мозга», что нового в источниках мозга | [brain-update](../brain-update/SKILL.md): `brain-watch.mjs`, `brain-metrics.mjs`, PR с обновлениями |
 | Загрузка, пустые состояния, формы, тосты | [react-ux](../react-ux/SKILL.md) |
 | Ошибки, белый экран, error boundary | [react-error-handling](../react-error-handling/SKILL.md) |
 | Большой компонент, структура папок | [react-architecture](../react-architecture/SKILL.md) |

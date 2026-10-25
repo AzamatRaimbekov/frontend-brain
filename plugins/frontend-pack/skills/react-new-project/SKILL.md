@@ -44,7 +44,8 @@ Configure the `@/*` path alias in `tsconfig.app.json` and `vite.config.ts` befor
 **Next.js**
 
 ```bash
-npx create-next-app@latest <dir> --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm
+# --no-agent-feedback: in 16.4 agent feedback is on by default and needs Next.js telemetry; client and bank projects keep it off (skills/nextjs)
+npx create-next-app@latest <dir> --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --no-agent-feedback
 cd <dir>
 npm install @tanstack/react-query react-hook-form @hookform/resolvers zod sonner \
   react-error-boundary react-i18next i18next lucide-react nuqs
