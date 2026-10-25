@@ -70,7 +70,7 @@ description: End-to-end team process from a Figma design to merged React code at
   ├─ человек-дизайнер (утверждение)
   ├─ figma-reader (figma-pack, только чтение) → спека
   ├─ frontend-architect → план
-  ├─ frontend-engineer (или основная сессия) → код, тесты, проверки, саморевью
+  ├─ frontend-engineer (или основная сессия) → код, тесты, проверки этапа `code`
   ├─ design-qa → сверка с Figma
   └─ frontend-reviewer → ревью
 ```

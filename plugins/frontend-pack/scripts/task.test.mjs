@@ -137,3 +137,27 @@ test('pipelines.md documents every pipeline and stage id of task.mjs', () => {
     for (const [id] of stages) assert.match(section, new RegExp(`\\| \`${id}\` \\|`), `${name}: stage ${id}`);
   }
 });
+
+test('skip marks a stage [-] with the reason, keeps it through later stage calls and logs a decision', () => withProject((dir) => {
+  cli(dir, 'new', 'small', '--title', 'Малая фича', '--pipeline', 'feature');
+  const file = join(dir, '.frontend', 'tasks', 'small.md');
+  assert.equal(cli(dir, 'stage', 'small', 'plan').status, 0);
+  assert.equal(cli(dir, 'skip', 'small', 'approve-plan', 'мелкая', 'фича').status, 0);
+  assert.equal(cli(dir, 'stage', 'small', 'review').status, 0);
+  let text = readFileSync(file, 'utf8');
+  assert.match(text, /- \[-\] approve-plan — .* \(пропущен: мелкая фича\)/);
+  assert.match(text, /- \[x\] plan/);
+  assert.match(text, /## Решения\n\n- Пропущен этап approve-plan: мелкая фича\n/);
+  assert.deepEqual(parseTask(text).meta.skipped, { 'approve-plan': 'мелкая фича' });
+  assert.equal(cli(dir, 'stage', 'small', 'done').status, 0);
+  assert.match(readFileSync(file, 'utf8'), /- \[-\] approve-plan/);
+  cli(dir, 'new', 'edit', '--title', 'Правка по макету', '--pipeline', 'figma');
+  assert.equal(cli(dir, 'skip', 'edit', 'access', 'Dev seat').status, 0);
+  text = readFileSync(join(dir, '.frontend', 'tasks', 'edit.md'), 'utf8');
+  assert.equal(parseTask(text).meta.stage, 'brief', 'skipping the current stage moves the marker');
+  assert.match(text, /- \[ \] brief — .* ← сейчас/);
+  assert.equal(cli(dir, 'skip', 'edit', 'nope', 'x').status, 1);
+  assert.equal(cli(dir, 'skip', 'edit', 'draft').status, 1, 'reason required');
+  assert.equal(cli(dir, 'stage', 'edit', 'access').status, 0);
+  assert.doesNotMatch(readFileSync(join(dir, '.frontend', 'tasks', 'edit.md'), 'utf8'), /\[-\] access/, 'stage un-skips');
+}));

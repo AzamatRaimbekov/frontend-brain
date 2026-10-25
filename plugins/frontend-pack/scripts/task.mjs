@@ -4,6 +4,7 @@
 // Usage:
 //   node task.mjs new <slug> --title "..." --pipeline <name> [--goal "..."] [--branch <name>]
 //   node task.mjs stage <slug> <stage|done> [--status open|blocked|done]
+//   node task.mjs skip <slug> <stage> <reason...>   marks [-] and writes the reason to decisions
 //   node task.mjs note <slug> <section> <text...>     sections: goal, decisions, artifacts, checks, questions
 //   node task.mjs list [--open]
 //   node task.mjs show <slug>
@@ -69,7 +70,7 @@ export function parseTask(text) {
     const kv = line.match(/^([a-z]+):\s*(.*)$/);
     if (!kv) continue;
     let value = kv[2].trim();
-    if (value.startsWith('"')) {
+    if (value.startsWith('"') || value.startsWith('{')) {
       try { value = JSON.parse(value); } catch { /* keep raw */ }
     }
     meta[kv[1]] = value;
@@ -80,6 +81,8 @@ export function parseTask(text) {
 function render(meta, body) {
   const keys = ['title', 'pipeline', 'stage', 'status', 'branch', 'created', 'updated'];
   const lines = keys.map((k) => `${k}: ${k === 'title' ? JSON.stringify(meta[k] ?? '') : meta[k] ?? ''}`);
+  const skipped = skippedOf(meta);
+  if (Object.keys(skipped).length) lines.push(`skipped: ${JSON.stringify(skipped)}`);
   return `---\n${lines.join('\n')}\n---\n${body}`;
 }
 
@@ -100,10 +103,14 @@ function load(cwd, slug) {
   return { path, ...parseTask(readFileSync(path, 'utf8')) };
 }
 
-function stageLines(pipeline, current, done) {
+// Skipped stages live in the frontmatter as {"stage": "reason"} so later `stage` calls keep the [-] mark.
+const skippedOf = (meta) => (meta.skipped && typeof meta.skipped === 'object' ? meta.skipped : {});
+
+function stageLines(pipeline, current, done, skipped = {}) {
   const stages = PIPELINES[pipeline] ?? [];
   const index = stages.findIndex(([id]) => id === current);
   return stages.map(([id, label], i) => {
+    if (skipped[id]) return `- [-] ${id} — ${label} (пропущен: ${skipped[id]})`;
     const checked = done || i < index;
     return `- [${checked ? 'x' : ' '}] ${id} — ${label}${!done && i === index ? NOW_MARK : ''}`;
   }).join('\n');
@@ -157,8 +164,32 @@ export function setStage(cwd, slug, stage, status) {
   if (stage !== 'done' && !stages.some(([id]) => id === stage)) {
     fail(`Этап ${stage} не из конвейера ${task.meta.pipeline}: ${stages.map(([id]) => id).join(', ')}, done.`);
   }
-  const meta = { ...task.meta, stage: stage === 'done' ? stages.at(-1)[0] : stage, status: done ? 'done' : status ?? 'open', updated: now() };
-  const body = replaceSection(task.body, 'Этапы', () => stageLines(meta.pipeline, meta.stage, done));
+  // Moving to a skipped stage means it is being done after all: drop the skip mark.
+  const skipped = { ...skippedOf(task.meta) };
+  if (stage !== 'done') delete skipped[stage];
+  const meta = { ...task.meta, skipped, stage: stage === 'done' ? stages.at(-1)[0] : stage, status: done ? 'done' : status ?? 'open', updated: now() };
+  const body = replaceSection(task.body, 'Этапы', () => stageLines(meta.pipeline, meta.stage, done, skipped));
+  writeFileSync(task.path, render(meta, body));
+  return meta;
+}
+
+export function skipStage(cwd, slug, stage, reason) {
+  const task = load(cwd, slug);
+  const stages = PIPELINES[task.meta.pipeline];
+  if (!stages) fail(`Неизвестный конвейер в задаче: ${task.meta.pipeline}`);
+  if (!stages.some(([id]) => id === stage)) fail(`Этап ${stage} не из конвейера ${task.meta.pipeline}: ${stages.map(([id]) => id).join(', ')}.`);
+  const text = String(reason ?? '').replace(/\s*\n\s*/g, ' ').trim();
+  if (!text) fail('Нужна причина пропуска.');
+  const skipped = { ...skippedOf(task.meta), [stage]: text };
+  let current = task.meta.stage;
+  // Skipping the current stage moves the marker to the next stage that is not skipped.
+  if (current === stage) current = stages.slice(stages.findIndex(([id]) => id === stage)).find(([id]) => !skipped[id])?.[0] ?? current;
+  const meta = { ...task.meta, skipped, stage: current, updated: now() };
+  let body = replaceSection(task.body, 'Этапы', () => stageLines(meta.pipeline, current, meta.status === 'done', skipped));
+  body = replaceSection(body, 'Решения', (content) => {
+    const line = `- Пропущен этап ${stage}: ${text}`;
+    return content === EMPTY || !content ? line : `${content}\n${line}`;
+  });
   writeFileSync(task.path, render(meta, body));
   return meta;
 }
@@ -202,6 +233,9 @@ function main(argv, cwd) {
   } else if (command === 'stage') {
     const meta = setStage(cwd, slug, rest[0], flags.status);
     console.log(`${slug}: этап ${meta.stage}, статус ${meta.status}`);
+  } else if (command === 'skip') {
+    const meta = skipStage(cwd, slug, rest[0], rest.slice(1).join(' '));
+    console.log(`${slug}: этап ${rest[0]} пропущен, сейчас ${meta.stage}`);
   } else if (command === 'note') {
     addNote(cwd, slug, rest[0], rest.slice(1).join(' '));
     console.log(`${slug}: записано в «${SECTIONS[rest[0].toLowerCase()]}»`);
@@ -212,7 +246,7 @@ function main(argv, cwd) {
   } else if (command === 'show') {
     process.stdout.write(readFileSync(load(cwd, slug).path, 'utf8'));
   } else {
-    console.error('Команды: new, stage, note, list, show. Подробности в начале task.mjs.');
+    console.error('Команды: new, stage, skip, note, list, show. Подробности в начале task.mjs.');
     return 2;
   }
   return 0;
