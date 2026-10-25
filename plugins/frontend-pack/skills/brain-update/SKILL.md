@@ -54,6 +54,7 @@ node plugins/frontend-pack/scripts/brain-watch.mjs --json     # то же для
 - Вендорные файлы `skills/react-brain/references/vercel-react-best-practices/` копируются **без изменений** целиком на новый коммит; при этом обнови закреплённый коммит в `skills/react-brain/SKILL.md` и `NOTICE.md`. Сомневаешься — решение `предложение`.
 - Безопасность (security release Next.js, React) — всегда минимум `статья` с безопасной версией, даже если правила не меняются.
 - Версию плагина не трогай, `rules/libraries.json` не правь.
+- Кит Mbank живёт в двух местах: `registry/mbank` (копирование через `add-ui.mjs`) и репозиторий [`mbank-ui`](https://github.com/AzamatRaimbekov/mbank-ui) (пакет). Сверь их: `gh repo clone AzamatRaimbekov/mbank-ui /tmp/mbank-ui` и `diff` файлов компонентов и виджетов без учёта путей импорта и строки `"use client"`. Расхождение — строка «Кит: расходится» в PR с файлами, без автоправки.
 
 ## 4. Индекс и проверки
 

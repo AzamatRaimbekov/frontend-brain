@@ -25,9 +25,10 @@ Not for client-facing Mbank web (use `mbank-ui` directly), non-Mbank admin panel
 # PLUGIN = path to plugins/frontend-pack; the directory must not exist or be empty
 node $PLUGIN/scripts/new-crm.mjs ../loans-crm --name "Mbank Кредиты"
 node $PLUGIN/scripts/new-crm.mjs ../loans-crm --dry-run   # print the plan only
+node $PLUGIN/scripts/new-crm.mjs ../loans-crm --kit copy  # kit sources copied into src/shared instead of the package
 ```
 
-The script runs: `create-vite` (react-ts, `--eslint`, no prompts) → `npm install` of the template packages (TanStack Router + Query, zod, react-error-boundary, Tailwind v4, the kit packages, MSW, Vitest + RTL) → `add-ui.mjs all` (kit + every CRM block) → copies [`templates/mbank-crm`](../../templates/mbank-crm) over the scaffold (configs, `src/`) → sets `<title>`, `lang="ru"`, npm scripts → `npx msw init public`. Then check it:
+The script runs: `create-vite` (react-ts, `--eslint`, no prompts) → `npm install` of the template packages (TanStack Router + Query, zod, react-error-boundary, Tailwind v4, MSW, Vitest + RTL) and the kit package `@mdigital/mbank-ui` (`mbank-ui` skill, "Install") → copies [`templates/mbank-crm`](../../templates/mbank-crm) over the scaffold (configs, `src/`) and points its imports at the package → sets `<title>`, `lang="ru"`, npm scripts → `npx msw init public`. With `--kit copy` it installs the kit's own packages and runs `add-ui.mjs all` instead of the package. The project is its own git repository: `git init`, then push it to a new GitLab/GitHub project. Then check it:
 
 ```bash
 npx tsc --noEmit -p tsconfig.app.json && npm run lint && npm test && npm run build

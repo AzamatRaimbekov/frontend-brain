@@ -1,6 +1,6 @@
 {
   "name": "frontend-pack",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Mdigital React frontend standards with mandatory Vercel and shadcn/ui practices plus Web Interface Guidelines.",
   "author": {
     "name": "Mdigital"
