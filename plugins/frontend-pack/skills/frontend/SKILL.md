@@ -74,11 +74,12 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 
 | Задача | Скиллы |
 |---|---|
-| Новый проект с нуля | [react-new-project](../react-new-project/SKILL.md), потом остальные по мере работы |
+| Новый проект с нуля | [react-new-project](../react-new-project/SKILL.md); CRM или админка на Mbank — сразу [mbank-crm](../mbank-crm/SKILL.md) (`new-crm.mjs`); потом остальные по мере работы |
 | Новая страница, экран, раздел, форма | [react-page-ux](../react-page-ux/SKILL.md) (сначала `UX.md`), [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md) |
 | Запросы к API, кэш, мутации | [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md) |
 | Вёрстка, стили, тема, адаптив | [react-ui](../react-ui/SKILL.md), [shadcn](../shadcn/SKILL.md) при `components.json` |
 | Продукт Mbank (банк, касса, travel, artwin, koko) или экран из Mbank Figma | [mbank-ui](../mbank-ui/SKILL.md): кодовый UI-кит и токены, ставится `add-ui.mjs`; плюс [react-ui](../react-ui/SKILL.md) |
+| CRM, админка, бэк-офис на Mbank (новая или новая страница в ней) | [mbank-crm](../mbank-crm/SKILL.md): новый проект — `node <plugin-root>/scripts/new-crm.mjs <папка>`, страницы — из CRM-блоков (`add-ui.mjs crm-…`) |
 | Ссылка на Figma, «по макету», «сделай в фигме и сверстай», передача в разработку | конвейер `figma` по [design-to-code](../design-to-code/SKILL.md): этапы бриф → Figma → утверждение → спека → код → сверка; агенты `design-lead`, `design-qa` и плагин figma-pack |
 | Тесты: юнит, компонент, страница, e2e, моки MSW | [react-testing](../react-testing/SKILL.md) |
 | Сложная форма, мастер из шагов, где хранить состояние | [react-forms-state](../react-forms-state/SKILL.md) (UX форм — в [react-ux](../react-ux/SKILL.md)) |

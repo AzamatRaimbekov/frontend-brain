@@ -94,7 +94,7 @@
 | Этап | Кто | Вход | Выход | Ворота |
 |---|---|---|---|---|
 | `requirements` | сессия | запрос | стек (Vite или Next.js), продукт (Mbank или нет), папка | **человек** подтвердил стек, если он не был назван |
-| `scaffold` | сессия: [react-new-project](../../react-new-project/SKILL.md) | требования | проект, `AGENTS.md` / `CLAUDE.md`, ESLint | `npm run build` проходит |
+| `scaffold` | сессия: [react-new-project](../../react-new-project/SKILL.md), для CRM/админки на Mbank — [mbank-crm](../../mbank-crm/SKILL.md) `new-crm.mjs` | требования | проект, `AGENTS.md` / `CLAUDE.md`, ESLint | `npm run build` проходит |
 | `shell` | сессия или агент `frontend-engineer` | проект | экран падения, 404, баннер «нет сети» ([app-shell](../../react-error-handling/references/app-shell.md)) | три экрана есть |
 | `checks` | сессия | проект | вывод команд | проверки проекта зелёные |
 | `review` | агент `frontend-reviewer` | весь `src/` | замечания | вердикт ревью |
