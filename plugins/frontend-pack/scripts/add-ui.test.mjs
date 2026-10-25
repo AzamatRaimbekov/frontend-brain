@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { cssImportHint, loadRegistry, parseArgs, resolveItems, run } from './add-ui.mjs';
+import { cssImportHint, isBlock, loadRegistry, parseArgs, resolveItems, run } from './add-ui.mjs';
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), 'add-ui.mjs');
 const REGISTRY = join(dirname(SCRIPT), '..', 'registry', 'mbank');
@@ -108,4 +108,62 @@ test('copies files, never overwrites without --force, CLI exits 0', () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+const BLOCKS = join(REGISTRY, 'blocks', 'crm');
+
+test('blocks use tokens only, no Lucide, and are all registered', () => {
+  const items = loadRegistry();
+  const listed = new Set([...items.values()].filter(isBlock).flatMap((i) => i.files.map((f) => f.path.split('/').pop())));
+  for (const file of readdirSync(BLOCKS)) {
+    assert.ok(listed.has(file), `${file} not in registry.json`);
+    const text = readFileSync(join(BLOCKS, file), 'utf8');
+    assert.doesNotMatch(text, /#[0-9a-fA-F]{3,8}\b|rgb\(|oklch\(/, `${file}: raw colour`);
+    assert.doesNotMatch(text, /\b(bg|text|border)-(slate|gray|zinc|red|blue|green|yellow|orange)-\d/, `${file}: palette class`);
+    assert.doesNotMatch(text, /lucide-react|forwardRef/, `${file}: lucide or forwardRef`);
+  }
+});
+
+test('every block import is covered by its registryDependencies', () => {
+  const items = loadRegistry();
+  const owner = new Map([...items.values()].flatMap((i) => i.files.map((f) => [f.path.split('/').pop().replace(/\.tsx?$/, ''), i.name])));
+  for (const item of [...items.values()].filter(isBlock)) {
+    const own = new Set(item.files.map((f) => f.path.split('/').pop().replace(/\.tsx?$/, '')));
+    for (const file of item.files) {
+      const text = readFileSync(join(REGISTRY, file.path), 'utf8');
+      for (const [, spec] of text.matchAll(/from "([^"]+)"/g)) {
+        const local = spec.match(/^(?:@\/shared\/(?:ui|lib|components)\/|\.\/)(.+)$/);
+        if (!local) continue;
+        const name = local[1];
+        if (own.has(name)) continue;
+        const dep = owner.get(name);
+        assert.ok(dep && item.registryDependencies.includes(dep), `${file.path} imports ${spec}, add "${dep}" to ${item.name}`);
+      }
+    }
+  }
+});
+
+test('blocks install into --blocks-dir with their kit dependencies; --list shows them apart', () => {
+  const dir = project();
+  try {
+    const result = run(parseArgs(['crm-board', '--dry-run', '--cwd', dir]), () => {});
+    for (const p of ['src/shared/components/crm/Board.tsx', 'src/shared/components/crm/ApplicationCard.tsx', 'src/shared/ui/badge.tsx', 'src/shared/ui/button.tsx'])
+      assert.ok(result.written.includes(join(...p.split('/'))), p);
+    const custom = run(parseArgs(['crm-timeline', '--dry-run', '--cwd', dir, '--blocks-dir', 'src/widgets/crm']), () => {});
+    assert.ok(custom.written.includes(join('src', 'widgets', 'crm', 'Timeline.tsx')));
+    const all = resolveItems(['blocks'], loadRegistry());
+    assert.ok(all.some((i) => i.name === 'crm-app-shell') && all.some((i) => i.name === 'dialog'));
+    const out = [];
+    run(parseArgs(['--list']), (l) => out.push(l));
+    const text = out.join('\n');
+    assert.ok(text.indexOf('Blocks') > text.indexOf('button') && text.indexOf('crm-board') > text.indexOf('Blocks'));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('alert-dialog has no Action part (confirm stays a Button wired to the mutation)', () => {
+  const text = readFileSync(join(REGISTRY, 'components', 'alert-dialog.tsx'), 'utf8');
+  assert.doesNotMatch(text, /AlertDialogPrimitive\.Action/);
+  assert.match(text, /AlertDialogPrimitive\.Cancel/);
 });
