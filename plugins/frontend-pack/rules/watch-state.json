@@ -1,0 +1,91 @@
+{
+  "$comment": "Last seen item of each source in watch-sources.json. Written by `node scripts/brain-watch.mjs --update-state`; the brain-update run commits it in its PR together with the changes it made, so the next run shows only newer items. Do not edit by hand.",
+  "updated": "2026-10-25",
+  "sources": {
+    "nextjs-blog": {
+      "id": "/blog/improving-navigation-experience-in-v0-with-nextjs-16-4",
+      "title": "Improving navigation experience in v0 with Next.js 16.4",
+      "date": "2026-10-16T15:00:00.000Z"
+    },
+    "nextjs-releases": {
+      "id": "v16.4.3",
+      "title": "v16.4.3",
+      "date": "2026-10-23T13:32:31.000Z"
+    },
+    "react-blog": {
+      "id": "https://react.dev/blog/2026/09/09/react-19-3",
+      "title": "React 19.3",
+      "date": "2026-09-09T00:00:00.000Z"
+    },
+    "tanstack-query": {
+      "id": "5.104.5",
+      "title": "@tanstack/react-query@5.104.5",
+      "date": "2026-10-19T16:57:50.440Z"
+    },
+    "tanstack-router": {
+      "id": "1.170.46",
+      "title": "@tanstack/react-router@1.170.46",
+      "date": "2026-10-22T20:10:14.318Z"
+    },
+    "vercel-react-best-practices": {
+      "id": "dc8367e6f91c022d83361f03c3313fa05e848ee5",
+      "title": "dc8367e update example",
+      "date": "2026-04-14T11:37:17.000Z"
+    },
+    "web-interface-guidelines": {
+      "id": "434b7f91364665f2f733b310ec54809bf8f37937",
+      "title": "434b7f9 Merge pull request #29 from vercel-labs/johnphamous/desktop-overscroll-guideline",
+      "date": "2026-10-05T20:49:16.000Z"
+    },
+    "shadcn-changelog": {
+      "id": "https://ui.shadcn.com/docs/changelog/2026-10-ai-elements",
+      "title": "October 2026 - Trace, Code Block and AI Elements",
+      "date": "2026-10-14T00:00:00.000Z"
+    },
+    "shadcn-cli": {
+      "id": "shadcn@4.22.1",
+      "title": "shadcn@4.22.1",
+      "date": "2026-10-18T18:11:04.000Z"
+    },
+    "tailwindcss-releases": {
+      "id": "v4.3.3",
+      "title": "v4.3.3",
+      "date": "2026-07-16T11:55:08.000Z"
+    },
+    "tailwindcss-blog": {
+      "id": "Tailwind Labs is joining Shopify",
+      "title": "Tailwind Labs is joining Shopify",
+      "date": "2026-09-09T13:15:00.000Z"
+    },
+    "vite-releases": {
+      "id": "v8.3.5",
+      "title": "v8.3.5",
+      "date": "2026-10-21T06:35:46.000Z"
+    },
+    "msw-releases": {
+      "id": "v3.0.3",
+      "title": "v3.0.3",
+      "date": "2026-10-10T01:37:25.000Z"
+    },
+    "zod-releases": {
+      "id": "v4.6.7",
+      "title": "v4.6.7",
+      "date": "2026-10-12T16:30:32.000Z"
+    },
+    "react-hook-form-releases": {
+      "id": "v7.91.0",
+      "title": "Version 7.91.0",
+      "date": "2026-10-23T21:19:22.000Z"
+    },
+    "figma-code-connect": {
+      "id": "v2.0.2",
+      "title": "Code Connect 2.0.2",
+      "date": "2026-10-14T18:40:49.000Z"
+    },
+    "figma-mcp-guide": {
+      "id": "056adaf7564d3dc5fa2e1c7828bbec925d5fa6bb",
+      "title": "056adaf Add root plugin and MCP configuration files (#84)",
+      "date": "2026-10-20T19:50:56.000Z"
+    }
+  }
+}

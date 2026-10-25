@@ -1,0 +1,704 @@
+{
+  "name": "mbank",
+  "homepage": "../../skills/mbank-ui/SKILL.md",
+  "description": "Coded Mbank UI kit for React 19 + Tailwind v4 + Radix (shadcn-style). Install with plugins/frontend-pack/scripts/add-ui.mjs.",
+  "source": "figma-pack mbank-figma-patterns/references/tokens.md (2026-10-09) + mbank-design-system/references/code-mapping.md",
+  "targets": {
+    "ui": "--dir (default src/shared/ui)",
+    "components": "--components-dir (default src/shared/components)",
+    "lib": "--lib-dir (default src/shared/lib)",
+    "tokens": "--tokens (default src/styles/mbank-tokens.css)",
+    "blocks": "--blocks-dir (default src/shared/components/crm)"
+  },
+  "items": [
+    {
+      "name": "tokens",
+      "type": "registry:style",
+      "description": "Mbank design tokens: light/dark, 5 brand modes, radius, typography, shadows, z-index, @theme inline mapping (Tailwind v4)",
+      "files": [
+        {
+          "path": "tokens.css",
+          "target": "tokens"
+        }
+      ],
+      "dependencies": [
+        "tailwindcss"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "description": "cn() = clsx + tailwind-merge extended with the Mbank font sizes",
+      "files": [
+        {
+          "path": "lib/utils.ts",
+          "target": "lib"
+        }
+      ],
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "icons",
+      "type": "registry:ui",
+      "description": "Temporary inline glyphs (check, minus, chevron-down, close) until the Mbank Icons SVGs are exported",
+      "files": [
+        {
+          "path": "components/icons.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "description": "Figma spinner; colour from currentColor",
+      "files": [
+        {
+          "path": "components/spinner.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "description": "Figma button/default: primary, brand, secondary, destructive, success, soft, ghost, outline, static, link; sizes xs-lg + icon; loading",
+      "files": [
+        {
+          "path": "components/button.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "spinner"
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "description": "Figma input/default: sizes sm 36 / md 44 / lg 56; hover, focus, invalid, disabled",
+      "files": [
+        {
+          "path": "components/input.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "description": "Figma TextArea",
+      "files": [
+        {
+          "path": "components/textarea.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "description": "Field label (Label Outside=on)",
+      "files": [
+        {
+          "path": "components/label.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "description": "Figma Badge-status: tone (status roles), fill ghost/solid, shape, size",
+      "files": [
+        {
+          "path": "components/badge.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "description": "Card surface with header, title, description, action, content, footer",
+      "files": [
+        {
+          "path": "components/card.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "description": "Figma Switchers - Check, Type=Checkbox (+ indeterminate)",
+      "files": [
+        {
+          "path": "components/checkbox.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "description": "Figma Switchers - Check, Type=Toggle",
+      "files": [
+        {
+          "path": "components/switch.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "description": "Figma segment / tab-outline / tabLine as Tabs variants",
+      "files": [
+        {
+          "path": "components/tabs.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "description": "Figma dialogInfo / dialogForm",
+      "files": [
+        {
+          "path": "components/dialog.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "description": "Figma dialogConfirm on Radix AlertDialog; no Action on purpose: confirm is a Button wired to the mutation, the dialog stays open while it runs",
+      "files": [
+        {
+          "path": "components/alert-dialog.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "button"
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "description": "Figma input/dropdown + Item / dropdown / default",
+      "files": [
+        {
+          "path": "components/select.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "description": "Loading placeholder",
+      "files": [
+        {
+          "path": "components/skeleton.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "description": "CRM TableSection / TableCell as semantic table parts",
+      "files": [
+        {
+          "path": "components/table.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "description": "Figma alert-text: clear, accent, info, success, warning, error",
+      "files": [
+        {
+          "path": "components/alert.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "description": "Figma Avatars: sizes xs-xl, image + initials fallback",
+      "files": [
+        {
+          "path": "components/avatar.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "description": "Figma tooltip (inverted)",
+      "files": [
+        {
+          "path": "components/tooltip.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "description": "Figma Item / dropdown / simple: action menu with checkbox items",
+      "files": [
+        {
+          "path": "components/dropdown-menu.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:component",
+      "description": "Shared EmptyState composite (react-ux API) styled with Mbank tokens",
+      "files": [
+        {
+          "path": "components/EmptyState.tsx",
+          "target": "components"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "crm-icons",
+      "type": "registry:block",
+      "description": "Outline glyphs for CRM blocks and side menu (search, bell, settings, nav icons) until Mbank Icons are exported",
+      "files": [
+        {
+          "path": "blocks/crm/crm-icons.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "crm-status-dot",
+      "type": "registry:block",
+      "description": "Coloured status dot (success/warning/error/info/neutral) for stepper, timeline, scoring",
+      "files": [
+        {
+          "path": "blocks/crm/StatusDot.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "crm-app-shell",
+      "type": "registry:block",
+      "description": "Figma sideMenu + topHeader: CrmLayout, SideMenu (sections, collapsible groups, active item, user), SideMenuSheet (mobile), TopHeader, Breadcrumbs, HeaderSearch, HeaderIconButton, UserMenu",
+      "files": [
+        {
+          "path": "blocks/crm/side-menu-types.ts",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/SideMenuItem.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/SideMenuSection.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/SideMenu.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/SideMenuUser.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/SideMenuSheet.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/CrmLayout.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/TopHeader.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/Breadcrumbs.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/HeaderSearch.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/HeaderIconButton.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/UserMenu.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons",
+        "button",
+        "input",
+        "avatar",
+        "dropdown-menu",
+        "dialog",
+        "crm-icons"
+      ]
+    },
+    {
+      "name": "crm-kpi-card",
+      "type": "registry:block",
+      "description": "Figma CRM / KPI card 266x128: label, value, delta with positive/negative tone, loading skeleton",
+      "files": [
+        {
+          "path": "blocks/crm/KpiCard.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "card",
+        "skeleton"
+      ]
+    },
+    {
+      "name": "crm-period-segment",
+      "type": "registry:block",
+      "description": "Figma Period row: title + segment Сегодня/Неделя/Месяц/Квартал on kit Tabs (tablist + tabpanel)",
+      "files": [
+        {
+          "path": "blocks/crm/PeriodSegment.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "tabs"
+      ]
+    },
+    {
+      "name": "crm-board",
+      "type": "registry:block",
+      "description": "Figma Board: Board, BoardColumn (name, count, SLA), ApplicationCard 140px, ShowMore, BoardSkeleton",
+      "files": [
+        {
+          "path": "blocks/crm/Board.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/BoardColumn.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/ApplicationCard.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/ShowMore.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/BoardSkeleton.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "badge",
+        "button",
+        "skeleton"
+      ]
+    },
+    {
+      "name": "crm-key-value",
+      "type": "registry:block",
+      "description": "Figma Key-value row 36px + section card (Заёмщик, Параметры кредита, Документы), value tone for problems",
+      "files": [
+        {
+          "path": "blocks/crm/KeyValueSection.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/KeyValueRow.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "card"
+      ]
+    },
+    {
+      "name": "crm-stage-stepper",
+      "type": "registry:block",
+      "description": "Figma Stages: horizontal stepper done/current/upcoming/failed with meta, vertical on phones",
+      "files": [
+        {
+          "path": "blocks/crm/StageStep.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/StageStepper.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "card",
+        "crm-status-dot"
+      ]
+    },
+    {
+      "name": "crm-timeline",
+      "type": "registry:block",
+      "description": "Figma History card + Timeline item (coloured dot, title, meta)",
+      "files": [
+        {
+          "path": "blocks/crm/Timeline.tsx",
+          "target": "blocks"
+        },
+        {
+          "path": "blocks/crm/TimelineItem.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "card",
+        "crm-status-dot"
+      ]
+    },
+    {
+      "name": "crm-summary-header",
+      "type": "registry:block",
+      "description": "Figma Summary card: title + status badge, big amount, context line, actions",
+      "files": [
+        {
+          "path": "blocks/crm/SummaryHeader.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "badge",
+        "card"
+      ]
+    },
+    {
+      "name": "crm-score-card",
+      "type": "registry:block",
+      "description": "Figma Scoring card: risk badge, score in risk colour, bullet reasons, meta line",
+      "files": [
+        {
+          "path": "blocks/crm/ScoreCard.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "badge",
+        "card",
+        "crm-status-dot"
+      ]
+    }
+  ]
+}

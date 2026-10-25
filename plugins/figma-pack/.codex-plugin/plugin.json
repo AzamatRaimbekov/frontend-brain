@@ -1,0 +1,21 @@
+{
+  "name": "figma-pack",
+  "version": "0.5.0",
+  "description": "Mdigital Figma workflow: connect a design system by one link, design layouts in Figma with our components, and turn designs into React (web), React Native or Flutter code.",
+  "author": {
+    "name": "Mdigital"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Mdigital Figma Pack",
+    "shortDescription": "Figma design and design-to-code workflow",
+    "longDescription": "Draw screens in Figma from the Mbank and project design systems, read approved mockups into a neutral spec, and build React, React Native or Flutter code by the Mdigital standards.",
+    "developerName": "Mdigital",
+    "category": "Developer tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": "Use $figma-core to route this Figma task: draw in Figma, connect a design system, or build code from a mockup."
+  }
+}

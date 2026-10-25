@@ -135,6 +135,12 @@ export default defineConfig([
 - `max-lines` counts every physical line, matching the team rule "a component file must not exceed 150 lines". Do not switch `skipBlankLines` on to sneak past the limit.
 - `react-hooks` v6+ ships the React Compiler diagnostics (`purity`, `refs`, `immutability`, `set-state-in-effect`, `static-components`, `preserve-manual-memoization`) inside `recommended`. Treat them as errors: they catch exactly the purity violations that silently disable the compiler.
 - The default-export exemption lists the common Next.js file conventions; extend it with any others the project uses (`global-error`, `opengraph-image`, `icon`, `sitemap`, `robots`).
+- Vite's scaffold adds `eslint-plugin-react-refresh`. shadcn and Mbank kit files in `src/shared/ui/**` export `cva` variants next to the component (`buttonVariants`), which `react-refresh/only-export-components` reports as an error. Keep the plugin for app code and turn the rule off only there:
+
+  ```js
+  { files: ['src/shared/ui/**/*.tsx', 'src/components/ui/**/*.tsx'], rules: { 'react-refresh/only-export-components': 'off' } },
+  ```
+
 - `react/no-multi-comp` with `ignoreStateless: false` flags any second component in a file, including small function components.
 - The `no-restricted-paths` zones with a path that does not exist (e.g. `src/pages` in a Next.js project) are harmless; remove them for clarity.
 - Cross-feature imports are allowed only through the public API. If the team wants strict feature isolation (features never import each other, as in bulletproof-react), add one zone per feature:

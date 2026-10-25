@@ -27,7 +27,9 @@ Optional: if a spinner did appear, keep it visible for at least ~400 ms to avoid
 
 ### `src/shared/components/ErrorState.tsx`
 
-Canonical `ErrorState` for the whole pack (boundaries in `react-error-handling` import this one).
+Canonical `ErrorState` for new projects (boundaries in `react-error-handling` import this one).
+
+**An existing project's `ErrorState` wins.** If the project (or its UI kit) already has an `ErrorState` with another API (for example `{ title, description, retryLabel, onRetry }`), use it as is and pass `getUserMessage(error)` as its description; do not add a second component or migrate call sites inside a feature task. New projects use the one below.
 
 ```tsx
 import { useTranslation } from 'react-i18next'
@@ -40,7 +42,7 @@ export function ErrorState({ error, onRetry, title }: ErrorStateProps) {
   const { t } = useTranslation()
   return (
     <div role="alert" className="flex flex-col items-center gap-3 py-12 text-center">
-      <p className="font-medium">{title ?? t('errors.loadFailed.title')}</p>
+      <h2 className="font-medium">{title ?? t('errors.loadFailed.title')}</h2>
       <p className="text-muted-foreground text-sm">{getUserMessage(error)}</p>
       {onRetry && <Button variant="outline" onClick={onRetry}>{t('common.retry')}</Button>}
     </div>
@@ -63,7 +65,7 @@ export function EmptyState({ title, description, action, icon }: EmptyStateProps
   return (
     <div role="status" className="flex flex-col items-center gap-2 py-12 text-center">
       {icon}
-      <p className="font-medium">{title}</p>
+      <h2 className="font-medium">{title}</h2>
       {description && <p className="text-muted-foreground max-w-sm text-sm">{description}</p>}
       {action}
     </div>
@@ -71,10 +73,29 @@ export function EmptyState({ title, description, action, icon }: EmptyStateProps
 }
 ```
 
+The title is an `h2` because both components render inside a page that already has its `h1` (next section). Inside a section that is itself an `h2`, wrap the call site so the title reads as `h3`, or give the component a `level` prop in the project.
+
 Three kinds of empty state (NN/g):
 1. **First use** - nothing created yet: explain the value + primary "Create" action.
 2. **No results** - filters/search matched nothing: echo the query, offer "Clear filters".
 3. **Cleared** - user finished everything (inbox zero): positive confirmation, no action needed.
+
+## One h1 in every state
+
+The page renders its one `h1` in every state, not only after data arrives: loading, error, 404 and empty included. Screen-reader users jump by headings; a skeleton or an error with no `h1` reads as a broken page.
+
+```tsx
+// features/orders/components/OrderDetails.tsx (components/ or the project's existing folder)
+const heading = <h1 className="sr-only">{t('orders.detail.title', { id: orderId })}</h1>
+if (query.isPending) return <>{heading}<OrderDetailsSkeleton /></>
+if (isNotFound(query.error)) return <>{heading}<EmptyState title={t('orders.notFound.title')} action={backToList} /></>
+if (query.isError) return <>{heading}<ErrorState error={query.error} onRetry={() => void query.refetch()} /></>
+return <OrderHeader order={query.data} /> // renders the visible <h1>
+```
+
+- Visible title when the design has one in that state; `sr-only` when the design shows none (skeleton, full-page error).
+- `EmptyState`/`ErrorState` titles are `h2` and differ in text from the `h1`, so the outline reads "Order 1042 > Order not found".
+- Test tip: give each state's heading its own accessible name and assert by level + name; two headings with the same name make `getByRole('heading', { name })` throw (`react-testing` section 4).
 
 ## Suspense variant
 

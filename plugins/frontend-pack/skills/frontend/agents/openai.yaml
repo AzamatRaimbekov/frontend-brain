@@ -1,5 +1,5 @@
 interface:
-  display_name: 'Frontend Mdigital'
+  display_name: 'Mdigital Frontend Hub'
   short_description: 'Build and review React frontends by Mdigital standards.'
   default_prompt: >-
     Use $frontend to build or change this React frontend by the Mdigital

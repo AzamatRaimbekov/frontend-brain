@@ -44,7 +44,8 @@ Configure the `@/*` path alias in `tsconfig.app.json` and `vite.config.ts` befor
 **Next.js**
 
 ```bash
-npx create-next-app@latest <dir> --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm
+# --no-agent-feedback: in 16.4 agent feedback is on by default and needs Next.js telemetry; client and bank projects keep it off (skills/nextjs)
+npx create-next-app@latest <dir> --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --no-agent-feedback
 cd <dir>
 npm install @tanstack/react-query react-hook-form @hookform/resolvers zod sonner \
   react-error-boundary react-i18next i18next lucide-react nuqs
@@ -69,9 +70,14 @@ Create these files, taking the code from the owning skill. Do not invent alterna
 | `shared/components/QueryState.tsx`, `ErrorState.tsx`, `EmptyState.tsx`, `Delayed.tsx` | `react-ux` references/async-states.md |
 | `shared/components/WidgetBoundary.tsx`, `app/AppErrorBoundary.tsx`, `app/AppFallback.tsx` | `react-error-handling` references/boundaries.md |
 | Router with `defaultPreload: 'intent'` and `defaultErrorComponent` (Vite) | `react-data-fetching` references/nextjs.md |
+| `pages/not-found/NotFoundPage.tsx` (`defaultNotFoundComponent`) or `app/not-found.tsx`, `shared/hooks/useOnlineStatus.ts`, `shared/components/OfflineBanner.tsx` | `react-error-handling` references/app-shell.md |
 | `shared/config/env.ts`: parse `import.meta.env` (Vite) or `process.env` (Next.js) with a Zod schema, export typed `env` | this skill |
 | `eslint.config.js` (max-lines 150, hooks, query, import boundaries) | `react-architecture` references/eslint-config.md |
-| i18n setup with `ru` as default locale | `react-ux` |
+| i18n setup with `ru` as default locale | `react-security-i18n` references/i18n.md |
+| `shared/lib/format.ts`, `shared/lib/safeUrl.ts`, `shared/components/SafeHtml.tsx` | `react-security-i18n` |
+| `src/test/setup.ts` (in `setupFiles`; inside `src/` so jest-dom types work), `src/test/server.ts`, `src/test/render.tsx`, `src/mocks/handlers.ts` + `src/mocks/browser.ts` (MSW, `onUnhandledFrame`) | `react-testing` sections 5-6 |
+| `pages/not-found` texts, crash fallback and offline banner copy in `shared/lib/messages.ts` (or `common.*` i18n keys) | `react-error-handling` references/app-shell.md |
+| Mbank product: tokens and UI kit via `node <frontend-pack>/scripts/add-ui.mjs all` (replaces the shadcn theme) | `mbank-ui` |
 
 Remove the scaffold's demo code (counter, logos, default page content).
 

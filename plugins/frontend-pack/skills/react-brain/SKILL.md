@@ -23,7 +23,8 @@ When running in Codex, first read [Codex integration](../../references/codex.md)
    - stable callbacks and one-time initialization: `advanced-*`.
 3. For visible interface changes, read [Web Interface Guidelines](references/web-interface-guidelines.md). Keep its full checklist in scope through implementation and review.
 4. Load only the relevant skills from frontend-pack for UX, architecture, UI, data fetching, error handling, and project setup. Their project-specific rules remain authoritative for libraries, file layout, naming, and limits.
-5. When a task uses shadcn/ui, also follow the bundled [shadcn skill](../shadcn/SKILL.md). Read the app's components.json and use the actual installed component APIs, base library, aliases, paths, and project CLI configuration.
+5. Search the team [knowledge base](../../knowledge/INDEX.md) for the change's area and stack (`node <plugin-root>/scripts/knowledge.mjs search <words> --stack <stack>`) and apply matching entries. A skill wins over an entry when they conflict.
+6. When a task uses shadcn/ui, also follow the bundled [shadcn skill](../shadcn/SKILL.md). Read the app's components.json and use the actual installed component APIs, base library, aliases, paths, and project CLI configuration.
 
 ## Mdigital overrides of Vercel rules
 

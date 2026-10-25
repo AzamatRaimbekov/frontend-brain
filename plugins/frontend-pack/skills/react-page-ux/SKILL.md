@@ -51,7 +51,7 @@ If the page has a destructive action, a form, or a multi-step flow, add those fl
 - **Navigation**: the user always knows where they are (page title, active nav item, breadcrumbs for depth >= 2) and how to go back.
 - **Mobile is not a shrunk desktop**: tables become cards or get horizontal scroll with a sticky first column; secondary actions move into a menu; tap targets >= 24px (44px preferred).
 - **Copy**: buttons are verbs ("Сохранить заказ", not "OK"); errors say what to do; no jargon or raw server text; every string is an i18n key. If the project has no i18n set up yet, do not install it unasked: put the feature's strings in `features/<f>/lib/messages.ts` (one exported object) so they move to i18n in one step, and say so in the report.
-- **Accessibility**: one `h1`; landmarks (`header`, `nav`, `main`); visible focus; keyboard reaches every action; dialogs trap and return focus; status changes announced.
+- **Accessibility**: one `h1` in every state - loading, error and 404 too (visible title, or `sr-only` when the design shows none); `EmptyState`/`ErrorState` titles are `h2` inside it (`react-ux` async-states.md); landmarks (`header`, `nav`, `main`); visible focus; keyboard reaches every action; dialogs trap and return focus; status changes announced.
 
 ## 3. Flows to sketch when present
 
@@ -69,6 +69,7 @@ Type-checking does not prove UX. With the dev server running, use the browser to
 
 1. Open the page at 1280px and at 375px width; take a screenshot of each and look at them.
 2. Force each state at least once: slow network or a delayed MSW handler (loading), empty response (empty), a 500 response (error), a 422 on form submit (server field errors).
+   Browser tool calls are sequential: navigate, then wait for a known text of the expected state (a row number, the empty-state title, the error title), then screenshot. Never batch navigate + screenshot in one parallel call: the shot catches the skeleton or the previous page.
 3. Tab through the page with the keyboard; the focus order matches the visual order and every action is reachable.
 4. Check the console for errors and warnings.
 
@@ -76,7 +77,11 @@ If no browser tool is available (for example in `claude -p`), do not skip the st
 
 ## 5a. Missing backend
 
-If the API does not exist yet, add MSW handlers in `src/mocks/` (dev only) for success, empty, a 500 and a 422 with field errors, driven by a query param or a dev toggle, so every state can be seen. Never fake data inside components.
+If the API does not exist yet, mock it with MSW (layout and code: `react-testing` section 5):
+
+- Handlers per feature in `src/features/<f>/api/<f>.handlers.ts` (no `__mocks__` folder), aggregated in `src/mocks/handlers.ts`, started in dev by `src/mocks/browser.ts`; tests reuse the same list through `src/test/server.ts`. An existing project keeps its mock layout.
+- Cover success, empty, a 500 and a 422 with field errors. The scenario comes from `?mock=empty|error` read once in `main.tsx` into `sessionStorage` (`mock-scenario`); handlers read it. Never read `window.location` or a `mock` param in `queryFn`, query keys or loaders.
+- Never fake data inside components. Say in the report that the API is mocked.
 
 ## 6. Checklist before finishing
 
@@ -86,6 +91,6 @@ If the API does not exist yet, add MSW handlers in `src/mocks/` (dev only) for s
 - [ ] At least one test per state for the page (Vitest + RTL + MSW)
 - [ ] Existing project structure untouched unless asked
 - [ ] Works at 375px and 1280px (screenshots taken)
-- [ ] Keyboard-only path works; one `h1`; focus visible
+- [ ] Keyboard-only path works; one `h1` in every state (loading, error, 404 included); focus visible
 - [ ] All copy is i18n keys with verb buttons and actionable errors
 - [ ] `frontend-reviewer` run on the changed files

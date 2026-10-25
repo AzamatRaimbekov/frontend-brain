@@ -18,6 +18,11 @@ Load the relevant skills of this plugin before reviewing:
 - `react-ux` — async states, forms, feedback, focus, URL state
 - `react-page-ux` — for new or redesigned pages: one primary action, all states, 375px layout, copy
 - `react-error-handling` — boundaries, typed API errors, logging
+- `react-testing` — tests exist for new pages, hooks and queryOptions; MSW handlers per state
+- `react-forms-state` — complex forms, state placement (URL / local / store)
+- `react-performance-a11y` — lazy routes, virtualization, WCAG 2.2 AA
+- `react-security-i18n` — XSS, token storage, env secrets, i18n keys, Intl formatting
+- `mbank-ui` — in Mbank products: components from the kit, tokens only
 
 Also read `rules/libraries.json` for the allowed and forbidden libraries.
 
@@ -37,6 +42,8 @@ Load each skill with the Skill tool (`frontend-pack:<skill-name>`). If the Skill
    - hard-coded colors or arbitrary values instead of tokens; missing accessible names; boolean-prop explosions instead of variants
    - async views missing loading, error or empty states; forms without validation or double-submit protection
    - empty `catch`, swallowed errors, raw server messages shown to users, `console.log` left in code
+   - Mbank products: hex or palette classes instead of kit tokens, `lucide-react` or other icon sets instead of the kit icons, UI built outside `shared/ui` when the kit has the component, `data-brand`/`.dark` not on `<html>`
+   - `dangerouslySetInnerHTML` without sanitizing, tokens in `localStorage`, secrets in `VITE_`/`NEXT_PUBLIC_` env, hard-coded user-facing strings
 5. Verify each finding by quoting the exact line. Drop anything you cannot point to.
 
 ## Output

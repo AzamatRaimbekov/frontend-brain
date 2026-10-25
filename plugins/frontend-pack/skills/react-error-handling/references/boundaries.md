@@ -27,17 +27,18 @@ Library: `react-error-boundary` v6 (ESM-only; in v6 the `error` in fallback prop
 // src/app/AppFallback.tsx
 import type { FallbackProps } from 'react-error-boundary'
 import { isApiError } from '@/shared/api/errors'
+import { shellMessages as m } from '@/shared/lib/messages' // or i18n.t('common.crash.*'), see app-shell.md
 
 export function AppFallback({ error }: FallbackProps) {
   const supportCode = isApiError(error) ? error.details.requestId : undefined
   return (
     <main role="alert" className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-4 p-6">
-      <h1 className="text-xl font-semibold">Something went wrong</h1>
-      <p className="text-muted-foreground">Reload the page. If it happens again, contact support.</p>
-      {supportCode && <p className="text-sm text-muted-foreground">Error code: {supportCode}</p>}
+      <h1 className="text-xl font-semibold">{m.crashTitle}</h1>
+      <p className="text-muted-foreground">{m.crashText}</p>
+      {supportCode && <p className="text-sm text-muted-foreground">{m.errorCode}: {supportCode}</p>}
       <div className="flex gap-2">
-        <button onClick={() => window.location.reload()}>Reload</button>
-        <a href="/">Go to home</a>
+        <button onClick={() => window.location.reload()}>{m.reload}</button>
+        <a href="/">{m.toHome}</a>
       </div>
     </main>
   )

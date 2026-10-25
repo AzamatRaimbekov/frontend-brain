@@ -78,8 +78,25 @@ Do not hand-edit filtered lists with `setQueryData`; invalidate `orderQueries.li
 
 ## Confirmation dialog
 
+The confirm button is a plain `Button` that runs the mutation, not `AlertDialogAction`: Radix closes the dialog on `AlertDialogAction` click, so the pending state and a server error would never be seen. The dialog is controlled; it closes on success and shows the error inside.
+
 ```tsx
-<AlertDialog>
+// features/projects/components/DeleteProjectDialog.tsx (components/ or the project's existing folder)
+import {
+  AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from '@/shared/ui/alert-dialog'
+
+const [open, setOpen] = useState(false)
+const deleteProject = useDeleteProject() // meta: { skipGlobalErrorToast: true } - the error is shown here
+const onOpenChange = (next: boolean) => {
+  if (deleteProject.isPending) return       // no closing by Esc/overlay mid-request
+  if (next) deleteProject.reset()           // a fresh dialog does not show the last error
+  setOpen(next)
+}
+const onConfirm = () => deleteProject.mutate(project.id, { onSuccess: () => setOpen(false) })
+
+<AlertDialog open={open} onOpenChange={onOpenChange}>
   <AlertDialogTrigger asChild><Button variant="destructive">{t('project.delete')}</Button></AlertDialogTrigger>
   <AlertDialogContent>
     <AlertDialogHeader>
@@ -88,19 +105,24 @@ Do not hand-edit filtered lists with `setQueryData`; invalidate `orderQueries.li
         {t('project.deleteConfirm.body', { tasks: project.taskCount })}  {/* "All 42 tasks and files will be deleted. This can't be undone." */}
       </AlertDialogDescription>
     </AlertDialogHeader>
+    {deleteProject.isError && <p role="alert" className="text-destructive text-sm">{getUserMessage(deleteProject.error)}</p>}
     <AlertDialogFooter>
-      <AlertDialogCancel>{t('project.keep')}</AlertDialogCancel>
-      <AlertDialogAction onClick={onDelete} disabled={deleteProject.isPending}>{t('project.delete')}</AlertDialogAction>
+      <AlertDialogCancel disabled={deleteProject.isPending}>{t('project.keep')}</AlertDialogCancel>
+      <Button variant="destructive" onClick={onConfirm} disabled={deleteProject.isPending}>
+        {deleteProject.isPending ? t('project.deleting') : t('project.delete')}
+      </Button>
     </AlertDialogFooter>
   </AlertDialogContent>
 </AlertDialog>
 ```
 
+If the trigger disappears after success (the deleted row, a "Cancel order" button hidden by the new status), the mutation must run in a parent that stays mounted and move focus itself: recipe in [accessibility-ux.md](accessibility-ux.md#focus-when-an-action-removes-its-own-trigger).
+
 - Title states the action and the object: "Delete project Alpha?"
 - Body states the consequence in numbers if possible, and whether it is reversible.
 - Buttons are verbs ("Delete project" / "Keep project"); the destructive button is visually distinct; default focus on Cancel (Radix AlertDialog does this).
 - Severe cases: require typing the object name before enabling the action.
-- Keep the dialog open with a pending state while the request runs; close on success; show error inside the dialog on failure.
+- Keep the dialog open with a pending state while the request runs; close on success; show the error inside the dialog on failure (the code above).
 
 ## Copy templates
 
