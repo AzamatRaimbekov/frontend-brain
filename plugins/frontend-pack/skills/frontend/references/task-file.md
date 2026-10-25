@@ -1,0 +1,101 @@
+# Файл задачи
+
+Память задачи в проекте: `.frontend/tasks/<slug>.md`. По нему видно, на каком этапе задача, что решили, что уже сделано и что показали проверки. Если чат прервался, новая сессия читает этот файл и продолжает с того же этапа.
+
+## Где и кто пишет
+
+- Лежит в **проекте**, а не в плагине: `<корень проекта>/.frontend/tasks/<slug>.md`.
+- Пишет только дирижёр (скилл [frontend](../SKILL.md) в основной сессии). Агенты-исполнители возвращают отчёт, дирижёр переносит из него главное. Так у файла один писатель.
+- **По умолчанию файл коммитится** вместе с кодом задачи: это бумажный след для ревьюера MR (что решили и почему, какие проверки прошли). Не хочет команда — пусть добавит `.frontend/tasks/` в `.gitignore` проекта; дирижёр это не меняет сам.
+- В файл не попадают секреты, токены, содержимое `.env` и персональные данные из ответов API.
+
+## Команды
+
+`<plugin-root>/scripts/task.mjs`, Node 18+, без зависимостей, запускать из корня проекта:
+
+```sh
+node <plugin-root>/scripts/task.mjs new orders-page --title "Страница заказов" --pipeline feature --goal "Менеджер видит и фильтрует заказы"
+node <plugin-root>/scripts/task.mjs stage orders-page plan
+node <plugin-root>/scripts/task.mjs stage orders-page code --status blocked
+node <plugin-root>/scripts/task.mjs note orders-page decisions "Фильтры в URL, не в сторе: ссылкой можно поделиться"
+node <plugin-root>/scripts/task.mjs note orders-page checks "tsc 0, eslint 0, vitest 14/14, build ok"
+node <plugin-root>/scripts/task.mjs stage orders-page done
+node <plugin-root>/scripts/task.mjs list --open
+node <plugin-root>/scripts/task.mjs show orders-page
+```
+
+- `slug` — латиница, цифры, дефис; обычно как ветка без префикса.
+- `--pipeline`: `small-edit`, `feature`, `figma`, `bug`, `new-project`, `review`, `refactor` ([этапы](pipelines.md)).
+- `stage` отмечает все этапы до указанного как сделанные и ставит метку «← сейчас». Без `--status` статус становится `open`; `done` вместо этапа закрывает задачу.
+- `note` — разделы `goal`, `decisions`, `artifacts`, `checks`, `questions` (или по-русски: `цель`, `решения`, `артефакты`, `проверки`, `вопросы`). Каждая заметка — новая строка списка.
+
+Скрипта нет под рукой — веди файл по шаблону ниже вручную тем же форматом.
+
+## Шаблон
+
+```markdown
+---
+title: "Страница заказов"
+pipeline: feature
+stage: plan
+status: open
+branch: feat/orders-page
+created: 2026-10-25T09:12
+updated: 2026-10-25T10:40
+---
+
+# Страница заказов
+
+## Цель
+
+- Менеджер видит и фильтрует заказы
+
+## Решения
+
+- Фильтры в URL, не в сторе: ссылкой можно поделиться
+
+## Артефакты
+
+- src/pages/orders/UX.md
+- План файлов: в описании MR
+
+## Этапы
+
+- [x] brief — UX-бриф (UX.md)
+- [ ] plan — План файлов (frontend-architect) ← сейчас
+- [ ] approve-plan — Человек утвердил план
+- [ ] code — Код и тесты (frontend-engineer)
+- [ ] checks — tsc, линтер, тесты, сборка
+- [ ] review — Ревью (frontend-reviewer)
+- [ ] handoff — Ветка и текст MR, человек решает про MR
+
+## Проверки
+
+_пока нет_
+
+## Открытые вопросы
+
+- Какой эндпоинт отдаёт заказы? Пока мок в src/features/orders/api
+```
+
+Статусы: `open` — идёт работа; `blocked` — ждём человека или внешнее (в «Открытые вопросы» — чего именно ждём); `done` — задача закрыта.
+
+## Когда обновлять
+
+| Момент | Команда |
+|---|---|
+| Выбран конвейер (кроме `small-edit`) | `new` |
+| Ворота этапа пройдены | `stage <следующий этап>` и `note … checks "<факт проверки>"` |
+| Принято решение или допущение | `note … decisions` |
+| Появился файл, ветка, ссылка на фрейм, спека | `note … artifacts` |
+| Нужен ответ человека | `note … questions` и `stage <тот же этап> --status blocked` |
+| MR открыт или человек принял результат | `stage <slug> done` |
+
+## Продолжение в новом чате
+
+Хук `SessionStart` (`scripts/session-tasks.mjs`) при старте сессии печатает до трёх незавершённых задач. Отключить: `MDIGITAL_TASKS_HOOK=off`. На «продолжи задачу», «что там с задачей» или после этой подсказки дирижёр:
+
+1. `task.mjs show <slug>` (или `list --open`, если slug не назван);
+2. сверяет файл с репозиторием: ветка, `git log`, есть ли артефакты из «Артефакты»;
+3. повторяет ворота последнего отмеченного этапа — факты могли устареть;
+4. продолжает с этапа «← сейчас».
