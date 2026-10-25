@@ -57,9 +57,13 @@ const queryClient = useQueryClient();
 
 ## Next.js App Router
 
-Next.js 16 with `cacheComponents` makes data dynamic by default; caching on the server is opt-in
-with `'use cache'`, `cacheLife`, `cacheTag`. TanStack Query is the client cache; the two layers
-are independent.
+This section owns only the TanStack Query side. Framework rules (rendering model, Cache Components,
+Server Action security, proxy, self-hosting, upgrades) live in the [nextjs skill](../../nextjs/SKILL.md);
+server caching details in [nextjs caching.md](../../nextjs/references/caching.md).
+
+Next.js 16 with `cacheComponents` (default for new apps since 16.4) makes data dynamic by default;
+caching on the server is opt-in with `'use cache'`, `cacheLife`, `cacheTag`. TanStack Query is the
+client cache; the two layers are independent.
 
 ### Query client factory
 
@@ -93,24 +97,36 @@ that calls `getQueryClient()` (not `useState(new QueryClient())` inside a Suspen
 
 ```tsx
 // app/orders/[id]/page.tsx (thin)
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default function Page({ params }: PageProps<'/orders/[id]'>) {
+  return (
+    <Suspense fallback={<OrderSkeleton />}>                   {/* params is a runtime API: keep it under Suspense */}
+      {params.then(({ id }) => <OrderData id={id} />)}
+    </Suspense>
+  );
+}
+
+function OrderData({ id }: { id: string }) {
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(orderQueries.detail(id));   // not awaited: streams with pending dehydration
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<OrderSkeleton />}>
-        <OrderDetails orderId={id} />                        {/* 'use client', useSuspenseQuery */}
-      </Suspense>
+      <OrderDetails orderId={id} />                          {/* 'use client', useSuspenseQuery */}
     </HydrationBoundary>
   );
 }
 ```
 
+`async function Page` with `await params` at the top is equivalent when the segment has `loading.tsx`
+(or the previous caching model is used); without a Suspense boundary Cache Components reports `blocking-route`.
+
 - Fetchers used on the server must not rely on browser-only things (cookies are forwarded
   explicitly via `headers()`), or use a server-only fetcher with the same Zod schema.
 - If Dates or other non-JSON values are in the cache, configure `serializeData`/`deserializeData`
   (e.g. superjson) on dehydrate/hydrate, or keep dates as strings in schemas used for SSR.
+- The server `queryFn` may differ from the client one (a server-only fetcher or a `'use cache'` read) as long as
+  the query key and Zod schema are the same. If that read is `'use cache'`d, `dehydrate()` reads the current
+  time during prerender: use the "prerenderable hydration state" pattern from the official
+  [TanStack Query guide](https://nextjs.org/docs/app/guides/client-side-data-fetching/tanstack-query).
 
 ### When not to use TanStack Query in Next.js
 
@@ -124,7 +140,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 - Default: `useMutation` calling a route handler / backend API, invalidating Query keys as usual.
 - Server Actions are allowed as the `mutationFn`:
   `useMutation({ mutationFn: updateOrderAction, onSuccess: () => queryClient.invalidateQueries(...) })`.
-  In the action call `revalidatePath`/`updateTag` only for data that Server Components render.
+  In the action call `updateTag`/`revalidatePath` only for data that Server Components render. Auth, ownership
+  and Zod inside every action: [nextjs server-actions.md](../../nextjs/references/server-actions.md).
 - `useActionState`/`<form action>` without Query: only for simple forms with no client cache
   involvement; `react-ux` (forms, React Hook Form + Zod) and `applyServerErrors` in `react-error-handling` are the default.
 
