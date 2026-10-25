@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-// Copies Mbank UI kit components (plugins/frontend-pack/registry/mbank) into a React project.
-// Usage: node add-ui.mjs <name...|all> [--dir src/shared/ui] [--components-dir src/shared/components]
-//        [--lib-dir src/shared/lib] [--tokens src/styles/mbank-tokens.css] [--cwd .] [--dry-run] [--force]
-//        node add-ui.mjs --list
+// Copies Mbank UI kit components and CRM blocks (plugins/frontend-pack/registry/mbank) into a React project.
+// Usage: node add-ui.mjs <name...|all|blocks> [--dir src/shared/ui] [--components-dir src/shared/components]
+//        [--blocks-dir src/shared/components/crm] [--lib-dir src/shared/lib] [--tokens src/styles/mbank-tokens.css]
+//        [--cwd .] [--dry-run] [--force]
+//        node add-ui.mjs --list   ("all" = every kit item and block, "blocks" = every block)
 // Never overwrites an existing file without --force. Pure Node 18+, no dependencies.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve, sep } from 'node:path';
@@ -12,6 +13,7 @@ const REGISTRY_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'reg
 const DEFAULTS = {
   dir: 'src/shared/ui',
   'components-dir': 'src/shared/components',
+  'blocks-dir': 'src/shared/components/crm',
   'lib-dir': 'src/shared/lib',
   tokens: 'src/styles/mbank-tokens.css',
   cwd: '.',
@@ -54,15 +56,18 @@ export function resolveItems(names, items) {
     for (const dep of item.registryDependencies ?? []) visit(dep, name);
     order.push(item);
   };
-  const wanted = names.includes('all') ? [...items.keys()] : names;
+  const blocks = [...items.values()].filter(isBlock).map((item) => item.name);
+  const wanted = names.flatMap((name) => (name === 'all' ? [...items.keys()] : name === 'blocks' ? blocks : [name]));
   for (const name of wanted) visit(name);
   return order;
 }
 
+export const isBlock = (item) => item.type === 'registry:block';
+
 function targetPath(file, opts, root) {
   const name = basename(file.path);
   if (file.target === 'tokens') return resolve(root, opts.tokens);
-  const dir = { ui: opts.dir, components: opts['components-dir'], lib: opts['lib-dir'] }[file.target];
+  const dir = { ui: opts.dir, components: opts['components-dir'], blocks: opts['blocks-dir'], lib: opts['lib-dir'] }[file.target];
   if (!dir) throw new Error(`Unknown target "${file.target}" for ${file.path}`);
   return resolve(root, dir, name);
 }
@@ -107,7 +112,10 @@ export function cssImportHint(root, tokensFile) {
 export function run(opts, log = console.log) {
   const items = loadRegistry();
   if (opts.list) {
-    for (const item of items.values()) log(`${item.name.padEnd(14)} ${item.description}`);
+    const all = [...items.values()];
+    for (const item of all.filter((i) => !isBlock(i))) log(`${item.name.padEnd(18)} ${item.description}`);
+    log('\nBlocks (CRM / admin, installed into --blocks-dir; "blocks" installs all):');
+    for (const item of all.filter(isBlock)) log(`${item.name.padEnd(18)} ${item.description}`);
     return { written: [], skipped: [], missing: [] };
   }
   if (opts.names.length === 0) throw new Error('Name at least one item (or "all"). Run with --list.');
@@ -149,6 +157,8 @@ export function run(opts, log = console.log) {
     log('\nNote: your utils.ts keeps plain tailwind-merge. Use registry/mbank/lib/utils.ts (extendTailwindMerge)');
     log('so text-2xs / text-caption / text-md are not dropped next to text-<color> classes.');
   }
+  if (plan.some(isBlock) && opts.dir !== DEFAULTS.dir)
+    log(`\nNote: blocks import kit components from "@/shared/ui/*". With --dir ${opts.dir} fix those imports.`);
   log('\nImports use "@/shared/lib/utils": make sure tsconfig paths and the bundler alias map "@/" to src/.');
   return { written, skipped, missing };
 }

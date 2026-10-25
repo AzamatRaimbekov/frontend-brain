@@ -1,0 +1,106 @@
+import type * as React from "react"
+
+/*
+ * Outline glyphs for the CRM blocks and the side menu (24 grid, stroke = currentColor).
+ * TODO: replace with SVGs exported from the Mbank Icons library (mbank-ui "Icons"); no Lucide.
+ * Kit glyphs (check, chevron-down, close) stay in shared/ui/icons.tsx.
+ */
+type IconProps = React.ComponentProps<"svg">
+
+function Icon({ children, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={24}
+      height={24}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      {children}
+    </svg>
+  )
+}
+
+export const SearchIcon = (p: IconProps) => (
+  <Icon {...p}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></Icon>
+)
+export const BellIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z" /><path d="M10 21h4" /></Icon>
+)
+export const SettingsIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 2.5l2 2.2 3-.4.9 2.9 2.7 1.4-1 2.9 1 2.9-2.7 1.4-.9 2.9-3-.4-2 2.2-2-2.2-3 .4-.9-2.9-2.7-1.4 1-2.9-1-2.9 2.7-1.4.9-2.9 3 .4z" />
+  </Icon>
+)
+export const ChevronLeftIcon = (p: IconProps) => (
+  <Icon {...p}><path d="m15 6-6 6 6 6" /></Icon>
+)
+export const ChevronsLeftIcon = (p: IconProps) => (
+  <Icon {...p}><path d="m11 7-5 5 5 5M18 7l-5 5 5 5" /></Icon>
+)
+export const PlusIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M12 5v14M5 12h14" /></Icon>
+)
+export const MenuIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M4 6h16M4 12h16M4 18h16" /></Icon>
+)
+export const MoreVerticalIcon = (p: IconProps) => (
+  <Icon {...p}><circle cx="12" cy="5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /></Icon>
+)
+export const HomeIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z" /></Icon>
+)
+export const UserIcon = (p: IconProps) => (
+  <Icon {...p}><circle cx="12" cy="8" r="4" /><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5" /></Icon>
+)
+export const UsersIcon = (p: IconProps) => (
+  <Icon {...p}><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c1-3 3.5-4.5 6.5-4.5s5.5 1.5 6.5 4.5M16 4.5a3.5 3.5 0 0 1 0 7M18 15.5c1.8.6 3 2 3.5 4.5" /></Icon>
+)
+export const ChartIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M4 20V10M9.5 20V4M15 20v-7M20.5 20V8" /></Icon>
+)
+export const ClockIcon = (p: IconProps) => (
+  <Icon {...p}><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></Icon>
+)
+export const ListIcon = (p: IconProps) => (
+  <Icon {...p}><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><path d="M8 9h8M8 12h8M8 15h5" /></Icon>
+)
+export const LayersIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M12 4 3.5 8.5 12 13l8.5-4.5zM3.5 12.5 12 17l8.5-4.5M3.5 16.5 12 21l8.5-4.5" /></Icon>
+)
+export const MapPinIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></Icon>
+)
+export const ScanIcon = (p: IconProps) => (
+  <Icon {...p}><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M7 10h4M7 14h7M16 10h1" /></Icon>
+)
+export const FileCheckIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M14 3.5H6.5v17h11V7z" /><path d="M14 3.5V7h3.5M9 13.5l2 2 4-4" /></Icon>
+)
+export const FileIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M14 3.5H6.5v17h11V7z" /><path d="M14 3.5V7h3.5M9.5 12h5M9.5 16h5" /></Icon>
+)
+export const DownloadIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M4.5 19.5h15" /></Icon>
+)
+export const EyeIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" /><circle cx="12" cy="12" r="3" /></Icon>
+)
+export const AlertIcon = (p: IconProps) => (
+  <Icon {...p}><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><path d="M12 8v5M12 16h.01" /></Icon>
+)
+export const ShieldIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M12 3.5 5 6v5.5c0 4.5 3 7.7 7 9 4-1.3 7-4.5 7-9V6z" /><path d="m9 12 2 2 4-4" /></Icon>
+)
+export const BookIcon = (p: IconProps) => (
+  <Icon {...p}><path d="M5 4.5h10.5a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z" /><path d="M5 16.5a3 3 0 0 1 3-3h10.5" /></Icon>
+)
+export const LifeBuoyIcon = (p: IconProps) => (
+  <Icon {...p}><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="3.5" /><path d="m6 6 3.5 3.5M18 6l-3.5 3.5M6 18l3.5-3.5M18 18l-3.5-3.5" /></Icon>
+)
