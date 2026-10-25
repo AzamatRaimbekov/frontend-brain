@@ -4,7 +4,7 @@ Mock the network, not the hooks. The real `queryOptions`, fetchers, Zod schemas 
 run in tests.
 
 ```ts
-// features/orders/api/__mocks__/order.handlers.ts
+// src/features/orders/api/orders.handlers.ts (no __mocks__ folder: Vitest reserves it for automocks)
 import { http, HttpResponse } from 'msw'; // msw's `http`, not shared/api/http
 export const orderHandlers = [
   http.get('*/orders', () => HttpResponse.json([orderFixture()])),
@@ -12,9 +12,16 @@ export const orderHandlers = [
     HttpResponse.json({ ...orderFixture({ id: String(params.id) }), ...((await request.json()) as object) })),
 ];
 
+// src/mocks/handlers.ts - the one list for dev, tests and Storybook
+export const handlers = [...orderHandlers /*, ...other features */];
+
+// src/mocks/browser.ts - dev only, started in main.tsx under import.meta.env.DEV
+export const worker = setupWorker(...handlers);
+// main.tsx: await worker.start({ quiet: true, onUnhandledFrame: 'bypass' })
+
 // src/test/server.ts
-export const server = setupServer(...orderHandlers /*, ...other features */);
-// vitest.setup.ts: beforeAll(() => server.listen({ onUnhandledRequest: 'error' })); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
+export const server = setupServer(...handlers);
+// src/test/setup.ts: beforeAll(() => server.listen({ onUnhandledFrame: 'error' })); afterEach(() => server.resetHandlers()); afterAll(() => server.close());
 
 // src/test/render.tsx
 export function renderWithClient(ui: ReactElement) {
@@ -35,5 +42,6 @@ Test cases to write for each feature with server state:
 Rules:
 - A fresh `QueryClient` per test (no shared cache between tests).
 - `retry: false` in tests, otherwise error tests wait for backoff.
-- `onUnhandledRequest: 'error'` so unmocked requests fail loudly.
-- Reuse the same handlers in Storybook (`msw-storybook-addon`) and local dev if the backend is not ready.
+- `onUnhandledFrame: 'error'` so unmocked requests fail loudly (MSW v3 name; v3 silently ignores the v2 `onUnhandledRequest`).
+- Reuse the same `src/mocks/handlers.ts` in Storybook (`msw-storybook-addon`) and local dev if the backend is not ready; dev scenarios (`?mock=empty|error`) are read by handlers, never by `queryFn` (`react-testing` section 5).
+- Existing projects keep their mock layout; new handlers follow it.

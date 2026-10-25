@@ -72,6 +72,7 @@ Rules:
 - An error with cached data is not a full-screen error: keep the data, show an inline banner or toast.
 - Distinguish "no data yet" from "nothing matches your filters": the second empty state offers "Clear filters".
 - With `useSuspenseQuery`, use `<Suspense fallback={<Skeleton/>}>` + an error boundary from `react-error-handling`; empty still needs handling in the component.
+- An existing project's `ErrorState`/`EmptyState` (its own props, or the UI kit's) wins over the code here; new projects use the `react-ux` ones.
 
 Details, Suspense variant and the `Delayed` implementation: `references/async-states.md`.
 
@@ -180,7 +181,8 @@ Examples: `references/url-state.md`.
 
 - **Focus after navigation**: move focus to the new page's `<h1>` (tabIndex={-1}) or main region; announce the route title.
 - **Dialogs**: focus moves into the dialog and returns to the trigger on close (Radix/shadcn does this; do not break it with conditional unmounting of the trigger).
-- **After deleting an item**, move focus to the next item, or the list heading if empty; never leave focus on `<body>`.
+- **After deleting an item**, move focus to the next item, or the list heading if empty; never leave focus on `<body>`. When the action removes its own trigger (a cancel button hidden by the new status), run the mutation in a parent that stays mounted and focus the `h1` in `onSuccess` (recipe in `references/accessibility-ux.md`).
+- **One `h1` in every state**: loading, error and 404 views keep the page `h1` (visible or `sr-only`); `EmptyState`/`ErrorState` titles are `h2` (`references/async-states.md`).
 - **Async updates**: result counts, "Saved", loading done → a polite live region (`role="status"`). Errors needing attention → `role="alert"`. sonner already uses a live region.
 - **Keyboard**: every action reachable and operable by keyboard; visible focus ring; focused element not hidden under sticky headers (2.4.11).
 - **Reduced motion**: respect `prefers-reduced-motion` (Tailwind `motion-safe:` / `motion-reduce:`); skeleton shimmer and transitions turn into static states.

@@ -48,6 +48,7 @@ export const isApiError = (e: unknown): e is ApiError => e instanceof ApiError
 - `catch (error)` is `unknown` (strict mode). Narrow with `isApiError`, `instanceof`, or Zod - never cast `as Error`.
 - Use `toError(unknown): Error` before passing anything to a reporter or boundary.
 - Feature code never calls `fetch` directly and never parses error bodies itself.
+- Existing project with an older `http()` (other signature, no `ApiError` kinds): extend it minimally for the task (for example accept `RequestInit` for a POST, add `isApiError`), keep its callers working, and do not migrate the whole layer inside a feature task; propose the migration in the report.
 - `useQuery().error` is typed `ApiError` without generics by the single `Register` declaration (`defaultError`, `queryMeta`, `mutationMeta`) in [references/tanstack-query.md](references/tanstack-query.md). Do not declare it anywhere else.
 
 ## 3. Layered error boundaries
@@ -203,7 +204,7 @@ Setup, scrubbing code, Next.js `onRequestError`: [references/logging.md](referen
 - Always pass TanStack Query's `signal` into `http()` so unmounts and key changes cancel requests.
 - `AbortError` from the caller's signal is `kind: 'aborted'`: never toast, never report.
 - Offline: TanStack Query pauses queries (`networkMode: 'online'`); show a global offline banner from `onlineManager`, not per-request errors.
-- Every app ships four shell states before its first feature page: crash fallback, 404, missing entity, offline banner. Code and checklist: [references/app-shell.md](references/app-shell.md).
+- Every app ships four shell states before its first feature page: crash fallback, 404, missing entity, offline banner. Code and checklist: [references/app-shell.md](references/app-shell.md). Their texts live in `shared/lib/messages.ts` or `common.*` i18n keys. An existing project without them gets the missing ones as a separate commit in the same branch, named in the MR.
 
 ## Anti-patterns (reject in review)
 

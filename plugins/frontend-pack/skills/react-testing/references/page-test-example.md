@@ -2,19 +2,25 @@
 
 A Vite + TanStack Router page `OrdersPage` with a list (query) and a create form (mutation). The handler layout, `server.ts` and `renderWithClient` are owned by `react-data-fetching` [testing.md](../../react-data-fetching/references/testing.md); this file adds the routed render helper, the i18n guard and the four state tests.
 
-## vitest.setup.ts
+## src/test/setup.ts
+
+`vitest.config.ts` (or `vite.config.ts` `test`): `setupFiles: ['./src/test/setup.ts']`. Inside `src/` the file is covered by `tsconfig.app.json`, so the jest-dom matcher types reach every test file.
 
 ```ts
 import '@testing-library/jest-dom/vitest'
 import { afterAll, afterEach, beforeAll, expect } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { i18n } from '@/shared/config/i18n'
-import { server } from './src/test/server'
+import { server } from './server'
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+// TanStack Router restores scroll on navigation; jsdom has no scrollTo and logs "Not implemented".
+window.scrollTo = () => {}
+
+beforeAll(() => server.listen({ onUnhandledFrame: 'error' })) // MSW v3; v2 projects: onUnhandledRequest
 afterEach(() => {
   cleanup()
   server.resetHandlers()
+  sessionStorage.clear() // dev mock scenario and anything else the page stored
 })
 afterAll(() => server.close())
 
@@ -31,9 +37,11 @@ afterEach(() => {
 })
 ```
 
-`cleanup()` is explicit because `globals: false` disables Testing Library's auto-cleanup. File name and MSW lines match `react-data-fetching` [testing.md](../../react-data-fetching/references/testing.md) (`vitest.setup.ts`). The i18n instance, its `ru` default and the one-namespace key form (`orders.*`, `errors.*`, `common.*` all in `translation`) come from `react-security-i18n` [i18n.md](../../react-security-i18n/references/i18n.md).
+`cleanup()` is explicit because `globals: false` disables Testing Library's auto-cleanup. MSW lines match `react-data-fetching` [testing.md](../../react-data-fetching/references/testing.md). More jsdom stubs (`matchMedia`, `ResizeObserver`, motion): knowledge entry [testing/vitest-setup-and-network-fakes](../../../knowledge/testing/vitest-setup-and-network-fakes.md). The i18n instance, its `ru` default and the one-namespace key form (`orders.*`, `errors.*`, `common.*` all in `translation`) come from `react-security-i18n` [i18n.md](../../react-security-i18n/references/i18n.md).
 
 ## src/test/render.tsx (routed render)
+
+File-based routing (`@tanstack/router-plugin` generates `src/routeTree.gen.ts`):
 
 ```tsx
 import { render } from '@testing-library/react'
@@ -63,9 +71,46 @@ export function renderRoute(url: string) {
 }
 ```
 
+Code-based routing (routes declared in `src/app/router.tsx`, no `routeTree.gen`): export the tree and a factory from the router file, so tests build a fresh router with their own history and the app keeps its singleton.
+
+```tsx
+// src/app/router.tsx
+import { createRootRoute, createRoute, createRouter, type RouterHistory } from '@tanstack/react-router'
+// ...rootRoute, ordersRoute, orderRoute declared with createRootRoute/createRoute
+export const routeTree = rootRoute.addChildren([ordersRoute, orderRoute])
+
+export const createAppRouter = ({ history }: { history?: RouterHistory } = {}) =>
+  createRouter({
+    routeTree,
+    history,
+    defaultPreload: 'intent',
+    defaultNotFoundComponent: NotFoundPage,
+    defaultErrorComponent: AppErrorFallback,
+  })
+
+export const router = createAppRouter()
+declare module '@tanstack/react-router' { interface Register { router: typeof router } }
+
+// src/test/render.tsx (createTestQueryClient as above)
+import { createAppRouter } from '@/app/router'
+
+export function renderRoute(url: string) {
+  const queryClient = createTestQueryClient()
+  const router = createAppRouter({ history: createMemoryHistory({ initialEntries: [url] }) })
+  const utils = render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  )
+  return { ...utils, router, queryClient }
+}
+```
+
+The test router gets the same defaults (404, error component, preload) as the app, so shell states are testable too.
+
 Next.js: render the page's client component with `renderWithClient` and mock only `next/navigation` (`useRouter`, `useSearchParams`) with `vi.mock('next/navigation', ...)`. With `nuqs`, wrap the render in nuqs' testing adapter (`NuqsTestingAdapter` from `nuqs/adapters/testing`, `searchParams` prop for the initial URL) so URL state works without Next.
 
-## src/features/orders/api/__mocks__/order.handlers.ts
+## src/features/orders/api/orders.handlers.ts
 
 ```ts
 import { delay, http, HttpResponse } from 'msw'
@@ -111,7 +156,7 @@ import { renderRoute } from '@/test/render'
 import { i18n } from '@/shared/config/i18n'
 import {
   createOrderEmailTaken, orderFixture, ordersEmpty, ordersLoadingForever, ordersServerError,
-} from '@/features/orders/api/__mocks__/order.handlers'
+} from '@/features/orders/api/orders.handlers'
 
 const t = i18n.t.bind(i18n)
 
@@ -171,6 +216,7 @@ describe('OrdersPage', () => {
 
 Notes:
 - Keys like `orders.empty.title` and test ids like `orders-skeleton` are the page's own; the shape of the tests is the rule, not these names.
+- The page keeps its `h1` in the loading and error states (visible or `sr-only`); the `ErrorState`/`EmptyState` title is an `h2` with different text. Query state headings by level and name, e.g. `findByRole('heading', { level: 2, name: t('errors.loadFailed.title') })`; two headings with one name make `getByRole` throw.
 - If the create button also exists in the page header, scope the query with `within(...)` on the empty-state container (`role="status"` in `react-ux` async-states.md).
 - Whether the field message is the raw server key or a mapped text depends on the backend contract (see `applyServerErrors` notes in `react-error-handling`). Assert on what the user actually sees.
 - The 422 path must not also toast: the mutation sets `meta: { skipGlobalErrorToast: true }` (`react-error-handling` section 7). If the test renders the app's `<Toaster />`, assert the error text appears exactly once.
