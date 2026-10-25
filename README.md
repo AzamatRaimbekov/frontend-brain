@@ -107,7 +107,7 @@ $frontend Проверь фронтенд в этой ветке перед merg
 
 База знаний: `plugins/frontend-pack/knowledge/` — короткие статьи (правило, рецепт, решение, ловушка) по областям и стекам, оглавление в [knowledge/INDEX.md](plugins/frontend-pack/knowledge/INDEX.md). Агент ищет в ней перед работой: `node plugins/frontend-pack/scripts/knowledge.mjs search <слова> --stack vite`.
 
-Агенты: `frontend-architect` (планирует фичу до кода), `frontend-reviewer` (ревью кода, только читает), `design-lead` (ведёт фичу от брифа и Figma до кода, сам код не пишет), `design-qa` (сверяет готовую страницу с макетом).
+Агенты: `frontend-engineer` (делает задачу целиком: план, код, тесты, проверки в браузере, саморевью, описание MR), `frontend-architect` (планирует фичу до кода), `frontend-reviewer` (ревью кода, только читает), `design-lead` (ведёт фичу от брифа и Figma до кода, сам код не пишет), `design-qa` (сверяет готовую страницу с макетом).
 
 Второй плагин **figma-pack**: каталог дизайн-системы Mbank, рисование экранов в Figma только из компонентов системы (агент `figma-designer`, нужно Full-место), чтение макета в спеку (агент `figma-reader`, хватает Dev-места), код для React, React Native и Flutter. Установка: `claude plugin install figma-pack@frontend-brain`.
 
@@ -116,6 +116,8 @@ $frontend Проверь фронтенд в этой ветке перед merg
 Хуки:
 - перед созданием новой страницы (`src/pages/<route>/*.tsx`, `page.tsx` в Next.js) рядом должен лежать `UX.md` с брифом (отключить в проекте: `MDIGITAL_UX_BRIEF=off`);
 - после каждой правки `.tsx`/`.jsx` файл длиннее 150 строк возвращается на декомпозицию (`shared/ui`, тесты и stories не считаются; старые файлы можно править, если они не растут).
+- после каждой правки `.ts`/`.tsx`/`.js` файл проверяется ESLint проекта, ошибки сразу возвращаются агенту (нужны `eslint.config.*` и установленные зависимости; отключить: `MDIGITAL_LINT_HOOK=off`);
+- на фронтовой задаче в React/Next/Vite-проекте мозг включается сам и объявляет маршрут: тип задачи, режим, скиллы (отключить: `MDIGITAL_FRONTEND_AUTOSTART=off`).
 
 Приоритет: правила Mdigital выше внешних. Где правило Vercel спорит с нашими (SWR, ручная мемоизация, barrel-файлы), в `react-brain` написано, что применять вместо него.
 
@@ -134,7 +136,7 @@ plugins/frontend-pack/            плагин фронтенда
   rules/libraries.json            белый и чёрный список библиотек
   knowledge/<область>/*.md        база знаний команды, INDEX.md генерируется
   registry/mbank/                 UI-кит Mbank: tokens.css, компоненты, registry.json
-  agents/                         frontend-architect, frontend-reviewer
+  agents/                         frontend-engineer, frontend-architect, frontend-reviewer, design-lead, design-qa
   hooks/, scripts/                хуки UX-бриф и 150 строк, knowledge.mjs (поиск, индекс, проверка)
 .github/                          CODEOWNERS, шаблон PR; CI-файл лежит в docs/ci/test.yml — перенести в .github/workflows/ после выдачи gh права workflow
 docs/reports/                     отчёты (A/B-тест UX-брифа)

@@ -203,6 +203,7 @@ Setup, scrubbing code, Next.js `onRequestError`: [references/logging.md](referen
 - Always pass TanStack Query's `signal` into `http()` so unmounts and key changes cancel requests.
 - `AbortError` from the caller's signal is `kind: 'aborted'`: never toast, never report.
 - Offline: TanStack Query pauses queries (`networkMode: 'online'`); show a global offline banner from `onlineManager`, not per-request errors.
+- Every app ships four shell states before its first feature page: crash fallback, 404, missing entity, offline banner. Code and checklist: [references/app-shell.md](references/app-shell.md).
 
 ## Anti-patterns (reject in review)
 
@@ -222,6 +223,7 @@ Setup, scrubbing code, Next.js `onRequestError`: [references/logging.md](referen
 - [ ] All HTTP goes through `shared/api/http.ts`; responses are Zod-validated; failures are `ApiError`.
 - [ ] No empty catch, no `any` in catch, no `console.log`, no floating promises.
 - [ ] App root boundary + route `errorComponent`/`error.tsx` + widget boundaries around independent widgets.
+- [ ] App shell states exist: crash fallback, 404 page, offline banner ([references/app-shell.md](references/app-shell.md)).
 - [ ] Boundaries containing queries are wrapped in `QueryErrorResetBoundary`; retry actually refetches.
 - [ ] Event handler and async errors are handled in place or escalated with `showBoundary`.
 - [ ] Query retry skips 4xx; `throwOnError` only for unexpected errors without cached data.

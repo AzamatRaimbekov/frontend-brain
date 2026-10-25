@@ -34,7 +34,7 @@ description: End-to-end team process from a Figma design to merged React code at
 | 4 | Спека | агент `figma-reader` | ссылка на утверждённый фрейм с `node-id` | спека по `spec-template` (12 разделов), скриншоты `.figma/<fileKey>/<nodeId>.png` | разделы 1–11 есть, вопросы раздела 11 закрыты или стали допущениями |
 | 5 | UX.md | [react-page-ux](../react-page-ux/SKILL.md) | спека (разделы 8 и 11 → состояния и допущения) | `src/pages/<route>/UX.md` | ворота B |
 | 6 | План файлов | агент [frontend-architect](../../agents/frontend-architect.md) | спека + UX.md | дерево файлов, данные, состояния | у каждого файла одна ответственность, оценка ≤ 150 строк |
-| 7 | Код | основная сессия: `figma-pack:figma-to-react` + [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md), [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md), [react-dry](../react-dry/SKILL.md); для Mbank `mbank-ui` (если установлен, иначе code-mapping §7) | план, спека, UX.md | ветка с кодом | ворота C |
+| 7 | Код | агент [frontend-engineer](../../agents/frontend-engineer.md) или основная сессия: `figma-pack:figma-to-react` + [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md), [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md), [react-dry](../react-dry/SKILL.md); для Mbank `mbank-ui` (если установлен, иначе code-mapping §7) | план, спека, UX.md | ветка с кодом | ворота C |
 | 8 | Визуальная сверка | агент [design-qa](../../agents/design-qa.md) | URL страницы, скриншоты Figma | таблица отличий 1280 / 768 / 375 | нет отличий с пометкой «исправить» |
 | 9 | Ревью | агент [frontend-reviewer](../../agents/frontend-reviewer.md) | изменённые файлы | список нарушений | 0 блокирующих |
 | 10 | QA и PR | основная сессия: `react-page-ux` §5 (состояния через MSW, клавиатура, консоль) | ветка | PR с отчётом | ворота D |
@@ -69,7 +69,7 @@ design-lead ── ворота и следующий шаг, кода не пи
   ├─ человек-дизайнер (утверждение)
   ├─ figma-reader (figma-pack, только чтение) → спека
   ├─ frontend-architect → план
-  ├─ основная сессия → код по скиллам frontend-pack
+  ├─ frontend-engineer (или основная сессия) → код, тесты, проверки, саморевью
   ├─ design-qa → сверка с Figma
   └─ frontend-reviewer → ревью
 ```

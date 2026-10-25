@@ -65,16 +65,20 @@ for (const change of changes) {
       },
     };
   }
-  const result = spawnSync(process.execPath, [join(scripts, script), ...args], {
-    input: JSON.stringify(input), encoding: 'utf8', cwd,
-  });
-  if (result.stdout) process.stdout.write(result.stdout);
-  if (result.stderr) process.stderr.write(result.stderr);
-  if (result.error) {
-    process.stderr.write(`Frontend hook failed: ${result.error.message}\n`);
-    status = Math.max(status, 1);
-  } else if (result.status !== 0) {
-    status = Math.max(status, result.status ?? 1);
+  // After a patch also lint the changed file with the project's ESLint.
+  const runs = phase === 'post' ? [[script, args], ['lint-on-edit.mjs', []]] : [[script, args]];
+  for (const [name, extra] of runs) {
+    const result = spawnSync(process.execPath, [join(scripts, name), ...extra], {
+      input: JSON.stringify(input), encoding: 'utf8', cwd,
+    });
+    if (result.stdout) process.stdout.write(result.stdout);
+    if (result.stderr) process.stderr.write(result.stderr);
+    if (result.error) {
+      process.stderr.write(`Frontend hook failed: ${result.error.message}\n`);
+      status = Math.max(status, 1);
+    } else if (result.status !== 0) {
+      status = Math.max(status, result.status ?? 1);
+    }
   }
 }
 process.exit(status);

@@ -22,6 +22,7 @@ existing project instructions and the user's chosen stack and scope.
 
 The Claude agents are reusable procedures in Codex:
 
+- For a whole task end to end, follow `agents/frontend-engineer.md` as the procedure.
 - For a large page or feature, read `agents/frontend-architect.md` and produce
   its file plan in the current session.
 - Before finishing implementation, read `agents/frontend-reviewer.md` and
@@ -36,13 +37,14 @@ If none is available, follow the page skill's test fallback and report which
 visual checks were not performed.
 
 The Codex manifest uses `hooks/codex-hooks.json`: its adapter translates
-`apply_patch` events into the existing UX-brief and file-size checks. Hooks run
+`apply_patch` events into the existing UX-brief, file-size and ESLint checks; a `UserPromptSubmit` hook reminds the agent to start with `$frontend` on frontend tasks. Hooks run
 only when enabled and trusted in Codex; installing a skill alone does not
 prove that a hook ran. File writes through other tools still need the checks
 specified by the skills. Before finishing, run:
 
 ```sh
 node <plugin-root>/scripts/check-file-size.mjs <changed-component-paths>
+npx eslint <changed-files>
 ```
 
 Respect the existing exception for legacy oversized files that did not grow,

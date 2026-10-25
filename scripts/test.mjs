@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Repository checks: plugin manifests, skill frontmatter, relative links in skills and agents, and the two hooks.
 // Usage: node scripts/test.mjs  (exit 1 if any check fails)
-import { readFileSync, readdirSync, statSync, existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, chmodSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { spawnSync } from 'node:child_process';
@@ -124,6 +124,52 @@ const tests = {
       writeFileSync(small, 'export const x = 1;\n'.repeat(20));
       assert.equal(run('check-file-size.mjs', { tool_name: 'Write', tool_input: { file_path: big } }).status, 2);
       assert.equal(run('check-file-size.mjs', { tool_name: 'Write', tool_input: { file_path: small } }).status, 0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  },
+  'lint-on-edit feeds ESLint errors back and stays quiet otherwise'() {
+    const dir = mkdtempSync(join(tmpdir(), 'frontend-brain-'));
+    const hook = (file, env = {}) =>
+      spawnSync(process.execPath, [join(PLUGIN, 'scripts', 'lint-on-edit.mjs')], {
+        encoding: 'utf8', env: { ...process.env, ...env },
+        input: JSON.stringify({ tool_name: 'Edit', tool_input: { file_path: file } }),
+      });
+    try {
+      const src = join(dir, 'src');
+      mkdirSync(join(dir, 'node_modules', '.bin'), { recursive: true });
+      mkdirSync(src);
+      const file = join(src, 'App.tsx');
+      writeFileSync(file, 'export const App = () => null\n');
+      assert.equal(hook(file).status, 0, 'no eslint.config: nothing to enforce');
+      writeFileSync(join(dir, 'eslint.config.js'), 'export default []\n');
+      const bin = join(dir, 'node_modules', '.bin', 'eslint');
+      writeFileSync(bin, '#!/bin/sh\necho "src/App.tsx  1:1  error  Unexpected any  @typescript-eslint/no-explicit-any"\nexit 1\n');
+      chmodSync(bin, 0o755);
+      const failed = hook(file);
+      assert.equal(failed.status, 2);
+      assert.match(failed.stderr, /no-explicit-any/);
+      assert.equal(hook(file, { MDIGITAL_LINT_HOOK: 'off' }).status, 0);
+      writeFileSync(bin, '#!/bin/sh\nexit 0\n');
+      assert.equal(hook(file).status, 0, 'clean file');
+      assert.equal(hook(join(src, 'notes.md')).status, 0, 'not a script file');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  },
+  'frontend-autostart fires on frontend tasks only'() {
+    const dir = mkdtempSync(join(tmpdir(), 'frontend-brain-'));
+    const hook = (prompt, cwd = dir) =>
+      spawnSync(process.execPath, [join(PLUGIN, 'scripts', 'frontend-autostart.mjs')], {
+        encoding: 'utf8', input: JSON.stringify({ prompt, cwd }),
+      }).stdout;
+    try {
+      assert.equal(hook('сделай страницу заказов'), '', 'not a frontend project and no stack words');
+      assert.match(hook('сделай страницу заказов на React'), /frontend-pack:frontend/);
+      writeFileSync(join(dir, 'package.json'), JSON.stringify({ dependencies: { react: '19.0.0' } }));
+      assert.match(hook('сделай страницу заказов'), /frontend-pack:frontend/);
+      assert.equal(hook('сколько будет 2+2'), '');
+      assert.equal(hook('$frontend сделай страницу'), '', 'already routed');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -20,8 +20,19 @@
           {
             "type": "command",
             "command": "node \"${PLUGIN_ROOT}/scripts/codex-hooks.mjs\" post",
-            "timeout": 10,
-            "statusMessage": "Checking frontend component size"
+            "timeout": 60,
+            "statusMessage": "Checking component size and ESLint"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/frontend-autostart.mjs\"",
+            "timeout": 10
           }
         ]
       }

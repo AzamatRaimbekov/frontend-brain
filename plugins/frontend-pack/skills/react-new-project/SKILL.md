@@ -69,6 +69,7 @@ Create these files, taking the code from the owning skill. Do not invent alterna
 | `shared/components/QueryState.tsx`, `ErrorState.tsx`, `EmptyState.tsx`, `Delayed.tsx` | `react-ux` references/async-states.md |
 | `shared/components/WidgetBoundary.tsx`, `app/AppErrorBoundary.tsx`, `app/AppFallback.tsx` | `react-error-handling` references/boundaries.md |
 | Router with `defaultPreload: 'intent'` and `defaultErrorComponent` (Vite) | `react-data-fetching` references/nextjs.md |
+| `pages/not-found/NotFoundPage.tsx` (`defaultNotFoundComponent`) or `app/not-found.tsx`, `shared/hooks/useOnlineStatus.ts`, `shared/components/OfflineBanner.tsx` | `react-error-handling` references/app-shell.md |
 | `shared/config/env.ts`: parse `import.meta.env` (Vite) or `process.env` (Next.js) with a Zod schema, export typed `env` | this skill |
 | `eslint.config.js` (max-lines 150, hooks, query, import boundaries) | `react-architecture` references/eslint-config.md |
 | i18n setup with `ru` as default locale | `react-security-i18n` references/i18n.md |
