@@ -1,0 +1,152 @@
+{
+  "$comment": "Upstream sources the frontend brain depends on. Read by scripts/brain-watch.mjs and the brain-update skill. type: rss (RSS or Atom feed), github-releases (repo, optional match = tag regex, prereleases), github-commits (repo, optional path, pinned = vendored commit), npm (package, versions with publish time). affects: files or folders in plugins/frontend-pack (../../ = repository root) that a change upstream can make stale. Every URL and repo was checked to respond on 2026-10-25.",
+  "sources": [
+    {
+      "id": "nextjs-blog",
+      "name": "Next.js Blog",
+      "type": "rss",
+      "url": "https://nextjs.org/feed.xml",
+      "affects": ["skills/react-new-project/SKILL.md", "skills/react-architecture/SKILL.md", "skills/react-data-fetching/SKILL.md", "skills/react-security-i18n/SKILL.md"],
+      "note": "Major releases, security advisories, new rendering and caching APIs."
+    },
+    {
+      "id": "nextjs-releases",
+      "name": "Next.js releases",
+      "type": "github-releases",
+      "repo": "vercel/next.js",
+      "prereleases": false,
+      "affects": ["skills/react-new-project/SKILL.md", "skills/react-error-handling/references/sources.md", "skills/react-security-i18n/SKILL.md"],
+      "note": "Stable tags only; canaries are skipped. Security patches need a knowledge entry or a version floor."
+    },
+    {
+      "id": "react-blog",
+      "name": "React Blog",
+      "type": "rss",
+      "url": "https://react.dev/rss.xml",
+      "affects": ["skills/react-brain/SKILL.md", "skills/react-architecture/SKILL.md", "skills/react-performance-a11y/SKILL.md", "skills/react-performance-a11y/references/sources.md"],
+      "note": "Official React release notes and deprecations (react.dev/feed.xml serves the same feed)."
+    },
+    {
+      "id": "tanstack-query",
+      "name": "@tanstack/react-query",
+      "type": "npm",
+      "package": "@tanstack/react-query",
+      "affects": ["skills/react-data-fetching/SKILL.md", "skills/react-data-fetching/references/sources.md", "rules/libraries.json"],
+      "note": "npm instead of GitHub releases: TanStack/query publishes ~20 packages per release, react-query gets buried."
+    },
+    {
+      "id": "tanstack-router",
+      "name": "@tanstack/react-router",
+      "type": "npm",
+      "package": "@tanstack/react-router",
+      "affects": ["skills/react-architecture/SKILL.md", "knowledge/architecture/tanstack-router-auth-guards.md", "rules/libraries.json"],
+      "note": "Patch releases are frequent; act on minor and major versions and on breaking notes."
+    },
+    {
+      "id": "vercel-react-best-practices",
+      "name": "Vercel React Best Practices (agent-skills)",
+      "type": "github-commits",
+      "repo": "vercel-labs/agent-skills",
+      "path": "skills/react-best-practices",
+      "pinned": "063bee94c3f4df8453406c830b0a7df0f2860278",
+      "affects": ["skills/react-brain/references/vercel-react-best-practices", "skills/react-brain/SKILL.md", "../../NOTICE.md"],
+      "note": "Vendored as is in react-brain at the pinned commit. New commits mean a re-vendor: copy files unchanged, bump the pin in react-brain/SKILL.md and NOTICE.md."
+    },
+    {
+      "id": "web-interface-guidelines",
+      "name": "Vercel Web Interface Guidelines",
+      "type": "github-commits",
+      "repo": "vercel-labs/web-interface-guidelines",
+      "affects": ["skills/react-brain/references/web-interface-guidelines.md"],
+      "note": "Adapted, not vendored: port new guidelines by hand."
+    },
+    {
+      "id": "shadcn-changelog",
+      "name": "shadcn/ui changelog",
+      "type": "rss",
+      "url": "https://ui.shadcn.com/rss.xml",
+      "affects": ["skills/shadcn/SKILL.md", "skills/react-ui/SKILL.md", "skills/react-ui/references/sources.md", "skills/mbank-ui/SKILL.md"],
+      "note": "Monthly changelog posts: base library, CLI, new components."
+    },
+    {
+      "id": "shadcn-cli",
+      "name": "shadcn CLI releases",
+      "type": "github-releases",
+      "repo": "shadcn-ui/ui",
+      "match": "^shadcn@",
+      "affects": ["skills/shadcn/SKILL.md", "skills/react-new-project/SKILL.md"],
+      "note": "Only the shadcn CLI package; @shadcn/registry and helpers are skipped."
+    },
+    {
+      "id": "tailwindcss-releases",
+      "name": "Tailwind CSS releases",
+      "type": "github-releases",
+      "repo": "tailwindlabs/tailwindcss",
+      "prereleases": false,
+      "affects": ["skills/react-ui/SKILL.md", "knowledge/ui/tokens-single-source.md", "rules/libraries.json"],
+      "note": "v4 is the team baseline."
+    },
+    {
+      "id": "tailwindcss-blog",
+      "name": "Tailwind CSS Blog",
+      "type": "rss",
+      "url": "https://tailwindcss.com/feeds/feed.xml",
+      "affects": ["skills/react-ui/SKILL.md", "rules/libraries.json"],
+      "note": "Project news and major announcements."
+    },
+    {
+      "id": "vite-releases",
+      "name": "Vite releases",
+      "type": "github-releases",
+      "repo": "vitejs/vite",
+      "match": "^v\\d",
+      "prereleases": false,
+      "affects": ["skills/react-new-project/SKILL.md", "knowledge/performance/react-compiler-vite8.md", "knowledge/project-setup/create-vite-eslint-flag.md"],
+      "note": "Core vite tags only (create-vite and plugin tags are skipped). Backport tags of old majors show up too."
+    },
+    {
+      "id": "msw-releases",
+      "name": "MSW releases",
+      "type": "github-releases",
+      "repo": "mswjs/msw",
+      "prereleases": false,
+      "affects": ["skills/react-testing/SKILL.md", "skills/react-testing/references/sources.md", "knowledge/testing/msw-v3-on-unhandled-frame.md"],
+      "note": "v3 option names differ from v2; check typings on every minor."
+    },
+    {
+      "id": "zod-releases",
+      "name": "Zod releases",
+      "type": "github-releases",
+      "repo": "colinhacks/zod",
+      "prereleases": false,
+      "affects": ["skills/react-forms-state/SKILL.md", "skills/react-data-fetching/SKILL.md", "knowledge/forms/zod4-rhf-input-output-types.md"],
+      "note": "Schema API used for every API response and form."
+    },
+    {
+      "id": "react-hook-form-releases",
+      "name": "React Hook Form releases",
+      "type": "github-releases",
+      "repo": "react-hook-form/react-hook-form",
+      "prereleases": false,
+      "affects": ["skills/react-forms-state/SKILL.md", "skills/react-ux/SKILL.md", "knowledge/forms/zod4-rhf-input-output-types.md"],
+      "note": "v8 betas exist (October 2026); they are skipped until v8 is stable."
+    },
+    {
+      "id": "figma-code-connect",
+      "name": "Figma Code Connect releases",
+      "type": "github-releases",
+      "repo": "figma/code-connect",
+      "prereleases": false,
+      "affects": ["knowledge/tooling/code-connect-template-files.md", "skills/design-to-code/SKILL.md", "../figma-pack/skills/figma-to-react/SKILL.md"],
+      "note": "Machine-readable Code Connect changelog. The Figma REST API changelog page has no feed (404 at the old URL), so it is not watched."
+    },
+    {
+      "id": "figma-mcp-guide",
+      "name": "Figma MCP server guide",
+      "type": "github-commits",
+      "repo": "figma/mcp-server-guide",
+      "affects": ["knowledge/tooling/figma-mcp-design-to-code-order.md", "knowledge/tooling/figma-mcp-seats-and-access.md", "skills/design-to-code/SKILL.md", "../figma-pack/skills/figma-core/SKILL.md"],
+      "note": "Figma's official guide and skills for the MCP server; the closest machine-readable changelog of the MCP tools."
+    }
+  ]
+}
