@@ -28,8 +28,8 @@ versions are marked with the version that introduced them. Every rule has a sour
 - Read `package.json` (`next`, `react`), `next.config.*` (`cacheComponents`, `partialPrefetching`, `output`,
   `images`, `experimental`), and look for `app/` vs `pages/`, `proxy.ts` vs `middleware.ts`, `AGENTS.md`.
 - **Which caching model?** `cacheComponents: true` → Cache Components ([references/caching.md](references/caching.md)).
-  No flag → the previous model (`fetch` options, `revalidate` segment config, `unstable_cache`). Never mix the two
-  vocabularies in one project; `create-next-app` 16.4+ turns Cache Components on by default.
+  No flag → the previous model (`fetch` options, `revalidate` segment config, `unstable_cache`). New code uses one
+  vocabulary (an existing `unstable_cache` may stay until migrated, per the official migration guide); `create-next-app` 16.4+ turns Cache Components on by default.
 - Next.js 16 needs Node.js ≥ 20.9 and TypeScript ≥ 5.1; Turbopack is the default bundler for `dev` and `build`.
 
 ## 1. Rendering model and the server/client boundary
@@ -205,7 +205,7 @@ rules: when one suggests SWR, CSS-in-JS or an unlisted package, our rules win.
 - A Server Action without auth, ownership check and Zod; returning DB rows or `error.message`.
 - Auth only in `proxy.ts`; data fetching in proxy.
 - Secrets or per-stand URLs in `NEXT_PUBLIC_*`; one image per stand rebuilt because of them.
-- Previous-model APIs (`export const revalidate`, `fetchCache`, `unstable_cache`) in a Cache Components app, or
+- New previous-model code (`export const revalidate`, `fetchCache`, new `unstable_cache`) in a Cache Components app, or
   `'use cache'` on a function that reads cookies.
 - Runtime APIs at the page top level with no `Suspense`/`loading.tsx` (blocking route).
 - Several self-hosted instances with per-instance cache, random action encryption keys and no `deploymentId`.
