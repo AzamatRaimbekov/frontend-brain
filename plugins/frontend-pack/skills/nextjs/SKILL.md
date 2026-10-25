@@ -142,7 +142,8 @@ Every Server Action is a public POST endpoint. Render-time gating is not securit
 ## 10. Upgrading
 
 Stay on the latest patch of a supported major (16.x Active LTS; 15.x Maintenance LTS until two years after its
-2024-10-21 release). Security patches land as patch releases: apply them the same week. Steps, breaking changes per
+2024-10-21 release). Security patches land as patch releases: apply them the same week. Minimum safe
+versions and every advisory: [references/security-advisories.md](references/security-advisories.md). Steps, breaking changes per
 major and codemods: [references/upgrading.md](references/upgrading.md).
 
 ## Что нового и советы
@@ -166,14 +167,35 @@ Use when the user asks "что нового в Next.js", "стоит ли обн
 5. **Never claim news you did not fetch in this session.** If the script reports no network, say so, use the
    verified-against version above and the project's `node_modules/next/dist/docs/`, and mark the advice as offline.
 
-## Agent tooling (optional)
+## Official Next.js agent tools: when to use them
 
-- `next-devtools-mcp` (`npx add-mcp next-devtools-mcp@latest`) exposes the running dev server's routes, errors,
-  logs and compilation issues to the agent. Dev only; keep `next dev` on localhost (an MCP endpoint
-  information-disclosure fix shipped in the September 2026 security release - stay patched).
-- Official workflow skills live in `vercel/next.js/skills` (MIT): `next-cache-components-adoption`,
-  `next-bundle-optimizer`, `next-dev-loop`. Install per project on request; they do not replace Mdigital rules.
-- `create-next-app` 16.4 defaults to `agentFeedback` on: pass `--no-agent-feedback` for client projects.
+Verified in `vercel/next.js/skills` (MIT) and `vercel/next-devtools-mcp` on 2026-10-25. They are optional, installed
+per project with the user's consent (`npx skills add vercel/next.js --skill <name>`), and never replace Mdigital
+rules: when one suggests SWR, CSS-in-JS or an unlisted package, our rules win.
+
+| Tool | Recommend or use when | Do not use when |
+|---|---|---|
+| `next upgrade --agent` (`npx next@canary upgrade --agent=latest`) | any minor/major upgrade; it gathers the version's guides and codemods | the project has uncommitted work or no green build to compare with |
+| `next-devtools-mcp` (`npx add-mcp next-devtools-mcp@latest`) | debugging a running `next dev`: routes, errors, compile issues, Server Action lookup | production/stage; unpatched Next.js older than 16.3.8 (dev MCP disclosure) |
+| `next-dev-loop` | after each edit of a page, to verify it in a browser (needs `agent-browser` ≥ 0.27) | CI or headless servers without a browser |
+| `next-cache-components-adoption` | moving an existing app to Cache Components, feature by feature, with checkpoints | as part of a version bump; apps that are not on 16.x |
+| `next-cache-components-optimizer` | an app already on Cache Components needs a bigger static shell for a named route | before adoption is finished |
+| `next-partial-prefetching-adoption` / `-optimizer` | adopting Partial Prefetching, then making chosen navigations instant with `instant()` tests | without Cache Components |
+| `next-bundle-optimizer` (experimental) | audit of initial JS per route (audit-only mode first) | as an automatic fixer without review |
+
+- `create-next-app` 16.4 turns `agentFeedback` on and the managed `AGENTS.md` block on. Client and banking projects:
+  `--no-agent-feedback` (it needs Next.js telemetry); keep and commit the `AGENTS.md` block.
+- Next.js recommends removing old "knowledge" skills for Next.js (`npx skills update`). That targets third-party
+  copies of the docs, not this skill: here framework facts defer to `node_modules/next/dist/docs/`.
+
+## Full references
+
+- [references/practices-by-topic.md](references/practices-by-topic.md) - every current practice from nextjs.org by
+  topic (security, caching, rendering, routing, deploy, performance, SEO, tooling, testing), with sources.
+- [references/features-timeline.md](references/features-timeline.md) - new features and breaking changes per
+  version (16.4 → 13), stable/experimental, codemods.
+- [references/security-advisories.md](references/security-advisories.md) - every security release with affected
+  and fixed versions; minimum safe version today.
 
 ## Anti-patterns
 

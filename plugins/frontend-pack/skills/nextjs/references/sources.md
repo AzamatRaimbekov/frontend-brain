@@ -42,6 +42,10 @@ served as Markdown (`<url>.md` or `Accept: text/markdown`); the index is https:/
 | Blog feed used by `nextjs-news.mjs` | https://nextjs.org/feed.xml |
 | Releases used by `nextjs-news.mjs` | https://api.github.com/repos/vercel/next.js/releases |
 
+| Practices by topic, features timeline | digest of 82 nextjs.org/blog posts (2018 - 2026-10-16) and 83 App Router guides read on 2026-10-25; each bullet links its own post or guide |
+| Security advisories, fixed versions | each security post on nextjs.org/blog (linked in security-advisories.md) and GitHub release tags v16.4.1, v16.4.3, v15.5.28 |
+| Official agent skills | https://github.com/vercel/next.js/tree/canary/skills (MIT), https://github.com/vercel/next-devtools-mcp (no license file detected by GitHub) |
+
 ## Reused ideas
 
 - Official Next.js Skills (`next-dev-loop`, `next-cache-components-adoption`, `next-bundle-optimizer`, ...) in
