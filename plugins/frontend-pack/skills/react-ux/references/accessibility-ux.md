@@ -26,6 +26,27 @@ export function useFocusOnMount<T extends HTMLElement>() {
 
 Don't focus on initial app load (it would skip the skip-link); only after client-side navigation.
 
+### Focus when an action removes its own trigger
+
+After "Cancel order" succeeds the status changes and the cancel button (the dialog's trigger) unmounts. Radix returns focus to a trigger that no longer exists, so focus falls to `<body>`.
+
+```tsx
+// features/orders/components/OrderDetails.tsx - stays mounted while the button comes and goes
+const cancel = useCancelOrder(order.id)
+const headingRef = useRef<HTMLHeadingElement>(null)
+const confirmCancel = () => cancel.mutate(undefined, { onSuccess: () => headingRef.current?.focus() })
+
+<h1 ref={headingRef} tabIndex={-1} className="outline-none">{t('orders.detail.title', { id: order.id })}</h1>
+<p role="status" className="sr-only">{cancel.isSuccess ? t('orders.cancelled', { id: order.id }) : ''}</p>
+{canCancel(order.status) && (
+  <CancelOrderDialog isPending={cancel.isPending} error={cancel.error} onConfirm={confirmCancel} onOpen={cancel.reset} />
+)}
+```
+
+- Run the mutation in the parent that stays mounted and pass `isPending`/`error`/`onConfirm` down; the dialog is presentational.
+- `mutate(vars, { onSuccess })` callbacks do not fire when the component that called `mutate` has unmounted; a dialog that calls `mutate` itself loses its `onSuccess` focus move. Callbacks in `useMutation({ onSuccess })` still run but have no element to focus.
+- Focus target: the page `h1` (`tabIndex={-1}`), or the next row in a list. Announce the result in a `role="status"` region that is always rendered.
+
 ## Announcing async updates (SC 4.1.3)
 
 - Results count / filters applied / "Saved": `role="status"` (polite).

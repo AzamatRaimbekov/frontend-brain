@@ -62,6 +62,7 @@ Add when relevant: 401/403 (redirect or no-access view), contract break (`ApiErr
 - Arrange data with fixture builders (`orderFixture({ status: 'closed' })`) next to the handlers; no shared mutable fixtures.
 - Every `await` is awaited: `@typescript-eslint/no-floating-promises` stays on in test files.
 - Routed pages: render inside a memory router (TanStack Router `createMemoryHistory` + `RouterProvider`; Next.js: test the page's client component and mock only `next/navigation` hooks). Helper code: [references/page-test-example.md](references/page-test-example.md).
+- Headings: a page renders its one `h1` in every state (`react-ux` [async-states.md](../react-ux/references/async-states.md#one-h1-in-every-state)), and the `EmptyState`/`ErrorState` title is an `h2` with a different text. Assert the state by its own name (`getByRole('heading', { level: 2, name: t('orders.notFound.title') })`); if two headings share a name, `getByRole` throws "multiple elements".
 - i18n: render with the real i18n instance and `ru` resources so tests catch missing keys; assert on translated text.
 - Time: `vi.useFakeTimers({ shouldAdvanceTime: true })` only for debounce or undo-toast timers; restore in `afterEach`.
 
@@ -70,20 +71,51 @@ Add when relevant: 401/403 (redirect or no-access view), contract break (`ApiErr
 ```
 src/features/orders/
   api/order.schemas.test.ts          # unit, next to the file under test
-  api/__mocks__/order.handlers.ts    # MSW handlers + fixtures for this feature
-  components/OrderForm.test.tsx      # integration
+  api/orders.handlers.ts             # MSW handlers + fixture builders for this feature
+  components/OrderForm.test.tsx      # integration; components/ or the project's existing folder (ui/)
 src/pages/orders/OrdersPage.test.tsx # page integration
-src/test/                            # server.ts, render.tsx (renderWithClient, renderRoute)
+src/mocks/handlers.ts                # aggregates every feature's handlers (dev, tests, Storybook)
+src/mocks/browser.ts                 # setupWorker(...handlers), started in main.tsx in dev only
+src/test/setup.ts                    # Vitest setupFiles: jest-dom, jsdom stubs, MSW lifecycle
+src/test/server.ts                   # setupServer(...handlers) from src/mocks/handlers.ts
+src/test/render.tsx                  # renderWithClient, renderRoute
 e2e/                                 # Playwright specs or Scenario Lab scenarios, outside src/
 ```
 
 - `*.test.ts(x)` next to the code. No `__tests__` folders, no `*.spec.tsx` inside `src/` (`*.spec.ts` is reserved for Playwright in `e2e/`).
-- Handler and fixture layout follows `react-data-fetching` [testing.md](../react-data-fetching/references/testing.md): per-feature handlers in `api/__mocks__/`, assembled once in `src/test/server.ts`. The same handlers serve Storybook and local dev.
+- MSW handlers live in the feature: `src/features/<f>/api/<f>.handlers.ts`. No `__mocks__` folder: Vitest reserves that name for `vi.mock` automocks. `src/mocks/handlers.ts` spreads all feature handlers once; dev (`src/mocks/browser.ts`), tests (`src/test/server.ts`) and Storybook use that one list. Code: `react-data-fetching` [testing.md](../react-data-fetching/references/testing.md).
+- Existing projects keep their mock and test layout (another folder name, a root setup file that already works); new files follow it.
 - `*.test.tsx` files are exempt from the 150-line `max-lines` rule (`react-architecture` section 2), but keep one `describe` per unit under test and split a file by behaviour when it becomes hard to scan.
+
+### Dev mock scenarios
+
+Every state must be reachable in the browser before the backend exists (`react-page-ux` section 5a). The handlers pick the scenario; feature code never knows about it.
+
+```ts
+// src/mocks/scenario.ts - dev only. ?mock=empty|error|slow on any URL sets it for the tab; ?mock=off clears it.
+const KEY = 'mock-scenario'
+export function initMockScenario() {
+  const fromUrl = new URLSearchParams(window.location.search).get('mock')
+  if (fromUrl === 'off') sessionStorage.removeItem(KEY)
+  else if (fromUrl) sessionStorage.setItem(KEY, fromUrl)
+}
+export const mockScenario = () => sessionStorage.getItem(KEY)
+
+// src/features/orders/api/orders.handlers.ts
+http.get('*/api/orders', async () => {
+  if (mockScenario() === 'error') return HttpResponse.json({ code: 'internal' }, { status: 500 })
+  if (mockScenario() === 'empty') return HttpResponse.json({ items: [], total: 0 })
+  return HttpResponse.json({ items: [orderFixture()], total: 1 })
+})
+```
+
+- `main.tsx` calls `initMockScenario()` once, right before `worker.start({ onUnhandledFrame: 'bypass' })`, inside the `import.meta.env.DEV` branch.
+- Never read `window.location` (or a `mock` search param) inside `queryFn`, query keys, loaders or route `validateSearch`: the key stops matching the preloaded one, `defaultPreload: 'intent'` fetches the wrong thing, and dev-only params leak into production routes.
+- Tests do not use scenarios: they override with `server.use(...)`; `sessionStorage` is cleared after each test.
 
 ## 6. Config and CI
 
-`vitest.config.ts` (or the `test` block of `vite.config.ts`): `environment: 'jsdom'`, `setupFiles: ['./vitest.setup.ts']`, `globals: false`, `restoreMocks: true`. `vitest.setup.ts` (project root, same name as in `react-data-fetching` testing.md) imports `@testing-library/jest-dom/vitest`, starts the MSW server with `onUnhandledRequest: 'error'` and resets handlers after each test (code in [references/page-test-example.md](references/page-test-example.md)).
+`vitest.config.ts` (or the `test` block of `vite.config.ts`): `environment: 'jsdom'`, `setupFiles: ['./src/test/setup.ts']`, `globals: false`, `restoreMocks: true`. The setup file lives in `src/test/` so it is inside `tsconfig.app.json` `include`; a root `vitest.setup.ts` falls outside it and the jest-dom matcher types (`toBeInTheDocument`) disappear from test files. `src/test/setup.ts` imports `@testing-library/jest-dom/vitest`, stubs what jsdom lacks (`window.scrollTo` for TanStack Router scroll restoration, `matchMedia`, `ResizeObserver`), starts the MSW server with `onUnhandledFrame: 'error'` (MSW v3; v2 used `onUnhandledRequest`, which v3 silently ignores) and resets handlers after each test (code in [references/page-test-example.md](references/page-test-example.md)).
 
 CI order (GitLab), each step must pass:
 
@@ -118,9 +150,9 @@ Coverage expectations (a floor, not a target to game): `features/**/api` and `fe
 - [ ] Schemas and pure `lib/` functions have unit tests including a failing input.
 - [ ] Each changed page or data widget has loading, empty, 500 (with Retry) and success tests via MSW.
 - [ ] Each form has: validation timing, successful submit payload, 422 mapped to a field, input kept on failure.
-- [ ] No mocks of our own modules; `onUnhandledRequest: 'error'`; fresh `QueryClient` with `retry: false`.
+- [ ] No mocks of our own modules; `onUnhandledFrame: 'error'` (MSW v3); fresh `QueryClient` with `retry: false`.
 - [ ] Locators are role or label first; no sleeps; all promises awaited.
-- [ ] Files are `*.test.ts(x)` next to the code; handlers in `api/__mocks__/`.
+- [ ] Files are `*.test.ts(x)` next to the code; handlers in `features/<f>/api/<f>.handlers.ts`, aggregated in `src/mocks/handlers.ts`.
 - [ ] `tsc`, lint, `vitest run`, build pass; E2E updated if a critical journey changed.
 
 Sources: [references/sources.md](references/sources.md).

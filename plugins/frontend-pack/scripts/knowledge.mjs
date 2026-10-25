@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Knowledge base of the frontend brain: plugins/frontend-pack/knowledge/<area>/<slug>.md
 // Usage:
-//   node knowledge.mjs search <words...> [--stack next] [--area data]   find entries (works in any installed copy)
+//   node knowledge.mjs search <words...> [--stack next] [--area data]   top 8 entries by weighted stem match (works in any installed copy)
 //   node knowledge.mjs index                                            rewrite knowledge/INDEX.md
 //   node knowledge.mjs check                                            validate entries and INDEX.md, exit 1 on errors
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync } from 'node:fs';
@@ -99,15 +99,55 @@ export function renderIndex(entries) {
   return out.join('\n');
 }
 
-function search(words, { stack, area }) {
-  const terms = words.map((w) => w.toLowerCase());
-  return loadEntries()
+// Search ranking: a term counts once per field, weighted title x3, tags x2, body x1.
+// Terms are matched by crude stem prefix ("загрузка" finds "загрузки", "testing" finds "tests").
+const WEIGHTS = { title: 3, tags: 2, body: 1 };
+const ENDINGS = [
+  'иями', 'ями', 'ами', 'ого', 'его', 'ому', 'ему', 'ыми', 'ими', 'ться', 'ing', 'ая', 'яя', 'ое', 'ее',
+  'ые', 'ие', 'ой', 'ей', 'ий', 'ый', 'ом', 'ем', 'ам', 'ям', 'ах', 'ях', 'ов', 'ев', 'ия', 'ья', 'ть',
+  'ed', 'es', 'ly', 'а', 'я', 'о', 'е', 'ы', 'и', 'у', 'ю', 'ь', 's',
+];
+export const MAX_RESULTS = 8;
+
+export function stem(word) {
+  const w = word.toLowerCase();
+  for (const end of ENDINGS) if (w.endsWith(end) && w.length - end.length >= 4) return w.slice(0, -end.length);
+  return w;
+}
+
+const tokenize = (text) => text.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+
+function fieldHas(fieldWords, term) {
+  if (term.length < 4) return fieldWords.includes(term);
+  const s = stem(term);
+  return fieldWords.some((w) => w.startsWith(s));
+}
+
+/** Ranks entries for the query words; returns [{ e, score, matched }] best first, at most MAX_RESULTS. */
+export function rank(entries, query, { stack, area } = {}) {
+  const terms = [...new Set(query.flatMap(tokenize))];
+  const pool = entries
     .filter((e) => e.meta && e.meta.status !== 'deprecated')
     .filter((e) => !area || e.area === area)
-    .filter((e) => !stack || e.meta.stack.includes('all') || e.meta.stack.includes(stack))
-    .map((e) => ({ e, score: terms.filter((t) => e.text.toLowerCase().includes(t)).length }))
-    .filter(({ score }) => score > 0 || !terms.length)
-    .sort((a, b) => b.score - a.score);
+    .filter((e) => !stack || e.meta.stack.includes('all') || e.meta.stack.includes(stack));
+  if (!terms.length) return pool.map((e) => ({ e, score: 0, matched: 0 }));
+  const minMatched = terms.length >= 3 ? Math.ceil(terms.length / 2) : 1;
+  return pool
+    .map((e) => {
+      const fields = { title: tokenize(e.meta.title ?? ''), tags: (e.meta.tags ?? []).flatMap(tokenize), body: tokenize(e.body) };
+      let score = 0;
+      let matched = 0;
+      for (const t of terms) {
+        let hit = false;
+        for (const [name, weight] of Object.entries(WEIGHTS))
+          if (fieldHas(fields[name], t)) { score += weight; hit = true; }
+        if (hit) matched++;
+      }
+      return { e, score, matched };
+    })
+    .filter(({ matched }) => matched >= minMatched)
+    .sort((a, b) => b.score - a.score || b.matched - a.matched || a.e.slug.localeCompare(b.e.slug))
+    .slice(0, MAX_RESULTS);
 }
 
 function main(argv) {
@@ -134,8 +174,9 @@ function main(argv) {
       if (rest[i] === '--stack' || rest[i] === '--area') opts[rest[i].slice(2)] = rest[++i];
       else words.push(rest[i]);
     }
-    const found = search(words, opts);
-    for (const { e } of found) console.log(`${e.file}\n    ${e.meta.title} [${e.meta.type}; ${e.meta.stack.join(', ')}]`);
+    const found = rank(loadEntries(), words, opts);
+    for (const { e, score } of found)
+      console.log(`${e.file}\n    ${e.meta.title} [${e.meta.type}; ${e.meta.stack.join(', ')}; score ${score}]`);
     if (!found.length) console.log('nothing found');
     return 0;
   }

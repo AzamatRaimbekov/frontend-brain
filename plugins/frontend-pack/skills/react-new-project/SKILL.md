@@ -74,7 +74,8 @@ Create these files, taking the code from the owning skill. Do not invent alterna
 | `eslint.config.js` (max-lines 150, hooks, query, import boundaries) | `react-architecture` references/eslint-config.md |
 | i18n setup with `ru` as default locale | `react-security-i18n` references/i18n.md |
 | `shared/lib/format.ts`, `shared/lib/safeUrl.ts`, `shared/components/SafeHtml.tsx` | `react-security-i18n` |
-| `vitest.setup.ts`, `src/mocks/` with MSW handlers | `react-testing` |
+| `src/test/setup.ts` (in `setupFiles`; inside `src/` so jest-dom types work), `src/test/server.ts`, `src/test/render.tsx`, `src/mocks/handlers.ts` + `src/mocks/browser.ts` (MSW, `onUnhandledFrame`) | `react-testing` sections 5-6 |
+| `pages/not-found` texts, crash fallback and offline banner copy in `shared/lib/messages.ts` (or `common.*` i18n keys) | `react-error-handling` references/app-shell.md |
 | Mbank product: tokens and UI kit via `node <frontend-pack>/scripts/add-ui.mjs all` (replaces the shadcn theme) | `mbank-ui` |
 
 Remove the scaffold's demo code (counter, logos, default page content).
