@@ -72,7 +72,7 @@
 ### G15. Нет Code Connect
 - Что видим: 0 связей из всех опубликованных компонентов.
 - Что сделать (фронтенд): когда появится код, связать в первую очередь Button, семейство Input, Switchers, Badge, Tabs, Dialog.
-- Статус (2026-10-31): карта Figma -> код `components-map.json` готова (66 компонентов связаны с `@mdigital/mbank-ui`), файлы Code Connect генерирует `components-map.mjs code-connect`; публикация (`npx figma connect publish`) ждёт места с доступом к Code Connect.
+- Статус (2026-10-31): карта Figma -> код `components-map.json` (плагин design-engine) готова (66 компонентов связаны с `@mdigital/mbank-ui`), файлы Code Connect генерирует `components-map.mjs code-connect`; публикация (`npx figma connect publish`) ждёт места с доступом к Code Connect.
 
 ### G21. Нет сеток и брейкпоинтов
 - Что видим: нет переменных брейкпоинтов, нет стилей сеток (layout grid), нет токенов безопасных зон (safe area) для мобайла.

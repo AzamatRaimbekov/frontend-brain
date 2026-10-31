@@ -12,13 +12,16 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { DEFAULT_PACKAGES, indexCode, propInfo } from './code-index.mjs';
+import { resolvePlugin } from './resolve-plugin.mjs';
 
 const PLUGIN = join(dirname(fileURLToPath(import.meta.url)), '..');
-const REFS = join(PLUGIN, 'skills', 'mbank-design-system', 'references');
+// The map is the engine's own; the catalog belongs to figma-pack, the code to frontend-pack.
+const FIGMA = resolvePlugin('figma-pack') ?? 'figma-pack (not installed)';
+const FRONTEND = resolvePlugin('frontend-pack') ?? 'frontend-pack (not installed)';
 export const DEFAULTS = {
-  map: join(REFS, 'components-map.json'),
-  catalog: join(REFS, 'catalog.json'),
-  code: join(PLUGIN, '..', 'frontend-pack', 'registry', 'mbank'),
+  map: join(PLUGIN, 'references', 'components-map.json'),
+  catalog: join(FIGMA, 'skills', 'mbank-design-system', 'references', 'catalog.json'),
+  code: join(FRONTEND, 'registry', 'mbank'),
 };
 export const STATUSES = ['mapped', 'partial', 'missing', 'ignore', 'out-of-scope'];
 const LINKED = new Set(['mapped', 'partial']);

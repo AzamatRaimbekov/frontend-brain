@@ -68,7 +68,7 @@ Source files: [`registry/mbank/components`](../../../registry/mbank/components).
 | Starter KIT `Skeleton` | `Skeleton` | Web components has no skeleton (G11 / G12) |
 | (none, G12) empty states | `EmptyState` | |
 | `toast` | `Toaster` + `toast()` (sonner.tsx) | state -> `toast.success / error / info / warning`; Light / Dark follows `.dark` |
-| `otp`, `slider`, stepper, time picker | shadcn component restyled with kit tokens | Not in the kit yet (backlog: `components-map.mjs report`) |
+| `otp`, `slider`, stepper, time picker | shadcn component restyled with kit tokens | Not in the kit yet (backlog: design-engine `components-map.mjs report`) |
 
 ## Token to Figma variable
 

@@ -36,6 +36,24 @@ Two ways, pick one per project:
   ```
 
   Imports: primitives, `EmptyState` and `cn` from `@mdigital/mbank-ui`, CRM widgets from `@mdigital/mbank-ui/crm`. Works in Vite and Next.js App Router (interactive files carry `"use client"`). A missing component or a fix goes to the `mbank-ui` repository as a PR with a new tag, never as a local copy that shadows the package.
+- **shadcn CLI (own the code, standard tooling).** The kit is also an official shadcn registry: [`registry/mbank/r`](../../registry/mbank/r/registry.json), built by `scripts/registry-build.mjs` (`--check` in `npm test`). Item `mbank` is the whole design system (`registry:base`: tokens as cssVars, brand modes, scales); every component is its own item with dependencies. Files land in the project's `components.json` aliases (`@/components/ui`, `@/lib/utils`).
+
+  ```json
+  // components.json — the repository is private, so the URL needs a GitHub token (env, never committed)
+  "registries": {
+    "@mbank": {
+      "url": "https://raw.githubusercontent.com/AzamatRaimbekov/frontend-brain/main/plugins/frontend-pack/registry/mbank/r/{name}.json",
+      "headers": { "Authorization": "Bearer ${GITHUB_TOKEN}" }
+    }
+  }
+  ```
+
+  ```bash
+  npx shadcn@latest add @mbank/mbank                        # design system: tokens + utils
+  npx shadcn@latest add @mbank/button @mbank/data-table @mbank/crm-kpi-card
+  ```
+
+  Verified 2026-10-31 with shadcn 4.23 on a clean Vite + Tailwind v4 project served from a local URL: install, `tsc -b` and `vite build` pass. The raw GitHub URL works only after `r/` is on `main`.
 - **Copy (`add-ui.mjs`).** For a project that already has the kit in `src/shared/ui` or must change component sources. The rest of this section is about this way.
 
 The copy source is [`registry/mbank`](../../registry/mbank/registry.json); [`scripts/add-ui.mjs`](../../scripts/add-ui.mjs) copies it. The `mbank-ui` repository and the registry hold the same code: a change to one goes to the other in the same week (`brain-update` checks it).

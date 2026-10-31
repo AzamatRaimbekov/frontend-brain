@@ -152,7 +152,7 @@ Only add icons that are used; do not dump all 2776 sets into the bundle.
 
 ## 7. Component mapping (suggested)
 
-The exact, checked mapping is `components-map.json`: for every Figma component the import (`@mdigital/mbank-ui` or `/crm`), the code component, the add-ui registry item and Figma variant value -> code prop value, taken from the real cva variants. Use it first; this table is the summary. `node plugins/figma-pack/scripts/components-map.mjs check` validates it against `catalog.json` and the kit code, `report` lists the missing components (kit backlog), `code-connect --out <dir>` writes `*.figma.tsx` for publishing.
+The exact, checked mapping is design-engine `references/components-map.json`: for every Figma component the import (`@mdigital/mbank-ui` or `/crm`), the code component, the add-ui registry item and Figma variant value -> code prop value, taken from the real cva variants. Use it first; this table is the summary. `node plugins/design-engine/scripts/components-map.mjs check` validates it against `catalog.json` and the kit code, `report` lists the missing components (kit backlog), `code-connect --out <dir>` writes `*.figma.tsx` for publishing.
 
 | Mbank Figma | shadcn / web code | Notes |
 |---|---|---|

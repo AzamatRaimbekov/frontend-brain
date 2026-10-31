@@ -44,6 +44,16 @@ const unitTests = () =>
   );
 
 const tests = {
+  'plugins do not reach into each other by relative paths (docs/architecture.md)'() {
+    const r = spawnSync(process.execPath, [join(ROOT, 'scripts', 'check-boundaries.mjs')], { encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stdout);
+  },
+  'shadcn registry r/ and design-engine contracts are up to date'() {
+    for (const script of ['plugins/frontend-pack/scripts/registry-build.mjs', 'plugins/design-engine/scripts/sync-contracts.mjs']) {
+      const r = spawnSync(process.execPath, [join(ROOT, script), '--check'], { encoding: 'utf8' });
+      assert.equal(r.status, 0, `${script}: ${r.stdout}${r.stderr}`);
+    }
+  },
   'manifests are valid and versions match'() {
     const claude = json(join(PLUGIN, '.claude-plugin', 'plugin.json'));
     const codex = json(join(PLUGIN, '.codex-plugin', 'plugin.json'));

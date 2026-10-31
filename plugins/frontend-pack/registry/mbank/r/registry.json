@@ -658,7 +658,7 @@
       "name": "icons",
       "type": "registry:ui",
       "title": "icons",
-      "description": "Temporary inline glyphs (check, minus, chevron-down, close) until the Mbank Icons SVGs are exported",
+      "description": "Temporary inline glyphs (check, minus, chevrons, close, sort arrows, search, calendar, columns) until the Mbank Icons SVGs are exported",
       "dependencies": [],
       "registryDependencies": [
         "@mbank/utils"
@@ -1013,6 +1013,223 @@
       "files": [
         {
           "path": "registry/mbank/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "pagination",
+      "description": "Figma pagination/basic + item/pagintaion / buttons + page/dropdown: controlled page (1-based), prev/next, ellipses, page-size select; sizes sm/md/lg, align",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons",
+        "@mbank/select"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/pagination.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "data-table",
+      "description": "CRM TableSection 2.0 as a shadcn data table on @tanstack/react-table: sorting header, global search, column visibility, row selection, Skeleton rows, empty slot, kit Pagination",
+      "dependencies": [
+        "@tanstack/react-table"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/table",
+        "@mbank/pagination",
+        "@mbank/skeleton",
+        "@mbank/checkbox",
+        "@mbank/input",
+        "@mbank/button",
+        "@mbank/dropdown-menu",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/data-table.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/mbank/ui/data-table-body.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/mbank/ui/data-table-toolbar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/mbank/ui/data-table-columns.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "popover",
+      "description": "Floating panel on the dropdown surface (z-popover, above Dialog) for pickers and filters",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "calendar",
+      "description": "Figma Calendar-items / day-items: shadcn calendar on react-day-picker v9, ru locale by default; single, range, multiple; month+year dropdowns",
+      "dependencies": [
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/button",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/calendar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "date-picker",
+      "description": "Figma input/calendar-single + input/calendar-multi: DatePicker and DateRangePicker (input-looking trigger, Calendar in a Popover); sizes sm/md/lg, aria-invalid, disabled",
+      "dependencies": [
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/calendar",
+        "@mbank/popover",
+        "@mbank/input",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/date-picker.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "progress",
+      "description": "Figma Progress bar / Determinate, Progress-Line, Progress circle: Progress (size, shape, tone, showValue, indeterminate) and ProgressCircle (sm-xl)",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/progress.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "accordion",
+      "description": "Figma accordion / Item accordion states / header / bottomInfo, item-faq: Radix Accordion; variant line | card (FAQ)",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/accordion.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "sheet",
+      "description": "Side panel on Radix Dialog (details, filters, edit forms): side right/left/top/bottom, size md/lg, header/body/footer",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/sheet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "title": "sonner",
+      "description": "Figma toast: sonner Toaster (unstyled + kit tokens, follows .dark) and toast() re-export; success/error/warning/info tones",
+      "dependencies": [
+        "sonner"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "chart",
+      "type": "registry:ui",
+      "title": "chart",
+      "description": "Figma Chart / Chart-tooltip: shadcn chart wrapper on recharts (ChartContainer + ChartConfig, tooltip, legend); series default to the supportive-1..10 palette",
+      "dependencies": [
+        "recharts"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/chart.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/mbank/ui/chart-tooltip.tsx",
           "type": "registry:ui"
         }
       ]

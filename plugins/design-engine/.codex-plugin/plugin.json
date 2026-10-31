@@ -11,6 +11,9 @@
     "shortDescription": "Figma design and React code from one spec",
     "developerName": "Mdigital",
     "category": "Developer tools",
-    "capabilities": ["Read", "Write"]
+    "capabilities": [
+      "Read",
+      "Write"
+    ]
   }
 }

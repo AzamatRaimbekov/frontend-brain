@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "accordion",
+  "type": "registry:ui",
+  "title": "accordion",
+  "description": "Figma accordion / Item accordion states / header / bottomInfo, item-faq: Radix Accordion; variant line | card (FAQ)",
+  "dependencies": [
+    "radix-ui",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/icons"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/accordion.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { Accordion as AccordionPrimitive } from \"radix-ui\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { ChevronDownIcon } from \"./icons\"\n\n/*\n * Figma `accordion`, `Item  / accordion / states` (selected off/on = closed/open),\n * `Item / accordion / header` (default / hover / active) and `item / accordion / bottomInfo`.\n * variant=\"card\" = FAQ look (`item-faq`): every item is a surface-1 card. Set variant on Accordion.\n */\nconst accordionVariants = cva(\"group/accordion flex w-full flex-col\", {\n  variants: {\n    variant: {\n      line: \"\",\n      card: \"gap-2\",\n    },\n  },\n  defaultVariants: { variant: \"line\" },\n})\n\ntype AccordionProps = React.ComponentProps<typeof AccordionPrimitive.Root> & VariantProps<typeof accordionVariants>\n\nfunction Accordion({ className, variant = \"line\", ...props }: AccordionProps) {\n  return (\n    <AccordionPrimitive.Root\n      data-slot=\"accordion\"\n      data-variant={variant}\n      className={cn(accordionVariants({ variant }), className)}\n      {...props}\n    />\n  )\n}\n\nfunction AccordionItem({ className, ...props }: React.ComponentProps<typeof AccordionPrimitive.Item>) {\n  return (\n    <AccordionPrimitive.Item\n      data-slot=\"accordion-item\"\n      className={cn(\n        \"group-data-[variant=line]/accordion:border-b group-data-[variant=line]/accordion:border-border group-data-[variant=line]/accordion:last:border-b-0\",\n        \"group-data-[variant=card]/accordion:rounded-lg group-data-[variant=card]/accordion:bg-surface-1 group-data-[variant=card]/accordion:px-4\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction AccordionTrigger({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {\n  return (\n    <AccordionPrimitive.Header className=\"flex\">\n      <AccordionPrimitive.Trigger\n        data-slot=\"accordion-trigger\"\n        className={cn(\n          \"flex flex-1 items-center justify-between gap-4 rounded-sm py-4 text-left text-md font-medium text-foreground transition-colors outline-none hover:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:text-disabled-foreground [&[data-state=open]>svg]:rotate-180\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        <ChevronDownIcon\n          className=\"size-5 shrink-0 text-muted-foreground transition-transform duration-200 motion-reduce:transition-none\"\n          aria-hidden=\"true\"\n        />\n      </AccordionPrimitive.Trigger>\n    </AccordionPrimitive.Header>\n  )\n}\n\nfunction AccordionContent({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Content>) {\n  return (\n    <AccordionPrimitive.Content\n      data-slot=\"accordion-content\"\n      className=\"overflow-hidden text-sm text-muted-foreground data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down motion-reduce:animate-none\"\n      {...props}\n    >\n      <div className={cn(\"pb-4\", className)}>{children}</div>\n    </AccordionPrimitive.Content>\n  )\n}\n\nexport { Accordion, AccordionItem, AccordionTrigger, AccordionContent, accordionVariants }\n"
+    }
+  ]
+}

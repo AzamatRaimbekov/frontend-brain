@@ -6,6 +6,21 @@
     "name": "Mdigital"
   },
   "repository": "https://github.com/AzamatRaimbekov/frontend-brain",
-  "keywords": ["design-to-code", "figma", "react", "design-system", "mbank"],
-  "dependencies": ["figma-pack", "frontend-pack"]
+  "keywords": [
+    "design-to-code",
+    "figma",
+    "react",
+    "design-system",
+    "mbank"
+  ],
+  "dependencies": [
+    {
+      "name": "figma-pack",
+      "version": "^0.6.0"
+    },
+    {
+      "name": "frontend-pack",
+      "version": "^0.14.0"
+    }
+  ]
 }
