@@ -64,7 +64,19 @@ After installing:
 - Spacing: default Tailwind 4px scale (Mbank web spacing is on the 4px grid).
 - Shadows: `shadow-xs..xl`, `shadow-dropdown`, `shadow-modal`, `shadow-tooltip`. Layers: `z-(--z-sticky|--z-overlay|--z-modal|--z-tooltip ...)`. Anything that floats out of a portal (Select, DropdownMenu, Popover, Combobox content) uses `z-(--z-popover)` (1700, above `--z-modal` 1500) so it stays visible inside a Dialog; `--z-dropdown` (1000) is only for non-portal in-flow menus.
 - Hex values (not oklch) are kept on purpose so every value traces back to Figma `tokens.md`. This is the one deviation from `react-ui/references/tokens-and-theming.md`.
-- Need a token that is not there? Check figma-pack `mbank-figma-patterns/references/tokens.md`, then add it to `tokens.css` in the brain (light + `.dark` + `@theme inline`) and send a PR. Never invent a value.
+- Need a token that is not there? Check figma-pack `mbank-figma-patterns/references/tokens.md`, then add the Figma variable to [`tokens.map.json`](../../registry/mbank/tokens.map.json), run `tokens-build.mjs` and send a PR. Never invent a value, never edit `tokens.css` by hand (it is generated).
+
+## Updating tokens from Figma
+
+`tokens.css` is generated: Figma variables ([`tokens.json`](../../../figma-pack/skills/mbank-figma-patterns/references/tokens.json)) + the mapping CSS var → Figma variable ([`tokens.map.json`](../../registry/mbank/tokens.map.json)) → [`scripts/tokens-build.mjs`](../../scripts/tokens-build.mjs). When a designer changes a colour, radius, text or effect style in the Mbank libraries:
+
+1. Agent with a **Full** seat (figma-pack `figma-core`) runs [`read-tokens.js`](../../../figma-pack/skills/mbank-figma-patterns/references/read-tokens.js) through `use_figma` in each library file (Foundation `KIT='foundation'`, Web components `KIT='web'`, Mobile KIT `KIT='mobile'`) and saves each result as `raw-<kit>.json` outside the repo. It only reads.
+2. `node plugins/frontend-pack/scripts/tokens-build.mjs --check --from raw-foundation.json --from raw-web.json --from raw-mobile.json` shows what changed in Figma (`~ theme text/link [light]: #3b82f6 -> #2563eb`) and which CSS vars it moves. Writes nothing.
+3. Same command without `--check` rewrites `tokens.json` and `tokens.css`. Sections the dumps do not contain are kept.
+4. New Figma variables are listed as `info: ... not used by tokens.map.json`. Map the ones the web needs (light `:root`, dark `.dark` and the `--color-*` utility come from one entry), or add a prefix to `ignore`. A value that is wrong in Figma gets an override with its gap id (`"dark": { "value": ..., "gap": "G04", "note": ... }`) and a line in figma-pack `gaps.md`, never a silent edit.
+5. `tokens-build.mjs --check` passes, `npm test` passes, PR with the Figma change list from step 2. Copy the new `tokens.css` to the mbank-ui package (`src/styles/tokens.css`) in the same release.
+
+`--check` exits 1 with `selector  css var  <- Figma variable  expected / actual` when `tokens.css` is out of date; `--strict` also fails on unmapped Figma variables; `--json` gives the same report to agents.
 
 ## Icons
 

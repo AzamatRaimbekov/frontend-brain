@@ -2,6 +2,8 @@
 
 Source of truth for values and keys. Machine copy: `tokens.json`. Import any variable with `figma.variables.importVariableByKeyAsync(key)`, any style with `figma.importStyleByKeyAsync(key)`.
 
+Updating from Figma: designer changes the library → agent on a Full seat runs [`read-tokens.js`](read-tokens.js) via `use_figma` in each library file → `node plugins/frontend-pack/scripts/tokens-build.mjs --from raw-foundation.json --from raw-web.json` rewrites `tokens.json` and the generated `frontend-pack/registry/mbank/tokens.css` (mapping: `tokens.map.json` next to it) → PR. Update the tables below from the change list it prints.
+
 ## 1. Spacing
 
 Mobile KIT uses `paddings/default/*` (collection `foundation`, scope GAP). Web/CRM use `spacing/*` (Web components, aliases of `rem/default/*`).
