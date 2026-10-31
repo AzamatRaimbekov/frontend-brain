@@ -12,6 +12,7 @@ import { Spinner } from "./spinner"
  * Heights follow the input scale (L 56 / M 44 / S 36 / 32); Figma has no focus state (G10),
  * so focus-visible uses the brand ring.
  */
+// @contract button start
 const buttonVariants = cva(
   "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors outline-none select-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
   {
@@ -44,6 +45,7 @@ const buttonVariants = cva(
     defaultVariants: { variant: "primary", size: "md" },
   },
 )
+// @contract button end
 
 type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {

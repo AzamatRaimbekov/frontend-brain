@@ -1,0 +1,35 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "chip",
+  "title": "Chip",
+  "parts": ["root", "icon", "label"],
+  "props": {
+    "tone": { "values": ["neutral", "brand"], "default": "neutral" },
+    "size": { "values": ["sm", "md"], "default": "md" }
+  },
+  "base": {
+    "root": { "layout": "row", "align": "center", "gap": 1, "radius": "full", "weight": "medium", "bg:hover": "surface-3" },
+    "icon": { "size": 4 },
+    "label": { "text": "sm" }
+  },
+  "variants": {
+    "tone": {
+      "neutral": { "root": { "bg": "surface-2", "fg": "foreground" } },
+      "brand": { "root": { "bg": "brand", "fg": "brand-foreground" } }
+    },
+    "size": {
+      "sm": { "root": { "height": 6, "px": 2, "text": "xs" } },
+      "md": { "root": { "height": 8, "px": 3, "text": "sm" } }
+    }
+  },
+  "states": ["default", "hover"],
+  "code": {
+    "file": "chip.tsx",
+    "template": "badge-like",
+    "parts": { "icon": "[&>svg]" },
+    "maps": { "size": { "const": "chipSizes", "part": "root" } },
+    "blocks": ["label"],
+    "extra": "whitespace-nowrap",
+    "extras": { "label": "truncate" }
+  }
+}

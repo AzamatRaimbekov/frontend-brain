@@ -1,0 +1,101 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "alert",
+  "title": "Alert",
+  "figma": {
+    "name": "alert-text",
+    "key": "862527fc2fc9aad902f137eb72e3d82620897a9d",
+    "nodeId": "3012:33"
+  },
+  "parts": [
+    "root",
+    "icon",
+    "title"
+  ],
+  "props": {
+    "tone": {
+      "values": [
+        "clear",
+        "accent",
+        "info",
+        "success",
+        "warning",
+        "error"
+      ],
+      "default": "clear"
+    }
+  },
+  "base": {
+    "root": {
+      "radius": "md",
+      "px": 4,
+      "py": 3,
+      "text": "sm",
+      "align": "start"
+    },
+    "icon": {
+      "size": 5
+    },
+    "title": {
+      "weight": "bold"
+    }
+  },
+  "variants": {
+    "tone": {
+      "clear": {
+        "root": {
+          "bg": "status-clear-muted",
+          "fg": "status-clear-foreground"
+        }
+      },
+      "accent": {
+        "root": {
+          "bg": "status-accent-muted",
+          "fg": "status-accent-foreground"
+        }
+      },
+      "info": {
+        "root": {
+          "bg": "status-info-muted",
+          "fg": "status-info-foreground"
+        }
+      },
+      "success": {
+        "root": {
+          "bg": "status-success-muted",
+          "fg": "status-success-foreground"
+        }
+      },
+      "warning": {
+        "root": {
+          "bg": "status-warning-muted",
+          "fg": "status-warning-foreground"
+        }
+      },
+      "error": {
+        "root": {
+          "bg": "status-error-muted",
+          "fg": "status-error-foreground"
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "alert.tsx",
+    "export": "alertVariants",
+    "template": "card-like",
+    "parts": {
+      "icon": "[&>svg]"
+    },
+    "blocks": [
+      "title"
+    ],
+    "extra": "relative grid w-full grid-cols-[0_1fr] gap-y-0.5 has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] has-[>svg]:gap-x-3 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+    "extras": {
+      "title": "col-start-2"
+    }
+  }
+}

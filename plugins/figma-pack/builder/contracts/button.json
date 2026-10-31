@@ -1,0 +1,208 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "button",
+  "title": "Button",
+  "figma": {
+    "name": "button/default",
+    "key": "713c90401df3b5d7ddf00e3af4d7ea5870c4c120",
+    "nodeId": "2077:341"
+  },
+  "parts": [
+    "root",
+    "icon"
+  ],
+  "props": {
+    "variant": {
+      "values": [
+        "primary",
+        "brand",
+        "secondary",
+        "destructive",
+        "success",
+        "soft",
+        "ghost",
+        "outline",
+        "static",
+        "link"
+      ],
+      "default": "primary"
+    },
+    "size": {
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "icon-sm",
+        "icon",
+        "icon-lg"
+      ],
+      "default": "md"
+    }
+  },
+  "base": {
+    "root": {
+      "gap": 2,
+      "radius": "md",
+      "weight": "medium",
+      "opacity:disabled": 50,
+      "align": "center",
+      "focus-ring": "ring/50"
+    },
+    "icon": {
+      "size": 5
+    }
+  },
+  "variants": {
+    "variant": {
+      "primary": {
+        "root": {
+          "bg": "primary",
+          "fg": "primary-foreground",
+          "bg:hover": "primary-hover",
+          "bg:active": "primary-active"
+        }
+      },
+      "brand": {
+        "root": {
+          "bg": "brand",
+          "fg": "brand-foreground",
+          "bg:hover": "brand-hover",
+          "bg:active": "brand-active"
+        }
+      },
+      "secondary": {
+        "root": {
+          "bg": "secondary",
+          "fg": "secondary-foreground",
+          "bg:hover": "secondary-hover",
+          "bg:active": "secondary-active"
+        }
+      },
+      "destructive": {
+        "root": {
+          "bg": "destructive",
+          "fg": "destructive-foreground",
+          "bg:hover": "destructive-hover",
+          "bg:active": "destructive-active"
+        }
+      },
+      "success": {
+        "root": {
+          "bg": "success",
+          "fg": "success-foreground",
+          "bg:hover": "success-hover",
+          "bg:active": "success-active"
+        }
+      },
+      "soft": {
+        "root": {
+          "bg": "soft",
+          "fg": "soft-foreground-strong",
+          "bg:hover": "soft-hover"
+        }
+      },
+      "ghost": {
+        "root": {
+          "bg": "ghost",
+          "fg": "ghost-foreground",
+          "bg:hover": "ghost-hover"
+        }
+      },
+      "outline": {
+        "root": {
+          "border-width": 1,
+          "border": "outline",
+          "bg": "background",
+          "fg": "outline-foreground",
+          "border:hover": "outline-hover",
+          "bg:hover": "muted"
+        }
+      },
+      "static": {
+        "root": {
+          "bg": "static",
+          "fg": "static-foreground",
+          "bg:hover": "static-hover",
+          "bg:active": "static-active"
+        }
+      },
+      "link": {
+        "root": {
+          "px": 0,
+          "fg": "link"
+        }
+      }
+    },
+    "size": {
+      "xs": {
+        "root": {
+          "height": 8,
+          "px": 3,
+          "text": "xs"
+        },
+        "icon": {
+          "size": 4
+        }
+      },
+      "sm": {
+        "root": {
+          "height": 9,
+          "px": 3,
+          "text": "sm"
+        },
+        "icon": {
+          "size": 4
+        }
+      },
+      "md": {
+        "root": {
+          "height": 11,
+          "px": 4,
+          "text": "sm"
+        }
+      },
+      "lg": {
+        "root": {
+          "height": 14,
+          "px": 6,
+          "text": "base"
+        }
+      },
+      "icon-sm": {
+        "root": {
+          "size": 9
+        }
+      },
+      "icon": {
+        "root": {
+          "size": 11
+        }
+      },
+      "icon-lg": {
+        "root": {
+          "size": 14
+        }
+      }
+    }
+  },
+  "states": [
+    "default",
+    "hover",
+    "active",
+    "focus",
+    "disabled"
+  ],
+  "code": {
+    "file": "button.tsx",
+    "export": "buttonVariants",
+    "template": "button-like",
+    "parts": {
+      "icon": "[&_svg:not([class*='size-'])]"
+    },
+    "extra": "inline-flex shrink-0 justify-center whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30",
+    "extras": {
+      "variant=link": "h-auto underline-offset-4 hover:underline"
+    }
+  }
+}

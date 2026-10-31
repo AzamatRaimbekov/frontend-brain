@@ -7,6 +7,7 @@ import { cn } from "@/shared/lib/utils"
  * Figma `alert-text` (Property 1 = Default / Attantion / Warning / success / Error) on status/ghost/*.
  * Default -> clear, Attantion -> accent. info is added for parity with the status roles.
  */
+// @contract alert start
 const alertVariants = cva(
   "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-md px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-5 [&>svg]:translate-y-0.5 [&>svg]:text-current",
   {
@@ -23,6 +24,7 @@ const alertVariants = cva(
     defaultVariants: { tone: "clear" },
   },
 )
+// @contract alert end
 
 type AlertProps = React.ComponentProps<"div"> & VariantProps<typeof alertVariants>
 
@@ -40,7 +42,16 @@ function Alert({ className, tone, ...props }: AlertProps) {
 
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot="alert-title" className={cn("col-start-2 font-bold", className)} {...props} />
+    <div
+      data-slot="alert-title"
+      className={cn(
+        // @contract alert.title start
+        "col-start-2 font-bold",
+        // @contract alert.title end
+        className,
+      )}
+      {...props}
+    />
   )
 }
 

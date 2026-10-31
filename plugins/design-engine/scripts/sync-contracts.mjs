@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 // Contracts between figma-pack (owner) and frontend-pack (consumer copy), docs/architecture.md:
-// Mbank tokens.json and the screen spec core (spec.js, fake.js). Only the engine updates the copies.
+// Mbank tokens.json, the screen spec core (spec.js, fake.js) and the component contracts (builder/contracts/*.json,
+// a folder contract: the copy mirrors the owner folder file by file). Only the engine updates the copies.
 // Usage:
 //   node sync-contracts.mjs            copy owner -> consumer where they differ, then rebuild tokens.css
 //   node sync-contracts.mjs --check    exit 1 and list contracts whose copy differs (writes nothing)
 //   node sync-contracts.mjs --json     report as JSON
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
@@ -23,7 +24,24 @@ export const CONTRACTS = [
   },
   { id: 'spec-core', owner: ['figma-pack', 'builder/core/spec.js'], copy: ['frontend-pack', 'scripts/spec-to-code/spec.mjs'], transform: toMjs },
   { id: 'spec-fake', owner: ['figma-pack', 'builder/core/fake.js'], copy: ['frontend-pack', 'scripts/spec-to-code/fake.mjs'], transform: toMjs },
+  { id: 'components', owner: ['figma-pack', 'builder/contracts'], copy: ['frontend-pack', 'registry/mbank/contracts'], dir: '.json' },
 ];
+
+const listDir = (dir, ext) => (existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith(ext)).sort() : []);
+
+// Folder contract: every owner file has an equal copy and the copy folder has nothing else.
+function syncDir(c, ownerPath, copyPath, check) {
+  if (!existsSync(ownerPath)) return { id: c.id, status: 'owner-missing', owner: ownerPath };
+  const owned = listDir(ownerPath, c.dir);
+  const stale = listDir(copyPath, c.dir).filter((f) => !owned.includes(f));
+  const changed = owned.filter((f) => !existsSync(join(copyPath, f)) || readFileSync(join(copyPath, f), 'utf8') !== readFileSync(join(ownerPath, f), 'utf8'));
+  if (!changed.length && !stale.length) return { id: c.id, status: 'same' };
+  if (check) return { id: c.id, status: 'differs', owner: ownerPath, copy: copyPath, files: [...changed, ...stale] };
+  mkdirSync(copyPath, { recursive: true });
+  for (const f of changed) writeFileSync(join(copyPath, f), readFileSync(join(ownerPath, f), 'utf8'));
+  for (const f of stale) rmSync(join(copyPath, f));
+  return { id: c.id, status: 'updated', copy: copyPath, files: [...changed, ...stale] };
+}
 
 export function syncContracts({ check = false, resolve = resolvePlugin } = {}) {
   const roots = { 'figma-pack': resolve('figma-pack'), 'frontend-pack': resolve('frontend-pack') };
@@ -32,6 +50,7 @@ export function syncContracts({ check = false, resolve = resolvePlugin } = {}) {
   const contracts = CONTRACTS.map((c) => {
     const ownerPath = join(roots[c.owner[0]], c.owner[1]);
     const copyPath = join(roots[c.copy[0]], c.copy[1]);
+    if (c.dir) return syncDir(c, ownerPath, copyPath, check);
     if (!existsSync(ownerPath)) return { id: c.id, status: 'owner-missing', owner: ownerPath };
     const expected = (c.transform ?? ((t) => t))(readFileSync(ownerPath, 'utf8'));
     const actual = existsSync(copyPath) ? readFileSync(copyPath, 'utf8') : null;
@@ -51,6 +70,6 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const report = syncContracts({ check: process.argv.includes('--check') });
   if (process.argv.includes('--json')) console.log(JSON.stringify(report, null, 2));
   else if (report.missing.length) console.error(`not installed: ${report.missing.join(', ')} (design-engine needs both packs)`);
-  else for (const c of report.contracts) console.log(`${c.status.padEnd(13)} ${c.id}${c.copy ? `  ${c.copy}` : ''}${c.output ? `\n${c.output}` : ''}`);
+  else for (const c of report.contracts) console.log(`${c.status.padEnd(13)} ${c.id}${c.copy ? `  ${c.copy}` : ''}${c.files ? `  (${c.files.join(', ')})` : ''}${c.output ? `\n${c.output}` : ''}`);
   process.exit(report.ok ? 0 : 1);
 }

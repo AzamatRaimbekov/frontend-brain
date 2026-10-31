@@ -1,0 +1,68 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "card",
+  "title": "Card",
+  "parts": [
+    "root",
+    "header",
+    "title",
+    "description",
+    "content",
+    "footer"
+  ],
+  "props": {},
+  "base": {
+    "root": {
+      "gap": 4,
+      "radius": "lg",
+      "border-width": 1,
+      "border": "border",
+      "bg": "card",
+      "py": 5,
+      "fg": "card-foreground",
+      "layout": "column"
+    },
+    "header": {
+      "gap": 1,
+      "px": 5,
+      "align": "start"
+    },
+    "title": {
+      "text": "base",
+      "weight": "bold"
+    },
+    "description": {
+      "text": "sm",
+      "fg": "muted-foreground"
+    },
+    "content": {
+      "px": 5
+    },
+    "footer": {
+      "gap": 2,
+      "px": 5,
+      "layout": "row",
+      "align": "center"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "card.tsx",
+    "shape": "classes",
+    "template": "card-like",
+    "blocks": [
+      "header",
+      "title",
+      "description",
+      "content",
+      "footer"
+    ],
+    "extras": {
+      "header": "grid auto-rows-min grid-rows-[auto_auto] has-data-[slot=card-action]:grid-cols-[1fr_auto]",
+      "footer": "[.border-t]:pt-4"
+    }
+  }
+}

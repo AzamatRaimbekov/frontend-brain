@@ -1,0 +1,13 @@
+{
+  "name": "fixture",
+  "items": [
+    {
+      "name": "chip",
+      "type": "registry:ui",
+      "description": "Fixture chip",
+      "files": [{ "path": "components/chip.tsx", "target": "ui" }],
+      "dependencies": ["class-variance-authority"],
+      "registryDependencies": ["utils"]
+    }
+  ]
+}

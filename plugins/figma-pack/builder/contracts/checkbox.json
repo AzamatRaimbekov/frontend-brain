@@ -1,0 +1,54 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "checkbox",
+  "title": "Checkbox",
+  "figma": {
+    "name": "Switchers - Check",
+    "key": "be053b3924b63e289a38bfd661b7180deb83236e",
+    "nodeId": "2280:9729"
+  },
+  "parts": [
+    "root"
+  ],
+  "props": {},
+  "base": {
+    "root": {
+      "size": 5,
+      "radius": "xs",
+      "border-width": 1,
+      "border": "input",
+      "bg": "background",
+      "border:hover": "input-hover",
+      "border:disabled": "input-disabled",
+      "bg:disabled": "muted",
+      "border:invalid": "border-destructive",
+      "border:checked": "brand",
+      "bg:checked": "brand",
+      "fg:checked": "brand-foreground",
+      "border:indeterminate": "brand",
+      "bg:indeterminate": "brand",
+      "fg:indeterminate": "brand-foreground",
+      "focus-ring": "ring/30"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default",
+    "hover",
+    "focus",
+    "disabled",
+    "invalid",
+    "checked",
+    "indeterminate"
+  ],
+  "code": {
+    "file": "checkbox.tsx",
+    "shape": "classes",
+    "template": "button-like",
+    "modifiers": {
+      "checked": "data-[state=checked]",
+      "indeterminate": "data-[state=indeterminate]"
+    },
+    "extra": "peer shrink-0 transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50"
+  }
+}

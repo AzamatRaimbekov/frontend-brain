@@ -1,0 +1,63 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "tabs-list",
+  "title": "Tabs list",
+  "figma": {
+    "name": "segment",
+    "key": "f28915a7224a6ba85128b9cbab0b9d706c9285a8",
+    "nodeId": "2371:564"
+  },
+  "parts": [
+    "root"
+  ],
+  "props": {
+    "variant": {
+      "values": [
+        "segment",
+        "outline",
+        "line"
+      ],
+      "default": "segment"
+    }
+  },
+  "base": {
+    "root": {
+      "align": "center"
+    }
+  },
+  "variants": {
+    "variant": {
+      "segment": {
+        "root": {
+          "gap": 1,
+          "radius": "md",
+          "bg": "muted"
+        }
+      },
+      "outline": {
+        "root": {
+          "gap": 2
+        }
+      },
+      "line": {
+        "root": {
+          "gap": 6,
+          "border": "border"
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "tabs.tsx",
+    "export": "tabsListVariants",
+    "template": "card-like",
+    "extra": "group/tabs-list inline-flex w-fit",
+    "extras": {
+      "variant=segment": "p-1",
+      "variant=line": "border-b"
+    }
+  }
+}

@@ -12,7 +12,9 @@ function Switch({ className, ...props }: React.ComponentProps<typeof SwitchPrimi
     <SwitchPrimitive.Root
       data-slot="switch"
       className={cn(
+        // @contract switch start
         "peer inline-flex h-6 w-10 shrink-0 items-center rounded-full border-2 border-transparent transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30 data-[state=checked]:bg-brand data-[state=unchecked]:bg-surface-3",
+        // @contract switch end
         className,
       )}
       {...props}

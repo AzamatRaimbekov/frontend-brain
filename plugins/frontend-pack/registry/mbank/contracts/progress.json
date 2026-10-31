@@ -1,0 +1,113 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "progress",
+  "title": "Progress",
+  "figma": {
+    "name": "Progress bar / Determinate",
+    "key": "cf47478133f9b8625225affab7ae57b7b022c9bd",
+    "nodeId": "4823:334"
+  },
+  "parts": [
+    "root",
+    "indicator"
+  ],
+  "props": {
+    "size": {
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    "shape": {
+      "values": [
+        "rounded",
+        "square"
+      ],
+      "default": "rounded"
+    },
+    "tone": {
+      "values": [
+        "brand",
+        "success",
+        "error",
+        "warning"
+      ],
+      "default": "brand"
+    }
+  },
+  "base": {
+    "root": {
+      "bg": "surface-2"
+    }
+  },
+  "variants": {
+    "size": {
+      "sm": {
+        "root": {
+          "height": 1
+        }
+      },
+      "md": {
+        "root": {
+          "height": 2
+        }
+      },
+      "lg": {
+        "root": {
+          "height": 3
+        }
+      }
+    },
+    "shape": {
+      "rounded": {
+        "root": {
+          "radius": "full"
+        }
+      },
+      "square": {
+        "root": {
+          "radius": "none"
+        }
+      }
+    },
+    "tone": {
+      "brand": {
+        "indicator": {
+          "bg": "brand"
+        }
+      },
+      "success": {
+        "indicator": {
+          "bg": "status-success"
+        }
+      },
+      "error": {
+        "indicator": {
+          "bg": "status-error"
+        }
+      },
+      "warning": {
+        "indicator": {
+          "bg": "status-warning"
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "progress.tsx",
+    "export": "progressVariants",
+    "template": "card-like",
+    "maps": {
+      "tone": {
+        "const": "indicatorTones",
+        "part": "indicator"
+      }
+    },
+    "extra": "relative w-full overflow-hidden"
+  }
+}
