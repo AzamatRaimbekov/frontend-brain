@@ -1,7 +1,8 @@
 // Spec -> code model: names, routes, search params and deterministic fixtures per screen.
 // The same spec drives the Figma frames (figma-pack/builder); fixtures reuse its fake data.
-import { BLOCKS, DATA_BLOCKS, normalizeSpec, validateSpec } from './spec.mjs';
+import { BLOCKS, DATA_BLOCKS, normalizeSpec, statDelta, validateSpec } from './spec.mjs';
 import { DEFAULT_STATUSES, fakeRows, fakeValue, FIELD_TYPES, parseColumn, rng } from './fake.mjs';
+import { splitHeaderActions } from './blocks-ui.mjs';
 import { camel, kebab, keyOf, pascal } from './util.mjs';
 
 export const LIST_BLOCKS = ['table', 'list', 'kanban', 'cards'];
@@ -32,9 +33,11 @@ function fixture(b, seed, ctx) {
   const r = rng(seed);
   switch (b.type) {
     case 'stats':
-      return b.items.map((it, i) => (typeof it === 'object'
-        ? { id: `kpi${i + 1}`, label: String(it.label), value: String(it.value ?? ''), delta: it.delta, tone: it.tone || 'neutral' }
-        : { id: `kpi${i + 1}`, label: String(it), value: fakeValue('number', r), tone: 'neutral' }));
+      return b.items.map((it, i) => {
+        if (typeof it !== 'object') return { id: `kpi${i + 1}`, label: String(it), value: fakeValue('number', r), tone: 'neutral' };
+        const d = statDelta(it); // "+14% к вчера" -> "+14%" coloured by meaning (better: up | down) + "к вчера" muted
+        return { id: `kpi${i + 1}`, label: String(it.label), value: String(it.value ?? ''), ...(d && { delta: d.value, ...(d.label && { deltaLabel: d.label }) }), tone: d?.tone || 'neutral' };
+      });
     case 'table': {
       const cols = ctx.columns.filter((c) => c.type !== 'actions');
       const total = b.data?.length ?? ctx.pageSize * 3;
@@ -168,6 +171,12 @@ export function buildModel(input) {
     screen.data = screen.flat.filter((b) => b.data);
     screen.lists = screen.flat.filter((b) => b.list);
     screen.header = screen.flat.find((b) => b.type === 'header') || null;
+    const hs = screen.header?.spec;
+    // Object page (Figma application card): breadcrumbs + status or amount -> Summary card with all actions.
+    screen.summary = Boolean(hs?.breadcrumbs?.length && (hs.badge || hs.amount));
+    const acts = splitHeaderActions(hs?.actions, screen.summary);
+    screen.pageActions = acts.page;
+    screen.topActions = acts.top;
     screen.form = screen.flat.find((b) => b.type === 'form') || null;
     screen.login = screen.flat.find((b) => b.type === 'login') || null;
     screen.search = searchModel(screen.flat, warnings, `screens[${si}]`);
@@ -190,7 +199,10 @@ export function buildModel(input) {
     if (kanban) kanban.href = screens.find((x) => x !== s && x.spec.nav === s.spec.nav && x.flat.some((b) => b.type === 'details' || b.type === 'stepper'))?.path || s.path;
   }
   const searchable = screens.find((s) => s.search.q && !s.plain);
-  return { project: spec.project, subtitle: spec.subtitle, user: spec.user, nav, screens, home, searchable, warnings };
+  // "+" in the first menu section header (Figma `listMenu` action): the first form screen, e.g. "Новый клиент".
+  const create = screens.find((s) => s.form && !s.plain);
+  return { project: spec.project, brand: spec.brand || 'MBANK CRM', subtitle: spec.subtitle, user: spec.user, nav, screens, home, searchable,
+    create: create && { href: create.path, label: create.header?.spec.title || create.title }, warnings };
 }
 
 function statusesOf(screen) {

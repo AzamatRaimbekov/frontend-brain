@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { PlusIcon } from '@/shared/components/crm/crm-icons'
 import { SideMenu } from '@/shared/components/crm/SideMenu'
+import { SideMenuBrand } from '@/shared/components/crm/SideMenuBrand'
 import { SideMenuUser } from '@/shared/components/crm/SideMenuUser'
 import { Button } from '@/shared/ui/button'
 import { DropdownMenuItem } from '@/shared/ui/dropdown-menu'
@@ -21,21 +22,18 @@ const sections = mainSections.map((section) =>
     : section,
 )
 
-/** The app's side menu: navigation.ts + router links + the signed-in user. */
-export function AppSideMenu({ activeId }: { activeId?: string }) {
+type AppSideMenuProps = { activeId?: string; collapsed?: boolean; onToggleCollapsed?: () => void }
+
+/** The app's side menu: Mbank logo, navigation.ts + router links, the signed-in user. */
+export function AppSideMenu({ activeId, collapsed, onToggleCollapsed }: AppSideMenuProps) {
   return (
     <SideMenu
-      brand={
-        <span className="flex items-center gap-3 text-xl font-bold text-foreground">
-          <span aria-hidden="true" className="flex size-9 items-center justify-center rounded-sm bg-brand text-lg text-brand-foreground">
-            M
-          </span>
-          MBANK CRM
-        </span>
-      }
+      brand={<SideMenuBrand name="MBANK CRM" />}
       sections={sections}
       footerSections={[helpSection]}
       activeId={activeId}
+      collapsed={collapsed}
+      onToggleCollapsed={onToggleCollapsed}
       // exact: TanStack Link would mark "/applications" current on "/applications/CL-1" too; navId decides.
       renderLink={({ item, ...props }) => <Link to={item.href} activeOptions={{ exact: true }} {...props} />}
       user={

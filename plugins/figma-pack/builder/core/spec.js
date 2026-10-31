@@ -44,6 +44,14 @@ function checkBlock(b, path, errors) {
     if (!Array.isArray(b.columns) || b.columns.length < 2) errors.push(`${path}.columns: split needs 2+ columns of blocks`);
     else b.columns.forEach((col, i) => (col || []).forEach((x, j) => checkBlock(x, `${path}.columns[${i}][${j}]`, errors)));
   }
+  if (b.type === 'stats') {
+    (b.items || []).forEach((it, i) => {
+      if (it && typeof it === 'object' && it.better != null && !['up', 'down'].includes(it.better)) errors.push(`${path}.items[${i}].better: up | down`);
+    });
+  }
+  if (b.type === 'header' && b.period != null && !(Array.isArray(b.period) && b.period.length >= 2)) {
+    errors.push(`${path}.period: 2+ labels, e.g. ["Сегодня", "Неделя", "Месяц", "Квартал"]`);
+  }
   if (b.type === 'form') {
     (b.fields || []).forEach((f, i) => { if (!(typeof f === 'string' || f?.label)) errors.push(`${path}.fields[${i}]: needs a label`); });
   }
@@ -71,6 +79,19 @@ export function validateSpec(spec) {
     (s.blocks || []).forEach((b, j) => checkBlock(b, `${p}.blocks[${j}]`, errors));
   });
   return errors;
+}
+
+// KPI delta "+14% к вчера" -> { value: "+14%", label: "к вчера", tone }. The colour is about meaning,
+// not sign: item.better "up" (default) or "down" ("−18 мин" to decision time is good). No sign -> neutral.
+export function statDelta(item) {
+  const raw = String(item?.delta ?? '').trim();
+  if (!raw) return null;
+  const at = raw.search(/\s(?=(к|за|от|vs|против|в сравнении)(\s|$))/i);
+  const value = at > 0 ? raw.slice(0, at) : raw;
+  const label = at > 0 ? raw.slice(at + 1) : '';
+  const sign = /^[+▲↑]/.test(value) ? 'up' : /^[-−–▼↓]/.test(value) ? 'down' : null;
+  const tone = item.tone || (!sign ? 'neutral' : sign === (item.better || 'up') ? 'positive' : 'negative');
+  return { value, label, tone };
 }
 
 // Fills defaults so builders never branch on missing fields.

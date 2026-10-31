@@ -183,9 +183,9 @@ function render(blocks, s, pad) {
   for (const b of blocks) {
     if (b.type === 'split') {
       const ratio = (b.spec.ratio || b.children.map(() => 1).join(':')).split(':').map((x) => `${Number(x) || 1}fr`).join('_');
-      lines.push(`${pad}<div className="grid gap-6 lg:grid-cols-[${ratio}]">`);
+      lines.push(`${pad}<div className="grid gap-4 lg:grid-cols-[${ratio}]">`);
       for (const col of b.children) {
-        lines.push(`${pad}  <div className="flex min-w-0 flex-col gap-6">`, ...render(col, s, `${pad}    `), `${pad}  </div>`);
+        lines.push(`${pad}  <div className="flex min-w-0 flex-col gap-4">`, ...render(col, s, `${pad}    `), `${pad}  </div>`);
       }
       lines.push(`${pad}</div>`);
       continue;
@@ -240,7 +240,7 @@ export function ${s.pascal}View(${sig}) {
 ${emptyLine}  const forbidden = isApiError(query.error) && query.error.status === 403
 
   return (
-    <div className="flex flex-col gap-6" aria-busy={query.isFetching}>
+    <div className="flex flex-col ${s.summary ? 'gap-4' : 'gap-6'}" aria-busy={query.isFetching}>
 ${render(prefix, s, '      ').join('\n')}${prefix.length ? '\n' : ''}      {query.isPending && (
         <p role="status" aria-label={m.loading} className="sr-only">
           {m.loading}

@@ -46,7 +46,7 @@ const EMIT = {
       {data
         ? data.map((kpi) => (
             <li key={kpi.id}>
-              <KpiCard label={kpi.label} value={kpi.value} delta={kpi.delta} deltaTone={kpi.tone} />
+              <KpiCard label={kpi.label} value={kpi.value} delta={kpi.delta} deltaLabel={kpi.deltaLabel} deltaTone={kpi.tone} className="h-full" />
             </li>
           ))
         : t.labels.map((label) => (
@@ -311,7 +311,7 @@ export const emitDataBlock = (b, ctx) => EMIT[b.type](b, ctx);
 export function dataSchema(b) {
   const str = 'z.string()';
   switch (b.type) {
-    case 'stats': return `z.array(z.object({ id: ${str}, label: ${str}, value: ${str}, delta: ${str}.optional(), tone: z.enum(['positive', 'negative', 'neutral']) }))`;
+    case 'stats': return `z.array(z.object({ id: ${str}, label: ${str}, value: ${str}, delta: ${str}.optional(), deltaLabel: ${str}.optional(), tone: z.enum(['positive', 'negative', 'neutral']) }))`;
     case 'table': {
       const cols = b.columns.filter((c) => c.type !== 'actions' && c.key !== 'id').map((c) => `${c.key}: ${str}`);
       return `z.object({ rows: z.array(z.object({ id: ${str}${cols.length ? `, ${cols.join(', ')}` : ''} })), total: z.number().int() })`;

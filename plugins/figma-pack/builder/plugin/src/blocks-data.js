@@ -2,6 +2,7 @@
 import { box, text, add, skel, rect, sizing } from './draw.js';
 import { badge, avatar, checkbox, statusVariant } from './kit.js';
 import { fakeRows, parseColumn, rng } from '../../core/fake.js';
+import { statDelta } from '../../core/spec.js';
 
 export const card = (ctx, name, o = {}) =>
   box(ctx, name, { gap: o.gap ?? 16, pad: o.pad ?? 24, fill: 'card', stroke: 'border', radius: 'xl', w: 'fill', ...o });
@@ -22,8 +23,13 @@ export async function stats(ctx, b) {
     if (ctx.state === 'loading') add(c, skel(ctx, 96, 12), skel(ctx, 140, 28, 'md'), skel(ctx, 72, 10));
     else {
       const value = ctx.state === 'empty' ? '0' : it.value;
-      const delta = it.delta && ctx.state !== 'empty'
-        ? await text(ctx, it.delta, { size: 'xs', weight: 'medium', color: String(it.delta).trim().startsWith('-') ? 'destructive' : 'success' })
+      // "+14% к вчера": the value coloured by meaning (it.better up | down), the comparison muted.
+      const d = ctx.state !== 'empty' ? statDelta(it) : null;
+      const tone = { positive: 'success', negative: 'destructive', neutral: 'muted-foreground' };
+      const delta = d
+        ? add(box(ctx, 'Delta', { dir: 'H', gap: 4, align: 'CENTER' }),
+          await text(ctx, d.value, { size: 'xs', weight: 'medium', color: tone[d.tone] }),
+          d.label && (await text(ctx, d.label, { size: 'xs', color: 'muted-foreground' })))
         : null;
       add(c, await text(ctx, it.label, { size: 'sm', weight: 'medium', color: 'muted-foreground' }),
         await text(ctx, value, { size: '2xl', weight: 'bold' }),

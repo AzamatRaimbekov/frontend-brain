@@ -1288,7 +1288,7 @@
       "name": "crm-app-shell",
       "type": "registry:component",
       "title": "crm-app-shell",
-      "description": "Figma sideMenu + topHeader: CrmLayout, SideMenu (sections, collapsible groups, active item, user), SideMenuSheet (mobile), TopHeader, Breadcrumbs, HeaderSearch, HeaderIconButton, UserMenu",
+      "description": "Figma sideMenu + topHeader: CrmLayout, SideMenu (Mbank logo + product name, sections, collapsible groups, active item, user), SideMenuSheet (mobile), TopHeader, Breadcrumbs, HeaderSearch, HeaderIconButton, UserMenu",
       "dependencies": [],
       "registryDependencies": [
         "@mbank/utils",
@@ -1311,6 +1311,10 @@
         },
         {
           "path": "registry/mbank/blocks/crm/SideMenuSection.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/SideMenuBrand.tsx",
           "type": "registry:component"
         },
         {
@@ -1375,13 +1379,17 @@
       "name": "crm-period-segment",
       "type": "registry:component",
       "title": "crm-period-segment",
-      "description": "Figma Period row: title + segment Сегодня/Неделя/Месяц/Квартал on kit Tabs (tablist + tabpanel)",
+      "description": "Figma Period row: segment Сегодня/Неделя/Месяц/Квартал — PeriodSegment (title + tablist + tabpanel) and PeriodSwitch (toggle buttons for a page title row)",
       "dependencies": [],
       "registryDependencies": [
         "@mbank/utils",
         "@mbank/tabs"
       ],
       "files": [
+        {
+          "path": "registry/mbank/blocks/crm/PeriodSwitch.tsx",
+          "type": "registry:component"
+        },
         {
           "path": "registry/mbank/blocks/crm/PeriodSegment.tsx",
           "type": "registry:component"

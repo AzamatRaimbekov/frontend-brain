@@ -25,14 +25,16 @@ src/features/<id>/lib/   messages.ts (all copy), status.ts (status label → bad
 src/features/<id>/ui/    <Id>View.tsx (query + states) and one component per block; index.ts = public API
 ```
 
+Shell (Figma `sideMenu` + `topHeader`): `SideMenuBrand` (Mbank logo + `spec.brand`, default "MBANK CRM") with the «« collapse button, collapsible sections (chevron), "+" in the first section → the first form screen; TopHeader: search "Номер заявки, ИНН или ФИО", page actions, settings, bell with the unread dot, user pill with the online dot.
+
 App files: `src/app/router.tsx` (routes, `/` → first menu screen, placeholder pages for menu items without a screen), `navigation.ts` (from `spec.nav`, groups → sections), `route-header.ts` (+ `plain` for shell `plain`), `AppLayout.tsx`, `AppHeader.tsx` (`spec.user`, header search → the first screen with a toolbar search), `AppSideMenu.tsx`, `src/mocks/handlers.ts` (all feature handlers), `src/mocks/lib.ts`, `src/shared/api/devMock.ts`, `src/shared/components/FormField.tsx`. The template demo (pipeline, application) is removed while it is untouched.
 
 ## Blocks → components
 
 | Spec block | Code |
 |---|---|
-| `header` | title → `TopHeader` h1 (route `staticData.header`); with `breadcrumbs` → `Breadcrumbs` + `SummaryHeader` (h1, badge, actions); subtitle / badge / actions → `Badge`, `Button` (`+ …` = primary with `PlusIcon`) |
-| `stats` | `KpiCard` grid, `loading` skeletons |
+| `header` | Figma title row: h1 20/28 bold on the background + `+ …` primary (`PlusIcon`) + `period` → `PeriodSwitch`; TopHeader shows the product (`spec.project`, `titleAs="p"`) or `Breadcrumbs`; other actions ("Экспорт") → dark `Экспорт ˅` in TopHeader (`staticData.header.actions`). Breadcrumbs + `badge`/`amount` → `SummaryHeader` card (amount, `subtitle` = meta line, all actions: «Отклонить» destructive, others soft link-blue, `+` primary) |
+| `stats` | `KpiCard` grid, `loading` skeletons; `delta` split by `statDelta` (spec core): "+14%" toned by `better` (`up`/`down`), "к вчера" muted |
 | `table` | kit `Table` (caption, skeleton rows), `Badge` for `status`, `Checkbox` for `selectable`, ghost `Button` + `MoreVerticalIcon` for `actions` |
 | `toolbar` | `Input type=search` (`?q=`), kit `Select` per filter (`?<filter>=`, options from the table column with that label) |
 | `pagination` | outline `Button`s + "Показано a–b из N" (`?page=`) |

@@ -22,6 +22,7 @@ Source of truth: [`builder/core/spec.js`](../../../builder/core/spec.js) (valida
 | Field | Values | Default |
 |---|---|---|
 | `platform` | `web`, `mobile` (app with tab bar) | `web` |
+| `brand` | product name in the side menu next to the Mbank logo (code) | `MBANK CRM` |
 | `viewports` | `desktop` 1440, `tablet` 768, `mobile` 375 (per spec or per screen) | desktop (web) / mobile |
 | `shell` | `sidebar` (nav app), `plain` (login, public), `mobile` (app bar + tab bar) | from platform and nav |
 | `states` | `default`, `loading`, `empty`, `error`, `no-access` | `default` |
@@ -32,8 +33,8 @@ Source of truth: [`builder/core/spec.js`](../../../builder/core/spec.js) (valida
 
 | type | Required | Optional | Notes |
 |---|---|---|---|
-| `header` | `title` | `subtitle`, `breadcrumbs[]`, `badge`, `actions[]` | `+` marks the primary action |
-| `stats` | `items[{label,value}]` | `delta` (`-` → red), `hint` | 3–4 items |
+| `header` | `title` | `subtitle`, `breadcrumbs[]`, `badge`, `amount`, `actions[]`, `period[]` | `+` marks the primary action; other actions of a page go to the top header (dark «Экспорт ˅»); with `badge` or `amount` on a page with breadcrumbs it is the object summary card (amount 32 bold, `subtitle` = meta line, actions «Отклонить» red / others soft / `+` yellow); `period` = segment on the right (`["Сегодня","Неделя","Месяц","Квартал"]`) |
+| `stats` | `items[{label,value}]` | `delta`, `better` (`up` default / `down`), `tone`, `hint` | 3–4 items. `delta` "+14% к вчера": the value is coloured by meaning — sign in the `better` direction → green, against → red, no sign → muted; the comparison ("к вчера", from `к`/`за`/`от`/`vs`) stays muted. Lower is better (time to decision, SLA overdue) → `better: "down"` |
 | `toolbar` | — | `search`, `filters[]`, `actions[]` | |
 | `table` | `columns[]` | `rows` (8), `statuses[]`, `selectable`, `title`, `data[][]` | column `"Label:type"`; mobile → list |
 | `pagination` | — | `summary` | removed in empty/error |

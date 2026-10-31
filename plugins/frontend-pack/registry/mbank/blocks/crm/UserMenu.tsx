@@ -9,23 +9,30 @@ type UserMenuProps = {
   role?: string
   avatarSrc?: string
   initials: string
+  /** Green dot on the avatar (Figma `status` online). */
+  online?: boolean
   /** DropdownMenuItem elements: Профиль, Сменить роль, Выйти. */
   children: React.ReactNode
 }
 
-/** Figma `avatarCont` in topHeader: avatar 36 + name (14 bold) + role (11 muted) + chevron. */
-export function UserMenu({ name, role, avatarSrc, initials, children }: UserMenuProps) {
+/** Figma `avatarCont` in topHeader: soft pill, photo 36 (+ online dot) + name (14 bold) + role (11 muted) + chevron. */
+export function UserMenu({ name, role, avatarSrc, initials, online = false, children }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         data-slot="user-menu"
-        aria-label={`Профиль: ${name}`}
-        className="flex h-9 items-center gap-2 rounded-md text-left outline-none hover:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/30 md:pr-2"
+        aria-label={`Профиль: ${name}${online ? ", в сети" : ""}`}
+        className="flex h-9 items-center gap-2 rounded-md text-left outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/30 md:bg-muted md:pr-2"
       >
-        <Avatar size="md" className="size-9">
-          {avatarSrc && <AvatarImage src={avatarSrc} alt="" />}
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
+        <span className="relative shrink-0">
+          <Avatar size="md" className="size-9 rounded-md">
+            {avatarSrc && <AvatarImage src={avatarSrc} alt="" />}
+            <AvatarFallback className="rounded-md bg-surface-3">{initials}</AvatarFallback>
+          </Avatar>
+          {online && (
+            <span aria-hidden="true" className="absolute -bottom-0.5 left-0.5 size-2 rounded-full bg-status-success ring-2 ring-muted" />
+          )}
+        </span>
         <span className="hidden min-w-0 flex-col xl:flex">
           <span className="truncate text-sm font-bold text-foreground">{name}</span>
           {role && <span className="truncate text-2xs text-muted-foreground">{role}</span>}
