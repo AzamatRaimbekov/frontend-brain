@@ -1,0 +1,30 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "button",
+  "title": "Button",
+  "figma": { "name": "button/default" },
+  "parts": ["root", "label", "icon"],
+  "props": {
+    "variant": { "values": ["primary", "secondary", "outline", "ghost"], "default": "primary" },
+    "size": { "values": ["sm", "md", "lg"], "default": "md" }
+  },
+  "base": {
+    "root": { "layout": "row", "align": "center", "gap": 2, "radius": "md", "weight": "medium", "focus-ring": "ring/50", "opacity:disabled": 50 },
+    "icon": { "size": 5 }
+  },
+  "variants": {
+    "variant": {
+      "primary": { "root": { "bg": "primary", "fg": "primary-foreground", "bg:hover": "primary-hover", "bg:active": "primary-active" } },
+      "secondary": { "root": { "bg": "secondary", "fg": "secondary-foreground", "bg:hover": "secondary-hover", "bg:active": "secondary-active" } },
+      "outline": { "root": { "bg": "background", "fg": "outline-foreground", "border": "outline", "border:hover": "outline-hover", "bg:hover": "muted" } },
+      "ghost": { "root": { "bg": "ghost", "fg": "ghost-foreground", "bg:hover": "ghost-hover" } }
+    },
+    "size": {
+      "sm": { "root": { "height": 9, "px": 3, "text": "sm" }, "icon": { "size": 4 } },
+      "md": { "root": { "height": 11, "px": 4, "text": "sm" } },
+      "lg": { "root": { "height": 14, "px": 6, "text": "base" } }
+    }
+  },
+  "states": ["default", "hover", "active", "focus", "disabled"],
+  "code": { "file": "button.tsx", "export": "buttonVariants", "extra": "disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0" }
+}

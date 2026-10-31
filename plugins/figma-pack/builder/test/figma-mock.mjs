@@ -46,6 +46,9 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
     remove() { for (const id of [...this.variableIds]) vars.get(id)?.remove(); cols.delete(this.id); }
   }
 
+  const BINDABLE = ['width', 'height', 'minWidth', 'maxWidth', 'minHeight', 'maxHeight', 'itemSpacing', 'counterAxisSpacing', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom',
+    'topLeftRadius', 'topRightRadius', 'bottomLeftRadius', 'bottomRightRadius', 'strokeWeight', 'opacity', 'visible', 'characters'];
+
   const SIZING_OK = (node, v) => {
     const parentAL = node.parent && node.parent.layoutMode && node.parent.layoutMode !== 'NONE';
     if (v === 'FILL' && !parentAL) throw new Error(`FILL can only be set on children of auto-layout frames (${node.name})`);
@@ -75,12 +78,45 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
     resizeWithoutConstraints(w, h) { this.resize(w, h); }
     rescale(s) { this.width *= s; this.height *= s; }
     remove() { if (this.parent) this.parent.children = this.parent.children.filter((x) => x !== this); nodes.delete(this.id); this.removed = true; }
-    setBoundVariable(field, v) { if (!vars.has(v.id)) throw new Error('bind missing var'); this.boundVariables[field] = { id: v.id }; }
+    setBoundVariable(field, v) {
+      if (v === null) { delete this.boundVariables[field]; return; }
+      if (!vars.has(v.id)) throw new Error('bind missing var');
+      if (!BINDABLE.includes(field)) throw new Error(`field ${field} is not bindable`);
+      this.boundVariables[field] = { type: 'VARIABLE_ALIAS', id: v.id };
+    }
     setExplicitVariableModeForCollection(c, modeId) { if (!c.modes.some((m) => m.modeId === modeId)) throw new Error('bad mode'); this.explicitModes[c.id] = modeId; }
     findAll(fn) { const out = []; const walk = (n) => n.children.forEach((c) => { if (fn(c)) out.push(c); walk(c); }); walk(this); return out; }
     findOne(fn) { return this.findAll(fn)[0] || null; }
     findAllWithCriteria({ types }) { return this.findAll((n) => types.includes(n.type)); }
-    setPluginData() {}
+    setPluginData(k, v) { this.pd = this.pd || {}; if (v === '') delete this.pd[k]; else this.pd[k] = String(v); }
+    getPluginData(k) { return (this.pd && this.pd[k]) || ''; }
+    getPluginDataKeys() { return Object.keys(this.pd || {}); }
+  }
+
+  // Components: a set's children are COMPONENT variants named 'prop=value, ...'.
+  class Component extends Node {
+    constructor() { super('COMPONENT'); this.layoutMode = 'NONE'; this.description = ''; this.key = `key-${this.id}`; }
+    createInstance() {
+      const i = new Node('INSTANCE');
+      i.mainComponent = this;
+      i.width = this.width; i.height = this.height;
+      return i;
+    }
+  }
+  class ComponentSet extends Node {
+    constructor() { super('COMPONENT_SET'); this.description = ''; this.key = `key-${this.id}`; this.layoutMode = 'NONE'; }
+    get defaultVariant() { return this.children[0]; }
+    get componentPropertyDefinitions() {
+      const defs = {};
+      for (const c of this.children) for (const pair of c.name.split(',')) {
+        const [k, v] = pair.split('=').map((x) => x.trim());
+        if (!k || v === undefined) throw new Error(`variant name without prop=value: ${c.name}`);
+        const d = (defs[k] = defs[k] || { type: 'VARIANT', defaultValue: v, variantOptions: [] });
+        if (!d.variantOptions.includes(v)) d.variantOptions.push(v);
+      }
+      return defs;
+    }
+    appendChild(c) { if (c.type !== 'COMPONENT') throw new Error('component set takes components only'); super.appendChild(c); }
   }
 
   class Text extends Node {
@@ -113,6 +149,15 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
     createFrame() { const f = new Node('FRAME'); f.layoutMode = 'NONE'; return f; },
     createText() { return new Text(); },
     createRectangle() { return new Node('RECTANGLE'); },
+    createComponent() { const c = new Component(); figma.currentPage.appendChild(c); return c; },
+    combineAsVariants(nodes, parent) {
+      if (!nodes.length || nodes.some((n) => n.type !== 'COMPONENT')) throw new Error('combineAsVariants needs components');
+      const set = new ComponentSet();
+      for (const n of nodes) set.appendChild(n);
+      set.componentPropertyDefinitions; // throws on bad variant names, like Figma
+      parent.appendChild(set);
+      return set;
+    },
     createSection() { return new Node('SECTION'); },
     createPage() { const p = page('Page'); root.appendChild(p); return p; },
     createNodeFromSvg(svg) { if (!svg.startsWith('<svg')) throw new Error('bad svg'); const f = new Node('FRAME'); const v = new Node('VECTOR'); v.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }]; f.appendChild(v); f.width = 24; f.height = 24; return f; },
@@ -126,6 +171,7 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
       createVariableCollection: (name) => new Collection(name),
       createVariable: (name, col, type) => new Variable(name, typeof col === 'string' ? cols.get(col) : col, type),
       createVariableAlias: (v) => ({ type: 'VARIABLE_ALIAS', id: v.id }),
+      setBoundVariableForEffect(effect, field, v) { if (!vars.has(v.id)) throw new Error('missing var'); return { ...effect, boundVariables: { [field]: { type: 'VARIABLE_ALIAS', id: v.id } } }; },
       setBoundVariableForPaint(paint, field, v) { if (!vars.has(v.id)) throw new Error('missing var'); return { ...paint, boundVariables: { [field]: { type: 'VARIABLE_ALIAS', id: v.id } } }; },
     },
   };

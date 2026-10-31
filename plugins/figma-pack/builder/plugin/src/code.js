@@ -6,8 +6,11 @@ import { auditFrames } from './audit.js';
 import { validateSpec } from '../../core/spec.js';
 import { toShadcnCss } from '../../core/css.js';
 import { COLOR_TOKENS } from '../../core/tokens.js';
+import { contractHandlers } from './contracts.js';
+// Built in by scripts/build.mjs from builder/contracts/*.json (fixtures until the extractor lands).
+import BUNDLED_CONTRACTS from 'ds:contracts';
 
-figma.showUI(__html__, { width: 480, height: 680, themeColors: true });
+figma.showUI(__html__, { width: 520, height: 720, themeColors: true });
 
 let kitCache = null;
 const post = (type, data) => figma.ui.postMessage({ type, ...data });
@@ -62,6 +65,7 @@ const handlers = {
     if (first) figma.viewport.scrollAndZoomIntoView([first]);
     return { result: res, audit };
   },
+  ...contractHandlers(BUNDLED_CONTRACTS),
 };
 
 figma.ui.onmessage = async (m) => {

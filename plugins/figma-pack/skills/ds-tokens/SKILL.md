@@ -39,6 +39,10 @@ Code: [figma-pack/builder](../../builder/README.md) (`BUILDER` below = path to `
 
 Plugin «Токены» → «Новый проектный токен»: project, role, light value, dark value (`orange/200` or `#hex`). Scopes are set from the role (`*-foreground`/`*-text` → text, `*-border`/`*-ring` → stroke, else fill).
 
+## Bind tokens to components
+
+Components are generated from contracts, not drawn: plugin tab «Компоненты» renders `builder/contracts/<name>.json` into a component set with every fill, stroke, radius, padding, gap and height bound to a variable, and «Привязки» rebinds a token in Figma and in the contract at once. How bindings work and what to do with tokens the plugin had to create: [references/component-bindings.md](references/component-bindings.md).
+
 ## Report
 
 ```

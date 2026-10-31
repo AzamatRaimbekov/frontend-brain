@@ -37,6 +37,7 @@
   <button data-tab="tokens">Токены</button>
   <button data-tab="screens">Экраны</button>
   <button data-tab="kit">Кит</button>
+  <button data-tab="components">Компоненты</button>
 </nav>
 
 <section id="brand" class="on">
@@ -107,6 +108,41 @@
     <p class="muted">Плагин ищет Button, Input, Badge, Avatar, Checkbox и другие по имени и ставит их экземпляры. Чего нет — рисует сам, тоже на токенах.</p>
     <div class="row"><button class="btn" id="scanKit">Просканировать файл</button><button class="btn" id="saveKit" disabled>Скачать карту кита</button></div>
     <div id="kitOut" class="muted"></div>
+  </div>
+</section>
+<section id="components">
+  <div class="card">
+    <h3>Контракты компонентов</h3>
+    <p class="muted">Контракт — JSON компонента: части, свойства, какой токен на каком свойстве. Из него плагин собирает компонент в Figma, а генератор — React-код. Рисовать руками не нужно.</p>
+    <div class="row"><select id="cSel"></select><button class="btn primary" id="cRender">Собрать в Figma</button><button class="btn" id="cRefresh" title="Обновить список">Обновить</button></div>
+    <div class="row muted">Состояния: <span id="cStates"></span></div>
+    <label class="row"><input type="checkbox" id="cCreate" checked> Недостающие цветовые токены создать в Brand (заглушка, потом задать значение)</label>
+    <label class="row"><input type="checkbox" id="cPrune"> Удалить варианты, которых больше нет в контракте</label>
+    <div id="cOut" class="muted"></div>
+    <div id="cList"></div>
+    <div class="row"><span class="muted">Импорт JSON:</span><input type="file" id="cFile" accept=".json" multiple></div>
+  </div>
+  <div class="card">
+    <h3>Привязки</h3>
+    <p class="muted">Строка = где (общее или значение свойства) × часть × свойство × состояние. Выберите токен из переменных файла: Figma перепривяжется сразу, контракт обновится.</p>
+    <div class="row"><input id="cFilter" placeholder="Фильтр: root, bg, hover, primary…" size="30"></div>
+    <div id="cRows" class="muted">Выберите контракт.</div>
+    <div class="row"><select id="cAddWhere"></select><select id="cAddPart"></select><select id="cAddProp"></select><select id="cAddState"></select>
+      <input id="cAddValue" list="cTokColor" placeholder="токен" size="14"><button class="btn" id="cAdd">Добавить</button></div>
+    <datalist id="cTokColor"></datalist><datalist id="cTokFloat"></datalist>
+  </div>
+  <div class="card">
+    <h3>Новый компонент</h3>
+    <div class="row"><input id="cNewName" placeholder="имя: promo-card" size="16"><input id="cNewTitle" placeholder="название: Promo Card" size="16"></div>
+    <div class="row"><select id="cNewTemplate"></select></div>
+    <div class="row"><input id="cNewProps" placeholder="variant=primary,secondary; size=sm,md" size="40"></div>
+    <div class="row"><button class="btn primary" id="cCreateNew">Создать и собрать</button></div>
+  </div>
+  <div class="card">
+    <h3>Экспорт для кода</h3>
+    <p class="muted">Эти файлы читает генератор кода: положите их в <code>builder/contracts/</code>.</p>
+    <div class="row"><button class="btn" id="cExportOne">Скачать выбранный</button><button class="btn" id="cExportAll">Скачать все</button><button class="btn" id="cCopy">Скопировать JSON</button><button class="btn danger" id="cReset">Вернуть из сборки</button></div>
+    <textarea id="cJson" rows="8" readonly placeholder="Здесь появится JSON контракта"></textarea>
   </div>
 </section>
 <div id="toast"></div>

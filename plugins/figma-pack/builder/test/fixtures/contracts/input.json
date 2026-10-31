@@ -1,0 +1,27 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "input",
+  "title": "Input",
+  "figma": { "name": "input/default" },
+  "parts": ["root", "placeholder"],
+  "props": {
+    "size": { "values": ["sm", "md", "lg"], "default": "md" }
+  },
+  "base": {
+    "root": {
+      "layout": "row", "align": "center", "radius": "md", "px": 3, "bg": "background", "fg": "foreground",
+      "border": "input", "border:hover": "input-hover", "border:focus": "ring", "focus-ring": "ring/30",
+      "border:disabled": "input-disabled", "bg:disabled": "muted"
+    },
+    "placeholder": { "fg": "muted-foreground", "fg:disabled": "disabled-foreground" }
+  },
+  "variants": {
+    "size": {
+      "sm": { "root": { "height": 9, "text": "sm" } },
+      "md": { "root": { "height": 11, "text": "sm" } },
+      "lg": { "root": { "height": 14, "px": 4, "text": "base" } }
+    }
+  },
+  "states": ["default", "hover", "focus", "disabled"],
+  "code": { "file": "input.tsx", "export": "inputVariants", "extra": "flex w-full min-w-0 transition-colors outline-none file:border-0" }
+}

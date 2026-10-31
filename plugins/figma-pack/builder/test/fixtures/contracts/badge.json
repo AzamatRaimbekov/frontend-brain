@@ -1,0 +1,37 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "badge",
+  "title": "Badge",
+  "figma": { "name": "Badge-status" },
+  "parts": ["root", "label"],
+  "props": {
+    "tone": { "values": ["neutral", "success", "error"], "default": "neutral" },
+    "fill": { "values": ["ghost", "solid"], "default": "ghost" },
+    "size": { "values": ["sm", "md"], "default": "md" }
+  },
+  "base": {
+    "root": { "layout": "row", "align": "center", "gap": 1, "radius": "full", "weight": "medium" }
+  },
+  "variants": {
+    "tone": {
+      "neutral": { "root": { "bg": "status-neutral-muted", "fg": "status-neutral-foreground" } },
+      "success": { "root": { "bg": "status-success-muted", "fg": "status-success-foreground" } },
+      "error": { "root": { "bg": "status-error-muted", "fg": "status-error-foreground" } }
+    },
+    "fill": {
+      "ghost": {},
+      "solid": { "root": { "fg": "status-filled-foreground" } }
+    },
+    "size": {
+      "sm": { "root": { "height": 5, "px": 1.5, "text": "xs" } },
+      "md": { "root": { "height": 6, "px": 2, "text": "xs" } }
+    }
+  },
+  "compound": [
+    { "when": { "fill": "solid", "tone": "neutral" }, "root": { "bg": "status-neutral" } },
+    { "when": { "fill": "solid", "tone": "success" }, "root": { "bg": "status-success" } },
+    { "when": { "fill": "solid", "tone": "error" }, "root": { "bg": "status-error" } }
+  ],
+  "states": ["default"],
+  "code": { "file": "badge.tsx", "export": "badgeVariants", "extra": "w-fit shrink-0 overflow-hidden whitespace-nowrap" }
+}
