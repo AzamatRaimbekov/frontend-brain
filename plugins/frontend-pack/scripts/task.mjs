@@ -29,6 +29,14 @@ export const PIPELINES = {
     ['code', 'Код (frontend-engineer)'], ['design-qa', 'Сверка с макетом (design-qa)'],
     ['review', 'Ревью (frontend-reviewer)'], ['handoff', 'QA и MR, человек решает про MR'],
   ],
+  spec: [
+    ['brief', 'Бриф утверждён'], ['spec', 'Спека экранов (figma-spec)'], ['tokens', 'Токены сверены с Figma'],
+    ['draft', 'Экраны в Figma из спеки (DS Builder)'], ['approve-design', 'Дизайнер утвердил экраны'],
+    ['scaffold', 'Проект (new-crm)'], ['generate', 'Код из спеки (spec-to-code)'],
+    ['code', 'Данные, API и доводка (frontend-engineer)'], ['checks', 'tsc, линтер, тесты, сборка'],
+    ['design-qa', 'Сверка с макетом (design-qa)'], ['review', 'Ревью (frontend-reviewer)'],
+    ['handoff', 'QA и MR, человек решает про MR'],
+  ],
   bug: [
     ['reproduce', 'Воспроизведение и причина'], ['failing-test', 'Тест, который падает'],
     ['fix', 'Фикс, тест зелёный'], ['checks', 'tsc, линтер, тесты, сборка'],

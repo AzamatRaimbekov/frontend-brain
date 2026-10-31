@@ -27,6 +27,8 @@ export const STAGE_OWNERS = {
   spec: '../figma-pack/agents/figma-reader.md', 'design-qa': 'agents/design-qa.md',
   requirements: 'skills/react-new-project/SKILL.md', scaffold: 'skills/react-new-project/SKILL.md', shell: 'skills/react-new-project/SKILL.md',
   handoff: 'skills/frontend/SKILL.md',
+  tokens: 'skills/mbank-ui/SKILL.md',
+  generate: 'skills/mbank-crm/SKILL.md',
 };
 
 // Task text -> knowledge areas. Crude stems on purpose: titles and goals are short Russian or English phrases.

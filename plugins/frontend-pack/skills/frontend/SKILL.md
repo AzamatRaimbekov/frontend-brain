@@ -18,7 +18,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 5. Если чего-то не хватает для первого шага, задай только вопросы, без которых нельзя начать. Остальное реши разумно и перечисли допущения в итоге.
 6. Объяви маршрут одной строкой до начала работы, чтобы человек видел, что мозг сработал и что будет дальше:
 
-   `Frontend: <тип задачи> · конвейер <small-edit | feature | figma | bug | new-project | review | refactor> · режим <написать | ревью | спроектировать | починить> → этапы: <по порядку> · скиллы: <по порядку> · статьи: <найденные или «нет»> · задача: <slug или «без файла»>`
+   `Frontend: <тип задачи> · конвейер <small-edit | feature | spec | figma | bug | new-project | review | refactor> · режим <написать | ревью | спроектировать | починить> → этапы: <по порядку> · скиллы: <по порядку> · статьи: <найденные или «нет»> · задача: <slug или «без файла»>`
 
    Грузи только то, что нужно этой задаче: правка отступа не тянет за собой UX-бриф и архитектуру, новая страница тянет.
 
@@ -30,6 +30,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 |---|---|---|---|
 | Правка 1–2 файлов без новой страницы | `small-edit` | code → checks | итог |
 | Новая страница, экран, форма, фича, API | `feature` | brief → plan → approve-plan → code → checks → review → handoff | план большой фичи, MR |
+| ТЗ или целый продукт из блоков каталога (CRM, админка, кабинет): «собери по ТЗ», «дизайн и фронт автоматически» | `spec` | brief → spec → tokens → draft → approve-design → scaffold → generate → code → checks → design-qa → review → handoff | бриф, экраны в Figma, утверждение дизайна, MR |
 | Ссылка на Figma, «по макету» | `figma` | access → brief → draft → approve-design → spec → ux → plan → code → design-qa → review → handoff | бриф, draw plan, утверждение макета, MR |
 | Баг, регрессия, «не работает» | `bug` | reproduce → failing-test → fix → checks → review → handoff | MR |
 | Новый проект с нуля | `new-project` | requirements → scaffold → shell → checks → review → handoff | стек, если не назван |
@@ -80,6 +81,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | Вёрстка, стили, тема, адаптив | [react-ui](../react-ui/SKILL.md), [shadcn](../shadcn/SKILL.md) при `components.json` |
 | Продукт Mbank (банк, касса, travel, artwin, koko) или экран из Mbank Figma | [mbank-ui](../mbank-ui/SKILL.md): кодовый UI-кит и токены, ставится `add-ui.mjs`; плюс [react-ui](../react-ui/SKILL.md) |
 | CRM, админка, бэк-офис на Mbank (новая или новая страница в ней) | [mbank-crm](../mbank-crm/SKILL.md): новый проект — `node <plugin-root>/scripts/new-crm.mjs <папка>`, страницы — из CRM-блоков (`add-ui.mjs crm-…`) |
+| ТЗ → экраны в Figma и код одной спекой, «автоматизируй дизайн и фронт» | конвейер `spec` ([pipelines.md](references/pipelines.md#spec)): `figma-pack:figma-spec` пишет спеку, плагин DS Builder строит Figma, `scripts/spec-to-code.mjs` — код на `@mdigital/mbank-ui`; токены — `mbank-ui` (`tokens-build.mjs`) или `figma-pack:ds-tokens` |
 | Ссылка на Figma, «по макету», «сделай в фигме и сверстай», передача в разработку | конвейер `figma` по [design-to-code](../design-to-code/SKILL.md): этапы бриф → Figma → утверждение → спека → код → сверка; агенты `design-lead`, `design-qa` и плагин figma-pack |
 | Тесты: юнит, компонент, страница, e2e, моки MSW | [react-testing](../react-testing/SKILL.md) |
 | Сложная форма, мастер из шагов, где хранить состояние | [react-forms-state](../react-forms-state/SKILL.md) (UX форм — в [react-ux](../react-ux/SKILL.md)) |
