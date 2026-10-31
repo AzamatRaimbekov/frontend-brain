@@ -64,3 +64,4 @@
 1. Значение цвета — **только имя токена** из `tokens.css` (без `--`), никаких hex. Новый токен сначала добавляется в дизайн-систему (конфигуратор или `tokens.map.json`), потом привязывается.
 2. Новый компонент = новый контракт. Плагин создаёт его из шаблона анатомии (button-like, input-like, badge-like, card-like), код генерируется тем же генератором.
 3. Проверка: каждый токен контракта существует в `tokens.css`; каждое значение `props.values` описано в `variants`; генерированный код и Figma совпадают по списку вариантов.
+Генератор кода: frontend-pack scripts/contract-to-code.mjs (--check/--write/--new), извлечение из кита: design-engine scripts/contracts-extract.mjs, проверка: design-engine scripts/contracts-check.mjs.

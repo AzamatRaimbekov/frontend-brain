@@ -23,6 +23,10 @@ test('fixtures are valid contracts; bad ones are explained', () => {
   assert.match(validateContract(setBinding(button, ['base', 'root'], 'colour', 'x')).join('\n'), /неизвестное свойство/);
   assert.match(validateContract(setBinding(button, ['base', 'nope'], 'bg', 'x')).join('\n'), /не объявлена/);
   assert.match(validateContract(setBinding(button, ['base', 'root'], 'bg:pressed', 'x')).join('\n'), /неизвестное состояние/);
+  const checkbox = { ...setBinding(button, ['base', 'root'], 'bg:checked', 'primary'), states: ['default', 'checked', 'disabled'] };
+  assert.deepEqual(validateContract(checkbox), [], 'states declared by the contract are allowed');
+  assert.equal(resolveStyle(checkbox, { variant: 'ghost', size: 'sm' }, 'checked').root.bg, 'primary');
+  assert.equal(variantList(checkbox).filter((v) => v.state === 'checked').length, 12);
 });
 
 test('variant list = props x states, state only when there are several', () => {
