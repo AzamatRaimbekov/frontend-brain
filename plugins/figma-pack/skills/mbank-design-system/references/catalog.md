@@ -470,7 +470,9 @@ Layout slots (Web components, page Blocks): 30 empty auto-layout containers `Ver
 
 ## 7. Code Connect
 
-Coverage: 0/233 (published per file: Web 134, Hero 79, CRM 79, Mobile 54). Code mapping rules: `code-mapping.md`.
+Published in Figma: 0/233 (published per file: Web 134, Hero 79, CRM 79, Mobile 54). Code mapping rules: `code-mapping.md`.
+
+Figma -> code map: `components-map.json` (2026-10-31), 66 of 233 components linked to `@mdigital/mbank-ui` (9 mapped + 57 partial; web 5 + 35, crm 4 + 22), 94 missing (kit backlog), 20 ignore, 54 mobile out of scope. Each JSON component has `code.web` filled from it. Check, backlog and Code Connect files: `node plugins/figma-pack/scripts/components-map.mjs check | report | code-connect --out <dir>`.
 
 ## 8. Gaps
 
