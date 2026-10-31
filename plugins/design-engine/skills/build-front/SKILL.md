@@ -23,6 +23,17 @@ description: Builds a working Mbank CRM / admin / cabinet frontend in about a mi
 4. **Что осталось руками** — из вывода `generate`: TODO-блоки (тип блока, которого нет в генераторе), кнопки без поведения (`TODO(spec-to-code)`), моки вместо реального API. Это следующий этап — агент `frontend-pack:frontend-engineer` по конвейеру `spec` скилла `frontend-pack:frontend`.
 5. **Figma (если нужен макет).** Та же спека → плагин DS Builder («Экраны» → «Собрать») или `use_figma` с Full seat. Проверка совпадения — агент `design-engine:design-qa`.
 
+## MCP `mbank-ds`: одни токены для любого агента
+
+Плагин поднимает MCP-сервер `mbank-ds` (`mcp/server.mjs`, без зависимостей; другой клиент — `node <design-engine>/mcp/server.mjs`). Пиши и правь UI Mbank через него, а не по памяти:
+
+| Инструмент | Когда |
+|---|---|
+| `ds_tokens` | перед любым цветом, радиусом, текстом: имя токена, light/dark, переменная Figma |
+| `ds_components`, `ds_component` | какой компонент кита взять, как поставить (пакет, `shadcn add @mbank/…`, копия), его контракт: какой токен на какой части |
+| `ds_check_project` | после правок: устарела ли копия токенов, где hex, произвольные цвета, палитра Tailwind |
+| `ds_sync_project` | перестроить проект под текущие токены (`write: true`), затем проверки проекта |
+
 ## Отчёт
 
 ```

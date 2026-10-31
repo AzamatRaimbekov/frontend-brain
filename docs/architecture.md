@@ -35,3 +35,7 @@ design-engine   движок   связка дизайна и кода: конв
 ## Версии
 
 Каждый плагин версионируется отдельно (`plugin.json` = запись в marketplace, проверяет `npm test`). `design-engine` держит диапазоны: `{ "name": "frontend-pack", "version": "^0.14" }`. Релиз: тег `<плагин>--v<версия>` (`claude plugin tag`).
+
+## MCP движка
+
+`design-engine` поднимает MCP-сервер `mbank-ds` (`plugins/design-engine/.mcp.json` → `mcp/server.mjs`): токены (значения и переменные Figma), компоненты кита с контрактами и командами установки, проверка и синхронизация проекта с текущими токенами. Так любой агент (Claude Code, Cursor, Codex) строит фронт по тем же токенам, что и Figma.
