@@ -2,6 +2,7 @@ import type * as React from "react"
 
 import { cn } from "@/shared/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs"
+import { periodListClass } from "./PeriodSwitch"
 
 export type PeriodOption<T extends string> = { value: T; label: string }
 
@@ -39,7 +40,7 @@ export function PeriodSegment<T extends string>({
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-xl font-bold text-foreground">{title}</h2>
-        <TabsList aria-label={label} className="w-full rounded-lg bg-surface-2 p-1 sm:w-fit">
+        <TabsList aria-label={label} className={periodListClass}>
           {options.map((option) => (
             <TabsTrigger
               key={option.value}

@@ -5,6 +5,8 @@ import { cn } from "@/shared/lib/utils"
 type TopHeaderProps = {
   /** Page title (h1). Leave empty when the page shows breadcrumbs and its own h1. */
   title?: React.ReactNode
+  /** "p" when the title is the section/product name and the page h1 is in the body (Figma: "Кредитный конвейер" + "Конвейер на 12 октября"). */
+  titleAs?: "h1" | "p"
   /** <Breadcrumbs /> instead of the title (Figma `topHeader subheader`). */
   breadcrumbs?: React.ReactNode
   /** Back link/button before the title, e.g. an icon Button with ChevronLeftIcon. */
@@ -21,7 +23,7 @@ type TopHeaderProps = {
 }
 
 /** Figma `topHeader` (68px, background/surface/light, bottom divider): title left, tools right. */
-export function TopHeader({ title, breadcrumbs, back, leading, search, actions, user, className }: TopHeaderProps) {
+export function TopHeader({ title, titleAs: Title = "h1", breadcrumbs, back, leading, search, actions, user, className }: TopHeaderProps) {
   return (
     <header
       data-slot="top-header"
@@ -33,7 +35,7 @@ export function TopHeader({ title, breadcrumbs, back, leading, search, actions, 
       {leading}
       <div className="flex min-w-0 flex-1 items-center gap-3">
         {back}
-        {title && <h1 className="truncate text-lg font-bold text-foreground">{title}</h1>}
+        {title && <Title className="truncate text-lg font-bold text-foreground">{title}</Title>}
         {breadcrumbs}
       </div>
       <div className="flex shrink-0 items-center gap-2 md:gap-4">

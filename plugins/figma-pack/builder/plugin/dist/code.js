@@ -871,6 +871,14 @@
       if (!Array.isArray(b.columns) || b.columns.length < 2) errors.push(`${path}.columns: split needs 2+ columns of blocks`);
       else b.columns.forEach((col, i) => (col || []).forEach((x, j) => checkBlock(x, `${path}.columns[${i}][${j}]`, errors)));
     }
+    if (b.type === "stats") {
+      (b.items || []).forEach((it, i) => {
+        if (it && typeof it === "object" && it.better != null && !["up", "down"].includes(it.better)) errors.push(`${path}.items[${i}].better: up | down`);
+      });
+    }
+    if (b.type === "header" && b.period != null && !(Array.isArray(b.period) && b.period.length >= 2)) {
+      errors.push(`${path}.period: 2+ labels, e.g. ["\u0421\u0435\u0433\u043E\u0434\u043D\u044F", "\u041D\u0435\u0434\u0435\u043B\u044F", "\u041C\u0435\u0441\u044F\u0446", "\u041A\u0432\u0430\u0440\u0442\u0430\u043B"]`);
+    }
     if (b.type === "form") {
       (b.fields || []).forEach((f, i) => {
         if (!(typeof f === "string" || (f == null ? void 0 : f.label))) errors.push(`${path}.fields[${i}]: needs a label`);
@@ -899,6 +907,17 @@
       (s.blocks || []).forEach((b, j) => checkBlock(b, `${p}.blocks[${j}]`, errors));
     });
     return errors;
+  }
+  function statDelta(item) {
+    var _a;
+    const raw = String((_a = item == null ? void 0 : item.delta) != null ? _a : "").trim();
+    if (!raw) return null;
+    const at = raw.search(/\s(?=(к|за|от|vs|против|в сравнении)(\s|$))/i);
+    const value = at > 0 ? raw.slice(0, at) : raw;
+    const label = at > 0 ? raw.slice(at + 1) : "";
+    const sign = /^[+▲↑]/.test(value) ? "up" : /^[-−–▼↓]/.test(value) ? "down" : null;
+    const tone = item.tone || (!sign ? "neutral" : sign === (item.better || "up") ? "positive" : "negative");
+    return { value, label, tone };
   }
   function normalizeSpec(spec) {
     var _a;
@@ -1094,7 +1113,13 @@
       if (ctx.state === "loading") add(c, skel(ctx, 96, 12), skel(ctx, 140, 28, "md"), skel(ctx, 72, 10));
       else {
         const value = ctx.state === "empty" ? "0" : it.value;
-        const delta = it.delta && ctx.state !== "empty" ? await text(ctx, it.delta, { size: "xs", weight: "medium", color: String(it.delta).trim().startsWith("-") ? "destructive" : "success" }) : null;
+        const d = ctx.state !== "empty" ? statDelta(it) : null;
+        const tone = { positive: "success", negative: "destructive", neutral: "muted-foreground" };
+        const delta = d ? add(
+          box(ctx, "Delta", { dir: "H", gap: 4, align: "CENTER" }),
+          await text(ctx, d.value, { size: "xs", weight: "medium", color: tone[d.tone] }),
+          d.label && await text(ctx, d.label, { size: "xs", color: "muted-foreground" })
+        ) : null;
         add(
           c,
           await text(ctx, it.label, { size: "sm", weight: "medium", color: "muted-foreground" }),

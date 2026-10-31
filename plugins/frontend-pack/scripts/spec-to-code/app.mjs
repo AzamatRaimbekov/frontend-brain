@@ -21,7 +21,9 @@ function router(model, screens) {
       const back = [...s.crumbs].reverse().find((c) => c.href);
       if (back) lines.push(`backTo: ${q(back.href)}`);
       lines.push(`crumbs: () => ${lit(s.crumbs.map((c, i) => ({ id: `crumb-${i + 1}`, label: c.label, href: c.href })), '      ')}`);
-    } else lines.push(`title: ${q(s.header?.spec.title || s.title)}`);
+    } else if (s.header && !s.plain) lines.push(`title: ${q(model.project)}`, 'section: true');
+    else lines.push(`title: ${q(s.title)}`);
+    if (s.topActions?.length) lines.push(`actions: ${lit(s.topActions.map((a) => a.label))}`);
     if (s.plain) lines.push('plain: true');
     return `const ${s.camel}Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -95,6 +97,7 @@ function navigation(model, screens, kit) {
   const sections = [...groups.entries()].map(([title, items], i) => `  {
     id: ${q(`section-${i + 1}`)},
     title: ${q(title)},
+    collapsible: true,
     items: [
 ${items.map((n) => `      item(${q(n.id)}, ${q(n.label)}, ${q(n.href)}, ${n.icon}),`).join('\n')}
     ],
@@ -129,6 +132,10 @@ export type RouteHeader = {
   crumbs?: (params: Record<string, string>) => BreadcrumbItem[]
   /** Back link target for the chevron before the breadcrumbs. */
   backTo?: string
+  /** The title is the section/product name ("p"); the page h1 is the header block in the body. */
+  section?: boolean
+  /** Secondary page actions shown in TopHeader as the dark "Экспорт ˅" button (spec header actions without "+"). */
+  actions?: string[]
   /** Screen without the CRM frame (spec shell "plain", e.g. login). */
   plain?: boolean
 }
@@ -141,7 +148,7 @@ declare module '@tanstack/react-router' {
 `;
 
 function layout(kit) {
-  const imp = new Imports(kit).add('@tanstack/react-router', 'Outlet', 'useMatches').add('@/shared/components/crm/CrmLayout', 'CrmLayout')
+  const imp = new Imports(kit).add('react', 'useState').add('@tanstack/react-router', 'Outlet', 'useMatches').add('@/shared/components/crm/CrmLayout', 'CrmLayout')
     .add('@/shared/components/OfflineBanner', 'OfflineBanner').add('./AppHeader', 'AppHeader').add('./AppSideMenu', 'AppSideMenu');
   return `${imp}
 
@@ -149,6 +156,8 @@ function layout(kit) {
 export function AppLayout() {
   const matches = useMatches()
   const header = matches[matches.length - 1]?.staticData.header
+  // Figma sideMenu "«" button: 280px menu <-> 72px icon rail.
+  const [collapsed, setCollapsed] = useState(false)
   if (header?.plain) {
     return (
       <main className="flex min-h-dvh items-center justify-center bg-surface-1 p-4">
@@ -157,7 +166,12 @@ export function AppLayout() {
     )
   }
   return (
-    <CrmLayout banner={<OfflineBanner />} sideMenu={<AppSideMenu activeId={header?.navId} />} header={<AppHeader />}>
+    <CrmLayout
+      banner={<OfflineBanner />}
+      collapsed={collapsed}
+      sideMenu={<AppSideMenu activeId={header?.navId} collapsed={collapsed} onToggleCollapsed={() => setCollapsed((value) => !value)} />}
+      header={<AppHeader />}
+    >
       <Outlet />
     </CrmLayout>
   )
@@ -168,7 +182,8 @@ export function AppLayout() {
 function header(model, screens, kit) {
   const s = screens.includes(model.searchable) ? model.searchable : null;
   const imp = new Imports(kit).add('@tanstack/react-router', 'Link', 'useMatches').add('@/shared/components/crm/Breadcrumbs', 'Breadcrumbs')
-    .add('@/shared/components/crm/crm-icons', 'BellIcon', 'ChevronLeftIcon').add('@/shared/components/crm/HeaderIconButton', 'HeaderIconButton')
+    .add('@/shared/components/crm/crm-icons', 'BellIcon', 'ChevronLeftIcon', 'SettingsIcon').add('@/shared/components/crm/HeaderIconButton', 'HeaderIconButton')
+    .add('@/shared/ui/icons', 'ChevronDownIcon')
     .add('@/shared/components/crm/SideMenuSheet', 'SideMenuSheet').add('@/shared/components/crm/TopHeader', 'TopHeader')
     .add('@/shared/components/crm/UserMenu', 'UserMenu').add('@/shared/ui/button', 'Button').add('@/shared/ui/dropdown-menu', 'DropdownMenuItem')
     .add('./AppSideMenu', 'AppSideMenu');
@@ -191,6 +206,7 @@ ${s ? '  const navigate = useNavigate()\n' : ''}
         </SideMenuSheet>
       }
       title={header?.crumbs ? undefined : header?.title}
+      titleAs={header?.section ? 'p' : 'h1'}
       back={
         header?.backTo && (
           <Button asChild variant="ghost" size="icon-sm" className="-ml-2 max-md:hidden">
@@ -205,14 +221,27 @@ ${s ? '  const navigate = useNavigate()\n' : ''}
           <Breadcrumbs items={header.crumbs(params)} renderLink={({ item, ...props }) => <Link to={item.href} activeOptions={{ exact: true }} {...props} />} />
         )
       }
-${s ? `      search={<HeaderSearch placeholder={${q(s.search.q)}} onSearch={(query) => navigate({ to: ${q(s.path)}, search: { q: query || undefined } })} />}
+${s ? `      search={<HeaderSearch onSearch={(query) => navigate({ to: ${q(s.path)}, search: { q: query || undefined } })} />}
 ` : ''}      actions={
-        <HeaderIconButton label="Уведомления">
-          <BellIcon />
-        </HeaderIconButton>
+        <>
+          {header?.actions?.map((label) => (
+            // TODO(spec-to-code): the page action from the spec ("Экспорт"); add its menu items
+            <Button key={label} type="button" variant="secondary" size="sm" className="mr-2 max-sm:hidden">
+              {label}
+              <ChevronDownIcon />
+            </Button>
+          ))}
+          <HeaderIconButton label="Настройки" className="max-sm:hidden">
+            <SettingsIcon />
+          </HeaderIconButton>
+          {/* TODO(spec-to-code): unread notifications from the API */}
+          <HeaderIconButton label="Уведомления" indicator>
+            <BellIcon />
+          </HeaderIconButton>
+        </>
       }
       user={
-        <UserMenu name=${JSON.stringify(user.name || 'Пользователь')} role=${JSON.stringify(user.role || '')} initials=${JSON.stringify(initials(user.name))}>
+        <UserMenu name=${JSON.stringify(user.name || 'Пользователь')} role=${JSON.stringify(user.role || '')} initials=${JSON.stringify(initials(user.name))} online>
           <DropdownMenuItem>Профиль</DropdownMenuItem>
           <DropdownMenuItem variant="destructive">Выйти</DropdownMenuItem>
         </UserMenu>
@@ -225,24 +254,40 @@ ${s ? `      search={<HeaderSearch placeholder={${q(s.search.q)}} onSearch={(que
 
 function sideMenu(model, kit) {
   const imp = new Imports(kit).add('@tanstack/react-router', 'Link').add('@/shared/components/crm/SideMenu', 'SideMenu')
-    .add('@/shared/components/crm/SideMenuUser', 'SideMenuUser').add('@/shared/ui/dropdown-menu', 'DropdownMenuItem').add('./navigation', 'mainSections');
+    .add('@/shared/components/crm/SideMenuBrand', 'SideMenuBrand').add('@/shared/components/crm/SideMenuUser', 'SideMenuUser')
+    .add('@/shared/ui/dropdown-menu', 'DropdownMenuItem').add('./navigation', 'mainSections');
+  if (model.create) imp.add('@/shared/components/crm/crm-icons', 'PlusIcon').add('@/shared/ui/button', 'Button');
   const user = model.user || {};
+  const sections = model.create ? `
+// "+" in the first section header (Figma listMenu action) opens the first form screen of the spec.
+const sections = mainSections.map((section, i) =>
+  i === 0
+    ? {
+        ...section,
+        action: (
+          <Button asChild variant="ghost" size="icon-sm" className="size-8 text-muted-foreground">
+            <Link to=${q(model.create.href)} aria-label=${JSON.stringify(model.create.label)}>
+              <PlusIcon className="size-5" />
+            </Link>
+          </Button>
+        ),
+      }
+    : section,
+)
+` : '\nconst sections = mainSections\n';
   return `${imp}
+${sections}
+type AppSideMenuProps = { activeId?: string; collapsed?: boolean; onToggleCollapsed?: () => void }
 
-/** The app's side menu: navigation.ts (spec.nav) + router links + the signed-in user (spec.user). */
-export function AppSideMenu({ activeId }: { activeId?: string }) {
+/** The app's side menu: Mbank logo, navigation.ts (spec.nav) + router links, the signed-in user (spec.user). */
+export function AppSideMenu({ activeId, collapsed, onToggleCollapsed }: AppSideMenuProps) {
   return (
     <SideMenu
-      brand={
-        <span className="flex items-center gap-3 text-lg font-bold text-foreground">
-          <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-brand text-lg text-brand-foreground">
-            M
-          </span>
-          ${JSON.stringify(model.project).slice(1, -1).replace(/[{}<>]/g, '')}
-        </span>
-      }
-      sections={mainSections}
+      brand={<SideMenuBrand name=${JSON.stringify(model.brand)} />}
+      sections={sections}
       activeId={activeId}
+      collapsed={collapsed}
+      onToggleCollapsed={onToggleCollapsed}
       // exact: TanStack Link would mark a parent path current too; navId decides.
       renderLink={({ item, ...props }) => <Link to={item.href} activeOptions={{ exact: true }} {...props} />}
       user={

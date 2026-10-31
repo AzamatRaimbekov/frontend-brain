@@ -48,7 +48,7 @@ export function AppHeader() {
       }
       actions={
         <>
-          <Button variant="secondary" size="sm" className="max-sm:hidden">
+          <Button variant="secondary" size="sm" className="mr-2 max-sm:hidden">
             Экспорт
             <ChevronDownIcon />
           </Button>
@@ -61,7 +61,7 @@ export function AppHeader() {
         </>
       }
       user={
-        <UserMenu name="Бакыт Токтосунов" role="Кредитный аналитик" initials="БТ">
+        <UserMenu name="Бакыт Токтосунов" role="Кредитный аналитик" initials="БТ" online>
           <DropdownMenuItem>Профиль</DropdownMenuItem>
           <DropdownMenuItem variant="destructive">Выйти</DropdownMenuItem>
         </UserMenu>

@@ -20,12 +20,12 @@
     {
       "id": "dashboard", "title": "Обзор", "nav": "dashboard", "page": "Обзор", "states": ["default", "loading"],
       "blocks": [
-        { "type": "header", "title": "Обзор", "subtitle": "Сводка за сегодня", "actions": ["Экспорт", "+ Новая заявка"] },
+        { "type": "header", "title": "Конвейер на 12 октября", "actions": ["Экспорт"], "period": ["Сегодня", "Неделя", "Месяц", "Квартал"] },
         { "type": "stats", "items": [
-          { "label": "Новые заявки", "value": "128", "delta": "+12% к вчера" },
-          { "label": "Уровень одобрения", "value": "64,2%", "delta": "+1,4 п.п." },
-          { "label": "Время до решения", "value": "38 мин", "delta": "-6 мин" },
-          { "label": "Просрочен SLA", "value": "7", "delta": "-3 к вчера" }
+          { "label": "Новых заявок", "value": "86", "delta": "+14% к вчера" },
+          { "label": "Уровень одобрения", "value": "64%", "delta": "+3 п.п. к прошлой неделе" },
+          { "label": "Время до решения", "value": "2 ч 14 мин", "delta": "−18 мин к вчера", "better": "down" },
+          { "label": "Просрочен SLA", "value": "9", "delta": "+4 к вчера", "better": "down" }
         ] },
         { "type": "split", "ratio": "2:1", "columns": [
           [{ "type": "chart", "title": "Заявки по часам", "subtitle": "Сегодня" }],
@@ -55,8 +55,8 @@
     {
       "id": "app-card", "title": "Заявка CL-240118", "nav": "apps", "page": "Заявки", "states": ["default", "no-access"],
       "blocks": [
-        { "type": "header", "title": "Заявка CL-240118", "badge": "На проверке", "breadcrumbs": ["Заявки", "CL-240118"], "actions": ["Отклонить", "Запросить документы", "+ Одобрить"] },
-        { "type": "stepper", "steps": ["Создана", "Скоринг", "Проверка СБ", "Андеррайтинг", "Решение"], "current": 2 },
+        { "type": "header", "title": "Заявка CL-240118", "badge": "Андеррайтинг", "amount": "450 000 KGS", "subtitle": "Потребительский · 24 мес · 21,5% годовых · подана 12.10.2026, 09:14 · приложение", "breadcrumbs": ["Заявки", "CL-240118"], "actions": ["Отклонить", "Запросить документы", "+ Одобрить кредит"] },
+        { "type": "stepper", "steps": ["Подана", "Скоринг", "Проверка СБ", "Андеррайтинг", "Решение"], "current": 3 },
         { "type": "split", "ratio": "2:1", "columns": [
           [
             { "type": "details", "title": "Заёмщик", "items": ["ФИО:person", "Телефон:phone", "Город:city", "Работодатель:company"] },

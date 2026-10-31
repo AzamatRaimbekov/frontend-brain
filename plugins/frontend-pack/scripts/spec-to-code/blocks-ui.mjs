@@ -9,7 +9,10 @@ export const UI_TEXTS = {
     title: b.spec.title || s.title,
     subtitle: b.spec.subtitle,
     badge: b.spec.badge,
-    actions: (b.spec.actions || []).map((a) => ({ label: clean(a), primary: /^\+/.test(String(a)) })),
+    amount: b.spec.amount,
+    actions: s.pageActions.map((a) => ({ label: a.label })),
+    period: Array.isArray(b.spec.period) ? b.spec.period.map(String) : undefined,
+    periodLabel: Array.isArray(b.spec.period) ? 'Период' : undefined,
   }),
   toolbar: (b, s) => ({ search: s.search.q ?? undefined, searchLabel: `Поиск: ${s.title}`, all: 'Все', filters: s.search.filters.map((f) => ({ label: f.label, options: f.options })) }),
   tabs: (b, s) => ({ label: b.spec.title || 'Вкладки', items: s.search.tabs }),
@@ -20,8 +23,24 @@ export const UI_TEXTS = {
   todo: (b) => ({ todo: `TODO: блок «${b.rawType}» из spec ещё не поддержан генератором` }),
 };
 
-/** Whether the header block needs its own component (TopHeader already shows the title). */
-export const headerHasBody = (b, s) => Boolean(s.crumbs || b.spec.subtitle || b.spec.badge || b.spec.actions?.length);
+/** Every header block renders the page h1 in the body (Figma title row or Summary card); TopHeader shows the section. */
+export const headerHasBody = (b) => Boolean(b);
+
+const DESTRUCTIVE = /отклон|отказ|удал|заблок|аннулир|reject|delete/i;
+
+/**
+ * Header actions split (model.mjs): "+ …" = primary (yellow), "Отклонить"-like = destructive.
+ * On an object page (Summary card) all actions stay in the card, the rest soft (Figma "Запросить документы").
+ * On other pages the secondary ones go to TopHeader as the dark "Экспорт ˅" button.
+ */
+export function splitHeaderActions(actions = [], summary = false) {
+  const all = actions.map((a) => {
+    const label = clean(a);
+    const tone = /^\+/.test(String(a)) ? 'primary' : DESTRUCTIVE.test(label) ? 'destructive' : summary ? 'soft' : 'secondary';
+    return { label, tone };
+  });
+  return { page: summary ? all : all.filter((a) => a.tone !== 'secondary'), top: summary ? [] : all.filter((a) => a.tone === 'secondary') };
+}
 
 function start(ctx, b, extra = []) {
   const imp = new Imports(ctx.kit);
@@ -30,55 +49,60 @@ function start(ctx, b, extra = []) {
   return imp;
 }
 
-const actionsJsx = (pad) => `${pad}{t.actions.map((action) => (
-${pad}  // TODO(spec-to-code): wire the action; the spec names only the label
-${pad}  <Button key={action.label} type="button" size="sm" variant={action.primary ? 'primary' : 'secondary'}>
-${pad}    {action.primary && <PlusIcon />}
-${pad}    {action.label}
-${pad}  </Button>
-${pad}))}`;
+// Figma Summary buttons are 36 high; the soft one is "neutral flat" with link-blue text ("Запросить документы").
+const LOOK = { primary: 'variant="primary"', destructive: 'variant="destructive"', soft: 'variant="soft" className="bg-secondary-muted text-link hover:bg-soft"', secondary: 'variant="secondary"' };
+const actionButtons = (acts, pad, plus) => acts.map((a, i) => `${pad}{/* TODO(spec-to-code): wire «${a.label}»; the spec names only the label */}
+${pad}<Button type="button" size="sm" ${LOOK[a.tone]}>
+${plus && a.tone === 'primary' ? `${pad}  <PlusIcon />\n` : ''}${pad}  {t.actions[${i}].label}
+${pad}</Button>`).join('\n');
 
 const EMIT = {
   header(b, ctx, s) {
-    const acts = Boolean(b.spec.actions?.length);
-    const extra = acts ? [['@/shared/ui/button', 'Button'], ['@/shared/components/crm/crm-icons', 'PlusIcon']] : [];
+    const acts = s.pageActions;
+    const extra = acts.length ? [['@/shared/ui/button', 'Button']] : [];
     if (b.spec.badge) extra.push(['../lib/status', 'statusTone']);
-    if (s.crumbs) {
+    if (s.summary) {
       const imp = start(ctx, b, [...extra, ['@/shared/components/crm/SummaryHeader', 'SummaryHeader']]);
       return `${imp}
 
 const t = m.blocks.${b.key}
 
-/** Spec block "header" on a page with breadcrumbs: the h1 lives here (crm SummaryHeader). */
+/** Spec block "header" of an object page (Figma \`Summary\`): h1 + status, amount, meta line, actions. */
 export function ${b.comp}() {
   return (
     <SummaryHeader
       title={t.title}
-${b.spec.badge ? '      status={{ label: t.badge, tone: statusTone(t.badge) }}\n' : ''}${b.spec.subtitle ? '      context={t.subtitle}\n' : ''}${acts ? `      actions={
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-${actionsJsx('          ')}
-        </div>
+${b.spec.badge ? '      status={{ label: t.badge, tone: statusTone(t.badge) }}\n' : ''}${b.spec.amount ? '      amount={t.amount}\n' : ''}${b.spec.subtitle ? '      context={t.subtitle}\n' : ''}${acts.length ? `      actions={
+        <>
+${actionButtons(acts, '          ', false)}
+        </>
       }
 ` : ''}    />
   )
 }
 `;
     }
+    const period = Array.isArray(b.spec.period);
+    if (acts.some((a) => a.tone === 'primary')) extra.push(['@/shared/components/crm/crm-icons', 'PlusIcon']);
     if (b.spec.badge) extra.push(['@/shared/ui/badge', 'Badge']);
+    if (period) extra.push(['react', 'useState'], ['@/shared/components/crm/PeriodSwitch', 'PeriodSwitch']);
     const imp = start(ctx, b, extra);
+    const right = acts.length || period;
     return `${imp}
 
 const t = m.blocks.${b.key}
-
-/** Spec block "header": the h1 is in TopHeader (route staticData.header); here subtitle, badge, actions. */
+${period ? 'const periods = t.period.map((label) => ({ value: label, label }))\n' : ''}
+/** Spec block "header": Figma page title row — h1 (20/28 bold) on the background${period ? ', period segment' : ''}${acts.length ? ', page actions' : ''} on the right. */
 export function ${b.comp}() {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex min-w-0 items-center gap-3">
-${b.spec.subtitle ? '        <p className="text-sm text-muted-foreground">{t.subtitle}</p>\n' : ''}${b.spec.badge ? '        <Badge tone={statusTone(t.badge)}>{t.badge}</Badge>\n' : ''}      </div>
-${acts ? `      <div className="flex flex-wrap gap-2">
-${actionsJsx('        ')}
-      </div>
+${period ? "  // TODO(spec-to-code): the period only switches the segment; send it to the screen query when the API takes it\n  const [period, setPeriod] = useState<string>(t.period[0])\n" : ''}  return (
+    <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex min-w-0 flex-col gap-1">
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-xl font-bold text-foreground">{t.title}</h1>
+${b.spec.badge ? '          <Badge tone={statusTone(t.badge)}>{t.badge}</Badge>\n' : ''}        </div>
+${b.spec.subtitle ? '        <p className="text-sm text-muted-foreground">{t.subtitle}</p>\n' : ''}      </div>
+${right ? `      <div className="flex flex-wrap items-center gap-3">
+${acts.length ? `${actionButtons(acts, '        ', true)}\n` : ''}${period ? '        <PeriodSwitch value={period} onValueChange={setPeriod} options={periods} label={t.periodLabel} />\n' : ''}      </div>
 ` : ''}    </div>
   )
 }
