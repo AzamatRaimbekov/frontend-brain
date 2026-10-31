@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-timeline",
+  "type": "registry:component",
+  "title": "crm-timeline",
+  "description": "Figma History card + Timeline item (coloured dot, title, meta)",
+  "dependencies": [],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/card",
+    "@mbank/crm-status-dot"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/Timeline.tsx",
+      "type": "registry:component",
+      "content": "import { useId } from \"react\"\nimport type * as React from \"react\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { Card } from \"@/registry/mbank/ui/card\"\n\ntype TimelineProps = {\n  title: string\n  /** <TimelineItem /> elements, newest first. */\n  children: React.ReactNode\n  /** Shown instead of the list when there are no items. */\n  empty?: React.ReactNode\n  className?: string\n}\n\n/** Figma `History` card (История заявки): title 16 bold, items 12px apart. */\nexport function Timeline({ title, children, empty, className }: TimelineProps) {\n  const titleId = useId()\n  const hasItems = Array.isArray(children) ? children.length > 0 : Boolean(children)\n  return (\n    <Card\n      role=\"region\"\n      aria-labelledby={titleId}\n      data-slot=\"timeline\"\n      className={cn(\"gap-3 border-transparent p-5\", className)}\n    >\n      <h2 id={titleId} className=\"text-base font-bold text-foreground\">\n        {title}\n      </h2>\n      {hasItems ? <ol className=\"flex flex-col gap-3\">{children}</ol> : empty}\n    </Card>\n  )\n}\n"
+    },
+    {
+      "path": "registry/mbank/blocks/crm/TimelineItem.tsx",
+      "type": "registry:component",
+      "content": "import { StatusDot, type StatusDotTone } from \"./StatusDot\"\n\ntype TimelineItemProps = {\n  title: string\n  /** \"12.10.2026, 10:02 · Система\". */\n  meta?: string\n  tone?: StatusDotTone\n  /** Machine-readable time for <time dateTime>. */\n  dateTime?: string\n}\n\n/** Figma `CRM / Timeline item` (40px): 12px dot, title 14 medium, meta caption muted. */\nexport function TimelineItem({ title, meta, tone = \"neutral\", dateTime }: TimelineItemProps) {\n  return (\n    <li data-slot=\"timeline-item\" className=\"flex gap-3\">\n      <StatusDot tone={tone} className=\"mt-1\" />\n      <div className=\"flex min-w-0 flex-col gap-1\">\n        <span className=\"text-sm font-medium text-foreground\">{title}</span>\n        {meta &&\n          (dateTime ? (\n            <time dateTime={dateTime} className=\"text-caption text-muted-foreground\">\n              {meta}\n            </time>\n          ) : (\n            <span className=\"text-caption text-muted-foreground\">{meta}</span>\n          ))}\n      </div>\n    </li>\n  )\n}\n"
+    }
+  ]
+}

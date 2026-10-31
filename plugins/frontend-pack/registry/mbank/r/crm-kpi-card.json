@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-kpi-card",
+  "type": "registry:component",
+  "title": "crm-kpi-card",
+  "description": "Figma CRM / KPI card 266x128: label, value, delta with positive/negative tone, loading skeleton",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/card",
+    "@mbank/skeleton"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/KpiCard.tsx",
+      "type": "registry:component",
+      "content": "import { cva } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { Card } from \"@/registry/mbank/ui/card\"\nimport { Skeleton } from \"@/registry/mbank/ui/skeleton\"\n\n/* Delta colour is about meaning, not sign: \"−18 мин\" to decision time is good (positive). */\nconst deltaVariants = cva(\"text-sm font-medium\", {\n  variants: {\n    tone: { positive: \"text-success-text\", negative: \"text-destructive-text\", neutral: \"text-muted-foreground\" },\n  },\n  defaultVariants: { tone: \"neutral\" },\n})\n\ntype KpiCardProps = {\n  label: string\n  /** Already formatted: \"86\", \"64%\", \"2 ч 14 мин\". */\n  value?: string\n  /** Already formatted with sign: \"+14%\", \"−18 мин\". */\n  delta?: string\n  /** What the delta compares to: \"к вчера\". */\n  deltaLabel?: string\n  deltaTone?: \"positive\" | \"negative\" | \"neutral\"\n  loading?: boolean\n  className?: string\n}\n\n/** Figma `CRM / KPI card` (266x128): label 14 muted, value 24 bold, delta 14 + caption muted. */\nexport function KpiCard({\n  label,\n  value,\n  delta,\n  deltaLabel,\n  deltaTone = \"neutral\",\n  loading = false,\n  className,\n}: KpiCardProps) {\n  return (\n    <Card\n      data-slot=\"kpi-card\"\n      aria-busy={loading || undefined}\n      className={cn(\"min-h-32 gap-2 border-transparent p-4 sm:p-5\", className)}\n    >\n      <p className=\"text-sm text-muted-foreground\">{label}</p>\n      {loading ? (\n        <>\n          <Skeleton className=\"h-8 w-24\" />\n          <Skeleton className=\"h-5 w-32\" />\n        </>\n      ) : (\n        <>\n          <p className=\"text-2xl font-bold text-foreground\">{value}</p>\n          {delta && (\n            <p className=\"flex flex-wrap items-baseline gap-x-1\">\n              <span className={deltaVariants({ tone: deltaTone })}>{delta}</span>\n              {deltaLabel && <span className=\"text-caption text-muted-foreground\">{deltaLabel}</span>}\n            </p>\n          )}\n        </>\n      )}\n    </Card>\n  )\n}\n"
+    }
+  ]
+}

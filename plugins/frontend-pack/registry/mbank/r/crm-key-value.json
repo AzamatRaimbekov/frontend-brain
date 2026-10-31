@@ -1,0 +1,26 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-key-value",
+  "type": "registry:component",
+  "title": "crm-key-value",
+  "description": "Figma Key-value row 36px + section card (Заёмщик, Параметры кредита, Документы), value tone for problems",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/card"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/KeyValueSection.tsx",
+      "type": "registry:component",
+      "content": "import { useId } from \"react\"\nimport type * as React from \"react\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { Card } from \"@/registry/mbank/ui/card\"\n\ntype KeyValueSectionProps = {\n  title: string\n  /** <KeyValueRow /> elements. */\n  children: React.ReactNode\n  /** Button or link on the right of the title (Изменить). */\n  action?: React.ReactNode\n  className?: string\n}\n\n/** Figma cards Заёмщик / Параметры кредита / Документы: p 20, title 16 bold, rows below. */\nexport function KeyValueSection({ title, children, action, className }: KeyValueSectionProps) {\n  const titleId = useId()\n  return (\n    <Card\n      data-slot=\"key-value-section\"\n      aria-labelledby={titleId}\n      role=\"region\"\n      className={cn(\"gap-2 border-transparent p-5\", className)}\n    >\n      <div className=\"flex items-center justify-between gap-2\">\n        <h2 id={titleId} className=\"text-base font-bold text-foreground\">\n          {title}\n        </h2>\n        {action}\n      </div>\n      <dl className=\"flex flex-col\">{children}</dl>\n    </Card>\n  )\n}\n"
+    },
+    {
+      "path": "registry/mbank/blocks/crm/KeyValueRow.tsx",
+      "type": "registry:component",
+      "content": "import type * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\nconst valueVariants = cva(\"min-w-0 break-words text-sm\", {\n  variants: {\n    tone: {\n      default: \"text-foreground\",\n      error: \"text-destructive-text\",\n      warning: \"text-warning-text\",\n      success: \"text-success-text\",\n      muted: \"text-muted-foreground\",\n    },\n  },\n  defaultVariants: { tone: \"default\" },\n})\n\ntype KeyValueRowProps = VariantProps<typeof valueVariants> & {\n  label: string\n  children: React.ReactNode\n  className?: string\n}\n\n/**\n * Figma `CRM / Key-value row` (36px): label 14 muted in a 196px column, value 14.\n * tone=\"error\" for a problem value (\"Не загружена — нужна за 6 мес\"). Stacks on phones.\n */\nexport function KeyValueRow({ label, tone, children, className }: KeyValueRowProps) {\n  return (\n    <div\n      data-slot=\"key-value-row\"\n      className={cn(\"grid gap-0.5 py-2 sm:min-h-9 sm:grid-cols-[196px_minmax(0,1fr)] sm:items-center sm:gap-x-0\", className)}\n    >\n      <dt className=\"text-sm text-muted-foreground sm:pr-4\">{label}</dt>\n      <dd className={valueVariants({ tone })}>{children}</dd>\n    </div>\n  )\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-stage-stepper",
+  "type": "registry:component",
+  "title": "crm-stage-stepper",
+  "description": "Figma Stages: horizontal stepper done/current/upcoming/failed with meta, vertical on phones",
+  "dependencies": [],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/card",
+    "@mbank/crm-status-dot"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/StageStep.tsx",
+      "type": "registry:component",
+      "content": "import { cn } from \"@/registry/mbank/lib/utils\"\nimport { StatusDot, type StatusDotTone } from \"./StatusDot\"\n\nexport type StageState = \"done\" | \"current\" | \"upcoming\" | \"failed\"\n\nconst dotTone: Record<StageState, StatusDotTone> = {\n  done: \"success\",\n  current: \"warning\",\n  upcoming: \"neutral\",\n  failed: \"error\",\n}\n\nconst stateText: Record<StageState, string> = {\n  done: \"пройден\",\n  current: \"текущий этап\",\n  upcoming: \"впереди\",\n  failed: \"не пройден\",\n}\n\ntype StageStepProps = { title: string; state: StageState; meta?: string }\n\n/** One step of the Figma `Stages` row: 12px dot + name 14 (bold when current), meta caption. */\nexport function StageStep({ title, state, meta }: StageStepProps) {\n  return (\n    <li\n      data-slot=\"stage-step\"\n      data-state={state}\n      aria-current={state === \"current\" ? \"step\" : undefined}\n      className=\"flex min-w-0 flex-col gap-1\"\n    >\n      <span className=\"flex items-center gap-2\">\n        <StatusDot tone={dotTone[state]} />\n        <span\n          className={cn(\n            \"truncate text-sm text-foreground\",\n            state === \"current\" && \"font-bold\",\n            state === \"upcoming\" && \"text-muted-foreground\",\n          )}\n        >\n          {title}\n        </span>\n        <span className=\"sr-only\">, {stateText[state]}</span>\n      </span>\n      {meta && <span className=\"truncate pl-5 text-caption text-muted-foreground sm:pl-0\">{meta}</span>}\n    </li>\n  )\n}\n"
+    },
+    {
+      "path": "registry/mbank/blocks/crm/StageStepper.tsx",
+      "type": "registry:component",
+      "content": "import { cn } from \"@/registry/mbank/lib/utils\"\nimport { Card } from \"@/registry/mbank/ui/card\"\nimport { StageStep, type StageState } from \"./StageStep\"\n\nexport type StageItem = { id: string; title: string; state: StageState; meta?: string }\n\ntype StageStepperProps = {\n  stages: StageItem[]\n  label?: string\n  className?: string\n}\n\n/**\n * Figma `Stages` (80px card, p 20, equal columns with 16px gaps): done green, current orange,\n * upcoming grey, failed red. Vertical list on phones.\n */\nexport function StageStepper({ stages, label = \"Этапы заявки\", className }: StageStepperProps) {\n  return (\n    <Card data-slot=\"stage-stepper\" className={cn(\"border-transparent p-5\", className)}>\n      <ol\n        aria-label={label}\n        className=\"grid gap-3 sm:grid-flow-col sm:auto-cols-fr sm:gap-4\"\n      >\n        {stages.map((stage) => (\n          <StageStep key={stage.id} title={stage.title} state={stage.state} meta={stage.meta} />\n        ))}\n      </ol>\n    </Card>\n  )\n}\n"
+    }
+  ]
+}

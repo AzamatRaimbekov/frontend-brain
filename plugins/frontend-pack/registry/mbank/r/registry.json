@@ -1,0 +1,1316 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "mbank",
+  "homepage": "https://github.com/AzamatRaimbekov/frontend-brain",
+  "items": [
+    {
+      "name": "mbank",
+      "type": "registry:base",
+      "title": "Mbank design system",
+      "description": "Mbank design tokens: light/dark, 5 brand modes, radius, typography, shadows, z-index, @theme inline mapping (Tailwind v4). Generated from tokens.css (Figma tokens.json + tokens.map.json).",
+      "dependencies": [
+        "tw-animate-css",
+        "class-variance-authority",
+        "clsx",
+        "tailwind-merge",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "cssVars": {
+        "theme": {
+          "radius-2xs": "2px",
+          "radius-xs": "4px",
+          "radius-sm": "8px",
+          "radius-md": "12px",
+          "radius-lg": "16px",
+          "radius-xl": "20px",
+          "radius-2xl": "24px",
+          "radius-3xl": "32px",
+          "radius-4xl": "40px",
+          "text-2xs": "11px",
+          "text-2xs--line-height": "14px",
+          "text-caption": "12px",
+          "text-caption--line-height": "16px",
+          "text-xs": "13px",
+          "text-xs--line-height": "16px",
+          "text-sm": "14px",
+          "text-sm--line-height": "20px",
+          "text-md": "15px",
+          "text-md--line-height": "22px",
+          "text-base": "16px",
+          "text-base--line-height": "24px",
+          "text-lg": "18px",
+          "text-lg--line-height": "26px",
+          "text-xl": "20px",
+          "text-xl--line-height": "28px",
+          "text-2xl": "24px",
+          "text-2xl--line-height": "32px",
+          "text-3xl": "32px",
+          "text-3xl--line-height": "40px",
+          "text-4xl": "44px",
+          "text-4xl--line-height": "52px",
+          "text-5xl": "48px",
+          "text-5xl--line-height": "56px",
+          "text-6xl": "56px",
+          "text-6xl--line-height": "68px",
+          "text-7xl": "72px",
+          "text-7xl--line-height": "88px",
+          "font-sans": "\"Inter Mbank\", \"Inter\", ui-sans-serif, system-ui, sans-serif",
+          "color-background": "var(--background)",
+          "color-foreground": "var(--foreground)",
+          "color-muted": "var(--muted)",
+          "color-muted-foreground": "var(--muted-foreground)",
+          "color-soft-foreground": "var(--soft-foreground)",
+          "color-disabled-foreground": "var(--disabled-foreground)",
+          "color-inverse-foreground": "var(--inverse-foreground)",
+          "color-card": "var(--card)",
+          "color-surface-0": "var(--surface-0)",
+          "color-surface-1": "var(--surface-1)",
+          "color-surface-2": "var(--surface-2)",
+          "color-surface-3": "var(--surface-3)",
+          "color-surface-4": "var(--surface-4)",
+          "color-surface-5": "var(--surface-5)",
+          "color-surface-6": "var(--surface-6)",
+          "color-surface-inverse": "var(--surface-inverse)",
+          "color-accent": "var(--accent)",
+          "color-accent-active": "var(--accent-active)",
+          "color-border": "var(--border)",
+          "color-border-secondary": "var(--border-secondary)",
+          "color-border-subtle": "var(--border-subtle)",
+          "color-input": "var(--input)",
+          "color-input-hover": "var(--input-hover)",
+          "color-input-active": "var(--input-active)",
+          "color-input-disabled": "var(--input-disabled)",
+          "color-border-destructive": "var(--border-destructive)",
+          "color-border-warning": "var(--border-warning)",
+          "color-border-success": "var(--border-success)",
+          "color-primary": "var(--primary)",
+          "color-primary-hover": "var(--primary-hover)",
+          "color-primary-active": "var(--primary-active)",
+          "color-primary-foreground": "var(--primary-foreground)",
+          "color-primary-foreground-muted": "var(--primary-foreground-muted)",
+          "color-primary-muted": "var(--primary-muted)",
+          "color-secondary": "var(--secondary)",
+          "color-secondary-hover": "var(--secondary-hover)",
+          "color-secondary-active": "var(--secondary-active)",
+          "color-secondary-foreground": "var(--secondary-foreground)",
+          "color-secondary-muted": "var(--secondary-muted)",
+          "color-soft": "var(--soft)",
+          "color-soft-hover": "var(--soft-hover)",
+          "color-soft-foreground-strong": "var(--soft-foreground-strong)",
+          "color-ghost": "var(--ghost)",
+          "color-ghost-hover": "var(--ghost-hover)",
+          "color-ghost-foreground": "var(--ghost-foreground)",
+          "color-outline": "var(--outline)",
+          "color-outline-hover": "var(--outline-hover)",
+          "color-outline-foreground": "var(--outline-foreground)",
+          "color-neutral-flat": "var(--neutral-flat)",
+          "color-neutral-flat-hover": "var(--neutral-flat-hover)",
+          "color-static": "var(--static)",
+          "color-static-hover": "var(--static-hover)",
+          "color-static-active": "var(--static-active)",
+          "color-static-foreground": "var(--static-foreground)",
+          "color-static-muted": "var(--static-muted)",
+          "color-static-light": "var(--static-light)",
+          "color-static-dark": "var(--static-dark)",
+          "color-success": "var(--success)",
+          "color-success-hover": "var(--success-hover)",
+          "color-success-active": "var(--success-active)",
+          "color-success-foreground": "var(--success-foreground)",
+          "color-destructive": "var(--destructive)",
+          "color-destructive-hover": "var(--destructive-hover)",
+          "color-destructive-active": "var(--destructive-active)",
+          "color-destructive-foreground": "var(--destructive-foreground)",
+          "color-destructive-soft": "var(--destructive-soft)",
+          "color-destructive-soft-hover": "var(--destructive-soft-hover)",
+          "color-destructive-soft-foreground": "var(--destructive-soft-foreground)",
+          "color-link": "var(--link)",
+          "color-destructive-text": "var(--destructive-text)",
+          "color-warning-text": "var(--warning-text)",
+          "color-success-text": "var(--success-text)",
+          "color-status-neutral": "var(--status-neutral)",
+          "color-status-neutral-muted": "var(--status-neutral-muted)",
+          "color-status-neutral-foreground": "var(--status-neutral-foreground)",
+          "color-status-accent": "var(--status-accent)",
+          "color-status-accent-muted": "var(--status-accent-muted)",
+          "color-status-accent-foreground": "var(--status-accent-foreground)",
+          "color-status-success": "var(--status-success)",
+          "color-status-success-muted": "var(--status-success-muted)",
+          "color-status-success-foreground": "var(--status-success-foreground)",
+          "color-status-warning": "var(--status-warning)",
+          "color-status-warning-muted": "var(--status-warning-muted)",
+          "color-status-warning-foreground": "var(--status-warning-foreground)",
+          "color-status-error": "var(--status-error)",
+          "color-status-error-muted": "var(--status-error-muted)",
+          "color-status-error-foreground": "var(--status-error-foreground)",
+          "color-status-info": "var(--status-info)",
+          "color-status-info-muted": "var(--status-info-muted)",
+          "color-status-info-foreground": "var(--status-info-foreground)",
+          "color-status-clear": "var(--status-clear)",
+          "color-status-clear-muted": "var(--status-clear-muted)",
+          "color-status-clear-foreground": "var(--status-clear-foreground)",
+          "color-status-filled-foreground": "var(--status-filled-foreground)",
+          "color-status-filled-foreground-inverse": "var(--status-filled-foreground-inverse)",
+          "color-supportive-1": "var(--supportive-1)",
+          "color-supportive-2": "var(--supportive-2)",
+          "color-supportive-3": "var(--supportive-3)",
+          "color-supportive-4": "var(--supportive-4)",
+          "color-supportive-5": "var(--supportive-5)",
+          "color-supportive-6": "var(--supportive-6)",
+          "color-supportive-7": "var(--supportive-7)",
+          "color-supportive-8": "var(--supportive-8)",
+          "color-supportive-9": "var(--supportive-9)",
+          "color-supportive-10": "var(--supportive-10)",
+          "color-supportive-ghost-1": "var(--supportive-ghost-1)",
+          "color-supportive-ghost-2": "var(--supportive-ghost-2)",
+          "color-supportive-ghost-3": "var(--supportive-ghost-3)",
+          "color-supportive-ghost-4": "var(--supportive-ghost-4)",
+          "color-supportive-ghost-5": "var(--supportive-ghost-5)",
+          "color-supportive-ghost-6": "var(--supportive-ghost-6)",
+          "color-supportive-ghost-7": "var(--supportive-ghost-7)",
+          "color-supportive-ghost-8": "var(--supportive-ghost-8)",
+          "color-supportive-ghost-9": "var(--supportive-ghost-9)",
+          "color-supportive-ghost-10": "var(--supportive-ghost-10)",
+          "color-overlay": "var(--overlay)",
+          "color-brand-bank": "var(--brand-bank)",
+          "color-brand-kassa": "var(--brand-kassa)",
+          "color-brand-travel": "var(--brand-travel)",
+          "color-brand-artwin": "var(--brand-artwin)",
+          "color-brand": "var(--brand)",
+          "color-brand-hover": "var(--brand-hover)",
+          "color-brand-active": "var(--brand-active)",
+          "color-brand-foreground": "var(--brand-foreground)",
+          "color-brand-foreground-muted": "var(--brand-foreground-muted)",
+          "color-brand-container-muted": "var(--brand-container-muted)",
+          "color-brand-ghost": "var(--brand-ghost)",
+          "color-brand-ghost-hover": "var(--brand-ghost-hover)",
+          "color-brand-ghost-active": "var(--brand-ghost-active)",
+          "color-brand-ghost-foreground": "var(--brand-ghost-foreground)",
+          "color-brand-ghost-foreground-muted": "var(--brand-ghost-foreground-muted)",
+          "color-brand-muted": "var(--brand-muted)",
+          "color-card-foreground": "var(--foreground)",
+          "color-popover": "var(--card)",
+          "color-popover-foreground": "var(--foreground)",
+          "color-accent-foreground": "var(--foreground)",
+          "color-brand-text": "var(--brand)",
+          "color-ring": "var(--brand)",
+          "shadow-xs": "0 2px 2px var(--shadow-color), 0 0 1px var(--shadow-color)",
+          "shadow-sm": "0 2px 4px var(--shadow-color), 0 0 8px var(--shadow-color)",
+          "shadow-md": "0 4px 8px var(--shadow-color), 0 0 16px var(--shadow-color)",
+          "shadow-lg": "0 12px 20px var(--shadow-color), 0 0 20px var(--shadow-color)",
+          "shadow-xl": "0 32px 32px var(--shadow-color), 0 0 32px var(--shadow-color)",
+          "shadow-default": "0 4px 24px var(--shadow-color)",
+          "shadow-default-hover": "0 12px 36px var(--shadow-color)",
+          "shadow-dropdown": "0 3px 6px var(--shadow-color), 0 11px 11px var(--shadow-color), 0 15px 35px var(--shadow-color)",
+          "shadow-notification": "0 8px 16px var(--shadow-color)",
+          "shadow-modal": "0 18px 30px var(--shadow-color)",
+          "shadow-tooltip": "0 4px 6px var(--shadow-color), 0 12px 12px var(--shadow-color), 0 24px 16px var(--shadow-color), 0 0 2px var(--shadow-color)"
+        },
+        "light": {
+          "background": "#ffffff",
+          "foreground": "#0e0f11",
+          "muted": "#f4f6f7",
+          "muted-foreground": "#768793",
+          "soft-foreground": "#40474f",
+          "disabled-foreground": "#a9b4bc",
+          "inverse-foreground": "#f4f6f7",
+          "card": "#ffffff",
+          "surface-0": "#ffffff",
+          "surface-1": "#f4f6f7",
+          "surface-2": "#eaeef0",
+          "surface-3": "#d7dce1",
+          "surface-4": "#cad1d7",
+          "surface-5": "#a9b4bc",
+          "surface-6": "#768793",
+          "surface-inverse": "#0e0f11",
+          "accent": "#eaeef0",
+          "accent-active": "#eaeef0",
+          "border": "#e0e5e8",
+          "border-secondary": "#d7dce1",
+          "border-subtle": "#cad1d7",
+          "input": "#d7dce1",
+          "input-hover": "#768793",
+          "input-active": "#a9b4bc",
+          "input-disabled": "#eaeef0",
+          "border-destructive": "#ef4444",
+          "border-warning": "#f97316",
+          "border-success": "#0fa976",
+          "primary": "#fddb2b",
+          "primary-hover": "#f7c21c",
+          "primary-active": "#fddb2b",
+          "primary-foreground": "#0e0f11",
+          "primary-foreground-muted": "#0e0f11",
+          "primary-muted": "#fef08a",
+          "secondary": "#17191d",
+          "secondary-hover": "#26292e",
+          "secondary-active": "#17191d",
+          "secondary-foreground": "var(--static-light)",
+          "secondary-muted": "#f0f3f4",
+          "soft": "#e0e5e8",
+          "soft-hover": "#d7dce1",
+          "soft-foreground-strong": "#0e0f11",
+          "ghost": "#ffffff00",
+          "ghost-hover": "#d7dce1",
+          "ghost-foreground": "#0e0f11",
+          "outline": "#e0e5e8",
+          "outline-hover": "#cad1d7",
+          "outline-foreground": "#0e0f11",
+          "neutral-flat": "#e0e5e8",
+          "neutral-flat-hover": "#d7dce1",
+          "static": "#ffffff",
+          "static-hover": "#d7dce1",
+          "static-active": "#ffffff",
+          "static-foreground": "#0e0f11",
+          "static-muted": "#f0f3f4",
+          "static-light": "#ffffff",
+          "static-dark": "#0e0f11",
+          "success": "#0fa976",
+          "success-hover": "#059669",
+          "success-active": "#0fa976",
+          "success-foreground": "#0e0f11f2",
+          "destructive": "#ef4444",
+          "destructive-hover": "#b91c1c",
+          "destructive-active": "#ef4444",
+          "destructive-foreground": "#0e0f11f2",
+          "destructive-soft": "#feebeb",
+          "destructive-soft-hover": "#fee2e2",
+          "destructive-soft-foreground": "#ef4444",
+          "link": "#3b82f6",
+          "destructive-text": "#ef4444",
+          "warning-text": "#f97316",
+          "success-text": "#0fa976",
+          "status-neutral": "#5d6c79",
+          "status-neutral-muted": "#cad1d7",
+          "status-neutral-foreground": "#1b1e22",
+          "status-accent": "#fddb2b",
+          "status-accent-muted": "#fef7b4",
+          "status-accent-foreground": "#713f12",
+          "status-success": "#10b981",
+          "status-success-muted": "#dcfce7",
+          "status-success-foreground": "#033a29",
+          "status-warning": "#ea580c",
+          "status-warning-muted": "#ffedd5",
+          "status-warning-foreground": "#7c2d12",
+          "status-error": "#e11d48",
+          "status-error-muted": "#fee2e2",
+          "status-error-foreground": "#881337",
+          "status-info": "#2563eb",
+          "status-info-muted": "#e0f2fe",
+          "status-info-foreground": "#1e3a8a",
+          "status-clear": "#dde2e6",
+          "status-clear-muted": "#f4f6f7",
+          "status-clear-foreground": "#1b1e22",
+          "status-filled-foreground": "#0e0f11f2",
+          "status-filled-foreground-inverse": "#0e0f11",
+          "supportive-1": "#5d6c79",
+          "supportive-2": "#f7c21c",
+          "supportive-3": "#10b981",
+          "supportive-4": "#ea580c",
+          "supportive-5": "#e11d48",
+          "supportive-6": "#2563eb",
+          "supportive-7": "#7c3aed",
+          "supportive-8": "#4f46e5",
+          "supportive-9": "#db2777",
+          "supportive-10": "#0f766b",
+          "supportive-ghost-1": "#e7e9eb",
+          "supportive-ghost-2": "#f2ebd4",
+          "supportive-ghost-3": "#dff1ec",
+          "supportive-ghost-4": "#f4e7e0",
+          "supportive-ghost-5": "#f4e1e6",
+          "supportive-ghost-6": "#e1e8f7",
+          "supportive-ghost-7": "#e9e4f7",
+          "supportive-ghost-8": "#e5e5f6",
+          "supportive-ghost-9": "#f3e2eb",
+          "supportive-ghost-10": "#deeded",
+          "overlay": "#000000bf",
+          "brand-bank": "#16a34a",
+          "brand-kassa": "#2563eb",
+          "brand-travel": "#60a5fa",
+          "brand-artwin": "#fddb2b",
+          "brand": "#16a34a",
+          "brand-hover": "#189547",
+          "brand-active": "#16a34a",
+          "brand-foreground": "#ffffff",
+          "brand-foreground-muted": "#a9b4bc",
+          "brand-container-muted": "#f0f3f4",
+          "brand-ghost": "#f0fdf4",
+          "brand-ghost-hover": "#e8fcee",
+          "brand-ghost-active": "#f0fdf4",
+          "brand-ghost-foreground": "#16a34a",
+          "brand-ghost-foreground-muted": "#86efac",
+          "brand-muted": "#f0fdf4",
+          "radius": "12px",
+          "shadow-color": "rgb(14 15 17 / 0.08)",
+          "z-hide": "-1",
+          "z-default": "0",
+          "z-dropdown": "1000",
+          "z-sticky": "1100",
+          "z-fab": "1200",
+          "z-overlay": "1300",
+          "z-loader": "1400",
+          "z-modal": "1500",
+          "z-toast": "1600",
+          "z-popover": "1700",
+          "z-tooltip": "1800"
+        },
+        "dark": {
+          "background": "#0e0f11",
+          "foreground": "#f0f3f4",
+          "muted": "#17191d",
+          "muted-foreground": "#768793",
+          "soft-foreground": "#d7dce1",
+          "disabled-foreground": "#5d6c79",
+          "inverse-foreground": "#0e0f11",
+          "card": "#26292e",
+          "surface-0": "#26292e",
+          "surface-1": "#2e3238",
+          "surface-2": "#3a3c41",
+          "surface-3": "#3f4146",
+          "surface-4": "#40474f",
+          "surface-5": "#464e58",
+          "surface-6": "#4d5661",
+          "surface-inverse": "#f4f6f7",
+          "accent": "#40474f",
+          "accent-active": "#373c42",
+          "border": "#3a3c41",
+          "border-secondary": "#40474f",
+          "border-subtle": "#464e58",
+          "input": "#4d5661",
+          "input-hover": "#515c69",
+          "input-active": "#515c69",
+          "input-disabled": "#26292e",
+          "border-destructive": "#dc2626",
+          "border-warning": "#f97316",
+          "border-success": "#0fa976",
+          "primary": "#f7c21c",
+          "primary-hover": "#fddb2b",
+          "primary-active": "#fddb2b",
+          "primary-foreground": "#0e0f11",
+          "primary-foreground-muted": "#0e0f11",
+          "primary-muted": "#fef08a",
+          "secondary": "#26292e",
+          "secondary-hover": "#464e58",
+          "secondary-active": "#464e58",
+          "secondary-foreground": "var(--static-light)",
+          "secondary-muted": "#3a3c41",
+          "soft": "#26292e",
+          "soft-hover": "#202327",
+          "soft-foreground-strong": "#f0f3f4",
+          "ghost": "#26292e",
+          "ghost-hover": "#20232700",
+          "ghost-foreground": "#f0f3f4",
+          "outline": "#26292e",
+          "outline-hover": "#202327",
+          "outline-foreground": "#f0f3f4",
+          "neutral-flat": "#26292e",
+          "neutral-flat-hover": "#1d2024",
+          "static": "#ffffff",
+          "static-hover": "#d7dce1",
+          "static-active": "#cad1d7",
+          "static-foreground": "#0e0f11",
+          "static-muted": "#f0f3f4",
+          "success": "#0fa976",
+          "success-hover": "#059669",
+          "success-active": "#10b981",
+          "success-foreground": "#0e0f11f2",
+          "destructive": "#b91c1c",
+          "destructive-hover": "#b91c1c",
+          "destructive-active": "#b91c1c",
+          "destructive-foreground": "#0e0f11f2",
+          "destructive-soft": "#b91c1c",
+          "destructive-soft-hover": "#b91c1c",
+          "destructive-soft-foreground": "#fca5a5",
+          "link": "#3b82f6",
+          "destructive-text": "#b91c1c",
+          "warning-text": "#ea580c",
+          "success-text": "#059669",
+          "status-neutral": "#a9b4bc",
+          "status-neutral-muted": "#4d5661",
+          "status-neutral-foreground": "#dde2e6",
+          "status-accent": "#fddb2b",
+          "status-accent-muted": "#492c12",
+          "status-accent-foreground": "#d9a607",
+          "status-success": "#10b981",
+          "status-success-muted": "#093429",
+          "status-success-foreground": "#10b981",
+          "status-warning": "#ea580c",
+          "status-warning-muted": "#542212",
+          "status-warning-foreground": "#f97316",
+          "status-error": "#e11d48",
+          "status-error-muted": "#4b1124",
+          "status-error-foreground": "#f43f5e",
+          "status-info": "#2563eb",
+          "status-info-muted": "#14234e",
+          "status-info-foreground": "#60a5fa",
+          "status-clear": "#54606d",
+          "status-clear-muted": "#1f2326",
+          "status-clear-foreground": "#a9b4bc",
+          "status-filled-foreground": "#0e0f11f2",
+          "status-filled-foreground-inverse": "#f0f3f4",
+          "supportive-3": "#059669",
+          "supportive-ghost-1": "#2e3236",
+          "supportive-ghost-2": "#433b1e",
+          "supportive-ghost-3": "#1a3f37",
+          "supportive-ghost-4": "#462b1f",
+          "supportive-ghost-5": "#441f2b",
+          "supportive-ghost-6": "#1f2d4c",
+          "supportive-ghost-7": "#30254c",
+          "supportive-ghost-8": "#2a2a54",
+          "supportive-ghost-9": "#432135",
+          "supportive-ghost-10": "#1a3738",
+          "overlay": "#ffffff7a",
+          "brand-bank": "#189547",
+          "brand-kassa": "#3b82f6",
+          "brand-travel": "#3b82f6",
+          "brand-artwin": "#f7c21c",
+          "brand": "#189547",
+          "brand-hover": "#22c55e",
+          "brand-active": "#22c55e",
+          "brand-foreground": "#ffffff",
+          "brand-foreground-muted": "#a9b4bc",
+          "brand-container-muted": "#3f4146",
+          "brand-ghost": "#16a34a1a",
+          "brand-ghost-hover": "#16a34a1a",
+          "brand-ghost-active": "#16a34a1a",
+          "brand-ghost-foreground": "#189547",
+          "brand-ghost-foreground-muted": "#16a34a1a",
+          "brand-muted": "#16a34a1a"
+        }
+      },
+      "css": {
+        "[data-brand=\"bank\"]": {
+          "--brand": "#16a34a",
+          "--brand-hover": "#189547",
+          "--brand-active": "#16a34a",
+          "--brand-foreground": "#ffffff",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#f0f3f4",
+          "--brand-ghost": "#f0fdf4",
+          "--brand-ghost-hover": "#e8fcee",
+          "--brand-ghost-active": "#f0fdf4",
+          "--brand-ghost-foreground": "#16a34a",
+          "--brand-ghost-foreground-muted": "#86efac",
+          "--brand-muted": "#f0fdf4"
+        },
+        "[data-brand=\"kassa\"]": {
+          "--brand": "#2563eb",
+          "--brand-hover": "#1d4ed8",
+          "--brand-active": "#1d4ed8",
+          "--brand-foreground": "#ffffff",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#f0f3f4",
+          "--brand-ghost": "#dbeafe",
+          "--brand-ghost-hover": "#bfdbfe",
+          "--brand-ghost-active": "#dbeafe",
+          "--brand-ghost-foreground": "#1d4ed8",
+          "--brand-ghost-foreground-muted": "#3b82f6",
+          "--brand-muted": "#eff6ff"
+        },
+        "[data-brand=\"travel\"]": {
+          "--brand": "#60a5fa",
+          "--brand-hover": "#4d9af9",
+          "--brand-active": "#60a5fa",
+          "--brand-foreground": "#ffffff",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#f0f3f4",
+          "--brand-ghost": "#eff6ff",
+          "--brand-ghost-hover": "#e5f1ff",
+          "--brand-ghost-active": "#eff6ff",
+          "--brand-ghost-foreground": "#60a5fa",
+          "--brand-ghost-foreground-muted": "#93c5fd",
+          "--brand-muted": "#eff6ff"
+        },
+        "[data-brand=\"artwin\"]": {
+          "--brand": "#fddb2b",
+          "--brand-hover": "#f7c21c",
+          "--brand-active": "#fddb2b",
+          "--brand-foreground": "#0e0f11",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#f0f3f4",
+          "--brand-ghost": "#fef7b4",
+          "--brand-ghost-hover": "#fef08a",
+          "--brand-ghost-active": "#fef7b4",
+          "--brand-ghost-foreground": "#d9a607",
+          "--brand-ghost-foreground-muted": "#f7c21c",
+          "--brand-muted": "#fefce8"
+        },
+        "[data-brand=\"koko\"]": {
+          "--brand": "#da78f2",
+          "--brand-hover": "#f7c21c",
+          "--brand-active": "#fddb2b",
+          "--brand-foreground": "#0e0f11",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#f0f3f4",
+          "--brand-ghost": "#fef7b4",
+          "--brand-ghost-hover": "#fef08a",
+          "--brand-ghost-active": "#fef7b4",
+          "--brand-ghost-foreground": "#d9a607",
+          "--brand-ghost-foreground-muted": "#f7c21c",
+          "--brand-muted": "#fefce8"
+        },
+        ".dark[data-brand=\"bank\"], .dark [data-brand=\"bank\"]": {
+          "--brand": "#189547",
+          "--brand-hover": "#22c55e",
+          "--brand-active": "#22c55e",
+          "--brand-foreground": "#ffffff",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#3f4146",
+          "--brand-ghost": "#16a34a1a",
+          "--brand-ghost-hover": "#16a34a1a",
+          "--brand-ghost-active": "#16a34a1a",
+          "--brand-ghost-foreground": "#189547",
+          "--brand-ghost-foreground-muted": "#16a34a1a",
+          "--brand-muted": "#16a34a1a"
+        },
+        ".dark[data-brand=\"kassa\"], .dark [data-brand=\"kassa\"]": {
+          "--brand": "#3b82f6",
+          "--brand-hover": "#1d4ed8",
+          "--brand-active": "#2563eb",
+          "--brand-foreground": "#ffffff",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#3f4146",
+          "--brand-ghost": "#13203d",
+          "--brand-ghost-hover": "#162c5d",
+          "--brand-ghost-active": "#173168",
+          "--brand-ghost-foreground": "#2563eb",
+          "--brand-ghost-foreground-muted": "#60a5fa",
+          "--brand-muted": "#101727"
+        },
+        ".dark[data-brand=\"travel\"], .dark [data-brand=\"travel\"]": {
+          "--brand": "#3b82f6",
+          "--brand-hover": "#3b82f6",
+          "--brand-active": "#60a5fa",
+          "--brand-foreground": "#ffffff",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#3f4146",
+          "--brand-ghost": "#2563eb33",
+          "--brand-ghost-hover": "#2563eb33",
+          "--brand-ghost-active": "#2563eb33",
+          "--brand-ghost-foreground": "#2563eb33",
+          "--brand-ghost-foreground-muted": "#2563eb33",
+          "--brand-muted": "#2563eb33"
+        },
+        ".dark[data-brand=\"artwin\"], .dark [data-brand=\"artwin\"]": {
+          "--brand": "#f7c21c",
+          "--brand-hover": "#fddb2b",
+          "--brand-active": "#fddb2b",
+          "--brand-foreground": "#a9b4bc",
+          "--brand-foreground-muted": "#3f4146",
+          "--brand-container-muted": "#f0f3f4",
+          "--brand-ghost": "#2563eb33",
+          "--brand-ghost-hover": "#2563eb33",
+          "--brand-ghost-active": "#2563eb33",
+          "--brand-ghost-foreground": "#2563eb33",
+          "--brand-ghost-foreground-muted": "#2563eb33",
+          "--brand-muted": "#2563eb33"
+        },
+        ".dark[data-brand=\"koko\"], .dark [data-brand=\"koko\"]": {
+          "--brand": "#da78f2",
+          "--brand-hover": "#f7c21c",
+          "--brand-active": "#fddb2b",
+          "--brand-foreground": "#0e0f11",
+          "--brand-foreground-muted": "#a9b4bc",
+          "--brand-container-muted": "#f0f3f4",
+          "--brand-ghost": "#fef7b4",
+          "--brand-ghost-hover": "#fef08a",
+          "--brand-ghost-active": "#fef7b4",
+          "--brand-ghost-foreground": "#d9a607",
+          "--brand-ghost-foreground-muted": "#f7c21c",
+          "--brand-muted": "#fefce8"
+        },
+        "@layer base": {
+          "*": {
+            "@apply border-border outline-ring/50": {}
+          },
+          "body": {
+            "@apply bg-background text-foreground font-sans antialiased": {}
+          }
+        },
+        "@custom-variant dark (&:where(.dark, .dark *))": {},
+        ":root": {
+          "color-scheme": "light"
+        },
+        ".dark": {
+          "color-scheme": "dark"
+        }
+      }
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "utils",
+      "description": "cn() = clsx + tailwind-merge extended with the Mbank font sizes",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "registry/mbank/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "icons",
+      "type": "registry:ui",
+      "title": "icons",
+      "description": "Temporary inline glyphs (check, minus, chevron-down, close) until the Mbank Icons SVGs are exported",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/icons.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "spinner",
+      "description": "Figma spinner; colour from currentColor",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/spinner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "button",
+      "description": "Figma button/default: primary, brand, secondary, destructive, success, soft, ghost, outline, static, link; sizes xs-lg + icon; loading",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/spinner"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "input",
+      "description": "Figma input/default: sizes sm 36 / md 44 / lg 56; hover, focus, invalid, disabled",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "textarea",
+      "description": "Figma TextArea",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/textarea.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "label",
+      "description": "Field label (Label Outside=on)",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "badge",
+      "description": "Figma Badge-status: tone (status roles), fill ghost/solid, shape, size",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "card",
+      "description": "Card surface with header, title, description, action, content, footer",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "checkbox",
+      "description": "Figma Switchers - Check, Type=Checkbox (+ indeterminate)",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "switch",
+      "description": "Figma Switchers - Check, Type=Toggle",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/switch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "tabs",
+      "description": "Figma segment / tab-outline / tabLine as Tabs variants",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "dialog",
+      "description": "Figma dialogInfo / dialogForm",
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "alert-dialog",
+      "description": "Figma dialogConfirm on Radix AlertDialog; no Action on purpose: confirm is a Button wired to the mutation, the dialog stays open while it runs",
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/button"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/alert-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "select",
+      "description": "Figma input/dropdown + Item / dropdown / default",
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "skeleton",
+      "description": "Loading placeholder",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "table",
+      "description": "CRM TableSection / TableCell as semantic table parts",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/table.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "alert",
+      "description": "Figma alert-text: clear, accent, info, success, warning, error",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/alert.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "avatar",
+      "description": "Figma Avatars: sizes xs-xl, image + initials fallback",
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/avatar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "tooltip",
+      "description": "Figma tooltip (inverted)",
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "dropdown-menu",
+      "description": "Figma Item / dropdown / simple: action menu with checkbox items",
+      "dependencies": [
+        "radix-ui",
+        "tw-animate-css"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:component",
+      "title": "empty-state",
+      "description": "Shared EmptyState composite (react-ux API) styled with Mbank tokens",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/components/EmptyState.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-icons",
+      "type": "registry:component",
+      "title": "crm-icons",
+      "description": "Outline glyphs for CRM blocks and side menu (search, bell, settings, nav icons) until Mbank Icons are exported",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/crm-icons.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-status-dot",
+      "type": "registry:component",
+      "title": "crm-status-dot",
+      "description": "Coloured status dot (success/warning/error/info/neutral) for stepper, timeline, scoring",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/StatusDot.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-app-shell",
+      "type": "registry:component",
+      "title": "crm-app-shell",
+      "description": "Figma sideMenu + topHeader: CrmLayout, SideMenu (sections, collapsible groups, active item, user), SideMenuSheet (mobile), TopHeader, Breadcrumbs, HeaderSearch, HeaderIconButton, UserMenu",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons",
+        "@mbank/button",
+        "@mbank/input",
+        "@mbank/avatar",
+        "@mbank/dropdown-menu",
+        "@mbank/dialog",
+        "@mbank/crm-icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/side-menu-types.ts",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/SideMenuItem.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/SideMenuSection.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/SideMenu.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/SideMenuUser.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/SideMenuSheet.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/CrmLayout.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/TopHeader.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/Breadcrumbs.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/HeaderSearch.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/HeaderIconButton.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/UserMenu.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-kpi-card",
+      "type": "registry:component",
+      "title": "crm-kpi-card",
+      "description": "Figma CRM / KPI card 266x128: label, value, delta with positive/negative tone, loading skeleton",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/card",
+        "@mbank/skeleton"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/KpiCard.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-period-segment",
+      "type": "registry:component",
+      "title": "crm-period-segment",
+      "description": "Figma Period row: title + segment Сегодня/Неделя/Месяц/Квартал on kit Tabs (tablist + tabpanel)",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/tabs"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/PeriodSegment.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-board",
+      "type": "registry:component",
+      "title": "crm-board",
+      "description": "Figma Board: Board, BoardColumn (name, count, SLA), ApplicationCard 140px, ShowMore, BoardSkeleton",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/badge",
+        "@mbank/button",
+        "@mbank/skeleton"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/Board.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/BoardColumn.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/ApplicationCard.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/ShowMore.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/BoardSkeleton.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-key-value",
+      "type": "registry:component",
+      "title": "crm-key-value",
+      "description": "Figma Key-value row 36px + section card (Заёмщик, Параметры кредита, Документы), value tone for problems",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/card"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/KeyValueSection.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/KeyValueRow.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-stage-stepper",
+      "type": "registry:component",
+      "title": "crm-stage-stepper",
+      "description": "Figma Stages: horizontal stepper done/current/upcoming/failed with meta, vertical on phones",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/card",
+        "@mbank/crm-status-dot"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/StageStep.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/StageStepper.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-timeline",
+      "type": "registry:component",
+      "title": "crm-timeline",
+      "description": "Figma History card + Timeline item (coloured dot, title, meta)",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/card",
+        "@mbank/crm-status-dot"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/Timeline.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/mbank/blocks/crm/TimelineItem.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-summary-header",
+      "type": "registry:component",
+      "title": "crm-summary-header",
+      "description": "Figma Summary card: title + status badge, big amount, context line, actions",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/badge",
+        "@mbank/card"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/SummaryHeader.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-score-card",
+      "type": "registry:component",
+      "title": "crm-score-card",
+      "description": "Figma Scoring card: risk badge, score in risk colour, bullet reasons, meta line",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/badge",
+        "@mbank/card",
+        "@mbank/crm-status-dot"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/ScoreCard.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}

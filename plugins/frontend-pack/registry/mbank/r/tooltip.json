@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip",
+  "type": "registry:ui",
+  "title": "tooltip",
+  "description": "Figma tooltip (inverted)",
+  "dependencies": [
+    "radix-ui",
+    "tw-animate-css"
+  ],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/tooltip.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { Tooltip as TooltipPrimitive } from \"radix-ui\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\n/*\n * Figma `tooltip` (Inverted on) / `Tooltip` (Dark=True): inverse surface, shadow/tooltip,\n * z-index tooltip 1800. Wrap the app (or the page) in TooltipProvider once.\n */\nfunction TooltipProvider({\n  delayDuration = 200,\n  ...props\n}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {\n  return <TooltipPrimitive.Provider data-slot=\"tooltip-provider\" delayDuration={delayDuration} {...props} />\n}\n\nfunction Tooltip(props: React.ComponentProps<typeof TooltipPrimitive.Root>) {\n  return <TooltipPrimitive.Root data-slot=\"tooltip\" {...props} />\n}\n\nfunction TooltipTrigger(props: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {\n  return <TooltipPrimitive.Trigger data-slot=\"tooltip-trigger\" {...props} />\n}\n\nfunction TooltipContent({\n  className,\n  sideOffset = 6,\n  children,\n  ...props\n}: React.ComponentProps<typeof TooltipPrimitive.Content>) {\n  return (\n    <TooltipPrimitive.Portal>\n      <TooltipPrimitive.Content\n        data-slot=\"tooltip-content\"\n        sideOffset={sideOffset}\n        className={cn(\n          \"z-(--z-tooltip) max-w-xs rounded-sm bg-surface-inverse px-3 py-2 text-xs text-inverse-foreground shadow-tooltip animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n        <TooltipPrimitive.Arrow className=\"fill-surface-inverse\" width={12} height={6} />\n      </TooltipPrimitive.Content>\n    </TooltipPrimitive.Portal>\n  )\n}\n\nexport { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }\n"
+    }
+  ]
+}

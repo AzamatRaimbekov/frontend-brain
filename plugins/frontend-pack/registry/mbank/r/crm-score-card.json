@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-score-card",
+  "type": "registry:component",
+  "title": "crm-score-card",
+  "description": "Figma Scoring card: risk badge, score in risk colour, bullet reasons, meta line",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/badge",
+    "@mbank/card",
+    "@mbank/crm-status-dot"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/ScoreCard.tsx",
+      "type": "registry:component",
+      "content": "import { useId } from \"react\"\nimport type * as React from \"react\"\nimport { cva } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { Badge } from \"@/registry/mbank/ui/badge\"\nimport { Card } from \"@/registry/mbank/ui/card\"\nimport { StatusDot, type StatusDotTone } from \"./StatusDot\"\n\ntype BadgeTone = React.ComponentProps<typeof Badge>[\"tone\"]\n\nconst scoreVariants = cva(\"text-3xl font-bold\", {\n  variants: { tone: { success: \"text-success-text\", warning: \"text-warning-text\", error: \"text-destructive-text\" } },\n  defaultVariants: { tone: \"warning\" },\n})\n\nexport type ScoreReason = { id: string; text: string; tone?: StatusDotTone }\n\ntype ScoreCardProps = {\n  title?: string\n  score: number\n  scoreTone?: \"success\" | \"warning\" | \"error\"\n  /** After the score: \"из 900 · модель v3.2\". */\n  scale?: string\n  risk?: { label: string; tone: BadgeTone }\n  reasons?: ScoreReason[]\n  /** Bottom line: \"Назначен: Токтосунов Б. · SLA до 14:00\". */\n  meta?: string\n  className?: string\n}\n\n/** Figma `Scoring` card: title + risk badge, score 32 bold in the risk colour, bullet reasons, meta. */\nexport function ScoreCard({ title = \"Скоринг\", score, scoreTone, scale, risk, reasons = [], meta, className }: ScoreCardProps) {\n  const titleId = useId()\n  return (\n    <Card role=\"region\" aria-labelledby={titleId} data-slot=\"score-card\" className={cn(\"gap-3 border-transparent p-5\", className)}>\n      <div className=\"flex items-center justify-between gap-2\">\n        <h2 id={titleId} className=\"text-base font-bold text-foreground\">\n          {title}\n        </h2>\n        {risk && (\n          <Badge size=\"sm\" tone={risk.tone} shape=\"square\" className=\"rounded-sm\">\n            {risk.label}\n          </Badge>\n        )}\n      </div>\n      <p className=\"flex items-baseline gap-2\">\n        <span className={scoreVariants({ tone: scoreTone })}>{score}</span>\n        {scale && <span className=\"text-sm text-muted-foreground\">{scale}</span>}\n      </p>\n      {reasons.length > 0 && (\n        <ul className=\"flex flex-col gap-2\">\n          {reasons.map((reason) => (\n            <li key={reason.id} className=\"flex items-start gap-2 text-sm text-foreground\">\n              <StatusDot size=\"sm\" tone={reason.tone ?? \"warning\"} className=\"mt-[7px]\" />\n              {reason.text}\n            </li>\n          ))}\n        </ul>\n      )}\n      {meta && <p className=\"text-caption text-muted-foreground\">{meta}</p>}\n    </Card>\n  )\n}\n"
+    }
+  ]
+}

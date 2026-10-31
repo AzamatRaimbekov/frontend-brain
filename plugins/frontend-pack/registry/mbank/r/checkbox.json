@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "checkbox",
+  "type": "registry:ui",
+  "title": "checkbox",
+  "description": "Figma Switchers - Check, Type=Checkbox (+ indeterminate)",
+  "dependencies": [
+    "radix-ui"
+  ],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/icons"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/checkbox.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { Checkbox as CheckboxPrimitive } from \"radix-ui\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { CheckIcon, MinusIcon } from \"./icons\"\n\n/*\n * Figma `Switchers - Check` Type=Checkbox. Selected uses the product brand (1.brand) so it follows\n * data-brand. TODO: confirm the selected fill against the Switchers frame (colour not in tokens.md).\n * Figma has no error/indeterminate states (G10); aria-invalid and indeterminate are added for code.\n */\nfunction Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {\n  return (\n    <CheckboxPrimitive.Root\n      data-slot=\"checkbox\"\n      className={cn(\n        \"peer size-5 shrink-0 rounded-xs border border-input bg-background transition-colors outline-none hover:border-input-hover focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:border-input-disabled disabled:bg-muted aria-invalid:border-border-destructive data-[state=checked]:border-brand data-[state=checked]:bg-brand data-[state=checked]:text-brand-foreground data-[state=indeterminate]:border-brand data-[state=indeterminate]:bg-brand data-[state=indeterminate]:text-brand-foreground disabled:data-[state=checked]:opacity-50\",\n        className,\n      )}\n      {...props}\n    >\n      <CheckboxPrimitive.Indicator\n        data-slot=\"checkbox-indicator\"\n        className=\"group flex items-center justify-center text-current\"\n      >\n        <CheckIcon className=\"size-3.5 group-data-[state=indeterminate]:hidden\" strokeWidth={3} />\n        <MinusIcon className=\"hidden size-3.5 group-data-[state=indeterminate]:block\" strokeWidth={3} />\n      </CheckboxPrimitive.Indicator>\n    </CheckboxPrimitive.Root>\n  )\n}\n\nexport { Checkbox }\n"
+    }
+  ]
+}

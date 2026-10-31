@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert-dialog",
+  "type": "registry:ui",
+  "title": "alert-dialog",
+  "description": "Figma dialogConfirm on Radix AlertDialog; no Action on purpose: confirm is a Button wired to the mutation, the dialog stays open while it runs",
+  "dependencies": [
+    "radix-ui",
+    "tw-animate-css"
+  ],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/button"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/alert-dialog.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { AlertDialog as AlertDialogPrimitive } from \"radix-ui\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { buttonVariants } from \"./button\"\n\n/*\n * Figma `dialogConfirm`, built like dialog.tsx (overlay, surface, shadow/modal, z-modal) on the\n * Radix AlertDialog primitive. Cancel gets the initial focus.\n * There is deliberately no AlertDialogAction: Radix Action closes the dialog on click, but the\n * Mdigital rule (react-ux) keeps it open while the request runs. Put a plain <Button> as the\n * confirm button, wire it to the mutation (loading={isPending}), close the dialog in onSuccess\n * (controlled `open`) and show the error text inside the dialog on failure.\n */\nfunction AlertDialog(props: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {\n  return <AlertDialogPrimitive.Root data-slot=\"alert-dialog\" {...props} />\n}\n\nfunction AlertDialogTrigger(props: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {\n  return <AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />\n}\n\nfunction AlertDialogContent({\n  className,\n  ...props\n}: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {\n  return (\n    <AlertDialogPrimitive.Portal>\n      <AlertDialogPrimitive.Overlay\n        data-slot=\"alert-dialog-overlay\"\n        className=\"fixed inset-0 z-(--z-overlay) bg-overlay data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0\"\n      />\n      <AlertDialogPrimitive.Content\n        data-slot=\"alert-dialog-content\"\n        className={cn(\n          \"fixed top-1/2 left-1/2 z-(--z-modal) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-lg bg-card p-6 text-card-foreground shadow-modal outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none\",\n          className,\n        )}\n        {...props}\n      />\n    </AlertDialogPrimitive.Portal>\n  )\n}\n\nfunction AlertDialogHeader({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div data-slot=\"alert-dialog-header\" className={cn(\"flex flex-col gap-2\", className)} {...props} />\n  )\n}\n\nfunction AlertDialogFooter({ className, ...props }: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"alert-dialog-footer\"\n      className={cn(\"flex flex-col-reverse gap-2 sm:flex-row sm:justify-end\", className)}\n      {...props}\n    />\n  )\n}\n\nfunction AlertDialogTitle({\n  className,\n  ...props\n}: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {\n  return (\n    <AlertDialogPrimitive.Title\n      data-slot=\"alert-dialog-title\"\n      className={cn(\"text-xl font-bold\", className)}\n      {...props}\n    />\n  )\n}\n\nfunction AlertDialogDescription({\n  className,\n  ...props\n}: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {\n  return (\n    <AlertDialogPrimitive.Description\n      data-slot=\"alert-dialog-description\"\n      className={cn(\"text-sm text-muted-foreground\", className)}\n      {...props}\n    />\n  )\n}\n\n/** Closes the dialog without side effects; disable it while the confirm request is pending. */\nfunction AlertDialogCancel({\n  className,\n  ...props\n}: React.ComponentProps<typeof AlertDialogPrimitive.Cancel>) {\n  return (\n    <AlertDialogPrimitive.Cancel\n      data-slot=\"alert-dialog-cancel\"\n      className={cn(buttonVariants({ variant: \"soft\" }), className)}\n      {...props}\n    />\n  )\n}\n\nexport {\n  AlertDialog,\n  AlertDialogTrigger,\n  AlertDialogContent,\n  AlertDialogHeader,\n  AlertDialogFooter,\n  AlertDialogTitle,\n  AlertDialogDescription,\n  AlertDialogCancel,\n}\n"
+    }
+  ]
+}

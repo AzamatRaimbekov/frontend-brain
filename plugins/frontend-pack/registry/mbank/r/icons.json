@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icons",
+  "type": "registry:ui",
+  "title": "icons",
+  "description": "Temporary inline glyphs (check, minus, chevron-down, close) until the Mbank Icons SVGs are exported",
+  "dependencies": [],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/icons.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\n\n/*\n * Minimal glyphs used inside the kit (checkbox tick, select chevron, close cross).\n * TODO: replace with SVGs exported from the Mbank Icons library (figma-pack mbank-design-system,\n * code-mapping section 6: check, chevron-down, close). Lucide is not used in Mbank UI.\n */\ntype IconProps = React.ComponentProps<\"svg\">\n\nfunction Icon({ children, ...props }: IconProps) {\n  return (\n    <svg\n      viewBox=\"0 0 24 24\"\n      width={24}\n      height={24}\n      fill=\"none\"\n      stroke=\"currentColor\"\n      strokeWidth={2}\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n      aria-hidden=\"true\"\n      {...props}\n    >\n      {children}\n    </svg>\n  )\n}\n\nexport function CheckIcon(props: IconProps) {\n  return (\n    <Icon {...props}>\n      <path d=\"M5 12.5l4.5 4.5L19 7.5\" />\n    </Icon>\n  )\n}\n\nexport function MinusIcon(props: IconProps) {\n  return (\n    <Icon {...props}>\n      <path d=\"M6 12h12\" />\n    </Icon>\n  )\n}\n\nexport function ChevronDownIcon(props: IconProps) {\n  return (\n    <Icon {...props}>\n      <path d=\"M6 9l6 6 6-6\" />\n    </Icon>\n  )\n}\n\nexport function CloseIcon(props: IconProps) {\n  return (\n    <Icon {...props}>\n      <path d=\"M6 6l12 12M18 6L6 18\" />\n    </Icon>\n  )\n}\n"
+    }
+  ]
+}

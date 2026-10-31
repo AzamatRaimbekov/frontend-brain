@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-summary-header",
+  "type": "registry:component",
+  "title": "crm-summary-header",
+  "description": "Figma Summary card: title + status badge, big amount, context line, actions",
+  "dependencies": [],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/badge",
+    "@mbank/card"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/SummaryHeader.tsx",
+      "type": "registry:component",
+      "content": "import type * as React from \"react\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { Badge } from \"@/registry/mbank/ui/badge\"\nimport { Card } from \"@/registry/mbank/ui/card\"\n\ntype BadgeTone = React.ComponentProps<typeof Badge>[\"tone\"]\n\ntype SummaryHeaderProps = {\n  /** Page h1: \"Заявка CL-240118\". */\n  title: string\n  status?: { label: string; tone: BadgeTone }\n  /** Big number: \"450 000 KGS\". */\n  amount?: string\n  /** \"Потребительский · 24 мес · 21,5% годовых · подана 12.10.2026, 09:14 · приложение\". */\n  context?: string\n  /** Buttons, Figma order: Отклонить (destructive) / Запросить документы / Одобрить (primary). */\n  actions?: React.ReactNode\n  /** For focus management after an action (react-ux): tabIndex=-1 is set. */\n  titleRef?: React.Ref<HTMLHeadingElement>\n  className?: string\n}\n\n/** Figma `Summary` card (p 20): title 20 bold + status badge, amount 32 bold, context 14 muted, actions. */\nexport function SummaryHeader({ title, status, amount, context, actions, titleRef, className }: SummaryHeaderProps) {\n  return (\n    <Card\n      data-slot=\"summary-header\"\n      className={cn(\"gap-6 border-transparent p-5 md:flex-row md:items-center md:justify-between\", className)}\n    >\n      <div className=\"flex min-w-0 flex-col gap-2\">\n        <div className=\"flex flex-wrap items-center gap-3\">\n          <h1 ref={titleRef} tabIndex={-1} className=\"text-xl font-bold text-foreground outline-none\">\n            {title}\n          </h1>\n          {status && (\n            <Badge tone={status.tone} shape=\"square\" className=\"rounded-sm\">\n              {status.label}\n            </Badge>\n          )}\n        </div>\n        {amount && <p className=\"text-3xl font-bold text-foreground\">{amount}</p>}\n        {context && <p className=\"text-sm text-muted-foreground\">{context}</p>}\n      </div>\n      {actions && (\n        <div className=\"flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap md:shrink-0 md:justify-end\">{actions}</div>\n      )}\n    </Card>\n  )\n}\n"
+    }
+  ]
+}
