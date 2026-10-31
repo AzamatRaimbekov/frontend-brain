@@ -38,6 +38,19 @@
         "mbank",
         "design-to-code"
       ]
+    },
+    {
+      "name": "design-engine",
+      "source": "./plugins/design-engine",
+      "description": "Design-to-code engine: one screen spec → Figma (figma-pack) and React code (frontend-pack), design QA, component map and token sync. Installs both packs.",
+      "version": "0.1.0",
+      "category": "development",
+      "keywords": [
+        "design-to-code",
+        "figma",
+        "react",
+        "design-system"
+      ]
     }
   ]
 }

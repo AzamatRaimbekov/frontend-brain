@@ -67,7 +67,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | спроектировать | большая фича, рефакторинг, «как разбить» | процедура [frontend-architect](../../agents/frontend-architect.md): план файлов до кода |
 | починить | баг, «не работает», регрессия | сначала воспроизведи и найди причину, затем тест, который падает, и только потом фикс; не меняй код наугад |
 
-Исполнители этапов: [frontend-architect](../../agents/frontend-architect.md) — план, [frontend-engineer](../../agents/frontend-engineer.md) — код, тесты и проверки, [frontend-reviewer](../../agents/frontend-reviewer.md) — ревью, [design-qa](../../agents/design-qa.md) — сверка с макетом, [design-lead](../../agents/design-lead.md) — проверка ворот конвейера `figma` и совет о следующем шаге (никого не запускает).
+Исполнители этапов: [frontend-architect](../../agents/frontend-architect.md) — план, [frontend-engineer](../../agents/frontend-engineer.md) — код, тесты и проверки, [frontend-reviewer](../../agents/frontend-reviewer.md) — ревью, агент `design-engine:design-qa` — сверка с макетом, агент `design-engine:design-lead` — проверка ворот конвейера `figma` и совет о следующем шаге (никого не запускает).
 
 ## Маршрутизация
 
@@ -82,7 +82,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | Продукт Mbank (банк, касса, travel, artwin, koko) или экран из Mbank Figma | [mbank-ui](../mbank-ui/SKILL.md): кодовый UI-кит и токены, ставится `add-ui.mjs`; плюс [react-ui](../react-ui/SKILL.md) |
 | CRM, админка, бэк-офис на Mbank (новая или новая страница в ней) | [mbank-crm](../mbank-crm/SKILL.md): новый проект — `node <plugin-root>/scripts/new-crm.mjs <папка>`, страницы — из CRM-блоков (`add-ui.mjs crm-…`) |
 | ТЗ → экраны в Figma и код одной спекой, «автоматизируй дизайн и фронт» | конвейер `spec` ([pipelines.md](references/pipelines.md#spec)): `figma-pack:figma-spec` пишет спеку, плагин DS Builder строит Figma, `scripts/spec-to-code.mjs` — код на `@mdigital/mbank-ui`; токены — `mbank-ui` (`tokens-build.mjs`) или `figma-pack:ds-tokens` |
-| Ссылка на Figma, «по макету», «сделай в фигме и сверстай», передача в разработку | конвейер `figma` по [design-to-code](../design-to-code/SKILL.md): этапы бриф → Figma → утверждение → спека → код → сверка; агенты `design-lead`, `design-qa` и плагин figma-pack |
+| Ссылка на Figma, «по макету», «сделай в фигме и сверстай», передача в разработку | конвейер `figma` по `design-engine:design-to-code`: этапы бриф → Figma → утверждение → спека → код → сверка; агенты `design-lead`, `design-qa` и плагин figma-pack |
 | Тесты: юнит, компонент, страница, e2e, моки MSW | [react-testing](../react-testing/SKILL.md) |
 | Сложная форма, мастер из шагов, где хранить состояние | [react-forms-state](../react-forms-state/SKILL.md) (UX форм — в [react-ux](../react-ux/SKILL.md)) |
 | Медленная страница, размер бандла, аудит доступности | [react-performance-a11y](../react-performance-a11y/SKILL.md) |

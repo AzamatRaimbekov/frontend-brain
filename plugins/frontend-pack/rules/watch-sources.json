@@ -1,5 +1,5 @@
 {
-  "$comment": "Upstream sources the frontend brain depends on. Read by scripts/brain-watch.mjs and the brain-update skill. type: rss (RSS or Atom feed), github-releases (repo, optional match = tag regex, prereleases), github-commits (repo, optional path, pinned = vendored commit), npm (package, versions with publish time). affects: files or folders in plugins/frontend-pack (../../ = repository root) that a change upstream can make stale. Every URL and repo was checked to respond on 2026-10-25.",
+  "$comment": "Upstream sources the frontend brain depends on. Read by scripts/brain-watch.mjs and the brain-update skill. type: rss (RSS or Atom feed), github-releases (repo, optional match = tag regex, prereleases), github-commits (repo, optional path, pinned = vendored commit), npm (package, versions with publish time). affects: files or folders in plugins/frontend-pack that a change upstream can make stale. Every URL and repo was checked to respond on 2026-10-25.",
   "sources": [
     {
       "id": "nextjs-blog",
@@ -49,7 +49,7 @@
       "repo": "vercel-labs/agent-skills",
       "path": "skills/react-best-practices",
       "pinned": "063bee94c3f4df8453406c830b0a7df0f2860278",
-      "affects": ["skills/react-brain/references/vercel-react-best-practices", "skills/react-brain/SKILL.md", "../../NOTICE.md"],
+      "affects": ["skills/react-brain/references/vercel-react-best-practices", "skills/react-brain/SKILL.md", "NOTICE.md"],
       "note": "Vendored as is in react-brain at the pinned commit. New commits mean a re-vendor: copy files unchanged, bump the pin in react-brain/SKILL.md and NOTICE.md."
     },
     {
@@ -137,7 +137,7 @@
       "type": "github-releases",
       "repo": "figma/code-connect",
       "prereleases": false,
-      "affects": ["knowledge/tooling/code-connect-template-files.md", "skills/design-to-code/SKILL.md", "../figma-pack/skills/figma-to-react/SKILL.md"],
+      "affects": ["knowledge/tooling/code-connect-template-files.md"],
       "note": "Machine-readable Code Connect changelog. The Figma REST API changelog page has no feed (404 at the old URL), so it is not watched."
     },
     {
@@ -145,7 +145,7 @@
       "name": "Figma MCP server guide",
       "type": "github-commits",
       "repo": "figma/mcp-server-guide",
-      "affects": ["knowledge/tooling/figma-mcp-design-to-code-order.md", "knowledge/tooling/figma-mcp-seats-and-access.md", "skills/design-to-code/SKILL.md", "../figma-pack/skills/figma-core/SKILL.md"],
+      "affects": ["knowledge/tooling/figma-mcp-design-to-code-order.md", "knowledge/tooling/figma-mcp-seats-and-access.md"],
       "note": "Figma's official guide and skills for the MCP server; the closest machine-readable changelog of the MCP tools."
     }
   ]

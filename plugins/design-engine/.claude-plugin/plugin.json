@@ -1,0 +1,11 @@
+{
+  "name": "design-engine",
+  "version": "0.1.0",
+  "description": "Mdigital design-to-code engine: one screen spec drives Figma (figma-pack) and React code (frontend-pack); design-to-code process, Figma-to-React/React Native/Flutter translation, design QA, Figma-to-code component map and token sync. Installs figma-pack and frontend-pack as dependencies.",
+  "author": {
+    "name": "Mdigital"
+  },
+  "repository": "https://github.com/AzamatRaimbekov/frontend-brain",
+  "keywords": ["design-to-code", "figma", "react", "design-system", "mbank"],
+  "dependencies": ["figma-pack", "frontend-pack"]
+}

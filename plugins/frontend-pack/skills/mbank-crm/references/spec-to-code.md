@@ -1,6 +1,6 @@
 # Spec → code
 
-The screen spec (one JSON, format in [figma-pack builder](../../../../figma-pack/builder/README.md)) is the single source of a CRM: the Figma plugin draws the frames from it, [`scripts/spec-to-code.mjs`](../../../scripts/spec-to-code.mjs) writes the React code from it. Write or change the spec first, then regenerate both.
+The screen spec (one JSON, format: figma-pack `builder/README.md` and skill `figma-pack:figma-spec`; this plugin keeps a copy of the validator in `scripts/spec-to-code/spec.mjs`) is the single source of a CRM: the Figma plugin draws the frames from it, [`scripts/spec-to-code.mjs`](../../../scripts/spec-to-code.mjs) writes the React code from it. Write or change the spec first, then regenerate both.
 
 ```bash
 # PLUGIN = path to plugins/frontend-pack

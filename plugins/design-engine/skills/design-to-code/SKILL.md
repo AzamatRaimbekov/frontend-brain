@@ -7,7 +7,7 @@ description: End-to-end team process from a Figma design to merged React code at
 
 В Codex сначала прочитай [интеграцию с Codex](../../references/codex.md).
 
-Этот скилл — порядок работы, а не правила кода. Правила кода остаются в скиллах `react-*` и в [libraries.json](../../rules/libraries.json), правила Figma — в плагине `figma-pack` (вход: `figma-pack:figma-core`). Ведёт процесс дирижёр — скилл [frontend](../frontend/SKILL.md) в основной сессии, конвейер `figma` ([этапы и их id](../frontend/references/pipelines.md#figma)): он запускает исполнителей инструментом Agent по таблице ниже, проверяет ворота и ведёт файл задачи `.frontend/tasks/<slug>.md`. Агент [design-lead](../../agents/design-lead.md) — проверяющий ворот и советник: дирижёр спрашивает его на границе этапов, он называет следующий шаг и сам никого не запускает и кода не пишет.
+Этот скилл — порядок работы, а не правила кода. Правила кода остаются в скиллах `react-*` и в `frontend-pack` rules/libraries.json, правила Figma — в плагине `figma-pack` (вход: `figma-pack:figma-core`). Ведёт процесс дирижёр — скилл `frontend-pack:frontend` в основной сессии, конвейер `figma` (этапы и их id — `frontend-pack:frontend`, references/pipelines.md): он запускает исполнителей инструментом Agent по таблице ниже, проверяет ворота и ведёт файл задачи `.frontend/tasks/<slug>.md`. Агент [design-lead](../../agents/design-lead.md) — проверяющий ворот и советник: дирижёр спрашивает его на границе этапов, он называет следующий шаг и сам никого не запускает и кода не пишет.
 
 ## 0. Перед стартом (один раз за сессию)
 
@@ -32,11 +32,11 @@ description: End-to-end team process from a Figma design to merged React code at
 | 2 | Черновик в Figma | `figma-pack:figma-core` → агент `figma-designer` (`figma-design`, `figma-structure`, для Mbank `mbank-figma-patterns`) | бриф, каталог | draw plan → после «да» фреймы `[draft] …`, ссылки | `structure-audit.js` 0 ошибок, `lint-design.js` 0 critical |
 | 3 | Утверждение | **человек-дизайнер** | ссылки на черновики | фреймы без `[draft]`, Section в Ready for dev | ворота A |
 | 4 | Спека | агент `figma-reader` | ссылка на утверждённый фрейм с `node-id` | спека по `spec-template` (12 разделов), скриншоты `.figma/<fileKey>/<nodeId>.png` | разделы 1–11 есть, вопросы раздела 11 закрыты или стали допущениями |
-| 5 | UX.md | [react-page-ux](../react-page-ux/SKILL.md) | спека (разделы 8 и 11 → состояния и допущения) | `src/pages/<route>/UX.md` | ворота B |
-| 6 | План файлов | агент [frontend-architect](../../agents/frontend-architect.md) | спека + UX.md | дерево файлов, данные, состояния | у каждого файла одна ответственность, оценка ≤ 150 строк |
-| 7 | Код | агент [frontend-engineer](../../agents/frontend-engineer.md) или основная сессия: `figma-pack:figma-to-react` + [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md), [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md), [react-dry](../react-dry/SKILL.md); для Mbank `mbank-ui` (если установлен, иначе code-mapping §7) | план, спека, UX.md | ветка с кодом | ворота C |
+| 5 | UX.md | `frontend-pack:react-page-ux` | спека (разделы 8 и 11 → состояния и допущения) | `src/pages/<route>/UX.md` | ворота B |
+| 6 | План файлов | агент `frontend-pack:frontend-architect` | спека + UX.md | дерево файлов, данные, состояния | у каждого файла одна ответственность, оценка ≤ 150 строк |
+| 7 | Код | агент `frontend-pack:frontend-engineer` или основная сессия: `design-engine:figma-to-react` + `frontend-pack:react-architecture`, `frontend-pack:react-ui`, `frontend-pack:react-ux`, `frontend-pack:react-data-fetching`, `frontend-pack:react-error-handling`, `frontend-pack:react-dry`; для Mbank `mbank-ui` (если установлен, иначе code-mapping §7) | план, спека, UX.md | ветка с кодом | ворота C |
 | 8 | Визуальная сверка | агент [design-qa](../../agents/design-qa.md) | URL страницы, скриншоты Figma | таблица отличий 1280 / 768 / 375 | нет отличий с пометкой «исправить» |
-| 9 | Ревью | агент [frontend-reviewer](../../agents/frontend-reviewer.md) | изменённые файлы | список нарушений | 0 блокирующих |
+| 9 | Ревью | агент `frontend-pack:frontend-reviewer` | изменённые файлы | список нарушений | 0 блокирующих |
 | 10 | QA и PR | основная сессия: `react-page-ux` §5 (состояния через MSW, клавиатура, консоль) | ветка | PR с отчётом | ворота D |
 
 Мелкая правка одного компонента по макету: этапы 1–3 и 6 пропускаются, этапы 4, 7, 8, 9 обязательны.

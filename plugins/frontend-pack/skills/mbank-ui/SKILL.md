@@ -85,11 +85,11 @@ After installing:
 
 ## Updating tokens from Figma
 
-`tokens.css` is generated: Figma variables ([`tokens.json`](../../../figma-pack/skills/mbank-figma-patterns/references/tokens.json)) + the mapping CSS var → Figma variable ([`tokens.map.json`](../../registry/mbank/tokens.map.json)) → [`scripts/tokens-build.mjs`](../../scripts/tokens-build.mjs). When a designer changes a colour, radius, text or effect style in the Mbank libraries:
+`tokens.css` is generated: Figma variables ([`tokens.json`](../../registry/mbank/tokens.json), a copy of the figma-pack contract `mbank-figma-patterns/references/tokens.json`; only design-engine `sync-contracts.mjs` updates the copy) + the mapping CSS var → Figma variable ([`tokens.map.json`](../../registry/mbank/tokens.map.json)) → [`scripts/tokens-build.mjs`](../../scripts/tokens-build.mjs). When a designer changes a colour, radius, text or effect style in the Mbank libraries:
 
-1. Agent with a **Full** seat (figma-pack `figma-core`) runs [`read-tokens.js`](../../../figma-pack/skills/mbank-figma-patterns/references/read-tokens.js) through `use_figma` in each library file (Foundation `KIT='foundation'`, Web components `KIT='web'`, Mobile KIT `KIT='mobile'`) and saves each result as `raw-<kit>.json` outside the repo. It only reads.
+1. Agent with a **Full** seat (figma-pack `figma-core`) runs figma-pack `mbank-figma-patterns/references/read-tokens.js` through `use_figma` in each library file (Foundation `KIT='foundation'`, Web components `KIT='web'`, Mobile KIT `KIT='mobile'`) and saves each result as `raw-<kit>.json` outside the repo. It only reads.
 2. `node plugins/frontend-pack/scripts/tokens-build.mjs --check --from raw-foundation.json --from raw-web.json --from raw-mobile.json` shows what changed in Figma (`~ theme text/link [light]: #3b82f6 -> #2563eb`) and which CSS vars it moves. Writes nothing.
-3. Same command without `--check` rewrites `tokens.json` and `tokens.css`. Sections the dumps do not contain are kept.
+3. Same command without `--check`, with `--tokens <figma-pack>/skills/mbank-figma-patterns/references/tokens.json` (the owner), rewrites the Figma tokens; then design-engine `sync-contracts.mjs` copies them here and rebuilds `tokens.css`. Sections the dumps do not contain are kept. Without design-engine, `--from` updates only this plugin's copy.
 4. New Figma variables are listed as `info: ... not used by tokens.map.json`. Map the ones the web needs (light `:root`, dark `.dark` and the `--color-*` utility come from one entry), or add a prefix to `ignore`. A value that is wrong in Figma gets an override with its gap id (`"dark": { "value": ..., "gap": "G04", "note": ... }`) and a line in figma-pack `gaps.md`, never a silent edit.
 5. `tokens-build.mjs --check` passes, `npm test` passes, PR with the Figma change list from step 2. Copy the new `tokens.css` to the mbank-ui package (`src/styles/tokens.css`) in the same release.
 

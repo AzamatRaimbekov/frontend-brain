@@ -59,7 +59,7 @@ node plugins/frontend-pack/scripts/new-crm.mjs ../my-crm --name "Мой CRM"
 node plugins/frontend-pack/scripts/spec-to-code.mjs my.spec.json --project ../my-crm
 ```
 
-Подробно — скилл `mbank-crm`, раздел «Spec → code» ([references/spec-to-code.md](../../frontend-pack/skills/mbank-crm/references/spec-to-code.md)).
+Подробно — скилл `mbank-crm`, раздел «Spec → code» (`frontend-pack:mbank-crm`, references/spec-to-code.md; ставится вместе с плагином `design-engine`).
 
 ## CLI токенов
 

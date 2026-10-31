@@ -12,7 +12,6 @@ import { markerState } from './spec-to-code/util.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const TEMPLATE = join(HERE, '..', 'templates', 'mbank-crm');
-const BUILDER = join(HERE, '..', '..', 'figma-pack', 'builder');
 const SCRIPT = join(HERE, 'spec-to-code.mjs');
 
 const SPEC = {
@@ -54,13 +53,6 @@ test('parseArgs: spec, --project, flags; rejects bad input', () => {
   assert.throws(() => parseArgs(['s.json']), /Usage/);
   assert.throws(() => parseArgs(['s.json', '--project']), /--project needs a value/);
   assert.throws(() => parseArgs(['s.json', '--project', 'x', '--nope']), /Unknown option/);
-});
-
-test('vendored spec core is the builder core (no drift)', () => {
-  for (const name of ['spec', 'fake']) {
-    const vendored = readFileSync(join(HERE, 'spec-to-code', `${name}.mjs`), 'utf8').replace(/\.mjs'/g, ".js'");
-    assert.equal(vendored, readFileSync(join(BUILDER, 'core', `${name}.js`), 'utf8'), `${name}.mjs differs from figma-pack/builder/core/${name}.js`);
-  }
 });
 
 test('generates route, page, UX.md, tests, feature and menu for a small spec', () => {

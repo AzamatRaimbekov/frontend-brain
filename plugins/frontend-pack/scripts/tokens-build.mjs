@@ -16,7 +16,8 @@ import { normalizeRaw, diffTokens } from './tokens-normalize.mjs';
 
 const PLUGIN = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const DEFAULTS = {
-  tokens: join(PLUGIN, '..', 'figma-pack', 'skills', 'mbank-figma-patterns', 'references', 'tokens.json'),
+  // Copy of the figma-pack contract; design-engine sync-contracts keeps it equal to the owner.
+  tokens: join(PLUGIN, 'registry', 'mbank', 'tokens.json'),
   map: join(PLUGIN, 'registry', 'mbank', 'tokens.map.json'),
   out: join(PLUGIN, 'registry', 'mbank', 'tokens.css'),
 };

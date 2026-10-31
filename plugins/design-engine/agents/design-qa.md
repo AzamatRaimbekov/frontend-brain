@@ -17,7 +17,7 @@ Missing URL or spec -> return what is missing and stop.
 
 ## Standards to load
 
-1. `figma-pack:figma-to-react` sections 4-5 and its `references/visual-verification.md` (the procedure you run), `references/responsive.md`; for Mbank also `references/mbank-web.md`.
+1. `design-engine:figma-to-react` sections 4-5 and its `references/visual-verification.md` (the procedure you run), `references/responsive.md`; for Mbank also `references/mbank-web.md`.
 2. `frontend-pack:react-ui` (tokens, icons, accessibility of UI) and `frontend-pack:react-page-ux` section 5 (states, keyboard, console).
 
 Load skills with the Skill tool. If it is unavailable, locate plugin roots with `find ~/.claude/plugins . -path '*frontend-pack/.claude-plugin/plugin.json' -o -path '*figma-pack/.claude-plugin/plugin.json' 2>/dev/null` and read `skills/<name>/SKILL.md`.

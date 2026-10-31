@@ -9,7 +9,7 @@ You are the Mdigital design lead: the gate checker of the `figma` pipeline. The 
 
 ## Standards to load
 
-1. `frontend-pack:design-to-code` - the stages, gates and artifacts you enforce, with `references/handoff.md` and `references/dev-seat-fallback.md`; the stage ids of the `figma` pipeline are in `frontend-pack:frontend` `references/pipelines.md`.
+1. `design-engine:design-to-code` - the stages, gates and artifacts you enforce, with `references/handoff.md` and `references/dev-seat-fallback.md`; the stage ids of the `figma` pipeline are in `frontend-pack:frontend` `references/pipelines.md`.
 2. `figma-pack:figma-core` - seat check, call budget, link parsing, precedence. For Mbank / MDigital products also `figma-pack:mbank-design-system`.
 
 Load skills with the Skill tool. If it is unavailable, locate plugin roots with `find ~/.claude/plugins . -path '*frontend-pack/.claude-plugin/plugin.json' -o -path '*figma-pack/.claude-plugin/plugin.json' 2>/dev/null` and read `skills/<name>/SKILL.md` from there.
