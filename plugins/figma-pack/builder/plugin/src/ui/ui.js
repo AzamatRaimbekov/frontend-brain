@@ -1,6 +1,7 @@
 // Plugin window. Pure DOM; talks to code.js through postMessage.
 import { generateTokens, contrastReport, BRAND_KEYS, COLOR_TOKENS } from '../../../core/tokens.js';
 import { validateSpec, framePlan } from '../../../core/spec.js';
+import { initComponents } from './components-ui.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -178,10 +179,15 @@ const on = {
   },
   error: (m) => {
     for (const id of ['setup', 'apply', 'build', 'scanKit']) busy($(id), false);
+    components.onError(m);
     if (m.for === 'build') checkSpec();
     toast(`Ошибка (${m.for}): ${m.message}`, true);
   },
 };
 
+const components = initComponents({ $, esc, send, toast });
+Object.assign(on, components.handlers);
+
 window.onmessage = (e) => { const m = e.data.pluginMessage; if (m && on[m.type]) on[m.type](m); };
 send('init');
+components.start();

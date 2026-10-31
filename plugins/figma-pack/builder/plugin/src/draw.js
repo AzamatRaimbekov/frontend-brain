@@ -94,7 +94,7 @@ export function add(parent, ...children) {
 
 // Prefers the kit's own styles (text-sm/leading-normal/medium); falls back to
 // our ds/* styles on ctx.font when the kit style's font is not installed.
-async function textStyle(ctx, sz, weight) {
+export async function textStyle(ctx, sz, weight) {
   const key = `${sz}/${weight}`;
   if (ctx.styles[key]) return ctx.styles[key];
   if (!ctx.kitStyles) ctx.kitStyles = new Map((await figma.getLocalTextStylesAsync()).map((s) => [s.name, s]));

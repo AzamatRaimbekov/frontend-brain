@@ -18,6 +18,18 @@
     return a;
   };
   var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+  var __objRest = (source, exclude) => {
+    var target = {};
+    for (var prop in source)
+      if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
+        target[prop] = source[prop];
+    if (source != null && __getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(source)) {
+        if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
+          target[prop] = source[prop];
+      }
+    return target;
+  };
   var __export = (target, all) => {
     for (var name in all)
       __defProp(target, name, { get: all[name], enumerable: true });
@@ -254,13 +266,13 @@
       ix.named[C.brand] = /* @__PURE__ */ new Map();
     }
     const brand = ix.col[C.brand];
-    const report = { linked: 0, created: 0, renamed: 0, scoped: 0, extensions: [] };
+    const report2 = { linked: 0, created: 0, renamed: 0, scoped: 0, extensions: [] };
     for (const [name, mv] of [...ix.named[C.mode]]) {
       if (mv.resolvedType !== "COLOR") continue;
       const clean2 = opts.fixNames ? fixLegacyName(name) : name;
       if (clean2 !== name) {
         mv.name = clean2;
-        report.renamed++;
+        report2.renamed++;
       }
       for (const theme of THEMES) {
         const mId = themeMode(mode, theme);
@@ -274,15 +286,15 @@
         const bv = await ensureBrandVar(ix, bName);
         if (isNew) {
           setAllModes(ix, bv, val);
-          report.created++;
+          report2.created++;
         }
         mv.setValueForMode(mId, alias(bv));
-        report.linked++;
+        report2.linked++;
       }
       mv.setVariableCodeSyntax("WEB", `var(${cssVar(clean2)})`);
       if (opts.fixScopes) {
         mv.scopes = scopesFor(clean2);
-        report.scoped++;
+        report2.scoped++;
       }
     }
     for (const t of EXTENSION_TOKENS) {
@@ -297,7 +309,7 @@
       mv.scopes = scopesFor(t);
       mv.setVariableCodeSyntax("WEB", `var(--${t})`);
       ix.named[C.mode].set(t, mv);
-      report.extensions.push(t);
+      report2.extensions.push(t);
     }
     for (const key of ["sans", "heading"]) {
       const name = `font/${key}`;
@@ -306,7 +318,7 @@
       const fv = await ensureBrandVar(ix, name, "STRING");
       setAllModes(ix, fv, sv ? alias(sv) : "Inter");
     }
-    return report;
+    return report2;
   }
   async function rollbackBrand() {
     const ix = await loadIndex();
@@ -374,9 +386,9 @@
       const bv = ix.named[C.brand].get(`color/${theme}/${token}`);
       if (!bv) continue;
       const raw = bv.valuesByMode[bm.modeId];
-      const inherited = isAlias(raw) && ((_a = ix.byId.get(raw.id)) == null ? void 0 : _a.variableCollectionId) === ix.col[C.style].id;
+      const inherited2 = isAlias(raw) && ((_a = ix.byId.get(raw.id)) == null ? void 0 : _a.variableCollectionId) === ix.col[C.style].id;
       const res = resolve(ix, bv, modes);
-      rows.push({ token, theme, value: describe(ix, raw), hex: res && typeof res === "object" ? rgbToHex(res) : null, inherited });
+      rows.push({ token, theme, value: describe(ix, raw), hex: res && typeof res === "object" ? rgbToHex(res) : null, inherited: inherited2 });
     }
     const font = ix.named[C.brand].get("font/sans");
     return { brand: bm.name, style: sm.name, rows, font: font ? resolve(ix, font, modes) : null, palette: ix.palette };
@@ -424,6 +436,23 @@
     mv.scopes = (scopes == null ? void 0 : scopes.length) ? scopes : scopesFor(name);
     mv.setVariableCodeSyntax("WEB", `var(${cssVar(name)})`);
     return { name, css: cssVar(name) };
+  }
+  async function ensureModeColor(name, like) {
+    const ix = await loadIndex();
+    if (!ix.col[C.brand] || !ix.col[C.mode]) return null;
+    const mode = ix.col[C.mode];
+    const mv = figma.variables.createVariable(name, mode, "COLOR");
+    const base = like && ix.named[C.mode].get(like);
+    for (const theme of THEMES) {
+      const bv = await ensureBrandVar(ix, `color/${theme}/${name}`);
+      const src = base && ix.named[C.brand].get(`color/${theme}/${like}`);
+      setAllModes(ix, bv, src ? alias(src) : rgba("#ff00ff"));
+      mv.setValueForMode(themeMode(mode, theme), alias(bv));
+    }
+    mv.setPluginData("ds", "contract-placeholder");
+    mv.scopes = scopesFor(name);
+    mv.setVariableCodeSyntax("WEB", `var(${cssVar(name)})`);
+    return mv;
   }
   async function resolveCustom(brandName, styleName) {
     const ix = await loadIndex();
@@ -1669,8 +1698,900 @@
     ].join("\n");
   }
 
+  // core/contract.js
+  var SCHEMA = "mbank/component@1";
+  var STATES2 = ["default", "hover", "active", "focus", "disabled"];
+  var STEP = 4;
+  var KINDS = {
+    bg: "color",
+    fg: "color",
+    border: "color",
+    "focus-ring": "color",
+    radius: "radius",
+    height: "space",
+    "min-height": "space",
+    px: "space",
+    py: "space",
+    gap: "space",
+    size: "space",
+    text: "text",
+    weight: "weight",
+    "border-width": "number",
+    opacity: "number",
+    shadow: "shadow",
+    layout: "layout",
+    align: "layout"
+  };
+  var PROPS = Object.keys(KINDS);
+  var WEIGHTS2 = ["regular", "medium", "semibold", "bold"];
+  var TEXT_PART = /^(label|text|title|placeholder|value|description|caption|hint)$/;
+  var ICON_PART = /icon/;
+  var partKind = (part) => part === "root" ? "root" : TEXT_PART.test(part) ? "text" : ICON_PART.test(part) ? "icon" : "frame";
+  function splitKey(key) {
+    const i = key.indexOf(":");
+    return i < 0 ? { prop: key, state: "default" } : { prop: key.slice(0, i), state: key.slice(i + 1) };
+  }
+  function splitToken(value) {
+    const [token, op] = String(value).split("/");
+    return { token, opacity: op === void 0 ? 1 : Number(op) / 100 };
+  }
+  var isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
+  function checkStyles(errors, where, styles, c) {
+    if (!isObj(styles)) {
+      errors.push(`${where}: \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043E\u0431\u044A\u0435\u043A\u0442\u043E\u043C`);
+      return;
+    }
+    for (const [part, props] of Object.entries(styles)) {
+      if (!c.parts.includes(part)) {
+        errors.push(`${where}: \u0447\u0430\u0441\u0442\u044C \xAB${part}\xBB \u043D\u0435 \u043E\u0431\u044A\u044F\u0432\u043B\u0435\u043D\u0430 \u0432 parts`);
+        continue;
+      }
+      if (!isObj(props)) {
+        errors.push(`${where}.${part}: \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u043E\u0431\u044A\u0435\u043A\u0442\u043E\u043C`);
+        continue;
+      }
+      for (const [key, value] of Object.entries(props)) {
+        const { prop, state } = splitKey(key);
+        if (!KINDS[prop]) errors.push(`${where}.${part}: \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0435 \u0441\u0432\u043E\u0439\u0441\u0442\u0432\u043E \xAB${prop}\xBB`);
+        if (!STATES2.includes(state)) errors.push(`${where}.${part}: \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0435 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435 \xAB${state}\xBB`);
+        if (KINDS[prop] === "color" && (typeof value !== "string" || /^#|^rgb|^oklch/i.test(value)))
+          errors.push(`${where}.${part}.${key}: \u0446\u0432\u0435\u0442 \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0438\u043C\u044F \u0442\u043E\u043A\u0435\u043D\u0430, \u043D\u0435 \xAB${value}\xBB`);
+        if (KINDS[prop] === "space" && !(typeof value === "number" && value >= 0)) errors.push(`${where}.${part}.${key}: \u0448\u0430\u0433 \u0441\u0435\u0442\u043A\u0438 \u2014 \u0447\u0438\u0441\u043B\u043E`);
+        if (prop === "weight" && !WEIGHTS2.includes(value)) errors.push(`${where}.${part}.weight: ${WEIGHTS2.join(" | ")}`);
+      }
+    }
+  }
+  function validateContract(c) {
+    var _a, _b, _c;
+    if (!isObj(c)) return ["\u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442: \u043D\u0435 \u043E\u0431\u044A\u0435\u043A\u0442"];
+    const errors = [];
+    if (c.$schema !== SCHEMA) errors.push(`$schema: \u043E\u0436\u0438\u0434\u0430\u0435\u0442\u0441\u044F ${SCHEMA}`);
+    if (!/^[a-z][a-z0-9-]*$/.test(c.name || "")) errors.push("name: kebab-case \u043B\u0430\u0442\u0438\u043D\u0438\u0446\u0435\u0439, \u043A\u0430\u043A \u0438\u043C\u044F \u0444\u0430\u0439\u043B\u0430");
+    if (!Array.isArray(c.parts) || !c.parts.includes("root")) {
+      errors.push('parts: \u043C\u0430\u0441\u0441\u0438\u0432 \u0441 "root"');
+      return errors;
+    }
+    if (!isObj(c.props)) errors.push("props: \u043E\u0431\u044A\u0435\u043A\u0442");
+    for (const [p, d] of Object.entries(c.props || {})) {
+      if (p === "state") errors.push("props.state: \u0437\u0430\u0440\u0435\u0437\u0435\u0440\u0432\u0438\u0440\u043E\u0432\u0430\u043D\u043E, \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F \u0437\u0430\u0434\u0430\u044E\u0442\u0441\u044F \u0432 states");
+      if (!isObj(d) || !Array.isArray(d.values) || !d.values.length) {
+        errors.push(`props.${p}.values: \u043D\u0435\u043F\u0443\u0441\u0442\u043E\u0439 \u043C\u0430\u0441\u0441\u0438\u0432`);
+        continue;
+      }
+      if (d.default !== void 0 && !d.values.includes(d.default)) errors.push(`props.${p}.default: \u043D\u0435\u0442 \u0432 values`);
+      for (const v of d.values) if (!isObj((_b = (_a = c.variants) == null ? void 0 : _a[p]) == null ? void 0 : _b[v])) errors.push(`variants.${p}.${v}: \u043D\u0435 \u043E\u043F\u0438\u0441\u0430\u043D`);
+    }
+    for (const s of c.states || []) if (!STATES2.includes(s)) errors.push(`states: \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0435 \xAB${s}\xBB`);
+    if (c.base) checkStyles(errors, "base", c.base, c);
+    for (const [p, byValue] of Object.entries(c.variants || {})) {
+      if (!((_c = c.props) == null ? void 0 : _c[p])) {
+        errors.push(`variants.${p}: \u043D\u0435\u0442 \u0442\u0430\u043A\u043E\u0433\u043E \u0441\u0432\u043E\u0439\u0441\u0442\u0432\u0430 \u0432 props`);
+        continue;
+      }
+      for (const [v, styles] of Object.entries(byValue)) checkStyles(errors, `variants.${p}.${v}`, styles, c);
+    }
+    (c.compound || []).forEach((cv, i) => {
+      if (!isObj(cv.when)) errors.push(`compound[${i}].when: \u043E\u0431\u044A\u0435\u043A\u0442`);
+      const _a2 = cv, { when } = _a2, styles = __objRest(_a2, ["when"]);
+      checkStyles(errors, `compound[${i}]`, styles, c);
+    });
+    return errors;
+  }
+  function combos(c) {
+    let out = [{}];
+    for (const [p, d] of Object.entries(c.props || {})) out = out.flatMap((o) => d.values.map((v) => __spreadProps(__spreadValues({}, o), { [p]: v })));
+    return out;
+  }
+  var statesOf = (c) => c.states && c.states.length ? c.states : ["default"];
+  function variantName(props, state, withState = true) {
+    const pairs = Object.entries(props).map(([k, v]) => `${k}=${v}`);
+    if (withState) pairs.push(`state=${state}`);
+    return pairs.join(", ") || "default";
+  }
+  function variantList(c) {
+    const states = statesOf(c);
+    return combos(c).flatMap((props) => states.map((state) => ({ props, state, name: variantName(props, state, states.length > 1) })));
+  }
+  function layers(c, props) {
+    var _a, _b;
+    const out = [{ source: "base", styles: c.base || {} }];
+    for (const [p, v] of Object.entries(props)) out.push({ source: `${p}=${v}`, styles: ((_b = (_a = c.variants) == null ? void 0 : _a[p]) == null ? void 0 : _b[v]) || {} });
+    (c.compound || []).forEach((cv, i) => {
+      const _a2 = cv, { when } = _a2, styles = __objRest(_a2, ["when"]);
+      if (Object.entries(when || {}).every(([k, v]) => props[k] === v)) out.push({ source: `compound:${i}`, styles });
+    });
+    return out;
+  }
+  function resolveStyle(c, props, state = "default") {
+    const out = {};
+    for (const part of c.parts) {
+      const plain = {};
+      const stated = {};
+      for (const { styles } of layers(c, props)) {
+        for (const [key, value] of Object.entries(styles[part] || {})) {
+          const k = splitKey(key);
+          if (k.state === "default") plain[k.prop] = value;
+          else if (k.state === state) stated[k.prop] = value;
+        }
+      }
+      const s = __spreadValues(__spreadValues({}, plain), stated);
+      if (state !== "focus") delete s["focus-ring"];
+      out[part] = s;
+    }
+    if (state === "disabled" && !JSON.stringify(c).includes(":disabled")) out.root.opacity = 50;
+    return out;
+  }
+  function inherited(style, part, prop, fallback) {
+    var _a, _b, _c, _d;
+    return (_d = (_c = (_a = style[part]) == null ? void 0 : _a[prop]) != null ? _c : (_b = style.root) == null ? void 0 : _b[prop]) != null ? _d : fallback;
+  }
+  var ALIGN = { start: "MIN", center: "CENTER", end: "MAX", between: "CENTER" };
+  function layoutFor(s = {}) {
+    const px = (v) => typeof v === "number" ? v * STEP : 0;
+    const row = (s.layout || "row") !== "column";
+    const out = {
+      layoutMode: row ? "HORIZONTAL" : "VERTICAL",
+      primaryAxisAlignItems: s.align === "between" ? "SPACE_BETWEEN" : row && s.align === "center" ? "CENTER" : "MIN",
+      counterAxisAlignItems: ALIGN[s.align] || (row ? "CENTER" : "MIN"),
+      itemSpacing: px(s.gap),
+      paddingLeft: px(s.px),
+      paddingRight: px(s.px),
+      paddingTop: px(s.py),
+      paddingBottom: px(s.py),
+      primaryAxisSizingMode: "AUTO",
+      counterAxisSizingMode: "AUTO"
+    };
+    if (s.size !== void 0) {
+      out.width = px(s.size);
+      out.height = px(s.size);
+      out.primaryAxisSizingMode = "FIXED";
+      out.counterAxisSizingMode = "FIXED";
+    } else if (s.height !== void 0) {
+      out.height = px(s.height);
+      if (row) out.counterAxisSizingMode = "FIXED";
+      else out.primaryAxisSizingMode = "FIXED";
+    }
+    if (s["min-height"] !== void 0) out.minHeight = px(s["min-height"]);
+    return out;
+  }
+  function bindingRows(c) {
+    const rows = [];
+    const push = (source, path, styles) => {
+      for (const [part, props] of Object.entries(styles || {})) {
+        if (!isObj(props)) continue;
+        for (const [key, value] of Object.entries(props)) {
+          const { prop, state } = splitKey(key);
+          if (!["color", "radius", "space", "text", "weight"].includes(KINDS[prop])) continue;
+          rows.push({ id: [...path, part, key].join("."), source, path: [...path, part], key, part, prop, state, kind: KINDS[prop], value });
+        }
+      }
+    };
+    push("base", ["base"], c.base);
+    for (const [p, byValue] of Object.entries(c.variants || {})) for (const [v, styles] of Object.entries(byValue)) push(`${p}=${v}`, ["variants", p, v], styles);
+    (c.compound || []).forEach((cv, i) => {
+      const _a = cv, { when } = _a, styles = __objRest(_a, ["when"]);
+      push(Object.entries(when || {}).map(([k, v]) => `${k}=${v}`).join(" + "), ["compound", String(i)], styles);
+    });
+    return rows;
+  }
+  function setBinding(c, path, key, value) {
+    const next = JSON.parse(JSON.stringify(c));
+    let o = next;
+    for (const seg of path) {
+      if (o[seg] === void 0) o[seg] = {};
+      o = o[seg];
+    }
+    if (value === null || value === void 0 || value === "") delete o[key];
+    else o[key] = value;
+    return next;
+  }
+  var normName = (name) => String(name).split(",").map((s) => s.trim().replace(/\s*=\s*/, "=")).filter(Boolean).sort().join(", ");
+  function diffVariants(existing, wanted) {
+    const byName = new Map(existing.map((e) => [normName(e.name), e]));
+    const keep = [];
+    const create = [];
+    for (const w of wanted) {
+      const hit = byName.get(normName(w.name));
+      if (hit) {
+        keep.push(__spreadProps(__spreadValues({}, w), { id: hit.id }));
+        byName.delete(normName(w.name));
+      } else create.push(w);
+    }
+    return { keep, create, stale: [...byName.values()] };
+  }
+
+  // core/contract-templates.js
+  var SIZES = { xs: [8, 3, "xs"], sm: [9, 3, "sm"], md: [11, 4, "sm"], lg: [14, 6, "base"], xl: [16, 8, "lg"] };
+  var TEMPLATES = {
+    "button-like": {
+      title: "\u041A\u043D\u043E\u043F\u043A\u0430: \u0444\u043E\u043D, \u043F\u043E\u0434\u043F\u0438\u0441\u044C, \u0438\u043A\u043E\u043D\u043A\u0430; hover/active/focus/disabled",
+      parts: ["root", "label", "icon"],
+      base: {
+        root: { layout: "row", align: "center", gap: 2, px: 4, height: 11, radius: "md", text: "sm", weight: "medium", bg: "primary", fg: "primary-foreground", "bg:hover": "primary-hover", "bg:active": "primary-active", "focus-ring": "ring/50", "opacity:disabled": 50 },
+        icon: { size: 5 }
+      },
+      states: ["default", "hover", "active", "focus", "disabled"]
+    },
+    "input-like": {
+      title: "\u041F\u043E\u043B\u0435: \u0440\u0430\u043C\u043A\u0430, \u043F\u043B\u0435\u0439\u0441\u0445\u043E\u043B\u0434\u0435\u0440; hover/focus/disabled",
+      parts: ["root", "placeholder"],
+      base: {
+        root: { layout: "row", align: "center", px: 3, height: 11, radius: "md", text: "sm", bg: "background", fg: "foreground", border: "input", "border:hover": "input-hover", "border:focus": "ring", "focus-ring": "ring/30", "bg:disabled": "muted", "border:disabled": "input-disabled" },
+        placeholder: { fg: "muted-foreground", "fg:disabled": "disabled-foreground" }
+      },
+      states: ["default", "hover", "focus", "disabled"]
+    },
+    "badge-like": {
+      title: "\u0411\u0435\u0439\u0434\u0436: \u0437\u0430\u043B\u0438\u0432\u043A\u0430 \u0438 \u043F\u043E\u0434\u043F\u0438\u0441\u044C, \u0431\u0435\u0437 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0439",
+      parts: ["root", "label"],
+      base: { root: { layout: "row", align: "center", gap: 1, px: 2, height: 6, radius: "full", text: "xs", weight: "medium", bg: "status-neutral-muted", fg: "status-neutral-foreground" } },
+      states: ["default"]
+    },
+    "card-like": {
+      title: "\u041A\u0430\u0440\u0442\u043E\u0447\u043A\u0430: \u0437\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A, \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435, \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435",
+      parts: ["root", "title", "description", "content"],
+      base: {
+        root: { layout: "column", gap: 2, px: 6, py: 6, radius: "xl", bg: "card", fg: "foreground", border: "border" },
+        title: { text: "base", weight: "semibold" },
+        description: { text: "sm", fg: "muted-foreground" },
+        content: { layout: "column", gap: 2, "min-height": 16 }
+      },
+      states: ["default"]
+    }
+  };
+  var kebab2 = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  function parseProps(input2) {
+    if (typeof input2 !== "string") return input2 || {};
+    const out = {};
+    for (const chunk of input2.split(/[;\n]/)) {
+      const [k, v] = chunk.split("=");
+      if (!k || !v) continue;
+      const values = v.split(",").map((x) => kebab2(x)).filter(Boolean);
+      if (values.length) out[kebab2(k)] = values;
+    }
+    return out;
+  }
+  function newContract({ name, title, template = "button-like", props = {} }) {
+    const t = TEMPLATES[template];
+    if (!t) throw new Error(`\u041D\u0435\u0442 \u0448\u0430\u0431\u043B\u043E\u043D\u0430 \xAB${template}\xBB: ${Object.keys(TEMPLATES).join(", ")}`);
+    const id = kebab2(name);
+    const c = {
+      $schema: SCHEMA,
+      name: id,
+      title: title || name,
+      parts: [...t.parts],
+      props: {},
+      base: JSON.parse(JSON.stringify(t.base)),
+      variants: {},
+      states: [...t.states],
+      code: { file: `${id}.tsx`, export: `${id.replace(/-([a-z0-9])/g, (_, ch) => ch.toUpperCase())}Variants` }
+    };
+    for (const [p, values] of Object.entries(parseProps(props))) {
+      c.props[p] = { values, default: values[0] };
+      c.variants[p] = {};
+      for (const v of values) {
+        const sz = p === "size" && SIZES[v];
+        c.variants[p][v] = sz ? { root: { height: sz[0], px: sz[1], text: sz[2] } } : {};
+      }
+    }
+    const errors = validateContract(c);
+    if (errors.length) throw new Error(errors.join("; "));
+    return c;
+  }
+
+  // core/token-map.js
+  var TOKEN_MAP = {
+    colors: {
+      "background": { "figma": "background/surface/light", "collection": "2.theme" },
+      "foreground": { "figma": "text/default", "collection": "2.theme" },
+      "muted": { "figma": "background/surface/soft", "collection": "2.theme" },
+      "muted-foreground": { "figma": "text/muted", "collection": "2.theme" },
+      "soft-foreground": { "figma": "text/soft", "collection": "2.theme" },
+      "disabled-foreground": { "figma": "text/disabled", "collection": "2.theme" },
+      "inverse-foreground": { "figma": "text/inverse", "collection": "2.theme" },
+      "card": { "figma": "background/onsurface/0", "collection": "2.theme" },
+      "surface-0": { "figma": "background/onsurface/0", "collection": "2.theme" },
+      "surface-1": { "figma": "background/onsurface/1", "collection": "2.theme" },
+      "surface-2": { "figma": "background/onsurface/2", "collection": "2.theme" },
+      "surface-3": { "figma": "background/onsurface/3", "collection": "2.theme" },
+      "surface-4": { "figma": "background/onsurface/4", "collection": "2.theme" },
+      "surface-5": { "figma": "background/onsurface/5", "collection": "2.theme" },
+      "surface-6": { "figma": "background/onsurface/6", "collection": "2.theme" },
+      "surface-inverse": { "figma": "background/onsurface/0-inverse", "collection": "2.theme" },
+      "accent": { "figma": "background/global/soft/hover", "collection": "2.theme" },
+      "accent-active": { "figma": "background/global/soft/active", "collection": "2.theme" },
+      "border": { "figma": "border/divider/primary", "collection": "2.theme" },
+      "border-secondary": { "figma": "border/divider/secondary", "collection": "2.theme" },
+      "border-subtle": { "figma": "border/divider/tetriary", "collection": "2.theme" },
+      "input": { "figma": "border/global/soft/default", "collection": "2.theme" },
+      "input-hover": { "figma": "border/global/soft/hover", "collection": "2.theme" },
+      "input-active": { "figma": "border/global/soft/active", "collection": "2.theme" },
+      "input-disabled": { "figma": "border/global/soft/disabled", "collection": "2.theme" },
+      "border-destructive": { "figma": "border/accent/danger", "collection": "2.theme" },
+      "border-warning": { "figma": "border/accent/warning", "collection": "2.theme" },
+      "border-success": { "figma": "border/accent/positive", "collection": "2.theme" },
+      "primary": { "figma": "accent/primary/default", "collection": "2.theme" },
+      "primary-hover": { "figma": "accent/primary/hover", "collection": "2.theme" },
+      "primary-active": { "figma": "accent/primary/active", "collection": "2.theme" },
+      "primary-foreground": { "figma": "accent/primary/on-accent", "collection": "2.theme" },
+      "primary-foreground-muted": { "figma": "accent/primary/on-accent-muted", "collection": "2.theme" },
+      "primary-muted": { "figma": "accent/primary/container-muted", "collection": "2.theme" },
+      "secondary": { "figma": "neutral/primary/default", "collection": "2.theme" },
+      "secondary-hover": { "figma": "neutral/primary/hover", "collection": "2.theme" },
+      "secondary-active": { "figma": "neutral/primary/active", "collection": "2.theme" },
+      "secondary-foreground": { "figma": "neutral/primary/on-accent", "collection": "2.theme" },
+      "secondary-muted": { "figma": "neutral/primary/container-muted", "collection": "2.theme" },
+      "soft": { "figma": "neutral/secondary/flat filled/default", "collection": "2.theme" },
+      "soft-hover": { "figma": "neutral/secondary/flat filled/hover", "collection": "2.theme" },
+      "soft-foreground-strong": { "figma": "neutral/secondary/flat filled/on-accent", "collection": "2.theme" },
+      "ghost": { "figma": "neutral/secondary/flat/default", "collection": "2.theme" },
+      "ghost-hover": { "figma": "neutral/secondary/flat/hover", "collection": "2.theme" },
+      "ghost-foreground": { "figma": "neutral/secondary/flat/on-accent", "collection": "2.theme" },
+      "outline": { "figma": "neutral/secondary/outline/default", "collection": "2.theme" },
+      "outline-hover": { "figma": "neutral/secondary/outline/hover", "collection": "2.theme" },
+      "outline-foreground": { "figma": "neutral/secondary/outline/on-accent", "collection": "2.theme" },
+      "neutral-flat": { "figma": "neutral/secondary/flat default/default", "collection": "2.theme" },
+      "neutral-flat-hover": { "figma": "neutral/secondary/flat default/hover", "collection": "2.theme" },
+      "static": { "figma": "accent/static/default", "collection": "2.theme" },
+      "static-hover": { "figma": "accent/static/hover", "collection": "2.theme" },
+      "static-active": { "figma": "accent/static/active", "collection": "2.theme" },
+      "static-foreground": { "figma": "accent/static/on-accent", "collection": "2.theme" },
+      "static-muted": { "figma": "neutral/static/container-muted", "collection": "2.theme" },
+      "static-light": { "figma": "static/light", "collection": "2.theme" },
+      "static-dark": { "figma": "static/dark", "collection": "2.theme" },
+      "success": { "figma": "accent/positive/default", "collection": "2.theme" },
+      "success-hover": { "figma": "accent/positive/hover", "collection": "2.theme" },
+      "success-active": { "figma": "accent/positive/active", "collection": "2.theme" },
+      "success-foreground": { "figma": "accent/positive/on-accent", "collection": "2.theme" },
+      "destructive": { "figma": "accent/negative/default", "collection": "2.theme" },
+      "destructive-hover": { "figma": "accent/negative/hover", "collection": "2.theme" },
+      "destructive-active": { "figma": "accent/negative/active", "collection": "2.theme" },
+      "destructive-foreground": { "figma": "accent/negative/on-accent", "collection": "2.theme" },
+      "destructive-soft": { "figma": "neutral/negative/default", "collection": "2.theme" },
+      "destructive-soft-hover": { "figma": "neutral/negative/hover", "collection": "2.theme" },
+      "destructive-soft-foreground": { "figma": "neutral/negative/on-accent", "collection": "2.theme" },
+      "link": { "figma": "text/link", "collection": "2.theme" },
+      "destructive-text": { "figma": "text/danger", "collection": "2.theme" },
+      "warning-text": { "figma": "text/warning", "collection": "2.theme" },
+      "success-text": { "figma": "text/positive", "collection": "2.theme" },
+      "status-neutral": { "figma": "status/filled/bg/default", "collection": "2.theme" },
+      "status-neutral-muted": { "figma": "status/ghost/bg/default", "collection": "2.theme" },
+      "status-neutral-foreground": { "figma": "status/ghost/text/default", "collection": "2.theme" },
+      "status-accent": { "figma": "status/filled/bg/accent", "collection": "2.theme" },
+      "status-accent-muted": { "figma": "status/ghost/bg/accent", "collection": "2.theme" },
+      "status-accent-foreground": { "figma": "status/ghost/text/accent", "collection": "2.theme" },
+      "status-success": { "figma": "status/filled/bg/success", "collection": "2.theme" },
+      "status-success-muted": { "figma": "status/ghost/bg/success", "collection": "2.theme" },
+      "status-success-foreground": { "figma": "status/ghost/text/success", "collection": "2.theme" },
+      "status-warning": { "figma": "status/filled/bg/warning", "collection": "2.theme" },
+      "status-warning-muted": { "figma": "status/ghost/bg/warning", "collection": "2.theme" },
+      "status-warning-foreground": { "figma": "status/ghost/text/warning", "collection": "2.theme" },
+      "status-error": { "figma": "status/filled/bg/error", "collection": "2.theme" },
+      "status-error-muted": { "figma": "status/ghost/bg/error", "collection": "2.theme" },
+      "status-error-foreground": { "figma": "status/ghost/text/error", "collection": "2.theme" },
+      "status-info": { "figma": "status/filled/bg/info", "collection": "2.theme" },
+      "status-info-muted": { "figma": "status/ghost/bg/info", "collection": "2.theme" },
+      "status-info-foreground": { "figma": "status/ghost/text/info", "collection": "2.theme" },
+      "status-clear": { "figma": "status/filled/bg/clear", "collection": "2.theme" },
+      "status-clear-muted": { "figma": "status/ghost/bg/clear", "collection": "2.theme" },
+      "status-clear-foreground": { "figma": "status/ghost/text/clear", "collection": "2.theme" },
+      "status-filled-foreground": { "figma": "status/filled/text/default", "collection": "2.theme" },
+      "status-filled-foreground-inverse": { "figma": "status/filled/text/default-inverse", "collection": "2.theme" },
+      "supportive-1": { "figma": "supportive/filled/1", "collection": "2.theme" },
+      "supportive-2": { "figma": "supportive/filled/2", "collection": "2.theme" },
+      "supportive-3": { "figma": "supportive/filled/3", "collection": "2.theme" },
+      "supportive-4": { "figma": "supportive/filled/4", "collection": "2.theme" },
+      "supportive-5": { "figma": "supportive/filled/5", "collection": "2.theme" },
+      "supportive-6": { "figma": "supportive/filled/6", "collection": "2.theme" },
+      "supportive-7": { "figma": "supportive/filled/7", "collection": "2.theme" },
+      "supportive-8": { "figma": "supportive/filled/8", "collection": "2.theme" },
+      "supportive-9": { "figma": "supportive/filled/9", "collection": "2.theme" },
+      "supportive-10": { "figma": "supportive/filled/10", "collection": "2.theme" },
+      "supportive-ghost-1": { "figma": "supportive/ghost/1", "collection": "2.theme" },
+      "supportive-ghost-2": { "figma": "supportive/ghost/2", "collection": "2.theme" },
+      "supportive-ghost-3": { "figma": "supportive/ghost/3", "collection": "2.theme" },
+      "supportive-ghost-4": { "figma": "supportive/ghost/4", "collection": "2.theme" },
+      "supportive-ghost-5": { "figma": "supportive/ghost/5", "collection": "2.theme" },
+      "supportive-ghost-6": { "figma": "supportive/ghost/6", "collection": "2.theme" },
+      "supportive-ghost-7": { "figma": "supportive/ghost/7", "collection": "2.theme" },
+      "supportive-ghost-8": { "figma": "supportive/ghost/8", "collection": "2.theme" },
+      "supportive-ghost-9": { "figma": "supportive/ghost/9", "collection": "2.theme" },
+      "supportive-ghost-10": { "figma": "supportive/ghost/10", "collection": "2.theme" },
+      "overlay": { "figma": "misc/overlay/default", "collection": "2.theme" },
+      "brand-bank": { "figma": "brand/bank/default", "collection": "2.theme" },
+      "brand-kassa": { "figma": "brand/kassa/default", "collection": "2.theme" },
+      "brand-travel": { "figma": "brand/travel/default", "collection": "2.theme" },
+      "brand-artwin": { "figma": "brand/artwin/default", "collection": "2.theme" },
+      "brand": { "figma": "default", "collection": "1.brand" },
+      "brand-hover": { "figma": "hover", "collection": "1.brand" },
+      "brand-active": { "figma": "active", "collection": "1.brand" },
+      "brand-foreground": { "figma": "on-accent", "collection": "1.brand" },
+      "brand-foreground-muted": { "figma": "on-accent-muted", "collection": "1.brand" },
+      "brand-container-muted": { "figma": "container-muted", "collection": "1.brand" },
+      "brand-ghost": { "figma": "ghost-default", "collection": "1.brand" },
+      "brand-ghost-hover": { "figma": "ghost-hover", "collection": "1.brand" },
+      "brand-ghost-active": { "figma": "ghost-active", "collection": "1.brand" },
+      "brand-ghost-foreground": { "figma": "ghost-on-accent", "collection": "1.brand" },
+      "brand-ghost-foreground-muted": { "figma": "ghost-on-accent-muted", "collection": "1.brand" },
+      "brand-muted": { "figma": "ghost-container-muted", "collection": "1.brand" },
+      "card-foreground": { "alias": "foreground" },
+      "popover": { "alias": "card" },
+      "popover-foreground": { "alias": "foreground" },
+      "accent-foreground": { "alias": "foreground" },
+      "brand-text": { "figma": "text/brand", "collection": "2.theme" },
+      "ring": { "figma": "border/accent/brand", "collection": "2.theme" }
+    },
+    radius: {
+      "2xs": "radius/xss",
+      "xs": "radius/xs",
+      "sm": "radius/s",
+      "md": "radius/m",
+      "lg": "radius/l",
+      "xl": "radius/xl",
+      "2xl": "radius/xl-2",
+      "3xl": "radius/xl-3",
+      "4xl": "radius/xl-4"
+    },
+    text: {
+      "2xs": "font/Label/s",
+      "caption": "font/Label/m",
+      "xs": "font/Body/xs",
+      "sm": "font/Body/s",
+      "md": "font/Body/m",
+      "base": "font/Body/l",
+      "lg": "font/Body/xl",
+      "xl": "font/Heading/h5",
+      "2xl": "font/Heading/h4",
+      "3xl": "font/Heading/h3",
+      "4xl": "font/Heading/h1",
+      "5xl": "font/Display/s",
+      "6xl": "font/Display/m",
+      "7xl": "font/Display/l"
+    }
+  };
+
+  // plugin/src/tokens-resolve.js
+  async function tokenIndex() {
+    const ix = await loadIndex();
+    const cols2 = await figma.variables.getLocalVariableCollectionsAsync();
+    const colName = new Map(cols2.map((c) => [c.id, c.name]));
+    const all = [...ix.byId.values()];
+    const byName = /* @__PURE__ */ new Map();
+    for (const v of all) {
+      const list2 = byName.get(v.name) || [];
+      list2.push(v);
+      byName.set(v.name, list2);
+    }
+    return { ix, all, byName, colName, cache: /* @__PURE__ */ new Map(), created: [], missing: [] };
+  }
+  function pick2(t, name, type, collection) {
+    const list2 = (t.byName.get(name) || []).filter((v) => v.resolvedType === type);
+    if (!list2.length) return null;
+    return collection && list2.find((v) => (t.colName.get(v.variableCollectionId) || "").startsWith(collection)) || list2[0];
+  }
+  function findColor(t, token, depth = 0) {
+    var _a;
+    const mode = (_a = t.ix.named[C.mode]) == null ? void 0 : _a.get(token);
+    if (mode && mode.resolvedType === "COLOR") return mode;
+    const m = TOKEN_MAP.colors[token];
+    if (m && m.alias && depth < 4) return findColor(t, m.alias, depth + 1);
+    if (m && m.figma) {
+      const v = pick2(t, m.figma, "COLOR", m.collection);
+      if (v) return v;
+    }
+    return pick2(t, token, "COLOR") || pick2(t, `color/${token}`, "COLOR");
+  }
+  function findRadius(t, key) {
+    var _a;
+    const style = (_a = t.ix.named[C.style]) == null ? void 0 : _a.get(`radius/${key}`);
+    if (style) return style;
+    return TOKEN_MAP.radius[key] && pick2(t, TOKEN_MAP.radius[key], "FLOAT") || pick2(t, `radius/${key}`, "FLOAT") || pick2(t, `rounded/${key}`, "FLOAT");
+  }
+  function findSpace(t, step) {
+    const s = String(step).replace(".", "-");
+    return pick2(t, `spacing/${step}`, "FLOAT") || pick2(t, `spacing/${s}`, "FLOAT") || pick2(t, `spacing/${step * STEP}`, "FLOAT");
+  }
+  var report = (t, kind, token) => {
+    if (!t.missing.some((m) => m.kind === kind && m.token === token)) t.missing.push({ kind, token });
+  };
+  async function colorVar(t, token, { create = true } = {}) {
+    var _a;
+    if (t.cache.has(`c:${token}`)) return t.cache.get(`c:${token}`);
+    let v = findColor(t, token);
+    if (!v && create) {
+      const like = token.replace(/-(hover|active|disabled|muted)$/, "");
+      v = await ensureModeColor(token, like !== token ? like : null);
+      if (v) {
+        t.created.push({ token, like: like !== token && ((_a = t.ix.named[C.mode]) == null ? void 0 : _a.has(like)) ? like : null });
+        t.ix.named[C.mode].set(token, v);
+        t.byName.set(token, [v]);
+      }
+    }
+    if (!v) report(t, "color", token);
+    t.cache.set(`c:${token}`, v || null);
+    return v || null;
+  }
+  function floatVar(t, kind, value) {
+    const key = `${kind}:${value}`;
+    if (t.cache.has(key)) return t.cache.get(key);
+    const v = kind === "radius" ? findRadius(t, value) : findSpace(t, value);
+    if (!v && !(kind === "radius" && (value === "full" || value === "none"))) report(t, kind, String(value));
+    t.cache.set(key, v || null);
+    return v || null;
+  }
+  function tokenForVariable(v, collectionName) {
+    if (collectionName === C.mode) return v.name.startsWith("custom/") ? cssVar(v.name).slice(2) : v.name;
+    for (const [token, m] of Object.entries(TOKEN_MAP.colors)) if (m.figma === v.name && (!m.collection || collectionName.startsWith(m.collection))) return token;
+    for (const [key, name] of Object.entries(TOKEN_MAP.radius)) if (name === v.name) return key;
+    const r = /^(?:radius|rounded)\/(.+)$/.exec(v.name);
+    if (r) return r[1];
+    const s = /^spacing\/([\d.-]+)$/.exec(v.name);
+    if (s) return Number(s[1].replace("-", "."));
+    return v.name.replace(/^color\//, "").replace(/\//g, "-");
+  }
+  async function listVariables() {
+    const t = await tokenIndex();
+    return t.all.filter((v) => v.resolvedType === "COLOR" || v.resolvedType === "FLOAT").filter((v) => t.colName.get(v.variableCollectionId) !== C.brand).map((v) => {
+      var _a;
+      const collection = t.colName.get(v.variableCollectionId) || "";
+      return { id: v.id, name: v.name, collection, type: v.resolvedType, token: tokenForVariable(v, collection), placeholder: ((_a = v.getPluginData) == null ? void 0 : _a.call(v, "ds")) === "contract-placeholder" };
+    });
+  }
+
+  // plugin/src/components.js
+  var PAGE = "Components";
+  var KEY = "mbank-contract";
+  var GAP2 = 24;
+  var RADIUS_PX = { none: 0, "2xs": 2, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, "2xl": 20, "3xl": 24, "4xl": 32, full: 9999 };
+  var MAGENTA = { r: 1, g: 0, b: 1 };
+  var WEIGHT_SUFFIX = { medium: "-md", semibold: "-strong", bold: "-strong" };
+  async function componentsPage() {
+    await figma.loadAllPagesAsync();
+    const page = figma.root.children.find((p2) => p2.name === PAGE);
+    if (page) return page;
+    const p = figma.createPage();
+    p.name = PAGE;
+    return p;
+  }
+  function findSet(page, c) {
+    return page.findOne((n) => n.type === "COMPONENT_SET" && n.getPluginData(KEY) === c.name) || page.findOne((n) => n.type === "COMPONENT_SET" && n.name === (c.title || c.name));
+  }
+  async function paintFor(r, value) {
+    const { token, opacity } = splitToken(value);
+    const v = await colorVar(r.t, token, { create: r.create });
+    const base = { type: "SOLID", color: MAGENTA, opacity };
+    if (!v) {
+      r.unbound++;
+      return base;
+    }
+    r.bound++;
+    return figma.variables.setBoundVariableForPaint(base, "color", v);
+  }
+  async function ringFor(r, value) {
+    const { token, opacity } = splitToken(value);
+    const v = await colorVar(r.t, token, { create: r.create });
+    const effect = { type: "DROP_SHADOW", color: __spreadProps(__spreadValues({}, MAGENTA), { a: opacity }), offset: { x: 0, y: 0 }, radius: 0, spread: 3, visible: true, blendMode: "NORMAL", showShadowBehindNode: false };
+    if (!v) {
+      r.unbound++;
+      return effect;
+    }
+    r.bound++;
+    return figma.variables.setBoundVariableForEffect(effect, "color", v);
+  }
+  function bindFloat(r, node, fields, kind, value) {
+    const v = floatVar(r.t, kind, value);
+    if (!v) {
+      r.unbound++;
+      return;
+    }
+    for (const f of fields) node.setBoundVariable(f, v);
+    r.bound++;
+  }
+  var FLOAT_FIELDS = ["paddingLeft", "paddingRight", "paddingTop", "paddingBottom", "itemSpacing", "width", "height", "minHeight", "topLeftRadius", "topRightRadius", "bottomLeftRadius", "bottomRightRadius"];
+  async function applyFrame(r, node, s) {
+    var _a, _b;
+    const L = layoutFor(s);
+    for (const f of FLOAT_FIELDS) if (node.boundVariables && node.boundVariables[f]) node.setBoundVariable(f, null);
+    for (const k of ["layoutMode", "primaryAxisAlignItems", "counterAxisAlignItems", "itemSpacing", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom"]) node[k] = L[k];
+    node.primaryAxisSizingMode = L.primaryAxisSizingMode;
+    node.counterAxisSizingMode = L.counterAxisSizingMode;
+    if (L.width !== void 0 || L.height !== void 0) node.resize(L.width || node.width, L.height || node.height);
+    if (L.minHeight !== void 0) node.minHeight = L.minHeight;
+    if (s.px !== void 0) bindFloat(r, node, ["paddingLeft", "paddingRight"], "space", s.px);
+    if (s.py !== void 0) bindFloat(r, node, ["paddingTop", "paddingBottom"], "space", s.py);
+    if (s.gap !== void 0) bindFloat(r, node, ["itemSpacing"], "space", s.gap);
+    if (s.size !== void 0) bindFloat(r, node, ["width", "height"], "space", s.size);
+    else if (s.height !== void 0) bindFloat(r, node, ["height"], "space", s.height);
+    if (s["min-height"] !== void 0) bindFloat(r, node, ["minHeight"], "space", s["min-height"]);
+    node.fills = s.bg ? [await paintFor(r, s.bg)] : [];
+    if (s.border) {
+      node.strokes = [await paintFor(r, s.border)];
+      node.strokeWeight = (_a = s["border-width"]) != null ? _a : 1;
+      node.strokeAlign = "INSIDE";
+    } else node.strokes = [];
+    if (s.radius !== void 0) {
+      const v = floatVar(r.t, "radius", s.radius);
+      if (v) {
+        for (const f of ["topLeftRadius", "topRightRadius", "bottomLeftRadius", "bottomRightRadius"]) node.setBoundVariable(f, v);
+        r.bound++;
+      } else node.cornerRadius = (_b = RADIUS_PX[s.radius]) != null ? _b : 8;
+    } else node.cornerRadius = 0;
+    node.opacity = s.opacity !== void 0 ? s.opacity / 100 : 1;
+    node.effects = s["focus-ring"] ? [await ringFor(r, s["focus-ring"])] : [];
+  }
+  async function pickTextStyle(r, size2, weight) {
+    const key = `${size2}/${weight}`;
+    if (r.textStyles.has(key)) return r.textStyles.get(key);
+    const local = new Map((await figma.getLocalTextStylesAsync()).map((s) => [s.name, s]));
+    const mapped = TOKEN_MAP.text[size2];
+    let st = null;
+    for (const name of mapped ? [`${mapped}${WEIGHT_SUFFIX[weight] || ""}`, mapped] : []) {
+      const hit = local.get(name);
+      if (!hit) continue;
+      try {
+        await figma.loadFontAsync(hit.fontName);
+        st = hit;
+        break;
+      } catch (e) {
+      }
+    }
+    if (!st) {
+      const sz = TYPE_SCALE[size2] ? size2 : { "2xs": "xs", caption: "xs", md: "sm", "5xl": "4xl", "6xl": "4xl", "7xl": "4xl" }[size2] || "sm";
+      st = await textStyle(r.ctx, sz, weight);
+    }
+    r.textStyles.set(key, st);
+    return st;
+  }
+  var defaultText = (part, c) => ({ placeholder: "Placeholder", description: "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", value: "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435", hint: "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430" })[part] || c.title || c.name;
+  async function applyText(r, node, style, part, c) {
+    const size2 = inherited(style, part, "text", "sm");
+    const weight = inherited(style, part, "weight", "regular");
+    const st = await pickTextStyle(r, size2, weight);
+    try {
+      await figma.loadFontAsync(node.fontName);
+    } catch (e) {
+    }
+    node.fontName = st.fontName;
+    if (!node.characters) node.characters = defaultText(part, c);
+    await node.setTextStyleIdAsync(st.id);
+    node.fills = [await paintFor(r, inherited(style, part, "fg", "foreground"))];
+    r.bound++;
+  }
+  async function applyIcon(r, comp, style, part) {
+    var _a, _b;
+    const token = splitToken(inherited(style, part, "fg", "foreground")).token;
+    r.ctx.vars[token] = await colorVar(r.t, token, { create: r.create });
+    const node = icon(r.ctx, "check", token, ((_b = (_a = style[part]) == null ? void 0 : _a.size) != null ? _b : 4) * STEP);
+    node.name = part;
+    if (r.ctx.vars[token]) r.bound++;
+    else r.unbound++;
+    return node;
+  }
+  async function renderVariant(r, comp, c, props, state) {
+    const style = resolveStyle(c, props, state);
+    await applyFrame(r, comp, style.root);
+    const column = comp.layoutMode === "VERTICAL";
+    if (column && comp.counterAxisSizingMode === "AUTO") {
+      comp.resize(320, comp.height);
+      comp.counterAxisSizingMode = "FIXED";
+    }
+    const keep = /* @__PURE__ */ new Set();
+    for (const part of c.parts.filter((p) => p !== "root")) {
+      const kind = partKind(part);
+      let node = comp.children.find((n) => n.name === part);
+      if (node && (kind === "icon" || kind === "text" !== (node.type === "TEXT"))) {
+        node.remove();
+        node = null;
+      }
+      if (kind === "icon") node = await applyIcon(r, comp, style, part);
+      else if (kind === "text") {
+        node = node || figma.createText();
+        await applyText(r, node, style, part, c);
+      } else {
+        node = node || figma.createFrame();
+        await applyFrame(r, node, style[part] || {});
+      }
+      node.name = part;
+      comp.appendChild(node);
+      if (column && kind !== "icon") node.layoutSizingHorizontal = "FILL";
+      keep.add(node);
+    }
+    for (const n of [...comp.children]) if (!keep.has(n)) n.remove();
+  }
+  function layoutGrid(set, c, comps) {
+    const states = statesOf(c);
+    const w = Math.max(...comps.map((x) => x.node.width));
+    const h = Math.max(...comps.map((x) => x.node.height));
+    comps.forEach((x, i) => {
+      x.node.x = GAP2 + i % states.length * (w + GAP2);
+      x.node.y = GAP2 + Math.floor(i / states.length) * (h + GAP2);
+    });
+    const rows = Math.ceil(comps.length / states.length);
+    set.resizeWithoutConstraints(GAP2 + states.length * (w + GAP2), GAP2 + rows * (h + GAP2));
+  }
+  async function renderContract(c, opts = {}) {
+    var _a;
+    const errors = validateContract(c);
+    if (errors.length) return { errors };
+    const page = await componentsPage();
+    const t = await tokenIndex();
+    const font = await loadFonts(opts.font || "Inter");
+    const r = { t, ctx: createCtx({ vars: {}, radius: {}, font }), textStyles: /* @__PURE__ */ new Map(), bound: 0, unbound: 0, create: opts.create !== false };
+    const wanted = variantList(c);
+    let set = findSet(page, c);
+    const existing = set ? set.children.filter((n) => n.type === "COMPONENT").map((n) => ({ id: n.id, name: n.name })) : [];
+    const diff = diffVariants(existing, wanted);
+    const comps = [];
+    for (const w of wanted) {
+      const hit = diff.keep.find((k) => k.name === w.name);
+      const node = hit ? set.children.find((n) => n.id === hit.id) : figma.createComponent();
+      node.name = w.name;
+      await renderVariant(r, node, c, w.props, w.state);
+      comps.push({ node, w });
+    }
+    const fresh = comps.filter((x) => !diff.keep.some((k) => k.name === x.w.name)).map((x) => x.node);
+    if (!set) {
+      set = figma.combineAsVariants(fresh, page);
+    } else for (const n of fresh) set.appendChild(n);
+    for (const s of diff.stale) if (opts.prune) (_a = set.children.find((n) => n.id === s.id)) == null ? void 0 : _a.remove();
+    set.name = c.title || c.name;
+    set.description = `mbank/component@1 \xB7 ${c.name}`;
+    set.setPluginData(KEY, c.name);
+    layoutGrid(set, c, comps);
+    const contract = __spreadProps(__spreadValues({}, c), { figma: __spreadValues(__spreadProps(__spreadValues({}, c.figma || {}), { name: set.name, nodeId: set.id }), set.key ? { key: set.key } : {}) });
+    set.setPluginData("contract-json", JSON.stringify(contract));
+    return {
+      contract,
+      report: {
+        setId: set.id,
+        page: page.name,
+        variants: wanted.length,
+        created: diff.create.length,
+        updated: diff.keep.length,
+        stale: diff.stale.map((s) => s.name),
+        pruned: !!opts.prune,
+        bound: r.bound,
+        unbound: r.unbound,
+        missing: t.missing,
+        createdTokens: t.created,
+        fallbackFonts: r.ctx.stats.fallbackFonts
+      }
+    };
+  }
+
+  // plugin/src/contracts.js
+  var PREFIX = "contract:";
+  function stored() {
+    const out = {};
+    for (const key of figma.root.getPluginDataKeys().filter((k) => k.startsWith(PREFIX))) {
+      try {
+        out[key.slice(PREFIX.length)] = JSON.parse(figma.root.getPluginData(key));
+      } catch (e) {
+      }
+    }
+    return out;
+  }
+  function putContract(c) {
+    figma.root.setPluginData(PREFIX + c.name, JSON.stringify(c));
+  }
+  function allContracts(bundled) {
+    const out = /* @__PURE__ */ new Map();
+    for (const c of bundled) out.set(c.name, { contract: c, source: c.example ? "example" : "bundled" });
+    for (const [name, c] of Object.entries(stored())) out.set(name, { contract: c, source: out.has(name) ? "edited" : "file" });
+    return out;
+  }
+  function get(bundled, name) {
+    const hit = allContracts(bundled).get(name);
+    if (!hit) throw new Error(`\u041D\u0435\u0442 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u0430 \xAB${name}\xBB`);
+    return hit.contract;
+  }
+  var strip = (_a) => {
+    var _b = _a, { example } = _b, c = __objRest(_b, ["example"]);
+    return c;
+  };
+  async function summary(bundled) {
+    const page = figma.root.children.find((p) => p.name === "Components");
+    return [...allContracts(bundled).values()].map(({ contract: c, source }) => ({
+      name: c.name,
+      title: c.title || c.name,
+      source,
+      errors: validateContract(c),
+      variants: validateContract(c).length ? 0 : variantList(c).length,
+      rendered: !!(page && findSet(page, c))
+    }));
+  }
+  async function render(c, m) {
+    const res = await renderContract(c, { font: m.font, prune: m.prune, create: m.create });
+    if (res.errors) return res;
+    putContract(strip(res.contract));
+    const node = await figma.getNodeByIdAsync(res.report.setId);
+    if (node && m.focus !== false) {
+      await figma.setCurrentPageAsync(await componentsPage());
+      figma.viewport.scrollAndZoomIntoView([node]);
+    }
+    return res;
+  }
+  function contractHandlers(bundled) {
+    return {
+      async "contracts-list"() {
+        return { contracts: await summary(bundled), templates: Object.entries(TEMPLATES).map(([id, t]) => ({ id, title: t.title })) };
+      },
+      async "contract-import"(m) {
+        const list2 = Array.isArray(m.json) ? m.json : [m.json];
+        const errors = {};
+        for (const c of list2) {
+          const e = validateContract(c);
+          if (e.length) errors[(c == null ? void 0 : c.name) || "?"] = e;
+          else putContract(strip(c));
+        }
+        return { errors, contracts: await summary(bundled) };
+      },
+      async "contract-render"(m) {
+        let c = get(bundled, m.name);
+        if (m.states) c = __spreadProps(__spreadValues({}, c), { states: m.states });
+        const res = await render(c, m);
+        return __spreadProps(__spreadValues({}, res), { contracts: await summary(bundled) });
+      },
+      async "contract-rows"(m) {
+        const c = get(bundled, m.name);
+        return { name: c.name, contract: c, rows: bindingRows(c), vars: await listVariables() };
+      },
+      async "contract-bind"(m) {
+        const c = setBinding(get(bundled, m.name), m.path, m.key, m.value);
+        const errors = validateContract(c);
+        if (errors.length) return { errors };
+        putContract(strip(c));
+        const page = await componentsPage();
+        const res = findSet(page, c) ? await render(c, __spreadProps(__spreadValues({}, m), { focus: false })) : { contract: c };
+        return { name: c.name, rows: bindingRows(res.contract || c), report: res.report, contract: res.contract || c };
+      },
+      async "contract-new"(m) {
+        const c = newContract(m);
+        if (allContracts(bundled).has(c.name) && !m.replace) throw new Error(`\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 \xAB${c.name}\xBB \u0443\u0436\u0435 \u0435\u0441\u0442\u044C`);
+        putContract(c);
+        const res = await render(c, m);
+        return __spreadProps(__spreadValues({}, res), { contracts: await summary(bundled) });
+      },
+      async "contract-reset"(m) {
+        figma.root.setPluginData(PREFIX + m.name, "");
+        return { contracts: await summary(bundled) };
+      },
+      async "contract-export"(m) {
+        const all = [...allContracts(bundled).values()].map((x) => strip(x.contract));
+        const list2 = m.name ? all.filter((c) => c.name === m.name) : all;
+        return { schema: SCHEMA, contracts: list2 };
+      },
+      async "vars-list"() {
+        return { vars: await listVariables() };
+      }
+    };
+  }
+
+  // ds:contracts
+  var contracts_default = [{ "$schema": "mbank/component@1", "name": "badge", "title": "Badge", "figma": { "name": "Badge-status" }, "parts": ["root", "label"], "props": { "tone": { "values": ["neutral", "success", "error"], "default": "neutral" }, "fill": { "values": ["ghost", "solid"], "default": "ghost" }, "size": { "values": ["sm", "md"], "default": "md" } }, "base": { "root": { "layout": "row", "align": "center", "gap": 1, "radius": "full", "weight": "medium" } }, "variants": { "tone": { "neutral": { "root": { "bg": "status-neutral-muted", "fg": "status-neutral-foreground" } }, "success": { "root": { "bg": "status-success-muted", "fg": "status-success-foreground" } }, "error": { "root": { "bg": "status-error-muted", "fg": "status-error-foreground" } } }, "fill": { "ghost": {}, "solid": { "root": { "fg": "status-filled-foreground" } } }, "size": { "sm": { "root": { "height": 5, "px": 1.5, "text": "xs" } }, "md": { "root": { "height": 6, "px": 2, "text": "xs" } } } }, "compound": [{ "when": { "fill": "solid", "tone": "neutral" }, "root": { "bg": "status-neutral" } }, { "when": { "fill": "solid", "tone": "success" }, "root": { "bg": "status-success" } }, { "when": { "fill": "solid", "tone": "error" }, "root": { "bg": "status-error" } }], "states": ["default"], "code": { "file": "badge.tsx", "export": "badgeVariants", "extra": "w-fit shrink-0 overflow-hidden whitespace-nowrap" }, "example": true }, { "$schema": "mbank/component@1", "name": "button", "title": "Button", "figma": { "name": "button/default" }, "parts": ["root", "label", "icon"], "props": { "variant": { "values": ["primary", "secondary", "outline", "ghost"], "default": "primary" }, "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "layout": "row", "align": "center", "gap": 2, "radius": "md", "weight": "medium", "focus-ring": "ring/50", "opacity:disabled": 50 }, "icon": { "size": 5 } }, "variants": { "variant": { "primary": { "root": { "bg": "primary", "fg": "primary-foreground", "bg:hover": "primary-hover", "bg:active": "primary-active" } }, "secondary": { "root": { "bg": "secondary", "fg": "secondary-foreground", "bg:hover": "secondary-hover", "bg:active": "secondary-active" } }, "outline": { "root": { "bg": "background", "fg": "outline-foreground", "border": "outline", "border:hover": "outline-hover", "bg:hover": "muted" } }, "ghost": { "root": { "bg": "ghost", "fg": "ghost-foreground", "bg:hover": "ghost-hover" } } }, "size": { "sm": { "root": { "height": 9, "px": 3, "text": "sm" }, "icon": { "size": 4 } }, "md": { "root": { "height": 11, "px": 4, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 6, "text": "base" } } } }, "states": ["default", "hover", "active", "focus", "disabled"], "code": { "file": "button.tsx", "export": "buttonVariants", "extra": "disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0" }, "example": true }, { "$schema": "mbank/component@1", "name": "input", "title": "Input", "figma": { "name": "input/default" }, "parts": ["root", "placeholder"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "layout": "row", "align": "center", "radius": "md", "px": 3, "bg": "background", "fg": "foreground", "border": "input", "border:hover": "input-hover", "border:focus": "ring", "focus-ring": "ring/30", "border:disabled": "input-disabled", "bg:disabled": "muted" }, "placeholder": { "fg": "muted-foreground", "fg:disabled": "disabled-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9, "text": "sm" } }, "md": { "root": { "height": 11, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "hover", "focus", "disabled"], "code": { "file": "input.tsx", "export": "inputVariants", "extra": "flex w-full min-w-0 transition-colors outline-none file:border-0" }, "example": true }];
+
   // plugin/src/code.js
-  figma.showUI(__html__, { width: 480, height: 680, themeColors: true });
+  figma.showUI(__html__, { width: 520, height: 720, themeColors: true });
   var kitCache = null;
   var post = (type, data) => figma.ui.postMessage(__spreadValues({ type }, data));
   async function kit() {
@@ -1697,13 +2618,13 @@
       missing
     };
   }
-  var handlers = {
+  var handlers = __spreadValues({
     async init() {
       return { status: await inspect() };
     },
     async setup(m) {
-      const report = await setupBrand(m);
-      return { report, status: await inspect() };
+      const report2 = await setupBrand(m);
+      return { report: report2, status: await inspect() };
     },
     async rollback() {
       const r = await rollbackBrand();
@@ -1755,7 +2676,7 @@
       if (first) figma.viewport.scrollAndZoomIntoView([first]);
       return { result: res, audit };
     }
-  };
+  }, contractHandlers(contracts_default));
   figma.ui.onmessage = async (m) => {
     const fn = handlers[m.type];
     if (!fn) return;

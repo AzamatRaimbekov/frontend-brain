@@ -264,6 +264,29 @@ export async function addCustomToken({ project, role, light, dark, scopes }) {
   return { name, css: cssVar(name) };
 }
 
+/**
+ * A component contract needs a colour token the file does not have: Mode/<name> aliasing new
+ * Brand color/<theme>/<name>. Value: `like` (a Mode token, e.g. primary for primary-hover) when
+ * given, else a loud magenta placeholder flagged with plugin data so the UI lists it for review.
+ */
+export async function ensureModeColor(name, like) {
+  const ix = await loadIndex();
+  if (!ix.col[C.brand] || !ix.col[C.mode]) return null;
+  const mode = ix.col[C.mode];
+  const mv = figma.variables.createVariable(name, mode, 'COLOR');
+  const base = like && ix.named[C.mode].get(like);
+  for (const theme of THEMES) {
+    const bv = await ensureBrandVar(ix, `color/${theme}/${name}`);
+    const src = base && ix.named[C.brand].get(`color/${theme}/${like}`);
+    setAllModes(ix, bv, src ? alias(src) : rgba('#ff00ff'));
+    mv.setValueForMode(themeMode(mode, theme), alias(bv));
+  }
+  mv.setPluginData('ds', 'contract-placeholder');
+  mv.scopes = scopesFor(name);
+  mv.setVariableCodeSyntax('WEB', `var(${cssVar(name)})`);
+  return mv;
+}
+
 /** Project tokens resolved to hex for one brand + style: { 'mmarket-badge-bg-orange': { light, dark } }. */
 export async function resolveCustom(brandName, styleName) {
   const ix = await loadIndex();
