@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+/* Mbank tokens (copied from frontend-pack at prebuild): app chrome + the utilities the kit uses.
+   The live preview overrides the vars inside [data-preview]. */
+@import "./generated/mbank/tokens.css";
+
+/* src/generated is git-ignored, and Tailwind skips ignored paths unless listed. */
+@source "./generated";

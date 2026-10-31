@@ -156,6 +156,7 @@ plugins/frontend-pack/            плагин фронтенда
   agents/                         frontend-engineer, frontend-architect, frontend-reviewer, design-lead, design-qa
   hooks/, scripts/                хуки UX-бриф и 150 строк, knowledge.mjs (поиск, индекс, проверка)
 .github/                          CODEOWNERS, шаблон PR; CI-файл лежит в docs/ci/test.yml — перенести в .github/workflows/ после выдачи gh права workflow
+apps/ds-configurator/             конфигуратор дизайн-системы (форк shadcn /create): бренд + опции + свои токены → registry:base JSON, tokens.css, скрипт use_figma; cd apps/ds-configurator && npm i && npm run dev
 docs/reports/                     отчёты (A/B-тест UX-брифа)
 scripts/test.mjs                  проверки репозитория: npm test
 scripts/release.mjs               релиз: одна версия во всех манифестах
