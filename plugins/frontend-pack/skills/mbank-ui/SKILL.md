@@ -1,6 +1,6 @@
 ---
 name: mbank-ui
-description: Coded Mbank UI kit for React 19 + Tailwind CSS v4 + Radix (shadcn-style) - verified Figma tokens (light/dark, brand modes bank/kassa/travel/artwin/koko, radius, type, shadows, z-index) and ready components (Button, Input, Textarea, Label, Badge, Card, Checkbox, Switch, Tabs, Dialog, Select, Skeleton, Table, Alert, Avatar, Tooltip, DropdownMenu, EmptyState) installed with add-ui.mjs. Use for any Mbank web product (client cabinet, CRM, admin, landing) and for any Figma-to-React build from the Mbank design system, instead of default shadcn styling. Triggers - "mbank", "мбанк", "дизайн-система", "дизайн система mbank", "компоненты mbank", "ui kit", "юай кит", "токены mbank", "сверстай по макету mbank", "из фигмы в код mbank", "mkassa", "design system components", "mbank components", "mbank tokens", "figma to react mbank".
+description: Coded Mbank UI kit for React 19 + Tailwind CSS v4 + Radix (shadcn-style) - verified Figma tokens (light/dark, brand modes bank/kassa/travel/artwin/koko, radius, type, shadows, z-index) and ready components (Button, Input, Textarea, Label, Badge, Card, Checkbox, Switch, Tabs, Dialog, Select, Skeleton, Table, Alert, Avatar, Tooltip, DropdownMenu, Pagination, DataTable, Popover, Calendar, DatePicker, Progress, Accordion, Sheet, Toaster, Chart, EmptyState) installed with add-ui.mjs. Use for any Mbank web product (client cabinet, CRM, admin, landing) and for any Figma-to-React build from the Mbank design system, instead of default shadcn styling. Triggers - "mbank", "мбанк", "дизайн-система", "дизайн система mbank", "компоненты mbank", "ui kit", "юай кит", "токены mbank", "сверстай по макету mbank", "из фигмы в код mbank", "mkassa", "design system components", "mbank components", "mbank tokens", "figma to react mbank".
 ---
 
 # Mbank UI kit (coded)
@@ -52,7 +52,7 @@ Options: `--dir src/shared/ui` (primitives), `--components-dir src/shared/compon
 
 The script never overwrites an existing file without `--force`, then prints:
 
-1. `npm install ...` for packages missing from `package.json` (`radix-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`, `tw-animate-css`).
+1. `npm install ...` for packages missing from `package.json` (`radix-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`, `tw-animate-css`; `data-table` adds `@tanstack/react-table` 8, `calendar` / `date-picker` add `react-day-picker` 9, `chart` adds `recharts` 3, `sonner` adds `sonner`).
 2. The CSS lines for the global stylesheet:
 
 ```css
@@ -97,7 +97,7 @@ After installing:
 
 ## Icons
 
-Mbank UI does not use Lucide (figma-pack code-mapping section 6 overrides the `react-ui` Lucide rule for Mbank projects). Export the needed icons from the Mbank Icons library as SVG components into `src/shared/ui/icons/`. The kit's `icons.tsx` (check, minus, chevron-down, close) holds temporary placeholder glyphs until those exports exist.
+Mbank UI does not use Lucide (figma-pack code-mapping section 6 overrides the `react-ui` Lucide rule for Mbank projects). Export the needed icons from the Mbank Icons library as SVG components into `src/shared/ui/icons/`. The kit's `icons.tsx` (check, minus, chevrons, close, sort arrows, search, calendar, columns) holds temporary placeholder glyphs until those exports exist.
 
 ## Building a screen from Figma
 
@@ -106,6 +106,8 @@ Mbank UI does not use Lucide (figma-pack code-mapping section 6 overrides the `r
 3. Compose the screen from kit components + tokens only (`react-architecture`, `react-page-ux` UX brief, `react-ux` states).
 4. Anything without a kit component: build it in `src/shared/components/` from kit primitives and tokens, not from raw Tailwind colours.
 5. Check light/dark and the product's `data-brand`, at 375 / 768 / 1280 px.
+
+CRM / admin screens: a list is `DataTable` (search, sorting, column menu, selection, Skeleton rows, `empty={<EmptyState />}`, built-in `Pagination`; server data through `tableOptions`), a period filter is `DateRangePicker`, record details or filters open in a `Sheet`, results of mutations go to `toast()` with one `<Toaster />` in the app root, dashboards use `ChartContainer` + recharts.
 
 ## Known gaps (from figma-pack `gaps.md`)
 

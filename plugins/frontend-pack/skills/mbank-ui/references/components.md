@@ -23,6 +23,16 @@ Source files: [`registry/mbank/components`](../../../registry/mbank/components).
 | `Avatar` (avatar.tsx) | AvatarImage, AvatarFallback | `size`: xs 24, sm 32, md 40, lg 56, xl 72 | md |
 | `Tooltip` (tooltip.tsx) | TooltipProvider, TooltipTrigger, TooltipContent | inverse surface; one `TooltipProvider` per app | - |
 | `DropdownMenu` (dropdown-menu.tsx) | Trigger, Content, Group, Item, CheckboxItem, Label, Separator, Shortcut | `DropdownMenuItem variant`: default, destructive | default |
+| `Pagination` (pagination.tsx) | - | controlled `page` (1-based), `pageCount`, `onPageChange`; page-size select with `pageSize` + `onPageSizeChange` (+ `pageSizeOptions`); `size`: sm, md, lg; `align`: left, center, right; `summary` text; `siblingCount`; `labels`. Helper `getPaginationRange` | md / right |
+| `DataTable` (data-table.tsx + data-table-body / -toolbar / -columns) | DataTableToolbar, DataTableColumnHeader, dataTableSelectColumn() | `columns`, `data` (TanStack `ColumnDef`), `loading` (+ `loadingRows`, Skeleton rows), `empty` slot (pass `<EmptyState />`), `toolbar` (render fn or `null`), `searchPlaceholder`, `paginated`, `initialPageSize` 20, `pageSizeOptions`, `getRowId`, `tableOptions` (controlled state, `manualPagination` + `rowCount` for server data). Column title for the visibility menu: string `header` or `meta.label` | - |
+| `Popover` (popover.tsx) | PopoverTrigger, PopoverAnchor, PopoverContent | Radix; content on `z-(--z-popover)` | - |
+| `Calendar` (calendar.tsx) | CalendarDayButton | react-day-picker v9 props: `mode` single / range / multiple, `selected`, `onSelect`, `disabled` matchers, `numberOfMonths`, `captionLayout="dropdown"` (month + year). Russian locale by default (`locale` to change) | ru, outside days on |
+| `DatePicker`, `DateRangePicker` (date-picker.tsx) | - | `value` (Date / DateRange), `onValueChange`, `size`: sm, md, lg, `placeholder`, `formatDate` (default 31.10.2026), `disabledDays`, `calendarProps` (captionLayout, startMonth, endMonth, locale), native `aria-invalid`, `disabled`, `id`. Range shows 2 months (`numberOfMonths`) | md |
+| `Progress` (progress.tsx) | ProgressCircle | `value` 0-100 (null = indeterminate), `size`: sm, md, lg, `shape`: rounded, square, `tone`: brand, success, error, warning, `showValue` (percent text). `ProgressCircle`: `value`, `size` sm, md, lg, xl, `tone`, `children` = text under it | md / rounded / brand |
+| `Accordion` (accordion.tsx) | AccordionItem, AccordionTrigger, AccordionContent | Radix `type` single (+ `collapsible`) / multiple; `variant`: line, card (FAQ) | line |
+| `Sheet` (sheet.tsx) | SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetBody, SheetFooter, SheetTitle, SheetDescription | `SheetContent side`: right, left, top, bottom; `size`: md, lg; `showCloseButton` | right / md |
+| `Toaster` (sonner.tsx) + `toast` | - | one `<Toaster />` in the app root (`position` top-right); `toast()`, `toast.success / error / warning / info / promise`. Unstyled sonner on kit tokens, follows `.dark` | - |
+| `ChartContainer` (chart.tsx + chart-tooltip.tsx) | ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, `useChart` | `config: ChartConfig` (`{ key: { label, color?, icon? } }`); series use `fill` / `stroke` = `var(--color-<key>)`; no colour -> `supportive-1..10` in order. Tooltip: `indicator` dot / line, `hideLabel`, `nameKey`, `labelFormatter`, `valueFormatter` (ru numbers) | - |
 | `EmptyState` (EmptyState.tsx, in `shared/components`) | - | `title`, `description?`, `action?`, `icon?` (same API as `react-ux`) | - |
 | `Spinner` (spinner.tsx) | - | colour from `currentColor` | - |
 
@@ -46,12 +56,19 @@ Source files: [`registry/mbank/components`](../../../registry/mbank/components).
 | `dialogInfo`, `dialogForm` | `Dialog` | `dialogConfirm` -> AlertDialog built the same way |
 | `tooltip`, `Tooltip` | `Tooltip` | |
 | `Avatars` | `Avatar` | Placeholder -> `AvatarFallback` |
-| `TableSection 2.0`, `TableCell`, `table/row/*` | `Table` (+ TanStack Table DataTable) | |
+| `TableSection 2.0`, `TableCell`, `table/row/*` | `DataTable` (list screens) or plain `Table` | `item/table-cell/header/sorter` -> `DataTableColumnHeader`; header search -> `DataTableToolbar` global search; header filter and `table/row/expand` are not in the kit yet |
+| `pagination/basic`, `item/pagintaion / buttons`, `item/pagination/page/dropdown` | `Pagination` | size l / m / s -> lg / md / sm, align -> `align`; DataTable already renders it |
+| `input/calendar-single`, `input/calendar-multi` | `DatePicker`, `DateRangePicker` | Size L / M / S -> `lg` / `md` / `sm`, error -> `aria-invalid` |
+| `molecules / Calendar-items`, `atoms / day-items`, `atoms / month+year` | `Calendar` | month / year grid views are not built: `captionLayout="dropdown"` |
+| `Progress bar / Determinate`, `Progress-Line`, `Progress circle` | `Progress`, `ProgressCircle` | Line state Success / Exeption -> `tone` success / error, `percent` -> `showValue` |
+| `accordion`, `Item / accordion / *`, `item-faq` | `Accordion` | FAQ look -> `variant="card"` |
+| `Chart`, `Chart-tooltip` | `ChartContainer` + recharts `LineChart` / `BarChart`, `ChartTooltipContent` | Coulm group / Stacked -> `BarChart` with `stackId` |
+| side panels (details, filters next to a table) | `Sheet` | mobile Bottom sheet on the web -> `side="bottom"` |
 | `spinner` | `Spinner` | |
 | Starter KIT `Skeleton` | `Skeleton` | Web components has no skeleton (G11 / G12) |
 | (none, G12) empty states | `EmptyState` | |
-| `toast` | `sonner` `toast()` | Not in the kit: style the Toaster with `bg-card` / `status-*` tokens |
-| `Breadcrumb`, `pagination/basic`, `accordion`, `Progress bar`, `otp`, calendars | shadcn component restyled with kit tokens | Not in the kit yet |
+| `toast` | `Toaster` + `toast()` (sonner.tsx) | state -> `toast.success / error / info / warning`; Light / Dark follows `.dark` |
+| `otp`, `slider`, stepper, time picker | shadcn component restyled with kit tokens | Not in the kit yet (backlog: `components-map.mjs report`) |
 
 ## Token to Figma variable
 
