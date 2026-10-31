@@ -120,7 +120,8 @@ function typeAliasText(source, name) {
   return source.slice(start, i).trim();
 }
 
-function parseCva(source) {
+// cva definitions of a source: { constName: { prop: [values] } }. Exported for contracts-extract.mjs.
+export function parseCva(source) {
   const out = {};
   for (const m of source.matchAll(/const\s+(\w+)\s*=\s*cva\(/g)) {
     const open = source.indexOf('(', m.index + m[0].length - 1);

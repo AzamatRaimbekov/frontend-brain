@@ -75,7 +75,12 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
     <td
       data-slot="table-cell"
       // Figma CRM UI KIT `item/cell/basic`: px 4+8, py 12, body/s 14/20, tnum -> 44px row.
-      className={cn("h-11 px-3 py-3 align-middle text-sm leading-5 whitespace-nowrap tabular-nums [&:has([role=checkbox])]:pr-0", className)}
+      className={cn(
+        // @contract table-cell start
+        "h-11 px-3 py-3 align-middle text-sm leading-5 whitespace-nowrap tabular-nums [&:has([role=checkbox])]:pr-0",
+        // @contract table-cell end
+        className,
+      )}
       {...props}
     />
   )

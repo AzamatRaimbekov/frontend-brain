@@ -1,0 +1,84 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "input",
+  "title": "Input",
+  "figma": {
+    "name": "input/default",
+    "key": "9b99d128100afd0ac499d5fc2cfdedf0ae6aa44b",
+    "nodeId": "2184:1939"
+  },
+  "parts": [
+    "root",
+    "placeholder"
+  ],
+  "props": {
+    "size": {
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  },
+  "base": {
+    "root": {
+      "radius": "md",
+      "border-width": 1,
+      "border": "input",
+      "bg": "background",
+      "px": 3,
+      "fg": "foreground",
+      "border:hover": "input-hover",
+      "border:focus": "ring",
+      "border:disabled": "input-disabled",
+      "bg:disabled": "muted",
+      "fg:disabled": "disabled-foreground",
+      "border:invalid": "border-destructive",
+      "layout": "row",
+      "focus-ring": "ring/30"
+    },
+    "placeholder": {
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "size": {
+      "sm": {
+        "root": {
+          "height": 9,
+          "text": "sm"
+        }
+      },
+      "md": {
+        "root": {
+          "height": 11,
+          "text": "sm"
+        }
+      },
+      "lg": {
+        "root": {
+          "height": 14,
+          "px": 4,
+          "text": "base"
+        }
+      }
+    }
+  },
+  "states": [
+    "default",
+    "hover",
+    "focus",
+    "disabled",
+    "invalid"
+  ],
+  "code": {
+    "file": "input.tsx",
+    "export": "inputVariants",
+    "template": "input-like",
+    "parts": {
+      "placeholder": "placeholder"
+    },
+    "extra": "w-full min-w-0 transition-colors outline-none disabled:pointer-events-none file:border-0 file:bg-transparent file:text-sm file:font-medium aria-invalid:ring-border-destructive/20"
+  }
+}

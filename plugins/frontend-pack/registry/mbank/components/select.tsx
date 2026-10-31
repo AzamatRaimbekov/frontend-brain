@@ -20,7 +20,9 @@ function SelectValue(props: React.ComponentProps<typeof SelectPrimitive.Value>) 
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+// @contract select-trigger.size start
 const triggerSizes = { sm: "h-9", md: "h-11", lg: "h-14 px-4 text-base" } as const
+// @contract select-trigger.size end
 
 function SelectTrigger({
   className,
@@ -33,7 +35,9 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
+        // @contract select-trigger start
         "flex w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-sm whitespace-nowrap text-foreground transition-colors outline-none hover:border-input-hover focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:border-input-disabled disabled:bg-muted disabled:text-disabled-foreground aria-invalid:border-border-destructive data-[placeholder]:text-muted-foreground *:data-[slot=select-value]:truncate",
+        // @contract select-trigger end
         triggerSizes[size],
         className,
       )}

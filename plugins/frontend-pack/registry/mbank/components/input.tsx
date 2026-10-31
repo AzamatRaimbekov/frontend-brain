@@ -8,6 +8,7 @@ import { cn } from "@/shared/lib/utils"
  * States: hover -> border/global/soft/hover, focus -> brand ring, error -> aria-invalid,
  * disabled -> border/global/soft/disabled + text/disabled.
  */
+// @contract input start
 const inputVariants = cva(
   "flex w-full min-w-0 rounded-md border border-input bg-background px-3 text-foreground transition-colors outline-none placeholder:text-muted-foreground hover:border-input-hover focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:border-input-disabled disabled:bg-muted disabled:text-disabled-foreground aria-invalid:border-border-destructive aria-invalid:ring-border-destructive/20 file:border-0 file:bg-transparent file:text-sm file:font-medium",
   {
@@ -21,6 +22,7 @@ const inputVariants = cva(
     defaultVariants: { size: "md" },
   },
 )
+// @contract input end
 
 type InputProps = Omit<React.ComponentProps<"input">, "size"> & VariantProps<typeof inputVariants>
 

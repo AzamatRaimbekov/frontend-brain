@@ -26,6 +26,7 @@ design-engine   движок   связка дизайна и кода: конв
 |---|---|---|
 | Токены Mbank `tokens.json` | figma-pack `skills/mbank-figma-patterns/references/tokens.json` | frontend-pack `registry/mbank/tokens.json` (вход `tokens-build.mjs`) |
 | Формат спеки экранов `spec@1` | figma-pack `builder/core/spec.js` + `skills/figma-spec/references/spec-format.md` | frontend-pack `references/spec-format.md` (вход `spec-to-code.mjs`) |
+| Контракты компонентов `mbank/component@1` | figma-pack `builder/contracts/*.json` (формат `builder/docs/component-contract.md`) | frontend-pack `registry/mbank/contracts/` — вся папка (вход `contract-to-code.mjs`) |
 | Карта компонентов Figma ↔ код | design-engine `references/components-map.json` | — (обе стороны читает только движок) |
 
 ## Как движок находит соседей

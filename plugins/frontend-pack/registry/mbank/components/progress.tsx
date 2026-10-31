@@ -10,6 +10,7 @@ import { cn } from "@/shared/lib/utils"
  * (size s/m/l/xl, bottom text -> children). value is 0-100; null = indeterminate.
  * TODO: confirm bar heights and circle diameters against the Progress Bar & Uploading frame.
  */
+// @contract progress start
 const progressVariants = cva("relative w-full overflow-hidden bg-surface-2", {
   variants: {
     size: { sm: "h-1", md: "h-2", lg: "h-3" },
@@ -17,13 +18,16 @@ const progressVariants = cva("relative w-full overflow-hidden bg-surface-2", {
   },
   defaultVariants: { size: "md", shape: "rounded" },
 })
+// @contract progress end
 
+// @contract progress.tone start
 const indicatorTones = {
   brand: "bg-brand",
   success: "bg-status-success",
   error: "bg-status-error",
   warning: "bg-status-warning",
 } as const
+// @contract progress.tone end
 
 type ProgressProps = Omit<React.ComponentProps<typeof ProgressPrimitive.Root>, "value"> &
   VariantProps<typeof progressVariants> & {

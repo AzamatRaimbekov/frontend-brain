@@ -113,6 +113,17 @@ After installing:
 
 `--check` exits 1 with `selector  css var  <- Figma variable  expected / actual` when `tokens.css` is out of date; `--strict` also fails on unmapped Figma variables; `--json` gives the same report to agents.
 
+## Components from contracts
+
+Each kit primitive has a component contract (`mbank/component@1`): one JSON per component in [`registry/mbank/contracts/`](../../registry/mbank/contracts/) that says which token sits on which property (bg, fg, border, radius, height, px, text, weight, focus-ring …) in every variant, size and state. The owner is figma-pack (`builder/contracts`, format in figma-pack `builder/docs/component-contract.md`); the DS Builder plugin renders the same contracts into Figma component sets with bound variables, so Figma and code cannot drift. This folder is a copy that only design-engine `sync-contracts.mjs` updates.
+
+The look of a contracted component lives between `// @contract <name> start` / `// @contract <name> end` markers (the cva call, the class strings in `cn(...)`, `<name>.<part>` part blocks, `<name>.<prop>` const maps). Never hand-edit classes inside the markers:
+
+- `node plugins/frontend-pack/scripts/contract-to-code.mjs --check` compares the generated class sets with the kit per variant/size, order-insensitive; exit 1 on drift (part of `npm test`).
+- Rebind a token (e.g. button primary `bg` → `brand`): change the owner contract, run design-engine `sync-contracts.mjs`, then `contract-to-code.mjs --write button`. Only the marked blocks are rewritten, the class order is kept.
+- New component: add a contract (template `button-like`, `input-like`, `badge-like` or `card-like` in `code.template`), sync, then `contract-to-code.mjs --new <name>` scaffolds `components/<name>.tsx` (cva + minimal accessible React 19 component) and the `registry.json` item; run `registry-build.mjs`.
+- Classes that Figma cannot show (behaviour, svg selectors, `inline-flex`, transitions) stay in `code.extra` / `code.extras` and are generated as is. Validation of contracts (tokens exist in `tokens.css`, props ⇔ variants, Figma key): design-engine `contracts-check.mjs`; first extraction from the kit: design-engine `contracts-extract.mjs`.
+
 ## Icons
 
 Mbank UI does not use Lucide (figma-pack code-mapping section 6 overrides the `react-ui` Lucide rule for Mbank projects). Export the needed icons from the Mbank Icons library as SVG components into `src/shared/ui/icons/`. The kit's `icons.tsx` (check, minus, chevrons, close, sort arrows, search, calendar, columns) holds temporary placeholder glyphs until those exports exist.

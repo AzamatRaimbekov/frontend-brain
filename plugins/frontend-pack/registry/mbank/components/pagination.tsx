@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
  * `item/pagination/page/dropdown` (page size). Controlled: the parent owns page (1-based) and pageSize.
  * TODO: confirm item heights against the Pagination frame (kit: lg 40 / md 36 / sm 32).
  */
+// @contract pagination start
 const paginationItemVariants = cva(
   "inline-flex shrink-0 items-center justify-center rounded-sm font-medium tabular-nums text-foreground transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:text-disabled-foreground aria-[current=page]:bg-secondary aria-[current=page]:text-secondary-foreground [&_svg]:size-5 [&_svg]:shrink-0",
   {
@@ -24,6 +25,7 @@ const paginationItemVariants = cva(
     defaultVariants: { size: "md" },
   },
 )
+// @contract pagination end
 
 const alignClasses = { left: "justify-start", center: "justify-center", right: "justify-end" } as const
 

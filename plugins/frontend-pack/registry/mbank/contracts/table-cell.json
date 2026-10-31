@@ -1,0 +1,32 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "table-cell",
+  "title": "Table cell",
+  "figma": {
+    "name": "TableCell",
+    "key": "75d931d4c1075a08c944e2a7ba1b34b1c4e787d0",
+    "nodeId": "1309:22504"
+  },
+  "parts": [
+    "root"
+  ],
+  "props": {},
+  "base": {
+    "root": {
+      "height": 11,
+      "px": 3,
+      "py": 3,
+      "text": "sm"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "table.tsx",
+    "shape": "classes",
+    "template": "card-like",
+    "extra": "align-middle leading-5 whitespace-nowrap tabular-nums [&:has([role=checkbox])]:pr-0"
+  }
+}

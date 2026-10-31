@@ -8,6 +8,7 @@ import { cn } from "@/shared/lib/utils"
  * Figma `Badge-status`: Appearance (status roles) -> tone, Solid on/off -> fill solid/ghost, Form rounded/squared, Size.
  * Ghost (Solid=off) uses status/ghost/*, solid uses status/filled/*.
  */
+// @contract badge start
 const badgeVariants = cva(
   "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap font-medium [&>svg]:pointer-events-none [&>svg]:size-3",
   {
@@ -41,6 +42,7 @@ const badgeVariants = cva(
     defaultVariants: { tone: "neutral", fill: "ghost", shape: "rounded", size: "md" },
   },
 )
+// @contract badge end
 
 type BadgeProps = React.ComponentProps<"span"> &
   VariantProps<typeof badgeVariants> & { asChild?: boolean }

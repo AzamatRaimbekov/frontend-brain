@@ -1,0 +1,56 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "textarea",
+  "title": "Textarea",
+  "figma": {
+    "name": "TextArea",
+    "key": "f5e8ed2faaef70b5702fa5e0f70d9c65a370a8ed",
+    "nodeId": "3069:1804"
+  },
+  "parts": [
+    "root",
+    "placeholder"
+  ],
+  "props": {},
+  "base": {
+    "root": {
+      "min-height": 24,
+      "radius": "md",
+      "border-width": 1,
+      "border": "input",
+      "bg": "background",
+      "px": 3,
+      "py": 2.5,
+      "text": "sm",
+      "fg": "foreground",
+      "border:hover": "input-hover",
+      "border:focus": "ring",
+      "border:disabled": "input-disabled",
+      "bg:disabled": "muted",
+      "fg:disabled": "disabled-foreground",
+      "border:invalid": "border-destructive",
+      "layout": "row",
+      "focus-ring": "ring/30"
+    },
+    "placeholder": {
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default",
+    "hover",
+    "focus",
+    "disabled",
+    "invalid"
+  ],
+  "code": {
+    "file": "textarea.tsx",
+    "shape": "classes",
+    "template": "input-like",
+    "parts": {
+      "placeholder": "placeholder"
+    },
+    "extra": "field-sizing-content w-full min-w-0 transition-colors outline-none disabled:pointer-events-none aria-invalid:ring-border-destructive/20"
+  }
+}

@@ -1,0 +1,226 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "badge",
+  "title": "Badge",
+  "figma": {
+    "name": "Badge-status",
+    "key": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd",
+    "nodeId": "2348:2631"
+  },
+  "parts": [
+    "root",
+    "icon"
+  ],
+  "props": {
+    "tone": {
+      "values": [
+        "neutral",
+        "accent",
+        "success",
+        "warning",
+        "error",
+        "info",
+        "clear"
+      ],
+      "default": "neutral"
+    },
+    "fill": {
+      "values": [
+        "ghost",
+        "solid"
+      ],
+      "default": "ghost"
+    },
+    "shape": {
+      "values": [
+        "rounded",
+        "square"
+      ],
+      "default": "rounded"
+    },
+    "size": {
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  },
+  "base": {
+    "root": {
+      "gap": 1,
+      "weight": "medium",
+      "align": "center"
+    },
+    "icon": {
+      "size": 3
+    }
+  },
+  "variants": {
+    "tone": {
+      "neutral": {
+        "root": {
+          "bg": "status-neutral-muted",
+          "fg": "status-neutral-foreground"
+        }
+      },
+      "accent": {
+        "root": {
+          "bg": "status-accent-muted",
+          "fg": "status-accent-foreground"
+        }
+      },
+      "success": {
+        "root": {
+          "bg": "status-success-muted",
+          "fg": "status-success-foreground"
+        }
+      },
+      "warning": {
+        "root": {
+          "bg": "status-warning-muted",
+          "fg": "status-warning-foreground"
+        }
+      },
+      "error": {
+        "root": {
+          "bg": "status-error-muted",
+          "fg": "status-error-foreground"
+        }
+      },
+      "info": {
+        "root": {
+          "bg": "status-info-muted",
+          "fg": "status-info-foreground"
+        }
+      },
+      "clear": {
+        "root": {
+          "bg": "status-clear-muted",
+          "fg": "status-clear-foreground"
+        }
+      }
+    },
+    "fill": {
+      "ghost": {},
+      "solid": {
+        "root": {
+          "fg": "status-filled-foreground"
+        }
+      }
+    },
+    "shape": {
+      "rounded": {
+        "root": {
+          "radius": "full"
+        }
+      },
+      "square": {
+        "root": {
+          "radius": "xs"
+        }
+      }
+    },
+    "size": {
+      "sm": {
+        "root": {
+          "height": 5,
+          "px": 1.5,
+          "text": "xs"
+        }
+      },
+      "md": {
+        "root": {
+          "height": 6,
+          "px": 2,
+          "text": "xs"
+        }
+      },
+      "lg": {
+        "root": {
+          "height": 7,
+          "px": 2.5,
+          "text": "sm"
+        }
+      }
+    }
+  },
+  "compound": [
+    {
+      "when": {
+        "fill": "solid",
+        "tone": "neutral"
+      },
+      "root": {
+        "bg": "status-neutral"
+      }
+    },
+    {
+      "when": {
+        "fill": "solid",
+        "tone": "accent"
+      },
+      "root": {
+        "bg": "status-accent"
+      }
+    },
+    {
+      "when": {
+        "fill": "solid",
+        "tone": "success"
+      },
+      "root": {
+        "bg": "status-success"
+      }
+    },
+    {
+      "when": {
+        "fill": "solid",
+        "tone": "warning"
+      },
+      "root": {
+        "bg": "status-warning"
+      }
+    },
+    {
+      "when": {
+        "fill": "solid",
+        "tone": "error"
+      },
+      "root": {
+        "bg": "status-error"
+      }
+    },
+    {
+      "when": {
+        "fill": "solid",
+        "tone": "info"
+      },
+      "root": {
+        "bg": "status-info"
+      }
+    },
+    {
+      "when": {
+        "fill": "solid",
+        "tone": "clear"
+      },
+      "root": {
+        "bg": "status-clear"
+      }
+    }
+  ],
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "badge.tsx",
+    "export": "badgeVariants",
+    "template": "badge-like",
+    "parts": {
+      "icon": "[&>svg]"
+    },
+    "extra": "inline-flex w-fit shrink-0 justify-center overflow-hidden whitespace-nowrap [&>svg]:pointer-events-none"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "skeleton",
+  "title": "Skeleton",
+  "parts": [
+    "root"
+  ],
+  "props": {},
+  "base": {
+    "root": {
+      "radius": "md",
+      "bg": "surface-2"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "skeleton.tsx",
+    "shape": "classes",
+    "template": "card-like",
+    "extra": "animate-pulse motion-reduce:animate-none"
+  }
+}

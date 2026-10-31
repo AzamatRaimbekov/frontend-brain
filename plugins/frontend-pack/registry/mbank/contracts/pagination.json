@@ -1,0 +1,89 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "pagination",
+  "title": "Pagination item",
+  "figma": {
+    "name": "item/pagintaion / buttons",
+    "key": "2255ec920c853b652f1389adbc4bd30779ee35d7",
+    "nodeId": "4141:5990"
+  },
+  "parts": [
+    "root",
+    "icon"
+  ],
+  "props": {
+    "size": {
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  },
+  "base": {
+    "root": {
+      "radius": "sm",
+      "weight": "medium",
+      "fg": "foreground",
+      "bg:hover": "accent",
+      "fg:disabled": "disabled-foreground",
+      "bg:selected": "secondary",
+      "fg:selected": "secondary-foreground",
+      "align": "center",
+      "focus-ring": "ring/30"
+    },
+    "icon": {
+      "size": 5
+    }
+  },
+  "variants": {
+    "size": {
+      "sm": {
+        "root": {
+          "height": 8,
+          "px": 1.5,
+          "text": "xs"
+        }
+      },
+      "md": {
+        "root": {
+          "height": 9,
+          "px": 2,
+          "text": "sm"
+        }
+      },
+      "lg": {
+        "root": {
+          "height": 10,
+          "px": 2.5,
+          "text": "sm"
+        }
+      }
+    }
+  },
+  "states": [
+    "default",
+    "hover",
+    "focus",
+    "disabled",
+    "selected"
+  ],
+  "code": {
+    "file": "pagination.tsx",
+    "export": "paginationItemVariants",
+    "template": "button-like",
+    "parts": {
+      "icon": "[&_svg]"
+    },
+    "modifiers": {
+      "selected": "aria-[current=page]"
+    },
+    "extra": "inline-flex shrink-0 justify-center tabular-nums transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:shrink-0",
+    "extras": {
+      "size=sm": "min-w-8",
+      "size=md": "min-w-9",
+      "size=lg": "min-w-10"
+    }
+  }
+}

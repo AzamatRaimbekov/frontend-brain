@@ -1,0 +1,89 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "avatar",
+  "title": "Avatar",
+  "figma": {
+    "name": "Avatars",
+    "key": "a3d5e7947473b09bf719839c62a18d751927d7a8",
+    "nodeId": "3174:1503"
+  },
+  "parts": [
+    "root",
+    "fallback"
+  ],
+  "props": {
+    "size": {
+      "values": [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
+      "default": "md"
+    }
+  },
+  "base": {
+    "root": {
+      "radius": "full",
+      "layout": "row"
+    },
+    "fallback": {
+      "radius": "full",
+      "bg": "surface-2",
+      "weight": "medium",
+      "fg": "soft-foreground",
+      "layout": "row",
+      "align": "center"
+    }
+  },
+  "variants": {
+    "size": {
+      "xs": {
+        "root": {
+          "size": 6,
+          "text": "xs"
+        }
+      },
+      "sm": {
+        "root": {
+          "size": 8,
+          "text": "xs"
+        }
+      },
+      "md": {
+        "root": {
+          "size": 10,
+          "text": "sm"
+        }
+      },
+      "lg": {
+        "root": {
+          "size": 14,
+          "text": "base"
+        }
+      },
+      "xl": {
+        "root": {
+          "size": 18,
+          "text": "xl"
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "avatar.tsx",
+    "export": "avatarVariants",
+    "template": "badge-like",
+    "blocks": [
+      "fallback"
+    ],
+    "extra": "relative shrink-0 overflow-hidden",
+    "extras": {
+      "fallback": "size-full justify-center"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "switch",
+  "title": "Switch",
+  "parts": [
+    "root"
+  ],
+  "props": {},
+  "base": {
+    "root": {
+      "height": 6,
+      "radius": "full",
+      "border-width": 2,
+      "opacity:disabled": 50,
+      "bg:checked": "brand",
+      "bg:unchecked": "surface-3",
+      "align": "center",
+      "focus-ring": "ring/30"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default",
+    "focus",
+    "disabled",
+    "checked",
+    "unchecked"
+  ],
+  "code": {
+    "file": "switch.tsx",
+    "shape": "classes",
+    "template": "button-like",
+    "modifiers": {
+      "checked": "data-[state=checked]",
+      "unchecked": "data-[state=unchecked]"
+    },
+    "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30"
+  }
+}

@@ -54,6 +54,13 @@ const tests = {
       assert.equal(r.status, 0, `${script}: ${r.stdout}${r.stderr}`);
     }
   },
+  'component contracts are valid and the kit matches them (contracts-check, contract-to-code --check)'() {
+    for (const script of ['plugins/design-engine/scripts/contracts-check.mjs', 'plugins/frontend-pack/scripts/contract-to-code.mjs --check']) {
+      const [file, ...args] = script.split(' ');
+      const r = spawnSync(process.execPath, [join(ROOT, file), ...args], { encoding: 'utf8' });
+      assert.equal(r.status, 0, `${script}: ${r.stdout}${r.stderr}`);
+    }
+  },
   'manifests are valid and versions match'() {
     const claude = json(join(PLUGIN, '.claude-plugin', 'plugin.json'));
     const codex = json(join(PLUGIN, '.codex-plugin', 'plugin.json'));

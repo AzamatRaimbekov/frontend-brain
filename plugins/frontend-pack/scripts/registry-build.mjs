@@ -4,7 +4,7 @@
 //   npx shadcn@latest add @mbank/mbank @mbank/button @mbank/crm-kpi-card
 // Output (default registry/mbank/r): registry.json + one <name>.json per item with file contents inline, plus the
 // design system item "mbank" (type registry:base): tokens.css as cssVars (light/dark/theme) and css (brands, scales).
-// Usage: node registry-build.mjs [--out <dir>] [--namespace @mbank] [--check]   (--check: exit 1 if r/ is stale)
+// Usage: node registry-build.mjs [--kit <registry dir>] [--out <dir>] [--namespace @mbank] [--check]   (--check: exit 1 if r/ is stale)
 // Pure Node 18+, no dependencies.
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
@@ -125,8 +125,9 @@ export function sameDir(a, b) {
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = process.argv.slice(2);
   const opt = (name, def) => (args.includes(name) ? args[args.indexOf(name) + 1] : def);
-  const out = opt('--out', join(KIT, 'r'));
-  const built = buildRegistry({ namespace: opt('--namespace', '@mbank') });
+  const kit = opt('--kit', KIT);
+  const out = opt('--out', join(kit, 'r'));
+  const built = buildRegistry({ kit, namespace: opt('--namespace', '@mbank') });
   if (args.includes('--check')) {
     const tmp = join(dirname(out), '.r-check');
     writeRegistry(tmp, built);
