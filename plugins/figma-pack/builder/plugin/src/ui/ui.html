@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg: var(--figma-color-bg, #fff); --fg: var(--figma-color-text, #111); --muted: var(--figma-color-text-secondary, #666);
+    --line: var(--figma-color-border, #e5e5e5); --accent: var(--figma-color-bg-brand, #0d99ff); --on-accent: var(--figma-color-text-onbrand, #fff);
+    --soft: var(--figma-color-bg-secondary, #f5f5f5); --danger: var(--figma-color-text-danger, #e5484d); --ok: var(--figma-color-text-success, #1a7f37); }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 12px/1.45 Inter, system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+  nav { display: flex; gap: 2px; padding: 8px 8px 0; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg); z-index: 2; }
+  nav button { border: 0; background: none; padding: 8px 12px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; cursor: pointer; }
+  nav button.on { color: var(--fg); border-color: var(--accent); }
+  section { display: none; padding: 12px; } section.on { display: block; }
+  h3 { font-size: 12px; margin: 16px 0 8px; } h3:first-child { margin-top: 0; }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+  .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
+  .muted { color: var(--muted); } .err { color: var(--danger); } .ok { color: var(--ok); }
+  button.btn { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-weight: 500; }
+  button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  button.danger { color: var(--danger); }
+  button:disabled { opacity: .5; cursor: default; }
+  input, select, textarea { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; }
+  textarea { width: 100%; font-family: ui-monospace, monospace; font-size: 11px; }
+  input[type=color] { padding: 0; width: 32px; height: 28px; }
+  table { width: 100%; border-collapse: collapse; } td, th { padding: 3px 4px; border-bottom: 1px solid var(--line); text-align: left; font-weight: 400; }
+  th { color: var(--muted); font-size: 11px; }
+  .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--line); vertical-align: middle; margin-right: 4px; }
+  .tag { font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--soft); color: var(--muted); }
+  .bar { height: 4px; background: var(--soft); border-radius: 2px; overflow: hidden; } .bar i { display: block; height: 100%; background: var(--accent); width: 0; }
+  #toast { position: fixed; left: 8px; right: 8px; bottom: 8px; padding: 8px 10px; border-radius: 6px; background: var(--fg); color: var(--bg); display: none; }
+</style>
+</head>
+<body>
+<nav>
+  <button data-tab="brand" class="on">Бренд</button>
+  <button data-tab="tokens">Токены</button>
+  <button data-tab="screens">Экраны</button>
+  <button data-tab="kit">Кит</button>
+</nav>
+
+<section id="brand" class="on">
+  <div class="card" id="status">Загрузка…</div>
+  <div class="card" id="setupCard">
+    <h3>Слой Brand</h3>
+    <p class="muted">Между Style и Mode появится коллекция Brand: один режим на проект. Компоненты кита не меняются.</p>
+    <label class="row"><input type="checkbox" id="fixScopes" checked> Навести порядок в областях применения (scopes)</label>
+    <label class="row"><input type="checkbox" id="fixNames" checked> Исправить имена custom/* (без пробелов, kebab-case)</label>
+    <div class="row"><button class="btn primary" id="setup">Включить слой Brand</button><button class="btn danger" id="rollback">Откатить</button></div>
+  </div>
+  <div class="card">
+    <h3>Бренды</h3>
+    <div class="row"><select id="brandSel"></select><select id="styleSel"></select></div>
+    <div class="row"><input id="newBrand" placeholder="Новый бренд, например MMarket"><button class="btn" id="addBrand">Добавить</button><button class="btn danger" id="removeBrand">Удалить выбранный</button></div>
+  </div>
+</section>
+
+<section id="tokens">
+  <div class="card">
+    <h3>Сгенерировать тему бренда</h3>
+    <div class="row"><input type="color" id="brandColor" value="#fabf00"><input id="brandHex" value="#fabf00" size="9">
+      <select id="neutral"><option>neutral</option><option>zinc</option><option>slate</option><option>stone</option><option>gray</option><option value="tinted">в тон бренда</option></select>
+      <input id="font" placeholder="Шрифт (Inter Mbank)" size="14"></div>
+    <label class="row"><input type="checkbox" id="withNeutrals"> Переопределить и нейтральные цвета (фон, карточки, границы)</label>
+    <label class="row"><input type="checkbox" id="snap" checked> Привязывать к палитре Tailwind, если цвет почти совпадает</label>
+    <div class="row"><button class="btn" id="generate">Сгенерировать</button><button class="btn primary" id="apply" disabled>Применить к бренду</button></div>
+    <div id="preview"></div>
+  </div>
+  <div class="card">
+    <h3>Текущие значения бренда</h3>
+    <div id="brandTable" class="muted">Выберите бренд на вкладке «Бренд».</div>
+  </div>
+  <div class="card">
+    <h3>Новый проектный токен</h3>
+    <div class="row"><input id="tProject" placeholder="проект: mmarket" size="10"><input id="tRole" placeholder="роль: badge-bg-orange" size="16"></div>
+    <div class="row"><input id="tLight" placeholder="light: orange/200 или #hex" size="16"><input id="tDark" placeholder="dark: orange/900" size="16"><button class="btn" id="addToken">Добавить</button></div>
+    <div id="customList" class="muted"></div>
+  </div>
+  <div class="card">
+    <h3>В код</h3>
+    <div class="row"><button class="btn" id="exportCss">Получить globals.css и tokens.json</button><button class="btn" id="copyCss" disabled>Скопировать CSS</button></div>
+    <textarea id="cssOut" rows="8" readonly placeholder="Здесь появится globals.css для shadcn/ui"></textarea>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="card">
+    <h3>Описание экранов (spec JSON)</h3>
+    <p class="muted">Попросите Claude: «сделай spec экранов по ТЗ» (скилл figma-spec) и вставьте результат сюда.</p>
+    <div class="row"><input type="file" id="specFile" accept=".json"></div>
+    <textarea id="spec" rows="12" placeholder='{"project": "...", "screens": [...]}'></textarea>
+    <div id="specInfo" class="muted"></div>
+  </div>
+  <div class="card">
+    <div class="row"><span>Бренд</span><select id="bBrand"></select><span>Стиль</span><select id="bStyle"></select>
+      <select id="bTheme"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div>
+    <div class="row"><input id="bFont" placeholder="Шрифт для запасных стилей: Inter" size="22"></div>
+    <div class="row"><button class="btn primary" id="build" disabled>Собрать экраны</button></div>
+    <div class="bar"><i id="progress"></i></div>
+    <div id="buildOut" class="muted"></div>
+  </div>
+</section>
+
+<section id="kit">
+  <div class="card">
+    <h3>Компоненты кита</h3>
+    <p class="muted">Плагин ищет Button, Input, Badge, Avatar, Checkbox и другие по имени и ставит их экземпляры. Чего нет — рисует сам, тоже на токенах.</p>
+    <div class="row"><button class="btn" id="scanKit">Просканировать файл</button><button class="btn" id="saveKit" disabled>Скачать карту кита</button></div>
+    <div id="kitOut" class="muted"></div>
+  </div>
+</section>
+<div id="toast"></div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "ds-builder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "shadcn tokens with a Brand layer + Figma plugin that builds screens from a compact spec",
+  "bin": { "ds": "cli/ds.mjs" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

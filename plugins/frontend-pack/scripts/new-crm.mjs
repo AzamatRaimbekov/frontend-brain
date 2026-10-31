@@ -71,6 +71,7 @@ export function planSteps(opts) {
     cmd('Create the Vite app (ESLint, no prompts)', 'npx',
       ['-y', 'create-vite@latest', basename(dir), '--template', 'react-ts', '--eslint', '--no-interactive', '--no-immediate'],
       dirname(dir)),
+    act('Keep TypeScript in the range typescript-eslint supports', () => pinTypescript(dir)),
     cmd('Install packages', 'npm', ['install', ...packages]),
     cmd('Install dev packages', 'npm', ['install', '-D', ...DEV_PACKAGES]),
     asPackage
@@ -81,6 +82,19 @@ export function planSteps(opts) {
     act('Set the name, lang="ru" and npm scripts', () => patchProject(dir, opts.name)),
     cmd('Generate the MSW worker in public/', 'npx', ['-y', 'msw', 'init', 'public', '--save']),
   ].filter(Boolean);
+}
+
+// create-vite 9.3 scaffolds typescript ~7 while typescript-eslint 8 peers on <6.1: npm install fails
+// with ERESOLVE (checked 2026-10-31). Pin the newest supported line until typescript-eslint catches up.
+export const TYPESCRIPT = '~6.0.3';
+export function pinTypescript(dir) {
+  const pkgPath = join(dir, 'package.json');
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  const current = pkg.devDependencies?.typescript;
+  if (!current || !/^[~^]?([7-9]|\d{2,})\./.test(current)) return false;
+  pkg.devDependencies.typescript = TYPESCRIPT;
+  writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+  return true;
 }
 
 function copyTemplate(dir) {
