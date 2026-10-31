@@ -91,6 +91,8 @@
 | `review` | агент `frontend-reviewer` | изменённые файлы | замечания | вердикт ревью |
 | `handoff` | сессия; **человек** решает про MR | ветка, отчёты | текст MR | ответ человека |
 
+С установленным `design-engine` этапы `scaffold`, `generate` и `checks` делает одна команда: скилл `design-engine:build-front` (`build-front.mjs <spec> --project <папка>`, около минуты).
+
 Правило регенерации: структуру экранов меняют в спеке и запускают `generate` снова. Файлы, которые человек или агент уже правил, скрипт без `--force` не перезаписывает. Автоматически, без вопросов, идут `spec`, `tokens`, `scaffold`, `generate`, `checks`; человек нужен на `brief`, `draft`, `approve-design` и `handoff`.
 
 ## bug
