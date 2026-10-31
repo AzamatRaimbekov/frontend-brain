@@ -5,7 +5,7 @@
   "title": "sonner",
   "description": "Figma toast: sonner Toaster (unstyled + kit tokens, follows .dark) and toast() re-export; success/error/warning/info tones",
   "dependencies": [
-    "sonner"
+    "sonner@^2"
   ],
   "registryDependencies": [
     "@mbank/utils"

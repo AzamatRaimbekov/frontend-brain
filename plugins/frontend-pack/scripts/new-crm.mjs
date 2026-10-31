@@ -24,7 +24,7 @@ export const PACKAGES = [
   'radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge', 'tw-animate-css',
 ];
 // The kit as a package: one repository, updated by changing the tag. Private: npm needs git access to it.
-export const KIT_PACKAGE = 'github:AzamatRaimbekov/mbank-ui#v0.1.0';
+export const KIT_PACKAGE = 'github:AzamatRaimbekov/mbank-ui#v0.2.1';
 // Kit packages that the copy mode installs itself; the package mode gets them as dependencies of KIT_PACKAGE.
 const COPY_ONLY = ['radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge'];
 export const DEV_PACKAGES = [
@@ -60,13 +60,21 @@ export function checkTarget(dir) {
   if (existsSync(dir) && readdirSync(dir).length > 0) throw new Error(`${dir} is not empty. Pick a new directory.`);
 }
 
+/** npm packages of all kit items (registry/mbank/registry.json) that PACKAGES does not already install. */
+export function kitDependencies() {
+  const registry = JSON.parse(readFileSync(join(SCRIPTS, '..', 'registry', 'mbank', 'registry.json'), 'utf8'));
+  const deps = new Set(registry.items.flatMap((item) => item.dependencies ?? []));
+  return [...deps].filter((d) => d !== 'tailwindcss' && !PACKAGES.includes(d)).sort();
+}
+
 /** The ordered steps; each is a shell command or a local action. Pure: used by --dry-run and tests. */
 export function planSteps(opts) {
   const dir = resolve(opts.dir);
   const cmd = (title, command, args, cwd = dir) => ({ title, kind: 'cmd', command, args, cwd });
   const act = (title, fn) => ({ title, kind: 'act', fn });
   const asPackage = opts.kit !== 'copy';
-  const packages = asPackage ? [...PACKAGES.filter((p) => !COPY_ONLY.includes(p)), KIT_PACKAGE] : PACKAGES;
+  // Copy mode copies every kit item, so it also needs their own packages (data table, calendar, charts, toasts).
+  const packages = asPackage ? [...PACKAGES.filter((p) => !COPY_ONLY.includes(p)), KIT_PACKAGE] : [...PACKAGES, ...kitDependencies()];
   return [
     cmd('Create the Vite app (ESLint, no prompts)', 'npx',
       ['-y', 'create-vite@latest', basename(dir), '--template', 'react-ts', '--eslint', '--no-interactive', '--no-immediate'],

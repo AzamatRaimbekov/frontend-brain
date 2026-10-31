@@ -5,7 +5,7 @@
   "title": "data-table",
   "description": "CRM TableSection 2.0 as a shadcn data table on @tanstack/react-table: sorting header, global search, column visibility, row selection, Skeleton rows, empty slot, kit Pagination",
   "dependencies": [
-    "@tanstack/react-table"
+    "@tanstack/react-table@^8"
   ],
   "registryDependencies": [
     "@mbank/utils",

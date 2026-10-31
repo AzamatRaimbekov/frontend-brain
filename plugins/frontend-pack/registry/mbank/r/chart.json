@@ -5,7 +5,7 @@
   "title": "chart",
   "description": "Figma Chart / Chart-tooltip: shadcn chart wrapper on recharts (ChartContainer + ChartConfig, tooltip, legend); series default to the supportive-1..10 palette",
   "dependencies": [
-    "recharts"
+    "recharts@^3"
   ],
   "registryDependencies": [
     "@mbank/utils"

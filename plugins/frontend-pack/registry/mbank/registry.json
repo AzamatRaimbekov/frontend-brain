@@ -448,7 +448,7 @@
         }
       ],
       "dependencies": [
-        "@tanstack/react-table"
+        "@tanstack/react-table@^8"
       ],
       "registryDependencies": [
         "utils",
@@ -492,7 +492,7 @@
         }
       ],
       "dependencies": [
-        "react-day-picker"
+        "react-day-picker@^9"
       ],
       "registryDependencies": [
         "utils",
@@ -512,7 +512,7 @@
         }
       ],
       "dependencies": [
-        "react-day-picker"
+        "react-day-picker@^9"
       ],
       "registryDependencies": [
         "utils",
@@ -593,7 +593,7 @@
         }
       ],
       "dependencies": [
-        "sonner"
+        "sonner@^2"
       ],
       "registryDependencies": [
         "utils",
@@ -615,7 +615,7 @@
         }
       ],
       "dependencies": [
-        "recharts"
+        "recharts@^3"
       ],
       "registryDependencies": [
         "utils",

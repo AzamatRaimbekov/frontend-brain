@@ -26,7 +26,7 @@ Two ways, pick one per project:
 - **Package (default for new projects).** The kit and the CRM widgets are one private repository, [`AzamatRaimbekov/mbank-ui`](https://github.com/AzamatRaimbekov/mbank-ui), package `@mdigital/mbank-ui`. Updating = changing the tag. Use it unless the project must change kit sources.
 
   ```bash
-  npm i github:AzamatRaimbekov/mbank-ui#v0.1.0 tw-animate-css   # needs git access to the repo
+  npm i github:AzamatRaimbekov/mbank-ui#v0.2.1 tw-animate-css   # needs git access to the repo
   ```
 
   ```css

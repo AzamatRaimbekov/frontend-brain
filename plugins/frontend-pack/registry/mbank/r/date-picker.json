@@ -5,7 +5,7 @@
   "title": "date-picker",
   "description": "Figma input/calendar-single + input/calendar-multi: DatePicker and DateRangePicker (input-looking trigger, Calendar in a Popover); sizes sm/md/lg, aria-invalid, disabled",
   "dependencies": [
-    "react-day-picker"
+    "react-day-picker@^9"
   ],
   "registryDependencies": [
     "@mbank/utils",

@@ -1043,7 +1043,7 @@
       "title": "data-table",
       "description": "CRM TableSection 2.0 as a shadcn data table on @tanstack/react-table: sorting header, global search, column visibility, row selection, Skeleton rows, empty slot, kit Pagination",
       "dependencies": [
-        "@tanstack/react-table"
+        "@tanstack/react-table@^8"
       ],
       "registryDependencies": [
         "@mbank/utils",
@@ -1099,7 +1099,7 @@
       "title": "calendar",
       "description": "Figma Calendar-items / day-items: shadcn calendar on react-day-picker v9, ru locale by default; single, range, multiple; month+year dropdowns",
       "dependencies": [
-        "react-day-picker"
+        "react-day-picker@^9"
       ],
       "registryDependencies": [
         "@mbank/utils",
@@ -1119,7 +1119,7 @@
       "title": "date-picker",
       "description": "Figma input/calendar-single + input/calendar-multi: DatePicker and DateRangePicker (input-looking trigger, Calendar in a Popover); sizes sm/md/lg, aria-invalid, disabled",
       "dependencies": [
-        "react-day-picker"
+        "react-day-picker@^9"
       ],
       "registryDependencies": [
         "@mbank/utils",
@@ -1200,7 +1200,7 @@
       "title": "sonner",
       "description": "Figma toast: sonner Toaster (unstyled + kit tokens, follows .dark) and toast() re-export; success/error/warning/info tones",
       "dependencies": [
-        "sonner"
+        "sonner@^2"
       ],
       "registryDependencies": [
         "@mbank/utils"
@@ -1218,7 +1218,7 @@
       "title": "chart",
       "description": "Figma Chart / Chart-tooltip: shadcn chart wrapper on recharts (ChartContainer + ChartConfig, tooltip, legend); series default to the supportive-1..10 palette",
       "dependencies": [
-        "recharts"
+        "recharts@^3"
       ],
       "registryDependencies": [
         "@mbank/utils"
