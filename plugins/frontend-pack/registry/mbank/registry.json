@@ -45,7 +45,7 @@
     {
       "name": "icons",
       "type": "registry:ui",
-      "description": "Temporary inline glyphs (check, minus, chevron-down, close) until the Mbank Icons SVGs are exported",
+      "description": "Temporary inline glyphs (check, minus, chevrons, close, sort arrows, search, calendar, columns) until the Mbank Icons SVGs are exported",
       "files": [
         {
           "path": "components/icons.tsx",
@@ -403,6 +403,223 @@
         "utils",
         "tokens",
         "icons"
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "description": "Figma pagination/basic + item/pagintaion / buttons + page/dropdown: controlled page (1-based), prev/next, ellipses, page-size select; sizes sm/md/lg, align",
+      "files": [
+        {
+          "path": "components/pagination.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons",
+        "select"
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "description": "CRM TableSection 2.0 as a shadcn data table on @tanstack/react-table: sorting header, global search, column visibility, row selection, Skeleton rows, empty slot, kit Pagination",
+      "files": [
+        {
+          "path": "components/data-table.tsx",
+          "target": "ui"
+        },
+        {
+          "path": "components/data-table-body.tsx",
+          "target": "ui"
+        },
+        {
+          "path": "components/data-table-toolbar.tsx",
+          "target": "ui"
+        },
+        {
+          "path": "components/data-table-columns.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "@tanstack/react-table"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "table",
+        "pagination",
+        "skeleton",
+        "checkbox",
+        "input",
+        "button",
+        "dropdown-menu",
+        "icons"
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "description": "Floating panel on the dropdown surface (z-popover, above Dialog) for pickers and filters",
+      "files": [
+        {
+          "path": "components/popover.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "description": "Figma Calendar-items / day-items: shadcn calendar on react-day-picker v9, ru locale by default; single, range, multiple; month+year dropdowns",
+      "files": [
+        {
+          "path": "components/calendar.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "button",
+        "icons"
+      ]
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "description": "Figma input/calendar-single + input/calendar-multi: DatePicker and DateRangePicker (input-looking trigger, Calendar in a Popover); sizes sm/md/lg, aria-invalid, disabled",
+      "files": [
+        {
+          "path": "components/date-picker.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "calendar",
+        "popover",
+        "input",
+        "icons"
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "description": "Figma Progress bar / Determinate, Progress-Line, Progress circle: Progress (size, shape, tone, showValue, indeterminate) and ProgressCircle (sm-xl)",
+      "files": [
+        {
+          "path": "components/progress.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "description": "Figma accordion / Item accordion states / header / bottomInfo, item-faq: Radix Accordion; variant line | card (FAQ)",
+      "files": [
+        {
+          "path": "components/accordion.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "description": "Side panel on Radix Dialog (details, filters, edit forms): side right/left/top/bottom, size md/lg, header/body/footer",
+      "files": [
+        {
+          "path": "components/sheet.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "radix-ui",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "description": "Figma toast: sonner Toaster (unstyled + kit tokens, follows .dark) and toast() re-export; success/error/warning/info tones",
+      "files": [
+        {
+          "path": "components/sonner.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "sonner"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "chart",
+      "type": "registry:ui",
+      "description": "Figma Chart / Chart-tooltip: shadcn chart wrapper on recharts (ChartContainer + ChartConfig, tooltip, legend); series default to the supportive-1..10 palette",
+      "files": [
+        {
+          "path": "components/chart.tsx",
+          "target": "ui"
+        },
+        {
+          "path": "components/chart-tooltip.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "recharts"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
       ]
     },
     {
