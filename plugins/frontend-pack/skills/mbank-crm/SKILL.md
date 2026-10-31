@@ -57,6 +57,10 @@ Gotchas already handled in the template, keep them when you copy code elsewhere:
 - TanStack `Link` marks a parent path current (`/applications` on `/applications/CL-1`); side menu links pass `activeOptions={{ exact: true }}` and the current item comes from `staticData.header.navId`.
 - Menu items without a page get a placeholder route (`placeholderItems`), so the menu has no dead links and unknown URLs still show the 404 page.
 
+## Spec → code
+
+When the screens are described as a spec (the JSON the figma-pack builder plugin draws in Figma), generate the pages instead of writing them: `node $PLUGIN/scripts/spec-to-code.mjs app.spec.json --project ../loans-crm` writes per screen the route, page, UX.md, tests and the feature (zod, query keys, MSW handlers with the spec data, one component per block), the menu from `spec.nav`, and keeps files you edited. Block mapping, states and limits: [references/spec-to-code.md](references/spec-to-code.md).
+
 ## Add a page
 
 1. Write `src/pages/<name>/UX.md` first (`react-page-ux`; the hook blocks a page without it).

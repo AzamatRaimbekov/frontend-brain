@@ -1,0 +1,98 @@
+{
+  "$schema": "ds-builder/spec@1",
+  "project": "Кредитный конвейер",
+  "subtitle": "CRM аналитика",
+  "platform": "web",
+  "viewports": ["desktop", "mobile"],
+  "user": { "name": "Айгуль Токтогулова", "role": "Кредитный аналитик" },
+  "nav": [
+    { "id": "dashboard", "label": "Обзор" },
+    { "id": "apps", "label": "Заявки" },
+    { "id": "clients", "label": "Клиенты" },
+    { "id": "reports", "label": "Отчёты" },
+    { "id": "settings", "label": "Настройки", "group": "Система" }
+  ],
+  "screens": [
+    {
+      "id": "login", "title": "Вход", "page": "Вход", "shell": "plain", "states": ["default", "error"],
+      "blocks": [{ "type": "login", "title": "Кредитный конвейер", "subtitle": "Войдите рабочей почтой" }]
+    },
+    {
+      "id": "dashboard", "title": "Обзор", "nav": "dashboard", "page": "Обзор", "states": ["default", "loading"],
+      "blocks": [
+        { "type": "header", "title": "Обзор", "subtitle": "Сводка за сегодня", "actions": ["Экспорт", "+ Новая заявка"] },
+        { "type": "stats", "items": [
+          { "label": "Новые заявки", "value": "128", "delta": "+12% к вчера" },
+          { "label": "Уровень одобрения", "value": "64,2%", "delta": "+1,4 п.п." },
+          { "label": "Время до решения", "value": "38 мин", "delta": "-6 мин" },
+          { "label": "Просрочен SLA", "value": "7", "delta": "-3 к вчера" }
+        ] },
+        { "type": "split", "ratio": "2:1", "columns": [
+          [{ "type": "chart", "title": "Заявки по часам", "subtitle": "Сегодня" }],
+          [{ "type": "list", "title": "Требуют внимания", "rows": 5, "statuses": ["Просрочен SLA", "На проверке", "Новая"] }]
+        ] }
+      ]
+    },
+    {
+      "id": "apps", "title": "Заявки", "nav": "apps", "page": "Заявки", "states": ["default", "loading", "empty", "error"],
+      "empty": { "title": "Заявок пока нет", "text": "Новые заявки появятся здесь автоматически", "action": "+ Создать заявку" },
+      "blocks": [
+        { "type": "header", "title": "Заявки", "breadcrumbs": ["CRM", "Заявки"], "actions": ["Экспорт", "+ Новая заявка"] },
+        { "type": "tabs", "items": ["Все", "Мои", "На проверке", "Просрочены"] },
+        { "type": "toolbar", "search": "Поиск по ФИО, телефону или номеру", "filters": ["Статус", "Продукт", "Период"] },
+        { "type": "table", "selectable": true, "rows": 8, "columns": ["Номер:id", "Клиент:person", "Продукт:product", "Сумма:money", "Статус:status", "Дата:datetime", ":actions"],
+          "statuses": ["Новая", "Скоринг", "На проверке", "Одобрена", "Отказ"] },
+        { "type": "pagination", "summary": "Показано 1–8 из 128" }
+      ]
+    },
+    {
+      "id": "pipeline", "title": "Конвейер", "nav": "apps", "page": "Заявки", "states": ["default"], "viewports": ["desktop"],
+      "blocks": [
+        { "type": "header", "title": "Конвейер заявок", "actions": ["+ Новая заявка"] },
+        { "type": "kanban", "columns": ["Новые", "Скоринг", "Проверка СБ", "Андеррайтинг", "Решение"] }
+      ]
+    },
+    {
+      "id": "app-card", "title": "Заявка CL-240118", "nav": "apps", "page": "Заявки", "states": ["default", "no-access"],
+      "blocks": [
+        { "type": "header", "title": "Заявка CL-240118", "badge": "На проверке", "breadcrumbs": ["Заявки", "CL-240118"], "actions": ["Отклонить", "Запросить документы", "+ Одобрить"] },
+        { "type": "stepper", "steps": ["Создана", "Скоринг", "Проверка СБ", "Андеррайтинг", "Решение"], "current": 2 },
+        { "type": "split", "ratio": "2:1", "columns": [
+          [
+            { "type": "details", "title": "Заёмщик", "items": ["ФИО:person", "Телефон:phone", "Город:city", "Работодатель:company"] },
+            { "type": "details", "title": "Кредит", "items": ["Продукт:product", "Сумма:money", ["Срок", "24 месяца"], ["Ставка", "18,5%"]] }
+          ],
+          [
+            { "type": "alert", "variant": "warning", "title": "Скоринг 712", "text": "Средний риск: высокий долг к доходу" },
+            { "type": "timeline", "title": "История" }
+          ]
+        ] }
+      ]
+    },
+    {
+      "id": "client-new", "title": "Новый клиент", "nav": "clients", "page": "Клиенты", "states": ["default", "error"],
+      "blocks": [
+        { "type": "header", "title": "Новый клиент", "breadcrumbs": ["Клиенты", "Новый"] },
+        { "type": "form", "title": "Данные клиента", "subtitle": "Поля со звёздочкой обязательны", "width": 760, "fields": [
+          { "label": "ФИО", "required": true },
+          { "label": "Телефон", "type": "phone", "required": true },
+          { "label": "Дата рождения", "type": "date" },
+          { "label": "Город", "type": "select" },
+          { "label": "Ежемесячный доход", "type": "money", "hint": "Подтверждается выпиской" },
+          { "label": "Согласие на обработку данных", "type": "checkbox" }
+        ], "submit": "Создать клиента" }
+      ]
+    },
+    {
+      "id": "reports", "title": "Отчёты", "nav": "reports", "page": "Отчёты", "states": ["default", "empty"],
+      "blocks": [
+        { "type": "header", "title": "Отчёты" },
+        { "type": "cards", "columns": 3, "items": [
+          { "title": "Воронка заявок", "text": "Конверсия по этапам за период", "badge": "Ежедневно" },
+          { "title": "Просрочки SLA", "text": "Где и почему заявки задерживаются", "badge": "Важно" },
+          { "title": "Портфель", "text": "Выдачи по продуктам и городам", "badge": "Еженедельно" }
+        ] }
+      ]
+    }
+  ]
+}

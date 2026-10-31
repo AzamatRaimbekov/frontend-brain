@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { DEV_PACKAGES, KIT_PACKAGE, PACKAGES, parseArgs, planSteps, run, toPackageImports } from './new-crm.mjs';
+import { DEV_PACKAGES, KIT_PACKAGE, PACKAGES, TYPESCRIPT, parseArgs, pinTypescript, planSteps, run, toPackageImports } from './new-crm.mjs';
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), 'new-crm.mjs');
 const TEMPLATE = join(dirname(SCRIPT), '..', 'templates', 'mbank-crm');
@@ -50,7 +50,7 @@ test('--dry-run prints the plan and touches nothing', () => {
     assert.ok(text.includes(KIT_PACKAGE));
     assert.doesNotMatch(text, /add-ui\.mjs/);
     assert.match(text, /msw init public --save/);
-    assert.equal(steps.length, 7);
+    assert.equal(steps.length, 8);
     const copy = run(parseArgs([dir, '--kit', 'copy', '--dry-run']), () => {});
     assert.ok(copy.some((s) => s.kind === 'cmd' && s.args.includes('all')), 'copy mode runs add-ui all');
   } finally {
@@ -99,4 +99,20 @@ test('template has a UX.md and a test next to every page with data', () => {
   const setup = readFileSync(join(TEMPLATE, 'src', 'test', 'setup.ts'), 'utf8');
   assert.match(setup, /onUnhandledFrame/, 'MSW 3 option (onUnhandledRequest is ignored)');
   assert.match(setup, /window\.scrollTo/, 'jsdom stub for TanStack Router');
+});
+
+test('pinTypescript: typescript 7+ from create-vite goes back to the typescript-eslint range', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'new-crm-'));
+  try {
+    const write = (ts) => writeFileSync(join(dir, 'package.json'), JSON.stringify({ devDependencies: { typescript: ts } }));
+    const read = () => JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).devDependencies.typescript;
+    write('~7.0.2');
+    assert.equal(pinTypescript(dir), true);
+    assert.equal(read(), TYPESCRIPT);
+    write('~5.9.3');
+    assert.equal(pinTypescript(dir), false);
+    assert.equal(read(), '~5.9.3');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
