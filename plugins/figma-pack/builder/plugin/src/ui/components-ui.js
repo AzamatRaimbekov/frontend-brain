@@ -1,6 +1,6 @@
 // «Компоненты» tab: contracts list, build in Figma, bindings table with a token picker,
 // new component from an anatomy template, export of contract JSON for the code generator.
-import { validateContract, STATES, PROPS, propKind } from '../../../core/contract.js';
+import { validateContract, statesAllowed, PROPS, propKind } from '../../../core/contract.js';
 
 export function initComponents({ $, esc, send, toast }) {
   let contracts = [];
@@ -8,7 +8,12 @@ export function initComponents({ $, esc, send, toast }) {
   const sel = () => $('cSel').value;
   const busy = (on) => { for (const id of ['cRender', 'cCreateNew']) $(id).disabled = on; };
 
-  $('cStates').innerHTML = STATES.map((s) => `<label><input type="checkbox" value="${s}" checked> ${s}</label>`).join(' ');
+  // State checkboxes follow the selected contract: the 5 standard ones plus its own (checked, invalid…).
+  function renderStates(c) {
+    const on = new Set(c.states && c.states.length ? c.states : ['default']);
+    $('cStates').innerHTML = statesAllowed(c).map((s) => `<label><input type="checkbox" value="${esc(s)}"${on.has(s) ? ' checked' : ''}> ${esc(s)}</label>`).join(' ');
+    $('cAddState').innerHTML = statesAllowed(c).map((s) => `<option>${esc(s)}</option>`).join('');
+  }
   const statesChosen = () => [...$('cStates').querySelectorAll('input:checked')].map((x) => x.value);
 
   function renderList() {
@@ -69,7 +74,6 @@ export function initComponents({ $, esc, send, toast }) {
   }
 
   $('cAddProp').innerHTML = PROPS.filter((p) => ['color', 'radius', 'space', 'text', 'weight'].includes(propKind(p))).map((p) => `<option>${p}</option>`).join('');
-  $('cAddState').innerHTML = STATES.map((s) => `<option>${s}</option>`).join('');
   $('cAddProp').onchange = () => $('cAddValue').setAttribute('list', listFor(propKind($('cAddProp').value)));
   $('cAdd').onclick = () => {
     const prop = $('cAddProp').value;
@@ -132,7 +136,7 @@ export function initComponents({ $, esc, send, toast }) {
       renderReport(m.report);
     },
     'contract-new:done': (m) => { handlers['contract-render:done'](m); if (m.contract) { $('cSel').value = m.contract.name; send('contract-rows', { name: m.contract.name }); toast(`Создан ${m.contract.name}`); } },
-    'contract-rows:done': (m) => { current = m; tokenLists(m.vars); renderRows(); },
+    'contract-rows:done': (m) => { current = m; renderStates(m.contract); tokenLists(m.vars); renderRows(); },
     'contract-bind:done': (m) => {
       if (m.errors) { toast(m.errors[0], true); return; }
       current = { ...current, contract: m.contract, rows: m.rows };

@@ -4,6 +4,9 @@
 
 export const SCHEMA = 'mbank/component@1';
 export const STATES = ['default', 'hover', 'active', 'focus', 'disabled'];
+// Extra states a contract may declare in c.states (invalid, checked, indeterminate, selected…):
+// in Figma they are more state=<s> values, in code modifiers from code.modifiers.
+export const statesAllowed = (c) => [...new Set([...STATES, ...((c && c.states) || [])])];
 export const STEP = 4; // contract spacing unit: 11 = 44 px
 
 const KINDS = {
@@ -42,7 +45,7 @@ function checkStyles(errors, where, styles, c) {
     for (const [key, value] of Object.entries(props)) {
       const { prop, state } = splitKey(key);
       if (!KINDS[prop]) errors.push(`${where}.${part}: неизвестное свойство «${prop}»`);
-      if (!STATES.includes(state)) errors.push(`${where}.${part}: неизвестное состояние «${state}»`);
+      if (!statesAllowed(c).includes(state)) errors.push(`${where}.${part}: неизвестное состояние «${state}»`);
       if (KINDS[prop] === 'color' && (typeof value !== 'string' || /^#|^rgb|^oklch/i.test(value)))
         errors.push(`${where}.${part}.${key}: цвет — только имя токена, не «${value}»`);
       if (KINDS[prop] === 'space' && !(typeof value === 'number' && value >= 0)) errors.push(`${where}.${part}.${key}: шаг сетки — число`);
@@ -65,7 +68,7 @@ export function validateContract(c) {
     if (d.default !== undefined && !d.values.includes(d.default)) errors.push(`props.${p}.default: нет в values`);
     for (const v of d.values) if (!isObj(c.variants?.[p]?.[v])) errors.push(`variants.${p}.${v}: не описан`);
   }
-  for (const s of c.states || []) if (!STATES.includes(s)) errors.push(`states: неизвестное «${s}»`);
+  for (const s of c.states || []) if (!/^[a-z][a-z0-9-]*$/.test(s)) errors.push(`states: «${s}» — kebab-case латиницей`);
   if (c.base) checkStyles(errors, 'base', c.base, c);
   for (const [p, byValue] of Object.entries(c.variants || {})) {
     if (!c.props?.[p]) { errors.push(`variants.${p}: нет такого свойства в props`); continue; }
