@@ -70,6 +70,19 @@
 node plugins/figma-pack/builder/cli/ds.mjs spec check my.spec.json
 ```
 
+## Агенту: собрать в Figma самому (Figma MCP)
+
+Тот же движок без интерфейса плагина работает через `use_figma`: токены Mbank (+ токены проекта), компоненты из контрактов, экраны по spec со страницами разделов и «Прототипом».
+
+```bash
+cd plugins/figma-pack/builder && npm i      # esbuild
+node mcp/bundle.mjs /tmp/mcp                # 01-load.js … NN-load.js, hashes.json, run.js
+```
+
+1. По очереди отправь `NN-load.js` в `use_figma` (код как есть, каждый ≤ 50 000 знаков). Вызов возвращает `hash`: он должен совпасть с `hashes.json`, иначе отправь кусок ещё раз.
+2. Дальше каждый вызов начинается с `run.js`, затем: `return await DS.tokens({ extras })` → `DS.components([...])` (кнопку — отдельным вызовом, она большая) → `DS.screens(spec, { brand, theme })`.
+3. `setPluginData` и `loadAllPagesAsync` в `use_figma` нет: сборка переписывает их на shared plugin data (`mbank.local`) и загрузку страниц.
+
 ## Код из того же spec
 
 ```bash

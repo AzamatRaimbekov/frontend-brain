@@ -2777,6 +2777,33 @@
       return { id: v.id, name: v.name, collection, type: v.resolvedType, token: tokenForVariable(v, collection), placeholder: ((_a = v.getPluginData) == null ? void 0 : _a.call(v, "ds")) === "contract-placeholder" };
     });
   }
+  var SCREEN_ALIAS = {
+    sidebar: "background",
+    "sidebar-foreground": "foreground",
+    "sidebar-primary": "primary",
+    "sidebar-primary-foreground": "primary-foreground",
+    "sidebar-accent": "accent",
+    "sidebar-accent-foreground": "foreground",
+    "sidebar-border": "border",
+    "sidebar-ring": "ring",
+    warning: "status-warning",
+    "warning-foreground": "foreground",
+    info: "status-info",
+    "info-foreground": "foreground",
+    "chart-1": "success",
+    "chart-2": "primary",
+    "chart-3": "status-accent",
+    "chart-4": "secondary",
+    "chart-5": "muted-foreground"
+  };
+  async function screenVars(base) {
+    const t = await tokenIndex();
+    const vars = __spreadValues({}, base.vars);
+    for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || SCREEN_ALIAS[k] && findColor(t, SCREEN_ALIAS[k]) || null;
+    const radius = __spreadValues({}, base.radius);
+    for (const k of Object.keys(radius)) if (!radius[k]) radius[k] = findRadius(t, k) || null;
+    return { vars, radius };
+  }
 
   // plugin/src/components.js
   var PAGE = "Components";
@@ -3298,7 +3325,7 @@
     async build(m) {
       const errors = [...validateSpec(m.spec), ...validateLinks(m.spec)];
       if (errors.length) return { errors };
-      const { vars, radius } = await modeVars();
+      const { vars, radius } = await screenVars(await modeVars());
       const k = await kit();
       const res = await buildSpec(
         m.spec,

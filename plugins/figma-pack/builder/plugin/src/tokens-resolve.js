@@ -128,3 +128,24 @@ export async function listVariables() {
       return { id: v.id, name: v.name, collection, type: v.resolvedType, token: tokenForVariable(v, collection), placeholder: v.getPluginData?.('ds') === 'contract-placeholder' };
     });
 }
+
+// shadcn tokens with no Mbank name of their own: the nearest Mbank role.
+const SCREEN_ALIAS = {
+  sidebar: 'background', 'sidebar-foreground': 'foreground', 'sidebar-primary': 'primary', 'sidebar-primary-foreground': 'primary-foreground',
+  'sidebar-accent': 'accent', 'sidebar-accent-foreground': 'foreground', 'sidebar-border': 'border', 'sidebar-ring': 'ring',
+  warning: 'status-warning', 'warning-foreground': 'foreground', info: 'status-info', 'info-foreground': 'foreground',
+  'chart-1': 'success', 'chart-2': 'primary', 'chart-3': 'status-accent', 'chart-4': 'secondary', 'chart-5': 'muted-foreground',
+};
+
+/**
+ * Variables for screens: Mode/<token> of the shadcn kit (modeVars), else the Mbank variable of the same role
+ * (Foundation names, local or from the library), so screens in an Mbank file bind to its tokens, not grey.
+ */
+export async function screenVars(base) {
+  const t = await tokenIndex();
+  const vars = { ...base.vars };
+  for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || (SCREEN_ALIAS[k] && findColor(t, SCREEN_ALIAS[k])) || null;
+  const radius = { ...base.radius };
+  for (const k of Object.keys(radius)) if (!radius[k]) radius[k] = findRadius(t, k) || null;
+  return { vars, radius };
+}

@@ -8,6 +8,7 @@ import { validateLinks } from '../../core/links.js';
 import { toShadcnCss } from '../../core/css.js';
 import { COLOR_TOKENS } from '../../core/tokens.js';
 import { contractHandlers } from './contracts.js';
+import { screenVars } from './tokens-resolve.js';
 // Built in by scripts/build.mjs from builder/contracts/*.json (fixtures until the extractor lands).
 import BUNDLED_CONTRACTS from 'ds:contracts';
 
@@ -57,7 +58,7 @@ const handlers = {
   async build(m) {
     const errors = [...validateSpec(m.spec), ...validateLinks(m.spec)];
     if (errors.length) return { errors };
-    const { vars, radius } = await modeVars();
+    const { vars, radius } = await screenVars(await modeVars());
     const k = await kit();
     const res = await buildSpec(m.spec, { vars, radius, kit: k.kit, font: m.font, brand: m.brand, style: m.style, theme: m.theme, only: m.only },
       (done, total, label) => post('progress', { done, total, label }));
