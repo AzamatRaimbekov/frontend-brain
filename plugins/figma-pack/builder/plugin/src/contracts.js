@@ -6,7 +6,7 @@
 // contracts; keys written by older builds into this plugin's private data are still read.
 import { validateContract, bindingRows, setBinding, variantList, SCHEMA } from '../../core/contract.js';
 import { newContract, TEMPLATES } from '../../core/contract-templates.js';
-import { renderContract, componentsPage, findSet } from './components.js';
+import { renderContract, componentsPage, findSet, pageOf } from './components.js';
 import { listVariables } from './tokens-resolve.js';
 import { sharedContracts, putSharedContract, dropSharedContract } from './shared-contracts.js';
 
@@ -41,11 +41,11 @@ function get(bundled, name) {
 const strip = ({ example, ...c }) => c; // build-time flag, not part of the contract
 
 async function summary(bundled) {
-  const page = figma.root.children.find((p) => p.name === 'Components');
+  const pageNamed = (name) => figma.root.children.find((p) => p.name === name);
   return [...allContracts(bundled).values()].map(({ contract: c, source }) => ({
     name: c.name, title: c.title || c.name, source, errors: validateContract(c),
     variants: validateContract(c).length ? 0 : variantList(c).length,
-    rendered: !!(page && findSet(page, c)),
+    rendered: !!(pageNamed(pageOf(c)) && findSet(pageNamed(pageOf(c)), c)),
   }));
 }
 
@@ -55,7 +55,7 @@ async function render(c, m) {
   putContract(strip(res.contract));
   const node = await figma.getNodeByIdAsync(res.report.setId);
   if (node && m.focus !== false) {
-    await figma.setCurrentPageAsync(await componentsPage());
+    await figma.setCurrentPageAsync(await componentsPage(pageOf(c)));
     figma.viewport.scrollAndZoomIntoView([node]);
   }
   return res;
@@ -90,7 +90,7 @@ export function contractHandlers(bundled) {
       const errors = validateContract(c);
       if (errors.length) return { errors };
       putContract(strip(c));
-      const page = await componentsPage();
+      const page = await componentsPage(pageOf(c));
       const res = findSet(page, c) ? await render(c, { ...m, focus: false }) : { contract: c };
       return { name: c.name, rows: bindingRows(res.contract || c), report: res.report, contract: res.contract || c };
     },

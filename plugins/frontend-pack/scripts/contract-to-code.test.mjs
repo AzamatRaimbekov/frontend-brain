@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -122,3 +122,22 @@ test('the real Mbank kit matches its contracts (registry/mbank/contracts)', () =
   assert.ok(report.length >= 15, `contracts: ${report.length}`);
   assert.deepEqual(report.filter((r) => r.diffs.length), []);
 });
+
+test('block contracts: --check proves every part has its data-slot element; --write and --new refuse them', () =>
+  withKit((kit) => {
+    const block = {
+      $schema: 'mbank/component@1', name: 'crm-note', title: 'CRM / Note', parts: ['root', 'title', 'text'], props: {}, variants: {}, states: ['default'],
+      base: { title: { text: 'sm' } }, code: { kind: 'block', file: 'blocks/crm/Note.tsx', slot: 'note', inline: ['text'] },
+    };
+    writeFileSync(join(kit, 'contracts', 'crm-note.json'), JSON.stringify(block));
+    const run = () => check({ kit, names: ['crm-note'] })[0].diffs;
+    assert.match(run().join('\n'), /kit file missing/);
+    mkdirSync(join(kit, 'blocks', 'crm'), { recursive: true });
+    const file = join(kit, 'blocks', 'crm', 'Note.tsx');
+    writeFileSync(file, 'export const Note = () => <div data-slot="note"><h3>t</h3>text</div>\n');
+    assert.deepEqual(run(), ['blocks/crm/Note.tsx: part "title" has no element with data-slot="note-title"']);
+    writeFileSync(file, 'export const Note = () => <div data-slot="note"><h3 data-slot="note-title">t</h3>text</div>\n');
+    assert.deepEqual(run(), [], 'text is inline: no element of its own');
+    assert.throws(() => write({ kit, name: 'crm-note' }), /block contract/);
+    assert.throws(() => create({ kit, name: 'crm-note' }), /block contract/);
+  }));

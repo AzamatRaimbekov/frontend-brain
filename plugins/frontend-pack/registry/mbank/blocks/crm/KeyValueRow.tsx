@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/shared/lib/utils"
 
-const valueVariants = cva("min-w-0 break-words text-sm", {
+const valueVariants = cva("min-w-0 break-words text-sm font-medium", {
   variants: {
     tone: {
       default: "text-foreground",
@@ -23,17 +23,22 @@ type KeyValueRowProps = VariantProps<typeof valueVariants> & {
 }
 
 /**
- * Figma `CRM / Key-value row` (36px): label 14 muted in a 196px column, value 14.
- * tone="error" for a problem value ("Не загружена — нужна за 6 мес"). Stacks on phones.
+ * Figma `CRM / Key-value row` (contract crm-key-value-row): row gap 16, py 8, label 180px body/s muted,
+ * value body/s medium, top-aligned. tone="error" for a problem value ("Не загружена — нужна за 6 мес").
+ * Stacks on phones.
  */
 export function KeyValueRow({ label, tone, children, className }: KeyValueRowProps) {
   return (
     <div
       data-slot="key-value-row"
-      className={cn("grid gap-0.5 py-2 sm:min-h-9 sm:grid-cols-[196px_minmax(0,1fr)] sm:items-center sm:gap-x-0", className)}
+      className={cn("grid gap-0.5 py-2 sm:min-h-9 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-start sm:gap-x-4", className)}
     >
-      <dt className="text-sm text-muted-foreground sm:pr-4">{label}</dt>
-      <dd className={valueVariants({ tone })}>{children}</dd>
+      <dt data-slot="key-value-row-label" className="text-sm text-muted-foreground">
+        {label}
+      </dt>
+      <dd data-slot="key-value-row-value" className={valueVariants({ tone })}>
+        {children}
+      </dd>
     </div>
   )
 }

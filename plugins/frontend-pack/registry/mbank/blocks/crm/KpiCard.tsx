@@ -25,7 +25,10 @@ type KpiCardProps = {
   className?: string
 }
 
-/** Figma `CRM / KPI card` (266x128): label 14 muted, value 24 bold, delta 14 + caption muted. */
+/**
+ * Figma `CRM / KPI card` (contract crm-kpi-card): p 20, gap 8, radius-lg, card surface; label body/s muted,
+ * value heading/h4 bold, delta row gap 4 centred: delta body/s medium + caption muted.
+ */
 export function KpiCard({
   label,
   value,
@@ -39,9 +42,11 @@ export function KpiCard({
     <Card
       data-slot="kpi-card"
       aria-busy={loading || undefined}
-      className={cn("min-h-32 gap-2 border-transparent p-4 sm:p-5", className)}
+      className={cn("min-h-32 gap-2 border-transparent p-5", className)}
     >
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <p data-slot="kpi-card-label" className="text-sm text-muted-foreground">
+        {label}
+      </p>
       {loading ? (
         <>
           <Skeleton className="h-8 w-24" />
@@ -49,11 +54,19 @@ export function KpiCard({
         </>
       ) : (
         <>
-          <p className="text-2xl font-bold text-foreground">{value}</p>
+          <p data-slot="kpi-card-value" className="text-2xl font-bold text-foreground">
+            {value}
+          </p>
           {delta && (
-            <p className="flex flex-wrap items-baseline gap-x-1">
-              <span className={deltaVariants({ tone: deltaTone })}>{delta}</span>
-              {deltaLabel && <span className="text-caption text-muted-foreground">{deltaLabel}</span>}
+            <p data-slot="kpi-card-delta" className="flex flex-wrap items-center gap-x-1">
+              <span data-slot="kpi-card-delta-value" className={deltaVariants({ tone: deltaTone })}>
+                {delta}
+              </span>
+              {deltaLabel && (
+                <span data-slot="kpi-card-delta-label" className="text-caption text-muted-foreground">
+                  {deltaLabel}
+                </span>
+              )}
             </p>
           )}
         </>

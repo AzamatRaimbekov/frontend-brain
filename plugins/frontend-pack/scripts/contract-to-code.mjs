@@ -6,6 +6,8 @@
 //                                                 order-insensitive; exit 1 on drift
 //   node contract-to-code.mjs --write <name>      regenerate only the blocks between // @contract <name> start/end
 //   node contract-to-code.mjs --new <name>        scaffold components/<name>.tsx from the contract + registry.json item
+//   Contracts with code.kind "block" (hand-written blocks, code.file = blocks/crm/<Name>.tsx) are only checked:
+//   every part has its data-slot element (contract-to-code/block.mjs); --write / --new refuse them.
 //   options: --kit <registry dir> (default registry/mbank), --contracts <dir> (default <kit>/contracts), --json
 // Pure Node 18+, no dependencies.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
@@ -13,6 +15,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { checkSource, writeSource } from './contract-to-code/blocks.mjs';
 import { registryItem, scaffold } from './contract-to-code/scaffold.mjs';
+import { checkBlockParts, isBlock } from './contract-to-code/block.mjs';
 
 export const KIT = join(dirname(fileURLToPath(import.meta.url)), '..', 'registry', 'mbank');
 
@@ -24,7 +27,7 @@ export function loadContracts(dir) {
     .map((f) => JSON.parse(readFileSync(join(dir, f), 'utf8')));
 }
 
-const fileOf = (kit, contract) => join(kit, 'components', contract.code?.file ?? `${contract.name}.tsx`);
+const fileOf = (kit, contract) => (isBlock(contract) ? join(kit, contract.code.file) : join(kit, 'components', contract.code?.file ?? `${contract.name}.tsx`));
 
 // [{ name, file, diffs }] for the given contracts (all when names is empty).
 export function check({ kit = KIT, contracts = join(kit, 'contracts'), names = [] } = {}) {
@@ -36,13 +39,15 @@ export function check({ kit = KIT, contracts = join(kit, 'contracts'), names = [
     .map((c) => {
       const file = fileOf(kit, c);
       if (!existsSync(file)) return { name: c.name, file, diffs: [`${c.code?.file ?? c.name}: kit file missing (contract-to-code --new ${c.name})`] };
-      return { name: c.name, file, diffs: checkSource(c, readFileSync(file, 'utf8')) };
+      const source = readFileSync(file, 'utf8');
+      return { name: c.name, file, diffs: isBlock(c) ? checkBlockParts(c, source) : checkSource(c, source) };
     });
 }
 
 const find = (contracts, name) => {
   const c = loadContracts(contracts).find((x) => x.name === name);
   if (!c) throw new Error(`no contract ${name}.json in ${contracts}`);
+  if (isBlock(c)) throw new Error(`${name} is a block contract: the block is hand-written (${c.code.file}), only --check applies`);
   return c;
 };
 

@@ -746,7 +746,7 @@
     {
       "name": "crm-kpi-card",
       "type": "registry:block",
-      "description": "Figma CRM / KPI card 266x128: label, value, delta with positive/negative tone, loading skeleton",
+      "description": "Figma CRM / KPI card 260x128: label, value, delta with positive/negative tone, loading skeleton",
       "files": [
         {
           "path": "blocks/crm/KpiCard.tsx",
@@ -884,6 +884,24 @@
         "tokens",
         "card",
         "crm-status-dot"
+      ]
+    },
+    {
+      "name": "crm-transfer-row",
+      "type": "registry:block",
+      "description": "Figma CRM / Transfer row: table row of «Все переводы» (ID, date, sender, recipient, country, amount, channel, status badge), right cell dividers",
+      "files": [
+        {
+          "path": "blocks/crm/TransferRow.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "table",
+        "badge"
       ]
     },
     {

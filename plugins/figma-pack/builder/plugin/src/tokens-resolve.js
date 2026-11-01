@@ -1,7 +1,9 @@
 // Contract token name (Mbank tokens.css name) -> Figma variable in this file.
 // Order: Mode/<token> (shadcn kit with the Brand layer) -> baked Mbank map (Foundation file names)
-// -> any variable named <token> or color/<token>. Missing colours are created through brand.js
-// (Mode + Brand, placeholder value, reported); missing radius/spacing stay numbers and are reported.
+// -> any variable named <token> or color/<token> -> the Mbank library variable imported by its baked key
+// (a file that uses Foundation / Web components as a library, e.g. CRM UI KIT, has no local copies).
+// Missing colours are created through brand.js (Mode + Brand, placeholder value, reported); missing
+// radius/spacing stay numbers and are reported.
 import { loadIndex, ensureModeColor, C } from './brand.js';
 import { TOKEN_MAP } from '../../core/token-map.js';
 import { STEP } from '../../core/contract.js';
@@ -18,7 +20,26 @@ export async function tokenIndex() {
     list.push(v);
     byName.set(v.name, list);
   }
-  return { ix, all, byName, colName, cache: new Map(), created: [], missing: [] };
+  return { ix, all, byName, colName, cache: new Map(), created: [], missing: [], imported: [] };
+}
+
+/** Library variable by its Figma name through the baked key (null when unknown or the library is off). */
+async function libraryVar(t, name) {
+  const key = name && TOKEN_MAP.keys && TOKEN_MAP.keys[name];
+  if (!key || !figma.variables.importVariableByKeyAsync) return null;
+  try {
+    const v = await figma.variables.importVariableByKeyAsync(key);
+    if (v && !t.imported.includes(name)) t.imported.push(name);
+    return v || null;
+  } catch (e) {
+    return null; // library not enabled in this file
+  }
+}
+
+function colorName(token, depth = 0) {
+  const m = TOKEN_MAP.colors[token];
+  if (m && m.alias && depth < 4) return colorName(m.alias, depth + 1);
+  return m && m.figma;
 }
 
 function pick(t, name, type, collection) {
@@ -42,18 +63,21 @@ export function findRadius(t, key) {
   return (TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], 'FLOAT')) || pick(t, `radius/${key}`, 'FLOAT') || pick(t, `rounded/${key}`, 'FLOAT');
 }
 
-/** Spacing step (11 = 44 px): Tailwind spacing/<step>, then web spacing/<px>. */
+/** Spacing step (11 = 44 px): Tailwind spacing/<step>, web spacing/<px>, then the Mbank name (spacing/s-1 = 12 px). */
 export function findSpace(t, step) {
   const s = String(step).replace('.', '-');
-  return pick(t, `spacing/${step}`, 'FLOAT') || pick(t, `spacing/${s}`, 'FLOAT') || pick(t, `spacing/${step * STEP}`, 'FLOAT');
+  const mbank = TOKEN_MAP.spacing && TOKEN_MAP.spacing[String(step * STEP)];
+  return pick(t, `spacing/${step}`, 'FLOAT') || pick(t, `spacing/${s}`, 'FLOAT') || pick(t, `spacing/${step * STEP}`, 'FLOAT') || (mbank && pick(t, mbank, 'FLOAT'));
 }
+
+const libraryName = (kind, value) => (kind === 'radius' ? TOKEN_MAP.radius[value] : TOKEN_MAP.spacing && TOKEN_MAP.spacing[String(value * STEP)]);
 
 const report = (t, kind, token) => { if (!t.missing.some((m) => m.kind === kind && m.token === token)) t.missing.push({ kind, token }); };
 
 /** Colour variable for a token; creates it (reported in t.created) when the Brand layer exists. */
 export async function colorVar(t, token, { create = true } = {}) {
   if (t.cache.has(`c:${token}`)) return t.cache.get(`c:${token}`);
-  let v = findColor(t, token);
+  let v = findColor(t, token) || (await libraryVar(t, colorName(token)));
   if (!v && create) {
     const like = token.replace(/-(hover|active|disabled|muted)$/, '');
     v = await ensureModeColor(token, like !== token ? like : null);
@@ -68,10 +92,10 @@ export async function colorVar(t, token, { create = true } = {}) {
   return v || null;
 }
 
-export function floatVar(t, kind, value) {
+export async function floatVar(t, kind, value) {
   const key = `${kind}:${value}`;
   if (t.cache.has(key)) return t.cache.get(key);
-  const v = kind === 'radius' ? findRadius(t, value) : findSpace(t, value);
+  const v = (kind === 'radius' ? findRadius(t, value) : findSpace(t, value)) || (await libraryVar(t, libraryName(kind, value)));
   if (!v && !(kind === 'radius' && (value === 'full' || value === 'none'))) report(t, kind, String(value));
   t.cache.set(key, v || null);
   return v || null;
@@ -86,6 +110,7 @@ export function tokenForVariable(v, collectionName) {
   if (r) return r[1];
   const s = /^spacing\/([\d.-]+)$/.exec(v.name);
   if (s) return Number(s[1].replace('-', '.'));
+  for (const [px, name] of Object.entries(TOKEN_MAP.spacing || {})) if (name === v.name) return Number(px) / STEP;
   return v.name.replace(/^color\//, '').replace(/\//g, '-');
 }
 

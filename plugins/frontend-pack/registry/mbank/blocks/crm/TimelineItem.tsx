@@ -9,20 +9,29 @@ type TimelineItemProps = {
   dateTime?: string
 }
 
-/** Figma `CRM / Timeline item` (40px): 12px dot, title 14 medium, meta caption muted. */
+/**
+ * Figma `CRM / Timeline item` (contract crm-timeline-item): row gap 12; marker pt 4 with a 12px dot
+ * (border/accent/* colour); content gap 4: title body/s medium, meta caption muted.
+ */
 export function TimelineItem({ title, meta, tone = "neutral", dateTime }: TimelineItemProps) {
   return (
     <li data-slot="timeline-item" className="flex gap-3">
-      <StatusDot tone={tone} className="mt-1" />
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="text-sm font-medium text-foreground">{title}</span>
+      <span data-slot="timeline-item-marker" className="flex shrink-0 flex-col pt-1">
+        <StatusDot data-slot="timeline-item-dot" tone={tone} />
+      </span>
+      <div data-slot="timeline-item-content" className="flex min-w-0 flex-col gap-1">
+        <span data-slot="timeline-item-title" className="text-sm font-medium text-foreground">
+          {title}
+        </span>
         {meta &&
           (dateTime ? (
-            <time dateTime={dateTime} className="text-caption text-muted-foreground">
+            <time data-slot="timeline-item-meta" dateTime={dateTime} className="text-caption text-muted-foreground">
               {meta}
             </time>
           ) : (
-            <span className="text-caption text-muted-foreground">{meta}</span>
+            <span data-slot="timeline-item-meta" className="text-caption text-muted-foreground">
+              {meta}
+            </span>
           ))}
       </div>
     </li>

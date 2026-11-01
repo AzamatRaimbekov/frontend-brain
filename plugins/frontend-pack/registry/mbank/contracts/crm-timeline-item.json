@@ -1,0 +1,97 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "crm-timeline-item",
+  "title": "CRM / Timeline item",
+  "figma": {
+    "name": "CRM / Timeline item",
+    "page": "☰ CRM blocks",
+    "source": {
+      "file": "vVuM5uw3TsWo1xm3vJelXG",
+      "name": "[draft] Mbank CRM — тест ИИ",
+      "nodeId": "24:6542",
+      "uses": 8
+    }
+  },
+  "parts": [
+    "root",
+    "marker",
+    "dot",
+    "content",
+    "title",
+    "meta"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 320
+    },
+    "marker": {
+      "kind": "frame",
+      "layer": "Marker"
+    },
+    "dot": {
+      "kind": "frame",
+      "layer": "Dot",
+      "parent": "marker"
+    },
+    "content": {
+      "kind": "frame",
+      "layer": "Content",
+      "fill": true
+    },
+    "title": {
+      "kind": "text",
+      "layer": "Title",
+      "parent": "content",
+      "fill": true,
+      "sample": "Событие"
+    },
+    "meta": {
+      "kind": "text",
+      "layer": "Meta",
+      "parent": "content",
+      "sample": "12.10.2026, 14:32 · Система"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "row",
+      "align": "start",
+      "gap": 3
+    },
+    "marker": {
+      "layout": "column",
+      "px": 0,
+      "pt": 1,
+      "pb": 0
+    },
+    "dot": {
+      "size": 3,
+      "radius": "full",
+      "bg": "border-success"
+    },
+    "content": {
+      "layout": "column",
+      "gap": 1
+    },
+    "title": {
+      "text": "sm",
+      "weight": "medium",
+      "fg": "foreground"
+    },
+    "meta": {
+      "text": "caption",
+      "fg": "muted-foreground",
+      "weight": "regular"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "kind": "block",
+    "file": "blocks/crm/TimelineItem.tsx",
+    "slot": "timeline-item"
+  }
+}

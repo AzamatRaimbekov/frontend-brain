@@ -11,7 +11,7 @@ export const STEP = 4; // contract spacing unit: 11 = 44 px
 
 const KINDS = {
   bg: 'color', fg: 'color', border: 'color', 'focus-ring': 'color',
-  radius: 'radius', height: 'space', 'min-height': 'space', px: 'space', py: 'space', gap: 'space', size: 'space',
+  radius: 'radius', height: 'space', 'min-height': 'space', px: 'space', py: 'space', pt: 'space', pb: 'space', gap: 'space', size: 'space',
   text: 'text', weight: 'weight', 'border-width': 'number', opacity: 'number', shadow: 'shadow', layout: 'layout', align: 'layout',
 };
 export const PROPS = Object.keys(KINDS);
@@ -20,7 +20,43 @@ const TEXT_PART = /^(label|text|title|placeholder|value|description|caption|hint
 const ICON_PART = /icon/;
 
 export const propKind = (prop) => KINDS[prop] || null;
-export const partKind = (part) => (part === 'root' ? 'root' : TEXT_PART.test(part) ? 'text' : ICON_PART.test(part) ? 'icon' : 'frame');
+/** Part kind: anatomy.<part>.kind when the contract sets it, else guessed from the part name. */
+export function partKind(part, c) {
+  if (part === 'root') return 'root';
+  const set = c && c.anatomy && c.anatomy[part] && c.anatomy[part].kind;
+  if (set) return set;
+  return TEXT_PART.test(part) ? 'text' : ICON_PART.test(part) ? 'icon' : 'frame';
+}
+
+// anatomy (optional, Figma structure only, no tokens): { <part>: { parent, kind, layer, sample, width, fill, sides, component } }.
+// layer = Figma layer name (default: the part name); keep the designers' names so Swap instance keeps text overrides.
+export const ANATOMY_KINDS = ['text', 'frame', 'icon', 'instance'];
+const SIDES = ['top', 'right', 'bottom', 'left'];
+/** Parent part of a part ('root' unless anatomy says otherwise). */
+export const parentOf = (c, part) => (part === 'root' ? null : (c.anatomy && c.anatomy[part] && c.anatomy[part].parent) || 'root');
+
+function checkAnatomy(errors, c) {
+  if (c.anatomy === undefined) return;
+  if (!isObj(c.anatomy)) { errors.push('anatomy: объект'); return; }
+  for (const [part, a] of Object.entries(c.anatomy)) {
+    const where = `anatomy.${part}`;
+    if (!c.parts.includes(part)) { errors.push(`${where}: часть не объявлена в parts`); continue; }
+    if (!isObj(a)) { errors.push(`${where}: объект`); continue; }
+    if (a.kind !== undefined && !ANATOMY_KINDS.includes(a.kind)) errors.push(`${where}.kind: ${ANATOMY_KINDS.join(' | ')}`);
+    if (a.parent !== undefined) {
+      const i = c.parts.indexOf(a.parent);
+      if (i < 0) errors.push(`${where}.parent: нет части «${a.parent}»`);
+      else if (i >= c.parts.indexOf(part)) errors.push(`${where}.parent: «${a.parent}» должна стоять в parts раньше`);
+      else if (!['root', 'frame'].includes(partKind(a.parent, c))) errors.push(`${where}.parent: «${a.parent}» не рамка`);
+    }
+    if (a.width !== undefined && !(typeof a.width === 'number' && a.width > 0)) errors.push(`${where}.width: число px`);
+    if (a.fill !== undefined && typeof a.fill !== 'boolean') errors.push(`${where}.fill: true | false`);
+    if (a.sides !== undefined && !(Array.isArray(a.sides) && a.sides.every((s) => SIDES.includes(s)))) errors.push(`${where}.sides: ${SIDES.join(', ')}`);
+    if (a.sample !== undefined && typeof a.sample !== 'string') errors.push(`${where}.sample: строка`);
+    if (a.layer !== undefined && !(typeof a.layer === 'string' && a.layer.trim())) errors.push(`${where}.layer: имя слоя — непустая строка`);
+    if (a.kind === 'instance' && !(isObj(a.component) && typeof a.component.name === 'string')) errors.push(`${where}.component: { name, key }`);
+  }
+}
 
 /** 'bg:hover' -> { prop: 'bg', state: 'hover' }; plain keys are the default state. */
 export function splitKey(key) {
@@ -69,6 +105,7 @@ export function validateContract(c) {
     for (const v of d.values) if (!isObj(c.variants?.[p]?.[v])) errors.push(`variants.${p}.${v}: не описан`);
   }
   for (const s of c.states || []) if (!/^[a-z][a-z0-9-]*$/.test(s)) errors.push(`states: «${s}» — kebab-case латиницей`);
+  checkAnatomy(errors, c);
   if (c.base) checkStyles(errors, 'base', c.base, c);
   for (const [p, byValue] of Object.entries(c.variants || {})) {
     if (!c.props?.[p]) { errors.push(`variants.${p}: нет такого свойства в props`); continue; }
@@ -155,6 +192,8 @@ export function bindingTarget(prop) {
     case 'radius': return { kind: 'float', fields: ['topLeftRadius', 'topRightRadius', 'bottomLeftRadius', 'bottomRightRadius'] };
     case 'px': return { kind: 'float', fields: ['paddingLeft', 'paddingRight'] };
     case 'py': return { kind: 'float', fields: ['paddingTop', 'paddingBottom'] };
+    case 'pt': return { kind: 'float', fields: ['paddingTop'] };
+    case 'pb': return { kind: 'float', fields: ['paddingBottom'] };
     case 'gap': return { kind: 'float', fields: ['itemSpacing'] };
     case 'height': return { kind: 'float', fields: ['height'] };
     case 'min-height': return { kind: 'float', fields: ['minHeight'] };
@@ -177,7 +216,7 @@ export function layoutFor(s = {}) {
     primaryAxisAlignItems: s.align === 'between' ? 'SPACE_BETWEEN' : row && s.align === 'center' ? 'CENTER' : 'MIN',
     counterAxisAlignItems: ALIGN[s.align] || (row ? 'CENTER' : 'MIN'),
     itemSpacing: px(s.gap),
-    paddingLeft: px(s.px), paddingRight: px(s.px), paddingTop: px(s.py), paddingBottom: px(s.py),
+    paddingLeft: px(s.px), paddingRight: px(s.px), paddingTop: px(s.pt ?? s.py), paddingBottom: px(s.pb ?? s.py),
     primaryAxisSizingMode: 'AUTO', counterAxisSizingMode: 'AUTO',
   };
   if (s.size !== undefined) { out.width = px(s.size); out.height = px(s.size); out.primaryAxisSizingMode = 'FIXED'; out.counterAxisSizingMode = 'FIXED'; }

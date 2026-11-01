@@ -2,15 +2,19 @@
 // Bakes the Mbank "CSS token -> Figma variable" map into the plugin (core/token-map.js), so the
 // plugin never reads frontend-pack at runtime (docs/architecture.md, rule 1).
 // Source: frontend-pack registry/mbank/tokens.map.json. Pass its path; plugins do not reach each other.
-// Usage: node scripts/bake-token-map.mjs --from <path to tokens.map.json> [--check]
+// Library keys (variables and text styles) and the web spacing names come from this plugin's own
+// skills/mbank-figma-patterns/references/tokens.json: a file that uses Foundation / Web components as a
+// library (CRM UI KIT) has no local variables, the plugin imports them by key.
+// Usage: node scripts/bake-token-map.mjs --from <path to tokens.map.json> [--tokens <tokens.json>] [--check]
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const OUT = fileURLToPath(new URL('../core/token-map.js', import.meta.url));
+const TOKENS = fileURLToPath(new URL('../../skills/mbank-figma-patterns/references/tokens.json', import.meta.url));
 
 const collectionOf = (desc = '') => String(desc).split(' ')[0];
 
-export function bake(map) {
+export function bake(map, figmaTokens = null) {
   const cols = map.collections || {};
   const colors = {};
   const put = (css, entry) => { const t = css.replace(/^--(color-)?/, ''); if (!colors[t]) colors[t] = entry; };
@@ -30,7 +34,18 @@ export function bake(map) {
   for (const r of map.theme?.radius || []) radius[r.css.replace('--radius-', '')] = r.figma;
   const text = {};
   for (const t of map.theme?.text || []) text[t.css.replace('--text-', '')] = t.style;
-  return { colors, radius, text };
+  if (!figmaTokens) return { colors, radius, text };
+  const spacing = {};
+  for (const v of figmaTokens.webSpacing?.vars || []) spacing[v.values[0]] = v.name;
+  // Keys only for names the map uses: 2.theme colours, radius, spacing; text styles with -md / -strong.
+  const pool = new Map([...(figmaTokens.theme?.vars || []), ...(figmaTokens.brandRadius?.vars || []), ...(figmaTokens.webSpacing?.vars || [])].map((v) => [v.name, v.key]));
+  const wanted = [...Object.values(colors).filter((c) => c.figma && c.collection === '2.theme').map((c) => c.figma), ...Object.values(radius), ...Object.values(spacing)];
+  const keys = {};
+  for (const name of [...new Set(wanted)].sort()) if (pool.has(name)) keys[name] = pool.get(name);
+  const styles = new Map((figmaTokens.textStyles?.web || []).map((s) => [s.name, s.key]));
+  const styleKeys = {};
+  for (const base of Object.values(text)) for (const name of [base, `${base}-md`, `${base}-strong`]) if (styles.has(name)) styleKeys[name] = styles.get(name);
+  return { colors, radius, text, spacing, keys, styleKeys };
 }
 
 export function render(baked) {
@@ -46,7 +61,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const i = process.argv.indexOf('--from');
   const from = i > 0 ? process.argv[i + 1] : process.env.TOKENS_MAP;
   if (!from || !existsSync(from)) { console.error('usage: bake-token-map.mjs --from <registry/mbank/tokens.map.json>'); process.exit(2); }
-  const text = render(bake(JSON.parse(readFileSync(from, 'utf8'))));
+  const j = process.argv.indexOf('--tokens');
+  const tokensFile = j > 0 ? process.argv[j + 1] : TOKENS;
+  const figmaTokens = existsSync(tokensFile) ? JSON.parse(readFileSync(tokensFile, 'utf8')) : null;
+  const text = render(bake(JSON.parse(readFileSync(from, 'utf8')), figmaTokens));
   if (process.argv.includes('--check')) {
     const same = existsSync(OUT) && readFileSync(OUT, 'utf8') === text;
     console.log(same ? 'ok: core/token-map.js is up to date' : 'differs: run without --check');

@@ -1,0 +1,100 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "crm-kpi-card",
+  "title": "CRM / KPI card",
+  "figma": {
+    "name": "CRM / KPI card",
+    "page": "☰ CRM blocks",
+    "source": {
+      "file": "vVuM5uw3TsWo1xm3vJelXG",
+      "name": "[draft] Mbank CRM — тест ИИ",
+      "nodeId": "21:1819",
+      "uses": 8
+    }
+  },
+  "parts": [
+    "root",
+    "label",
+    "value",
+    "delta",
+    "delta-value",
+    "delta-label"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 260
+    },
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "sample": "Переводов сегодня"
+    },
+    "value": {
+      "kind": "text",
+      "layer": "Value",
+      "sample": "12 480"
+    },
+    "delta": {
+      "kind": "frame",
+      "layer": "Delta"
+    },
+    "delta-value": {
+      "kind": "text",
+      "layer": "Delta value",
+      "parent": "delta",
+      "sample": "+8,2%"
+    },
+    "delta-label": {
+      "kind": "text",
+      "layer": "Delta label",
+      "parent": "delta",
+      "sample": "к вчера"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "column",
+      "gap": 2,
+      "px": 5,
+      "py": 5,
+      "radius": "lg",
+      "bg": "card",
+      "fg": "foreground"
+    },
+    "label": {
+      "text": "sm",
+      "fg": "muted-foreground",
+      "weight": "regular"
+    },
+    "value": {
+      "text": "2xl",
+      "weight": "bold",
+      "fg": "foreground"
+    },
+    "delta": {
+      "layout": "row",
+      "align": "center",
+      "gap": 1
+    },
+    "delta-value": {
+      "text": "sm",
+      "weight": "medium",
+      "fg": "success-text"
+    },
+    "delta-label": {
+      "text": "caption",
+      "fg": "muted-foreground",
+      "weight": "regular"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "kind": "block",
+    "file": "blocks/crm/KpiCard.tsx",
+    "slot": "kpi-card"
+  }
+}

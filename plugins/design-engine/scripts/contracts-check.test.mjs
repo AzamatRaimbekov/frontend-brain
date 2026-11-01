@@ -60,3 +60,17 @@ test('a contract without figma is valid with a warning; the CLI exits 1 on error
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('block contracts (code.kind block): tokens, slot and anatomy checked, no cva render; keyless figma needs a planned entry', () => {
+  const kpi = JSON.parse(readFileSync(join(DEFAULTS.dir, 'crm-kpi-card.json'), 'utf8'));
+  const check = (c, file = 'crm-kpi-card.json') => checkContract(c, { ...ctx, file }).errors.join('\n');
+  assert.equal(check(kpi), '');
+  const bad = JSON.parse(JSON.stringify(kpi));
+  bad.base.label.fg = 'grey-500';
+  delete bad.code.slot;
+  bad.anatomy['delta-label'].parent = 'nowhere';
+  bad.figma.name = 'CRM / KPI';
+  const text = check(bad);
+  for (const re of [/base\.label\.fg = "grey-500": no such colour token/, /code\.slot .* is required/, /anatomy\.delta-label\.parent: no part "nowhere"/, /figma\.name "CRM \/ KPI" != components-map/]) assert.match(text, re);
+  assert.match(check({ ...kpi, name: 'crm-orphan' }, 'crm-orphan.json'), /no key and no components-map entry with contract "crm-orphan"/);
+});

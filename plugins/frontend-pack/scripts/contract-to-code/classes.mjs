@@ -9,7 +9,7 @@ export const STATE_MODIFIERS = { hover: 'hover', active: 'active', focus: 'focus
 export const STATE_ORDER = ['default', 'hover', 'active', 'focus', 'disabled', 'invalid', 'selected', 'checked', 'unchecked', 'indeterminate'];
 
 const NUM = /^\d+(\.\d+)?$/;
-const SPACING = { height: 'h', 'min-height': 'min-h', size: 'size', px: 'px', py: 'py', gap: 'gap' };
+const SPACING = { height: 'h', 'min-height': 'min-h', size: 'size', px: 'px', py: 'py', pt: 'pt', pb: 'pb', gap: 'gap' };
 const SPACING_BY_PREFIX = Object.fromEntries(Object.entries(SPACING).map(([k, v]) => [v, k]));
 const WEIGHTS = { regular: 'normal', medium: 'medium', semibold: 'semibold', bold: 'bold' };
 const ALIGN = ['start', 'center', 'end', 'between'];
@@ -102,7 +102,7 @@ export function parseUtility(util, tokens) {
   if (m && tokens.shadow.has(m[1])) return { prop: 'shadow', value: m[1] };
   m = util.match(/^opacity-(\d+)$/);
   if (m) return { prop: 'opacity', value: Number(m[1]) };
-  m = util.match(/^(min-h|size|gap|h|px|py)-(.+)$/);
+  m = util.match(/^(min-h|size|gap|h|px|py|pt|pb)-(.+)$/);
   if (m && NUM.test(m[2])) return { prop: SPACING_BY_PREFIX[m[1]], value: Number(m[2]) };
   return null;
 }

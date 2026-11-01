@@ -1359,7 +1359,7 @@
       "name": "crm-kpi-card",
       "type": "registry:component",
       "title": "crm-kpi-card",
-      "description": "Figma CRM / KPI card 266x128: label, value, delta with positive/negative tone, loading skeleton",
+      "description": "Figma CRM / KPI card 260x128: label, value, delta with positive/negative tone, loading skeleton",
       "dependencies": [
         "class-variance-authority"
       ],
@@ -1494,6 +1494,24 @@
         },
         {
           "path": "registry/mbank/blocks/crm/TimelineItem.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "crm-transfer-row",
+      "type": "registry:component",
+      "title": "crm-transfer-row",
+      "description": "Figma CRM / Transfer row: table row of «Все переводы» (ID, date, sender, recipient, country, amount, channel, status badge), right cell dividers",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/table",
+        "@mbank/badge"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/TransferRow.tsx",
           "type": "registry:component"
         }
       ]

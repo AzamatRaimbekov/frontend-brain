@@ -2,6 +2,8 @@
 // Validates component contracts (mbank/component@1, figma-pack builder/docs/component-contract.md):
 // schema, every token exists in frontend-pack tokens.css, props.values <-> variants, states have a code modifier,
 // the contract renders to code, and figma {name, key} exists in references/components-map.json.
+// code.kind "block" (hand-written blocks such as CRM / KPI card): tokens, parts and anatomy are checked, the
+// cva render is skipped; a figma component without a key yet needs a "planned" map entry naming the contract.
 // Usage: node contracts-check.mjs [--dir <contracts dir>] [--json]   (default: figma-pack builder/contracts; exit 1 on errors)
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,6 +16,7 @@ if (!FRONTEND || !FIGMA) throw new Error('contracts-check needs figma-pack and f
 const lib = (file) => import(pathToFileURL(join(FRONTEND, 'scripts', 'contract-to-code', file)).href);
 const { PROPERTIES, STATE_MODIFIERS, readTokens, validValue } = await lib('classes.mjs');
 const { contractBlocks } = await lib('blocks.mjs');
+const { isBlock } = await lib('block.mjs');
 
 export const DEFAULTS = {
   dir: join(FIGMA, 'builder', 'contracts'),
@@ -42,6 +45,15 @@ export function checkContract(c, { tokens, map, file = `${c?.name}.json` }) {
   if (!Array.isArray(c.states) || !c.states.includes('default')) err('states must include "default"');
   if (!isObj(c.code) || typeof c.code.file !== 'string') err('code.file is required');
   if (errors.length) return { errors, warnings };
+  if (isBlock(c)) {
+    if (!/^blocks\/.+\.tsx$/.test(c.code.file)) err('code.file of a block contract is blocks/<dir>/<Name>.tsx');
+    if (typeof c.code.slot !== 'string' || !NAME.test(c.code.slot)) err('code.slot (kebab-case data-slot of the root) is required for a block contract');
+    for (const p of c.code.inline ?? []) if (!c.parts.includes(p)) err(`code.inline: part "${p}" is not in parts`);
+  }
+  for (const [part, a] of Object.entries(c.anatomy ?? {})) {
+    if (!c.parts.includes(part)) err(`anatomy: part "${part}" is not in parts`);
+    else if (a?.parent !== undefined && !c.parts.includes(a.parent)) err(`anatomy.${part}.parent: no part "${a.parent}"`);
+  }
 
   const modifiers = { ...STATE_MODIFIERS, ...(c.code.modifiers ?? {}) };
   for (const s of c.states) if (s !== 'default' && !modifiers[s]) err(`state "${s}" has no code modifier (code.modifiers)`);
@@ -85,14 +97,19 @@ export function checkContract(c, { tokens, map, file = `${c?.name}.json` }) {
     scope(`compound[${i}]`, rest);
   });
 
-  if (!errors.length) {
+  if (!errors.length && !isBlock(c)) {
     try {
       contractBlocks(c);
     } catch (error) {
       err(`does not render to code: ${error.message}`);
     }
   }
-  if (c.figma) {
+  if (c.figma && !c.figma.key) {
+    // Not in the library yet (built by DS Builder, then published): tracked by a planned map entry.
+    const entry = map.components.find((e) => e.contract === c.name);
+    if (!entry) err(`figma "${c.figma.name}" has no key and no components-map entry with contract "${c.name}"`);
+    else if (entry.figma !== c.figma.name) err(`figma.name "${c.figma.name}" != components-map "${entry.figma}"`);
+  } else if (c.figma) {
     const entry = map.components.find((e) => e.key && e.key === c.figma.key);
     if (!entry) err(`figma.key ${c.figma.key} is not in components-map.json`);
     else if (entry.figma !== c.figma.name) err(`figma.name "${c.figma.name}" != components-map "${entry.figma}"`);

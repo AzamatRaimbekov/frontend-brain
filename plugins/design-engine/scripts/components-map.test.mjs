@@ -205,3 +205,15 @@ test('the real map is valid and catalog.json is in sync with it', () => {
   assert.deepEqual(errors, []);
   assert.equal(writeCatalog(text, map), text, 'run: node plugins/figma-pack/scripts/components-map.mjs write-catalog');
 });
+
+test('planned: a contract-built component not in the library yet; once published it must become mapped', () => {
+  const planned = { figma: 'CRM / Dot row', kit: 'crm', status: 'planned', contract: 'crm-dot-row', import: '@mdigital/mbank-ui/crm', registry: 'dot', component: 'Dot', proposal: 'build with DS Builder' };
+  const idx = indexCode(code, MAP.packages);
+  assert.deepEqual(check({ ...MAP, components: [...MAP.components, planned] }, catalog(), idx), []);
+  const bad = check({ ...MAP, components: [...MAP.components, { ...planned, contract: undefined, component: 'Nope', key: 'k-x' }] }, catalog(), idx);
+  for (const re of [/planned entry has no key/, /planned needs "contract"/, /does not export Nope/]) assert.ok(bad.some((e) => re.test(e)), bad.join('\n'));
+  const published = catalog();
+  published.components.push({ ...COMPONENTS[1], name: 'CRM / Dot row', key: 'k-dot-row', nodeId: '7:8', variantProps: {} });
+  const now = check({ ...MAP, components: [...MAP.components, planned] }, published, idx);
+  assert.ok(now.some((e) => /now in the library \(k-dot-row\): set key, nodeId and status mapped/.test(e)), now.join('\n'));
+});
