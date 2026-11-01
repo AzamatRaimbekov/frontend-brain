@@ -54,7 +54,7 @@ function saveImages(result) {
   if (!result || !Array.isArray(result.images)) return result;
   mkdirSync(OUT, { recursive: true });
   const images = result.images.map((img) => {
-    const path = join(OUT, `${String(img.name || 'node').replace(/[^\w.-]+/g, '_').slice(0, 60)}-${Date.now()}.png`);
+    const path = join(OUT, `${String(img.id || '').replace(/[^\w]+/g, '-')}-${String(img.name || 'node').replace(/[^\w.-]+/g, '_').slice(0, 60)}-${Date.now()}.png`); // id keeps Cyrillic-named nodes apart
     writeFileSync(path, Buffer.from(img.base64, 'base64'));
     return { name: img.name, id: img.id, width: img.width, height: img.height, path };
   });
