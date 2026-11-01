@@ -1,23 +1,24 @@
 // Structural blocks: page header, toolbars, forms, navigation and states.
-import { box, text, add, rect, skel } from './draw.js';
+import { box, text, add, rect, skel, link } from './draw.js';
 import { button, badge, input, checkbox } from './kit.js';
 import { card } from './blocks-data.js';
+import { actionLabel as clean, isPrimaryAction as isPrimary } from '../../core/links.js';
 
-const isPrimary = (label) => String(label).trim().startsWith('+');
-const clean = (label) => String(label).replace(/^\+\s*/, '');
+// An action button tagged for the prototype: "+ Новая заявка → app-new" -> action:Новая заявка.
+const actionButton = async (ctx, a, variant, sz) => link(await button(ctx, clean(a), variant, sz), `action:${clean(a)}`);
 
 export async function header(ctx, b) {
   const mobile = ctx.vp === 'mobile';
   const h = box(ctx, 'Page header', { dir: mobile ? 'V' : 'H', gap: 16, align: mobile ? 'MIN' : 'CENTER', justify: 'SPACE_BETWEEN', w: 'fill' });
   const left = box(ctx, 'Title', { gap: 6, w: mobile ? 'fill' : 'hug' });
-  if (b.breadcrumbs) add(left, await text(ctx, b.breadcrumbs.join('  /  '), { size: 'sm', color: 'muted-foreground' }));
+  if (b.breadcrumbs) add(left, link(await text(ctx, b.breadcrumbs.join('  /  '), { size: 'sm', color: 'muted-foreground' }), 'back'));
   const titleRow = box(ctx, 'Title row', { dir: 'H', gap: 12, align: 'CENTER' });
   add(titleRow, await text(ctx, b.title, { size: mobile ? 'xl' : '2xl', weight: 'bold' }), b.badge && (await badge(ctx, b.badge, 'secondary')));
   add(left, titleRow, b.subtitle && (await text(ctx, b.subtitle, { size: 'sm', color: 'muted-foreground' })));
   add(h, left);
   if (b.actions?.length) {
     const acts = box(ctx, 'Actions', { dir: 'H', gap: 8, align: 'CENTER', wrap: mobile });
-    for (const a of b.actions) add(acts, await button(ctx, clean(a), isPrimary(a) ? 'default' : 'outline'));
+    for (const a of b.actions) add(acts, await actionButton(ctx, a, isPrimary(a) ? 'default' : 'outline'));
     add(h, acts);
   }
   return h;
@@ -33,7 +34,7 @@ export async function toolbar(ctx, b) {
   add(t, filters);
   if (b.actions?.length && !mobile) {
     add(t, box(ctx, 'Spacer', { w: 'fill' }));
-    for (const a of b.actions) add(t, await button(ctx, clean(a), isPrimary(a) ? 'default' : 'outline', 'sm'));
+    for (const a of b.actions) add(t, await actionButton(ctx, a, isPrimary(a) ? 'default' : 'outline', 'sm'));
   }
   return t;
 }
@@ -85,7 +86,7 @@ export async function form(ctx, b) {
   for (const [i, f] of b.fields.entries()) add(grid, await field(ctx, f, w, ctx.state === 'error' && i === 0));
   add(c, grid);
   const acts = box(ctx, 'Form actions', { dir: 'H', gap: 8, justify: 'MAX', w: 'fill' });
-  add(acts, await button(ctx, b.cancel || 'Отмена', 'outline'), await button(ctx, b.submit || 'Сохранить', 'default'));
+  add(acts, link(await button(ctx, b.cancel || 'Отмена', 'outline'), 'cancel'), link(await button(ctx, b.submit || 'Сохранить', 'default'), 'submit'));
   return add(c, acts);
 }
 
@@ -112,7 +113,7 @@ export async function alert(ctx, b) {
   add(a, rect(ctx, 'Mark', 4, 36, accent, 'full'));
   const t = box(ctx, 'Text', { gap: 2, w: 'fill' });
   add(t, b.title && (await text(ctx, b.title, { size: 'sm', weight: 'semibold', color: tc })), await text(ctx, b.text, { size: 'sm', color: 'muted-foreground', w: 'fill' }));
-  return add(a, t, b.action && (await button(ctx, b.action, 'outline', 'sm')));
+  return add(a, t, b.action && (await actionButton(ctx, b.action, 'outline', 'sm')));
 }
 
 export async function empty(ctx, b) {
@@ -122,7 +123,7 @@ export async function empty(ctx, b) {
   add(icon, await text(ctx, b.icon || '∅', { size: 'lg', color: 'muted-foreground' }));
   add(c, icon, await text(ctx, b.title || 'Пока ничего нет', { size: 'base', weight: 'semibold', align: 'CENTER' }),
     await text(ctx, b.text || 'Здесь появятся записи, когда они будут созданы.', { size: 'sm', color: 'muted-foreground', align: 'CENTER' }),
-    b.action && (await button(ctx, clean(b.action), 'default')));
+    b.action && (await actionButton(ctx, b.action, 'default')));
   return c;
 }
 
@@ -138,7 +139,7 @@ export async function login(ctx, b) {
     const fw = box(ctx, `Field / ${label}`, { gap: 6, w: 'fill' });
     add(c, add(fw, await text(ctx, label, { size: 'sm', weight: 'medium' }), await input(ctx, type === 'password' ? '••••••••' : 'name@company.kg', { error: err })));
   }
-  const btn = await button(ctx, b.submit || 'Войти', 'default');
+  const btn = link(await button(ctx, b.submit || 'Войти', 'default'), 'submit');
   add(c, btn);
   if ('layoutSizingHorizontal' in btn) btn.layoutSizingHorizontal = 'FILL';
   if (b.footer !== false) add(c, await text(ctx, b.footer || 'Забыли пароль?', { size: 'sm', color: 'muted-foreground', align: 'CENTER', w: 'fill' }));

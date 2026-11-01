@@ -145,3 +145,10 @@ export function skel(ctx, w, h = 12, radius = 'sm') {
   if (w === 'fill') SIZING.set(r, { w: 'fill' });
   return r;
 }
+
+// Marks a clickable node with its link key (core/links.js); prototype.js wires the click.
+export const LINK_KEY = 'mbank-link';
+export function link(node, key) {
+  if (node && key) node.setPluginData(LINK_KEY, key);
+  return node;
+}

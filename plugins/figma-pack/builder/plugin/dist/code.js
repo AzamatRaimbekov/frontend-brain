@@ -269,9 +269,9 @@
     const report2 = { linked: 0, created: 0, renamed: 0, scoped: 0, extensions: [] };
     for (const [name, mv] of [...ix.named[C.mode]]) {
       if (mv.resolvedType !== "COLOR") continue;
-      const clean2 = opts.fixNames ? fixLegacyName(name) : name;
-      if (clean2 !== name) {
-        mv.name = clean2;
+      const clean = opts.fixNames ? fixLegacyName(name) : name;
+      if (clean !== name) {
+        mv.name = clean;
         report2.renamed++;
       }
       for (const theme of THEMES) {
@@ -281,7 +281,7 @@
         if (target && target.variableCollectionId === brand.id) continue;
         if (target && target.variableCollectionId === mode.id) continue;
         const fromStyle = target && target.variableCollectionId === ix.col[C.style].id && target.name.startsWith(`color/${theme}/`);
-        const bName = fromStyle ? target.name : `color/${theme}/${clean2}`;
+        const bName = fromStyle ? target.name : `color/${theme}/${clean}`;
         const isNew = !ix.named[C.brand].has(bName);
         const bv = await ensureBrandVar(ix, bName);
         if (isNew) {
@@ -291,9 +291,9 @@
         mv.setValueForMode(mId, alias(bv));
         report2.linked++;
       }
-      mv.setVariableCodeSyntax("WEB", `var(${cssVar(clean2)})`);
+      mv.setVariableCodeSyntax("WEB", `var(${cssVar(clean)})`);
       if (opts.fixScopes) {
-        mv.scopes = scopesFor(clean2);
+        mv.scopes = scopesFor(clean);
         report2.scoped++;
       }
     }
@@ -647,6 +647,11 @@
     if (w === "fill") SIZING.set(r, { w: "fill" });
     return r;
   }
+  var LINK_KEY = "mbank-link";
+  function link(node, key) {
+    if (node && key) node.setPluginData(LINK_KEY, key);
+    return node;
+  }
 
   // plugin/src/kit.js
   var ROLES = {
@@ -951,6 +956,10 @@
   function normalizeSpec(spec) {
     var _a;
     const platform = spec.platform || "web";
+    const section = (s) => {
+      var _a2;
+      return (_a2 = (spec.nav || []).find((n) => n.id === s.nav)) == null ? void 0 : _a2.label;
+    };
     return __spreadProps(__spreadValues({}, spec), {
       platform,
       viewports: ((_a = spec.viewports) == null ? void 0 : _a.length) ? spec.viewports : [platform === "mobile" ? "mobile" : "desktop"],
@@ -960,7 +969,7 @@
         var _a2, _b, _c, _d;
         return __spreadProps(__spreadValues({
           shell: s.shell || (platform === "mobile" ? "mobile" : ((_a2 = spec.nav) == null ? void 0 : _a2.length) ? "sidebar" : "plain"),
-          page: s.page || s.title,
+          page: s.page || section(s) || s.title,
           states: ((_b = s.states) == null ? void 0 : _b.length) ? s.states : ["default"]
         }, s), {
           viewports: ((_c = s.viewports) == null ? void 0 : _c.length) ? s.viewports : ((_d = spec.viewports) == null ? void 0 : _d.length) ? spec.viewports : [platform === "mobile" ? "mobile" : "desktop"]
@@ -1038,7 +1047,7 @@
     const it = box(ctx, `Nav / ${item.label}`, { dir: "H", gap: 10, pad: compact ? [10, 10] : [8, 12], radius: "md", align: "CENTER", fill: active ? "sidebar-accent" : null, w: compact ? "hug" : "fill", justify: compact ? "CENTER" : "MIN" });
     add(it, icon(ctx, item.icon || guessIcon(item.label), active ? "sidebar-accent-foreground" : "sidebar-foreground", 16));
     if (!compact) add(it, await text(ctx, item.label, { size: "sm", weight: active ? "medium" : "regular", color: active ? "sidebar-accent-foreground" : "sidebar-foreground", w: "fill" }));
-    return it;
+    return link(it, `nav:${item.id}`);
   }
   async function logo(ctx, spec, compact) {
     const l = box(ctx, "Logo", { dir: "H", gap: 10, align: "CENTER", pad: [4, compact ? 0 : 8], w: compact ? "hug" : "fill" });
@@ -1070,14 +1079,14 @@
   }
   async function mobileBar(ctx, screen) {
     const bar = box(ctx, "App bar", { dir: "H", gap: 12, pad: [12, 16], align: "CENTER", fill: "background", w: "fill", h: 56 });
-    if (screen.back) add(bar, icon(ctx, "back", "foreground", 22));
+    if (screen.back) add(bar, link(icon(ctx, "back", "foreground", 22), "back"));
     return add(bar, await text(ctx, screen.title, { size: "lg", weight: "semibold", w: "fill", truncate: true }), icon(ctx, "bell", "foreground", 20));
   }
   async function tabbar(ctx, spec, screen) {
     const bar = box(ctx, "Tab bar", { dir: "H", pad: [8, 8, 24, 8], fill: "background", stroke: "border", w: "fill", justify: "SPACE_BETWEEN" });
     for (const item of spec.nav.slice(0, 5)) {
       const on = item.id === screen.nav;
-      const it = box(ctx, `Tab / ${item.label}`, { gap: 4, align: "CENTER", pad: [4, 6], w: "fill" });
+      const it = link(box(ctx, `Tab / ${item.label}`, { gap: 4, align: "CENTER", pad: [4, 6], w: "fill" }), `nav:${item.id}`);
       add(bar, add(it, icon(ctx, item.icon || guessIcon(item.label), on ? "primary" : "muted-foreground", 22), await text(ctx, item.label, { size: "xs", weight: on ? "medium" : "regular", color: on ? "primary" : "muted-foreground", align: "CENTER" })));
     }
     return bar;
@@ -1175,7 +1184,7 @@
   async function mobileRows(ctx, b, columns, rows) {
     const list2 = card(ctx, "List", { gap: 0, pad: 0 });
     for (const r of rows) {
-      const item = box(ctx, "Row", { dir: "H", gap: 12, pad: 16, w: "fill", align: "CENTER", stroke: "border" });
+      const item = link(box(ctx, "Row", { dir: "H", gap: 12, pad: 16, w: "fill", align: "CENTER", stroke: "border" }), b.link && `row:${b.link}`);
       const main = box(ctx, "Main", { gap: 4, w: "fill" });
       const pi = columns.findIndex((c) => c.type === "person" || c.type === "company");
       const si = columns.findIndex((c) => c.type === "status");
@@ -1216,7 +1225,7 @@
     }
     add(t, hr);
     for (const [ri, r] of rows.entries()) {
-      const row = box(ctx, `Row ${ri + 1}`, { dir: "H", w: "fill", align: "CENTER" });
+      const row = link(box(ctx, `Row ${ri + 1}`, { dir: "H", w: "fill", align: "CENTER" }), b.link && `row:${b.link}`);
       add(t, sizing(rect(ctx, "Divider", avail + sel, 1, "border"), "fill"));
       if (sel) add(row, add(box(ctx, "Select", { pad: [0, 14], align: "CENTER", justify: "CENTER", h: 52 }), await checkbox(ctx, ri === 1)));
       for (let i = 0; i < columns.length; i++) add(row, await cell(ctx, columns[i].type, r[i], widths[i]));
@@ -1238,7 +1247,7 @@
       add(c, head);
       const shown = Math.min(n, ctx.state === "loading" ? 2 : 3);
       for (let i = 0; i < shown; i++) {
-        const k = card(ctx, "Card", { gap: 8, pad: 12 });
+        const k = link(card(ctx, "Card", { gap: 8, pad: 12 }), b.link && `row:${b.link}`);
         if (ctx.state === "loading") add(k, skel(ctx, 80, 10), skel(ctx, "fill", 12), skel(ctx, 60, 10));
         else {
           const [id, who, sum] = fakeRows(["id", "person", "money"], 1, 31 + ci * 5 + i + ctx.seed)[0];
@@ -1272,7 +1281,7 @@
     const items = b.items || fakeRows(["person", "text", "status"], b.rows || 5, 21 + ctx.seed, b.statuses);
     for (const it of items) {
       const [who, what, st] = Array.isArray(it) ? it : [it.title, it.subtitle, it.status];
-      const row = box(ctx, "Item", { dir: "H", gap: 12, pad: [12, 24], align: "CENTER", w: "fill" });
+      const row = link(box(ctx, "Item", { dir: "H", gap: 12, pad: [12, 24], align: "CENTER", w: "fill" }), b.link && `row:${b.link}`);
       if (ctx.state === "loading") {
         add(row, skel(ctx, 32, 32, "full"), add(box(ctx, "Lines", { gap: 6, w: "fill" }), skel(ctx, 140, 12), skel(ctx, 90, 10)));
         add(c, row);
@@ -1304,7 +1313,7 @@
     const per = cols(ctx, b.columns || 3);
     const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
     for (const it of b.items) {
-      const c = card(ctx, `Card / ${it.title}`, { gap: 8, pad: 20, w });
+      const c = link(card(ctx, `Card / ${it.title}`, { gap: 8, pad: 20, w }), (it.link || b.link) && `row:${it.link || b.link}`);
       if (ctx.state === "loading") add(c, skel(ctx, 120, 14), skel(ctx, "fill", 10), skel(ctx, 160, 10));
       else add(c, await text(ctx, it.title, { size: "base", weight: "semibold" }), it.text && await text(ctx, it.text, { size: "sm", color: "muted-foreground", w: "fill" }), it.badge && await badge(ctx, it.badge, statusVariant(it.badge)));
       add(grid, c);
@@ -1341,21 +1350,134 @@
     tabs: () => tabs,
     toolbar: () => toolbar
   });
-  var isPrimary = (label) => String(label).trim().startsWith("+");
-  var clean = (label) => String(label).replace(/^\+\s*/, "");
+
+  // core/links.js
+  var ARROW = /\s*(?:→|->)\s*([\w-]+)\s*$/;
+  function parseAction(a) {
+    var _a;
+    if (a && typeof a === "object") return { label: String((_a = a.label) != null ? _a : ""), to: a.to || null };
+    const s = String(a != null ? a : "");
+    const m = s.match(ARROW);
+    return m ? { label: s.slice(0, m.index), to: m[1] } : { label: s, to: null };
+  }
+  var actionLabel = (a) => parseAction(a).label.replace(/^\+\s*/, "").trim();
+  var isPrimaryAction = (a) => parseAction(a).label.trim().startsWith("+");
+  var LISTS = ["table", "list", "kanban", "cards"];
+  var KINDS = ["nav", "action", "row", "back", "submit", "cancel", "text"];
+  function walkBlocks(blocks, fn) {
+    for (const b of blocks || []) {
+      if (!b || typeof b !== "object") continue;
+      fn(b);
+      if (b.type === "split") for (const col of b.columns || []) walkBlocks(col, fn);
+    }
+  }
+  function linkKey(on) {
+    const s = String(on != null ? on : "").trim();
+    const kind = s.split(":")[0];
+    if (KINDS.includes(s) || s.includes(":") && KINDS.includes(kind)) return s;
+    return `text:${s.replace(/^\+\s*/, "")}`;
+  }
+  function linkTargets(spec) {
+    const out = [];
+    const act = (a, path) => {
+      const { to } = parseAction(a);
+      if (to) out.push({ path, to });
+    };
+    (spec.screens || []).forEach((s, i) => {
+      var _a;
+      const p = `screens[${i}]`;
+      if (s.parent) out.push({ path: `${p}.parent`, to: s.parent });
+      if ((_a = s.empty) == null ? void 0 : _a.action) act(s.empty.action, `${p}.empty.action`);
+      walkBlocks(s.blocks, (b) => {
+        const bp = `${p}.${b.type}`;
+        if (b.link) out.push({ path: `${bp}.link`, to: b.link });
+        if (b.to) out.push({ path: `${bp}.to`, to: b.to });
+        if (b.cancelTo) out.push({ path: `${bp}.cancelTo`, to: b.cancelTo });
+        for (const it of b.type === "cards" ? b.items || [] : []) if (it == null ? void 0 : it.link) out.push({ path: `${bp}.items.link`, to: it.link });
+        for (const a of b.actions || []) act(a, `${bp}.actions`);
+        if (b.action) act(b.action, `${bp}.action`);
+      });
+    });
+    (spec.links || []).forEach((l, i) => {
+      out.push({ path: `links[${i}].from`, to: l == null ? void 0 : l.from });
+      out.push({ path: `links[${i}].to`, to: l == null ? void 0 : l.to });
+    });
+    return out;
+  }
+  function validateLinks(spec) {
+    const errors = [];
+    if (!spec || !Array.isArray(spec.screens)) return errors;
+    if (spec.links != null && !Array.isArray(spec.links)) return ["links: array of { from, on, to }"];
+    const ids = new Set(spec.screens.map((s) => s == null ? void 0 : s.id));
+    (spec.links || []).forEach((l, i) => {
+      if (!(l == null ? void 0 : l.on)) errors.push(`links[${i}].on: required (text on the screen or a key like "action:\u042D\u043A\u0441\u043F\u043E\u0440\u0442")`);
+    });
+    for (const t of linkTargets(spec)) if (!ids.has(t.to)) errors.push(`${t.path}: unknown screen "${t.to}"`);
+    return errors;
+  }
+  function resolveLinks(spec) {
+    var _a, _b, _c;
+    const screens = spec.screens;
+    const first = {};
+    for (const s of screens) if (s.nav && !first[s.nav]) first[s.nav] = s.id;
+    const parentOf2 = (s) => s.parent || (s.nav && first[s.nav] !== s.id ? first[s.nav] : null);
+    const hasForm = (s) => {
+      let f = false;
+      walkBlocks(s.blocks, (b) => {
+        if (b.type === "form") f = true;
+      });
+      return f;
+    };
+    const formIn = (s) => {
+      const c = screens.filter((x) => x.id !== s.id && x.nav && x.nav === s.nav && hasForm(x));
+      return c.length === 1 ? c[0].id : null;
+    };
+    const home = first[(_a = spec.nav[0]) == null ? void 0 : _a.id] || ((_b = screens.find((s) => s.shell !== "plain")) == null ? void 0 : _b.id) || null;
+    const map = /* @__PURE__ */ new Map();
+    for (const s of screens) {
+      const put = (on, to) => {
+        if (to && to !== s.id && !map.has(`${s.id}|${on}`)) map.set(`${s.id}|${on}`, { from: s.id, on, to, auto: true });
+      };
+      const action = (a) => {
+        const { to } = parseAction(a);
+        put(`action:${actionLabel(a)}`, to || (isPrimaryAction(a) ? formIn(s) : null));
+      };
+      if (s.shell !== "plain") for (const n of spec.nav) put(`nav:${n.id}`, first[n.id]);
+      put("back", parentOf2(s));
+      if ((_c = s.empty) == null ? void 0 : _c.action) action(s.empty.action);
+      walkBlocks(s.blocks, (b) => {
+        if (LISTS.includes(b.type) && b.link) put(`row:${b.link}`, b.link);
+        if (b.type === "cards") {
+          for (const it of b.items || []) if (it == null ? void 0 : it.link) put(`row:${it.link}`, it.link);
+        }
+        for (const a of b.actions || []) action(a);
+        if (b.action && ["empty", "alert"].includes(b.type)) action(b.action);
+        if (b.type === "form") {
+          put("submit", b.to || parentOf2(s));
+          put("cancel", b.cancelTo || b.to || parentOf2(s));
+        }
+        if (b.type === "login") put("submit", b.to || home);
+      });
+    }
+    for (const l of spec.links || []) map.set(`${l.from}|${linkKey(l.on)}`, { from: l.from, on: linkKey(l.on), to: l.to, auto: false });
+    return [...map.values()];
+  }
+
+  // plugin/src/blocks-ui.js
+  var actionButton = async (ctx, a, variant, sz) => link(await button(ctx, actionLabel(a), variant, sz), `action:${actionLabel(a)}`);
   async function header(ctx, b) {
     var _a;
     const mobile = ctx.vp === "mobile";
     const h = box(ctx, "Page header", { dir: mobile ? "V" : "H", gap: 16, align: mobile ? "MIN" : "CENTER", justify: "SPACE_BETWEEN", w: "fill" });
     const left = box(ctx, "Title", { gap: 6, w: mobile ? "fill" : "hug" });
-    if (b.breadcrumbs) add(left, await text(ctx, b.breadcrumbs.join("  /  "), { size: "sm", color: "muted-foreground" }));
+    if (b.breadcrumbs) add(left, link(await text(ctx, b.breadcrumbs.join("  /  "), { size: "sm", color: "muted-foreground" }), "back"));
     const titleRow = box(ctx, "Title row", { dir: "H", gap: 12, align: "CENTER" });
     add(titleRow, await text(ctx, b.title, { size: mobile ? "xl" : "2xl", weight: "bold" }), b.badge && await badge(ctx, b.badge, "secondary"));
     add(left, titleRow, b.subtitle && await text(ctx, b.subtitle, { size: "sm", color: "muted-foreground" }));
     add(h, left);
     if ((_a = b.actions) == null ? void 0 : _a.length) {
       const acts = box(ctx, "Actions", { dir: "H", gap: 8, align: "CENTER", wrap: mobile });
-      for (const a of b.actions) add(acts, await button(ctx, clean(a), isPrimary(a) ? "default" : "outline"));
+      for (const a of b.actions) add(acts, await actionButton(ctx, a, isPrimaryAction(a) ? "default" : "outline"));
       add(h, acts);
     }
     return h;
@@ -1371,7 +1493,7 @@
     add(t, filters);
     if (((_b = b.actions) == null ? void 0 : _b.length) && !mobile) {
       add(t, box(ctx, "Spacer", { w: "fill" }));
-      for (const a of b.actions) add(t, await button(ctx, clean(a), isPrimary(a) ? "default" : "outline", "sm"));
+      for (const a of b.actions) add(t, await actionButton(ctx, a, isPrimaryAction(a) ? "default" : "outline", "sm"));
     }
     return t;
   }
@@ -1420,7 +1542,7 @@
     for (const [i, f] of b.fields.entries()) add(grid, await field(ctx, f, w, ctx.state === "error" && i === 0));
     add(c, grid);
     const acts = box(ctx, "Form actions", { dir: "H", gap: 8, justify: "MAX", w: "fill" });
-    add(acts, await button(ctx, b.cancel || "\u041E\u0442\u043C\u0435\u043D\u0430", "outline"), await button(ctx, b.submit || "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C", "default"));
+    add(acts, link(await button(ctx, b.cancel || "\u041E\u0442\u043C\u0435\u043D\u0430", "outline"), "cancel"), link(await button(ctx, b.submit || "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C", "default"), "submit"));
     return add(c, acts);
   }
   async function stepper(ctx, b) {
@@ -1445,7 +1567,7 @@
     add(a, rect(ctx, "Mark", 4, 36, accent, "full"));
     const t = box(ctx, "Text", { gap: 2, w: "fill" });
     add(t, b.title && await text(ctx, b.title, { size: "sm", weight: "semibold", color: tc }), await text(ctx, b.text, { size: "sm", color: "muted-foreground", w: "fill" }));
-    return add(a, t, b.action && await button(ctx, b.action, "outline", "sm"));
+    return add(a, t, b.action && await actionButton(ctx, b.action, "outline", "sm"));
   }
   async function empty(ctx, b) {
     const c = box(ctx, "Empty state", { gap: 12, pad: [56, 24], align: "CENTER", stroke: "border", radius: "xl", fill: "card", w: "fill" });
@@ -1457,7 +1579,7 @@
       icon2,
       await text(ctx, b.title || "\u041F\u043E\u043A\u0430 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442", { size: "base", weight: "semibold", align: "CENTER" }),
       await text(ctx, b.text || "\u0417\u0434\u0435\u0441\u044C \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0430\u043F\u0438\u0441\u0438, \u043A\u043E\u0433\u0434\u0430 \u043E\u043D\u0438 \u0431\u0443\u0434\u0443\u0442 \u0441\u043E\u0437\u0434\u0430\u043D\u044B.", { size: "sm", color: "muted-foreground", align: "CENTER" }),
-      b.action && await button(ctx, clean(b.action), "default")
+      b.action && await actionButton(ctx, b.action, "default")
     );
     return c;
   }
@@ -1473,7 +1595,7 @@
       const fw = box(ctx, `Field / ${label}`, { gap: 6, w: "fill" });
       add(c, add(fw, await text(ctx, label, { size: "sm", weight: "medium" }), await input(ctx, type === "password" ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" : "name@company.kg", { error: err })));
     }
-    const btn = await button(ctx, b.submit || "\u0412\u043E\u0439\u0442\u0438", "default");
+    const btn = link(await button(ctx, b.submit || "\u0412\u043E\u0439\u0442\u0438", "default"), "submit");
     add(c, btn);
     if ("layoutSizingHorizontal" in btn) btn.layoutSizingHorizontal = "FILL";
     if (b.footer !== false) add(c, await text(ctx, b.footer || "\u0417\u0430\u0431\u044B\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C?", { size: "sm", color: "muted-foreground", align: "CENTER", w: "fill" }));
@@ -1481,10 +1603,140 @@
   }
   var SPLIT_GAP = 24;
 
+  // plugin/src/prototype.js
+  var PROTO_PAGE = "\u041F\u0440\u043E\u0442\u043E\u0442\u0438\u043F";
+  var SCREEN_KEY = "mbank-screen";
+  var PROTO_KEY = "mbank-proto";
+  var GAP = 160;
+  async function pageFor(name) {
+    await figma.loadAllPagesAsync();
+    return figma.root.children.find((p) => p.name === name) || Object.assign(figma.createPage(), { name });
+  }
+  var protoState = (s) => s.states.includes("default") ? "default" : s.states[0];
+  var reaction = (destinationId) => ({
+    trigger: { type: "ON_CLICK" },
+    actions: [{ type: "NODE", destinationId, navigation: "NAVIGATE", transition: { type: "DISSOLVE", easing: { type: "EASE_OUT" }, duration: 0.2 } }]
+  });
+  async function setReactions(node, list2) {
+    if (typeof node.setReactionsAsync === "function") await node.setReactionsAsync(list2);
+    else node.reactions = list2;
+  }
+  function clickable(frame, key) {
+    if (!key.startsWith("text:")) return frame.findAll((n) => n.getPluginData(LINK_KEY) === key);
+    const want = key.slice(5);
+    return frame.findAll((n) => n.type === "TEXT" && String(n.characters).trim().replace(/^\+\s*/, "") === want).map((t) => {
+      let tagged = null;
+      let inst = null;
+      for (let n = t.parent; n && n !== frame; n = n.parent) {
+        if (!tagged && n.getPluginData(LINK_KEY)) tagged = n;
+        if (n.type === "INSTANCE") inst = n;
+      }
+      return inst || tagged || t;
+    });
+  }
+  async function wireFrames(frames, links) {
+    const out = { wired: 0, missing: [] };
+    for (const [id, frame] of frames) {
+      const plan = /* @__PURE__ */ new Map();
+      for (const l of links) {
+        if (l.from !== id || !frames.has(l.to)) continue;
+        const nodes = clickable(frame, l.on);
+        if (!nodes.length && !l.auto) out.missing.push(`${l.from}: ${l.on} \u2192 ${l.to}`);
+        for (const n of nodes) plan.set(n, frames.get(l.to).id);
+      }
+      for (const [n, dest] of plan) {
+        await setReactions(n, [reaction(dest)]);
+        out.wired++;
+      }
+    }
+    return out;
+  }
+  function setFlows(page, flows) {
+    const names = flows.map((f) => f.name);
+    page.flowStartingPoints = [...(page.flowStartingPoints || []).filter((f) => !names.includes(f.name)), ...flows];
+  }
+  var flowName = (spec, vp, where) => [spec.project, where, vp === "desktop" ? null : vp].filter(Boolean).join(" \xB7 ");
+  async function wirePage(page, spec, links) {
+    const byVp = {};
+    for (const sec of page.children) for (const f of sec.type === "SECTION" ? sec.children : [sec]) {
+      const [project, id, state, vp] = (f.getPluginData(SCREEN_KEY) || "").split("|");
+      const s = project === spec.project && spec.screens.find((x) => x.id === id);
+      if (!s || state !== protoState(s)) continue;
+      (byVp[vp] = byVp[vp] || /* @__PURE__ */ new Map()).set(id, f);
+    }
+    const res = { wired: 0, missing: [] };
+    const flows = [];
+    for (const [vp, frames] of Object.entries(byVp)) {
+      const r = await wireFrames(frames, links);
+      res.wired += r.wired;
+      const start = spec.screens.find((s) => frames.has(s.id));
+      flows.push({ nodeId: frames.get(start.id).id, name: flowName(spec, vp, page.name) });
+    }
+    setFlows(page, flows);
+    return res;
+  }
+  function startOf(spec, screens) {
+    const login2 = screens.find((s) => s.blocks.some((b) => b.type === "login"));
+    return login2 || screens.find((s) => {
+      var _a;
+      return s.nav && s.nav === ((_a = spec.nav[0]) == null ? void 0 : _a.id);
+    }) || screens[0];
+  }
+  async function buildPrototype(spec, links, base, make) {
+    const page = await pageFor(PROTO_PAGE);
+    await figma.setCurrentPageAsync(page);
+    page.children.filter((n) => n.getPluginData(PROTO_KEY) === spec.project).forEach((n) => n.remove());
+    let y = Math.max(0, ...page.children.map((n) => n.y + n.height + GAP));
+    const all = spec.screens.flatMap((s) => s.viewports);
+    const vps = ["desktop", "mobile", "tablet"].filter((v) => all.includes(v)).slice(0, all.includes("desktop") ? 2 : 1);
+    const tag = (n) => {
+      n.setPluginData(PROTO_KEY, spec.project);
+      page.appendChild(n);
+      return n;
+    };
+    const label = async (value, size2, py) => {
+      const t = tag(await text(base, value, { size: size2, weight: "bold", color: "muted-foreground" }));
+      t.x = 0;
+      t.y = py;
+      return t.height;
+    };
+    const res = { page: page.name, frames: [], wired: 0, missing: [] };
+    const flows = [];
+    for (const vp of vps) {
+      const screens = spec.screens.filter((s) => s.viewports.includes(vp));
+      y += await label(flowName(spec, vp, vp === "desktop" ? "\u0434\u0435\u0441\u043A\u0442\u043E\u043F" : null), "3xl", y) + 48;
+      const frames = /* @__PURE__ */ new Map();
+      for (const section of [...new Set(screens.map((s) => s.page))]) {
+        y += await label(section, "xl", y) + 24;
+        let x = 0;
+        let rowH = 0;
+        for (const s of screens.filter((x2) => x2.page === section)) {
+          const f = tag(await make(s, protoState(s), vp));
+          f.name = s.title;
+          f.x = x;
+          f.y = y;
+          f.setPluginData(SCREEN_KEY, [spec.project, s.id, protoState(s), vp].join("|"));
+          x += f.width + GAP / 2;
+          rowH = Math.max(rowH, f.height);
+          frames.set(s.id, f);
+          res.frames.push({ id: f.id, screen: s.id, viewport: vp });
+        }
+        y += rowH + GAP;
+      }
+      const r = await wireFrames(frames, links);
+      res.wired += r.wired;
+      res.missing.push(...r.missing);
+      flows.push({ nodeId: frames.get(startOf(spec, screens).id).id, name: flowName(spec, vp) });
+      y += GAP;
+    }
+    setFlows(page, flows);
+    return res;
+  }
+
   // plugin/src/screens.js
   var BUILDERS = __spreadValues(__spreadValues({}, blocks_data_exports), blocks_ui_exports);
-  var GAP = 120;
-  var LISTS = ["table", "list", "kanban", "cards"];
+  var GAP2 = 120;
+  var LISTS2 = ["table", "list", "kanban", "cards"];
   function blocksForState(screen, state) {
     const blocks = screen.blocks;
     const emptyText = screen.empty || {};
@@ -1498,7 +1750,7 @@
     if (state === "empty") {
       let replaced = false;
       return blocks.flatMap((b) => {
-        if (LISTS.includes(b.type)) {
+        if (LISTS2.includes(b.type)) {
           if (replaced) return [];
           replaced = true;
           return [{ type: "empty", title: emptyText.title || b.emptyTitle || "\u041F\u043E\u043A\u0430 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435\u0442", text: emptyText.text || b.emptyText, action: emptyText.action || b.emptyAction }];
@@ -1515,7 +1767,7 @@
           continue;
         }
         if (DATA_BLOCKS.includes(b.type) && b.type !== "details") {
-          if (!replaced && LISTS.includes(b.type)) {
+          if (!replaced && LISTS2.includes(b.type)) {
             replaced = true;
             out.push({ type: "empty", icon: "!", title: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438", text: "\u0414\u0430\u043D\u043D\u044B\u0435 \u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B." });
           }
@@ -1566,10 +1818,6 @@
     frame.name = `[draft] ${screen.title} / ${state} / ${width}`;
     return frame;
   }
-  async function pageFor(name) {
-    await figma.loadAllPagesAsync();
-    return figma.root.children.find((p) => p.name === name) || Object.assign(figma.createPage(), { name });
-  }
   async function buildSpec(rawSpec, opts, onProgress = () => {
   }) {
     const spec = normalizeSpec(rawSpec);
@@ -1584,38 +1832,51 @@
     const result = { frames: [], sections: [], stats: base.stats, font, fallbackFonts: false };
     let done = 0;
     const yByPage = {};
-    for (const [si, screen] of screens.entries()) {
+    const touched = /* @__PURE__ */ new Map();
+    for (const screen of screens) {
       const page = await pageFor(screen.page);
       await figma.setCurrentPageAsync(page);
       const title = `${spec.project} / ${screen.title}`;
       page.findAll((n) => n.type === "SECTION" && n.name === title).forEach((n) => n.remove());
-      if (yByPage[page.id] == null) yByPage[page.id] = Math.max(0, ...page.children.map((n) => n.y + n.height + GAP));
+      if (yByPage[page.id] == null) yByPage[page.id] = Math.max(0, ...page.children.map((n) => n.y + n.height + GAP2));
       const section = figma.createSection();
       section.name = title;
       page.appendChild(section);
-      let y = GAP;
+      let y = GAP2;
       for (const state of screen.states) {
-        let x = GAP;
+        let x = GAP2;
         let rowH = 0;
         for (const vp of screen.viewports) {
-          const f = await buildFrame(base, spec, screen, state, vp, si * 13);
+          const f = await buildFrame(base, spec, screen, state, vp, spec.screens.indexOf(screen) * 13);
+          f.setPluginData(SCREEN_KEY, [spec.project, screen.id, state, vp].join("|"));
           section.appendChild(f);
           f.x = x;
           f.y = y;
           await setFrameModes(f, { brand: opts.brand, style: opts.style, theme: opts.theme || "light" });
-          x += f.width + GAP;
+          x += f.width + GAP2;
           rowH = Math.max(rowH, f.height);
           result.frames.push({ id: f.id, name: f.name, page: page.name });
           onProgress(++done, total, f.name);
         }
-        y += rowH + GAP;
+        y += rowH + GAP2;
       }
-      const w = Math.max(...section.children.map((n) => n.x + n.width)) + GAP;
+      const w = Math.max(...section.children.map((n) => n.x + n.width)) + GAP2;
       section.resizeWithoutConstraints(w, y);
       section.x = 0;
       section.y = yByPage[page.id];
-      yByPage[page.id] += y + GAP;
+      yByPage[page.id] += y + GAP2;
       result.sections.push({ id: section.id, name: title, page: page.name });
+      touched.set(page.id, page);
+    }
+    if (opts.prototype !== false) {
+      const links = resolveLinks(spec);
+      for (const page of touched.values()) await wirePage(page, spec, links);
+      result.prototype = await buildPrototype(spec, links, base, async (screen, state, vp) => {
+        const f = await buildFrame(base, spec, screen, state, vp, spec.screens.indexOf(screen) * 13);
+        await setFrameModes(f, { brand: opts.brand, style: opts.style, theme: opts.theme || "light" });
+        return f;
+      });
+      result.links = links.length;
     }
     result.fallbackFonts = base.stats.fallbackFonts;
     return result;
@@ -1703,7 +1964,7 @@
   var STATES2 = ["default", "hover", "active", "focus", "disabled"];
   var statesAllowed = (c) => [.../* @__PURE__ */ new Set([...STATES2, ...c && c.states || []])];
   var STEP = 4;
-  var KINDS = {
+  var KINDS2 = {
     bg: "color",
     fg: "color",
     border: "color",
@@ -1725,7 +1986,7 @@
     layout: "layout",
     align: "layout"
   };
-  var PROPS = Object.keys(KINDS);
+  var PROPS = Object.keys(KINDS2);
   var WEIGHTS2 = ["regular", "medium", "semibold", "bold"];
   var TEXT_PART = /^(label|text|title|placeholder|value|description|caption|hint)$/;
   var ICON_PART = /icon/;
@@ -1794,11 +2055,11 @@
       }
       for (const [key, value] of Object.entries(props)) {
         const { prop, state } = splitKey(key);
-        if (!KINDS[prop]) errors.push(`${where}.${part}: \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0435 \u0441\u0432\u043E\u0439\u0441\u0442\u0432\u043E \xAB${prop}\xBB`);
+        if (!KINDS2[prop]) errors.push(`${where}.${part}: \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0435 \u0441\u0432\u043E\u0439\u0441\u0442\u0432\u043E \xAB${prop}\xBB`);
         if (!statesAllowed(c).includes(state)) errors.push(`${where}.${part}: \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E\u0435 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435 \xAB${state}\xBB`);
-        if (KINDS[prop] === "color" && (typeof value !== "string" || /^#|^rgb|^oklch/i.test(value)))
+        if (KINDS2[prop] === "color" && (typeof value !== "string" || /^#|^rgb|^oklch/i.test(value)))
           errors.push(`${where}.${part}.${key}: \u0446\u0432\u0435\u0442 \u2014 \u0442\u043E\u043B\u044C\u043A\u043E \u0438\u043C\u044F \u0442\u043E\u043A\u0435\u043D\u0430, \u043D\u0435 \xAB${value}\xBB`);
-        if (KINDS[prop] === "space" && !(typeof value === "number" && value >= 0)) errors.push(`${where}.${part}.${key}: \u0448\u0430\u0433 \u0441\u0435\u0442\u043A\u0438 \u2014 \u0447\u0438\u0441\u043B\u043E`);
+        if (KINDS2[prop] === "space" && !(typeof value === "number" && value >= 0)) errors.push(`${where}.${part}.${key}: \u0448\u0430\u0433 \u0441\u0435\u0442\u043A\u0438 \u2014 \u0447\u0438\u0441\u043B\u043E`);
         if (prop === "weight" && !WEIGHTS2.includes(value)) errors.push(`${where}.${part}.weight: ${WEIGHTS2.join(" | ")}`);
       }
     }
@@ -1925,8 +2186,8 @@
         if (!isObj(props)) continue;
         for (const [key, value] of Object.entries(props)) {
           const { prop, state } = splitKey(key);
-          if (!["color", "radius", "space", "text", "weight"].includes(KINDS[prop])) continue;
-          rows.push({ id: [...path, part, key].join("."), source, path: [...path, part], key, part, prop, state, kind: KINDS[prop], value });
+          if (!["color", "radius", "space", "text", "weight"].includes(KINDS2[prop])) continue;
+          rows.push({ id: [...path, part, key].join("."), source, path: [...path, part], key, part, prop, state, kind: KINDS2[prop], value });
         }
       }
     };
@@ -2516,7 +2777,7 @@
   // plugin/src/components.js
   var PAGE = "Components";
   var KEY = "mbank-contract";
-  var GAP2 = 24;
+  var GAP3 = 24;
   var RADIUS_PX = { none: 0, "2xs": 2, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, "2xl": 20, "3xl": 24, "4xl": 32, full: 9999 };
   var MAGENTA = { r: 1, g: 0, b: 1 };
   var WEIGHT_SUFFIX = { medium: "-md", semibold: "-strong", bold: "-strong" };
@@ -2747,11 +3008,11 @@
     const w = Math.max(...comps.map((x) => x.node.width));
     const h = Math.max(...comps.map((x) => x.node.height));
     comps.forEach((x, i) => {
-      x.node.x = GAP2 + i % states.length * (w + GAP2);
-      x.node.y = GAP2 + Math.floor(i / states.length) * (h + GAP2);
+      x.node.x = GAP3 + i % states.length * (w + GAP3);
+      x.node.y = GAP3 + Math.floor(i / states.length) * (h + GAP3);
     });
     const rows = Math.ceil(comps.length / states.length);
-    set.resizeWithoutConstraints(GAP2 + states.length * (w + GAP2), GAP2 + rows * (h + GAP2));
+    set.resizeWithoutConstraints(GAP3 + states.length * (w + GAP3), GAP3 + rows * (h + GAP3));
   }
   var reportOf = (r, t, extra) => __spreadProps(__spreadValues({}, extra), {
     bound: r.bound,
@@ -2775,8 +3036,8 @@
     const node = found || figma.createComponent();
     if (!found) {
       page.appendChild(node);
-      node.x = GAP2;
-      node.y = GAP2 + Math.max(0, ...page.children.filter((n) => n !== node).map((n) => n.y + n.height));
+      node.x = GAP3;
+      node.y = GAP3 + Math.max(0, ...page.children.filter((n) => n !== node).map((n) => n.y + n.height));
     }
     await renderVariant(r, node, c, {}, "default");
     const contract = finish(node, c);
@@ -3031,7 +3292,7 @@
       return { tokens, css: toShadcnCss(tokens) };
     },
     async build(m) {
-      const errors = validateSpec(m.spec);
+      const errors = [...validateSpec(m.spec), ...validateLinks(m.spec)];
       if (errors.length) return { errors };
       const { vars, radius } = await modeVars();
       const k = await kit();
@@ -3042,7 +3303,12 @@
       );
       const audit = await auditFrames(res.frames.map((f) => f.id));
       const first = res.sections[0] && await figma.getNodeByIdAsync(res.sections[0].id);
-      if (first) figma.viewport.scrollAndZoomIntoView([first]);
+      if (first) {
+        let page = first.parent;
+        while (page && page.type !== "PAGE") page = page.parent;
+        if (page) await figma.setCurrentPageAsync(page);
+        figma.viewport.scrollAndZoomIntoView([first]);
+      }
       return { result: res, audit };
     }
   }, contractHandlers(contracts_default));

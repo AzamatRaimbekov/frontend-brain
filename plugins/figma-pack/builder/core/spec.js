@@ -97,6 +97,8 @@ export function statDelta(item) {
 // Fills defaults so builders never branch on missing fields.
 export function normalizeSpec(spec) {
   const platform = spec.platform || 'web';
+  // One Figma page per product section: the nav item's label unless the screen names its page.
+  const section = (s) => (spec.nav || []).find((n) => n.id === s.nav)?.label;
   return {
     ...spec,
     platform,
@@ -105,7 +107,7 @@ export function normalizeSpec(spec) {
     user: spec.user || { name: 'Айгуль Токтогулова', role: 'Менеджер' },
     screens: spec.screens.map((s) => ({
       shell: s.shell || (platform === 'mobile' ? 'mobile' : spec.nav?.length ? 'sidebar' : 'plain'),
-      page: s.page || s.title,
+      page: s.page || section(s) || s.title,
       states: s.states?.length ? s.states : ['default'],
       ...s,
       viewports: s.viewports?.length ? s.viewports : spec.viewports?.length ? spec.viewports : [platform === 'mobile' ? 'mobile' : 'desktop'],

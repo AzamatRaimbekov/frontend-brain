@@ -167,6 +167,7 @@ const on = {
     const a = m.audit;
     $('buildOut').innerHTML = `<b class="ok">Собрано фреймов: ${r.frames.length}</b> на страницах: ${esc([...new Set(r.frames.map((f) => f.page))].join(', '))}<br>
       Компоненты кита: ${r.stats.instances}, нарисовано плагином: ${r.stats.fallbacks}<br>
+      ${r.prototype ? `Прототип: страница «${esc(r.prototype.page)}», экранов ${r.prototype.frames.length}, переходов ${r.prototype.wired} — Present (▶) чтобы прокликать<br>${r.prototype.missing.length ? `<span class="err">Не нашёл, куда кликать: ${esc(r.prototype.missing.join('; '))}</span><br>` : ''}` : ''}
       ${r.fallbackFonts ? '<span class="err">Шрифт стилей кита не установлен — использованы запасные стили ds/* на ' + esc(r.font) + '</span><br>' : ''}
       Проверка: ${a.ok ? '<span class="ok">все цвета на токенах, весь текст на стилях</span>' : `<span class="err">цвета без токена ${a.rawFills + a.rawStrokes}, текст без стиля ${a.unstyledText}</span> ${esc(a.samples.join(', '))}`}`;
   },

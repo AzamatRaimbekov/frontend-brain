@@ -1,5 +1,5 @@
 // Data blocks: they change in loading / empty states.
-import { box, text, add, skel, rect, sizing } from './draw.js';
+import { box, text, add, skel, rect, sizing, link } from './draw.js';
 import { badge, avatar, checkbox, statusVariant } from './kit.js';
 import { fakeRows, parseColumn, rng } from '../../core/fake.js';
 import { statDelta } from '../../core/spec.js';
@@ -57,7 +57,7 @@ const WEIGHT = { id: 1, person: 1.6, company: 1.6, money: 1.1, status: 1, date: 
 async function mobileRows(ctx, b, columns, rows) {
   const list = card(ctx, 'List', { gap: 0, pad: 0 });
   for (const r of rows) {
-    const item = box(ctx, 'Row', { dir: 'H', gap: 12, pad: 16, w: 'fill', align: 'CENTER', stroke: 'border' });
+    const item = link(box(ctx, 'Row', { dir: 'H', gap: 12, pad: 16, w: 'fill', align: 'CENTER', stroke: 'border' }), b.link && `row:${b.link}`);
     const main = box(ctx, 'Main', { gap: 4, w: 'fill' });
     const pi = columns.findIndex((c) => c.type === 'person' || c.type === 'company');
     const si = columns.findIndex((c) => c.type === 'status');
@@ -96,7 +96,7 @@ export async function table(ctx, b) {
   }
   add(t, hr);
   for (const [ri, r] of rows.entries()) {
-    const row = box(ctx, `Row ${ri + 1}`, { dir: 'H', w: 'fill', align: 'CENTER' });
+    const row = link(box(ctx, `Row ${ri + 1}`, { dir: 'H', w: 'fill', align: 'CENTER' }), b.link && `row:${b.link}`);
     add(t, sizing(rect(ctx, 'Divider', avail + sel, 1, 'border'), 'fill'));
     if (sel) add(row, add(box(ctx, 'Select', { pad: [0, 14], align: 'CENTER', justify: 'CENTER', h: 52 }), await checkbox(ctx, ri === 1)));
     for (let i = 0; i < columns.length; i++) add(row, await cell(ctx, columns[i].type, r[i], widths[i]));
@@ -119,7 +119,7 @@ export async function kanban(ctx, b) {
     add(c, head);
     const shown = Math.min(n, ctx.state === 'loading' ? 2 : 3);
     for (let i = 0; i < shown; i++) {
-      const k = card(ctx, 'Card', { gap: 8, pad: 12 });
+      const k = link(card(ctx, 'Card', { gap: 8, pad: 12 }), b.link && `row:${b.link}`);
       if (ctx.state === 'loading') add(k, skel(ctx, 80, 10), skel(ctx, 'fill', 12), skel(ctx, 60, 10));
       else {
         const [id, who, sum] = fakeRows(['id', 'person', 'money'], 1, 31 + ci * 5 + i + ctx.seed)[0];
@@ -155,7 +155,7 @@ export async function list(ctx, b) {
   const items = b.items || fakeRows(['person', 'text', 'status'], b.rows || 5, 21 + ctx.seed, b.statuses);
   for (const it of items) {
     const [who, what, st] = Array.isArray(it) ? it : [it.title, it.subtitle, it.status];
-    const row = box(ctx, 'Item', { dir: 'H', gap: 12, pad: [12, 24], align: 'CENTER', w: 'fill' });
+    const row = link(box(ctx, 'Item', { dir: 'H', gap: 12, pad: [12, 24], align: 'CENTER', w: 'fill' }), b.link && `row:${b.link}`);
     if (ctx.state === 'loading') { add(row, skel(ctx, 32, 32, 'full'), add(box(ctx, 'Lines', { gap: 6, w: 'fill' }), skel(ctx, 140, 12), skel(ctx, 90, 10))); add(c, row); continue; }
     const main = box(ctx, 'Text', { gap: 2, w: 'fill' });
     add(main, await text(ctx, who, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }), what && (await text(ctx, what, { size: 'xs', color: 'muted-foreground', w: 'fill' })));
@@ -185,7 +185,7 @@ export async function cards(ctx, b) {
   const per = cols(ctx, b.columns || 3);
   const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
   for (const it of b.items) {
-    const c = card(ctx, `Card / ${it.title}`, { gap: 8, pad: 20, w });
+    const c = link(card(ctx, `Card / ${it.title}`, { gap: 8, pad: 20, w }), (it.link || b.link) && `row:${it.link || b.link}`);
     if (ctx.state === 'loading') add(c, skel(ctx, 120, 14), skel(ctx, 'fill', 10), skel(ctx, 160, 10));
     else add(c, await text(ctx, it.title, { size: 'base', weight: 'semibold' }), it.text && (await text(ctx, it.text, { size: 'sm', color: 'muted-foreground', w: 'fill' })), it.badge && (await badge(ctx, it.badge, statusVariant(it.badge))));
     add(grid, c);

@@ -18,7 +18,7 @@
       "blocks": [{ "type": "login", "title": "Кредитный конвейер", "subtitle": "Войдите рабочей почтой" }]
     },
     {
-      "id": "dashboard", "title": "Обзор", "nav": "dashboard", "page": "Обзор", "states": ["default", "loading"],
+      "id": "dashboard", "title": "Обзор", "nav": "dashboard", "states": ["default", "loading"],
       "blocks": [
         { "type": "header", "title": "Конвейер на 12 октября", "actions": ["Экспорт"], "period": ["Сегодня", "Неделя", "Месяц", "Квартал"] },
         { "type": "stats", "items": [
@@ -29,31 +29,31 @@
         ] },
         { "type": "split", "ratio": "2:1", "columns": [
           [{ "type": "chart", "title": "Заявки по часам", "subtitle": "Сегодня" }],
-          [{ "type": "list", "title": "Требуют внимания", "rows": 5, "statuses": ["Просрочен SLA", "На проверке", "Новая"] }]
+          [{ "type": "list", "title": "Требуют внимания", "link": "app-card", "rows": 5, "statuses": ["Просрочен SLA", "На проверке", "Новая"] }]
         ] }
       ]
     },
     {
-      "id": "apps", "title": "Заявки", "nav": "apps", "page": "Заявки", "states": ["default", "loading", "empty", "error"],
+      "id": "apps", "title": "Заявки", "nav": "apps", "states": ["default", "loading", "empty", "error"],
       "empty": { "title": "Заявок пока нет", "text": "Новые заявки появятся здесь автоматически", "action": "+ Создать заявку" },
       "blocks": [
-        { "type": "header", "title": "Заявки", "breadcrumbs": ["CRM", "Заявки"], "actions": ["Экспорт", "+ Новая заявка"] },
+        { "type": "header", "title": "Заявки", "breadcrumbs": ["CRM", "Заявки"], "actions": ["Конвейер → pipeline", "Экспорт", "+ Новая заявка"] },
         { "type": "tabs", "items": ["Все", "Мои", "На проверке", "Просрочены"] },
         { "type": "toolbar", "search": "Поиск по ФИО, телефону или номеру", "filters": ["Статус", "Продукт", "Период"] },
-        { "type": "table", "selectable": true, "rows": 8, "columns": ["Номер:id", "Клиент:person", "Продукт:product", "Сумма:money", "Статус:status", "Дата:datetime", ":actions"],
+        { "type": "table", "link": "app-card", "selectable": true, "rows": 8, "columns": ["Номер:id", "Клиент:person", "Продукт:product", "Сумма:money", "Статус:status", "Дата:datetime", ":actions"],
           "statuses": ["Новая", "Скоринг", "На проверке", "Одобрена", "Отказ"] },
         { "type": "pagination", "summary": "Показано 1–8 из 128" }
       ]
     },
     {
-      "id": "pipeline", "title": "Конвейер", "nav": "apps", "page": "Заявки", "states": ["default"], "viewports": ["desktop"],
+      "id": "pipeline", "title": "Конвейер", "nav": "apps", "states": ["default"], "viewports": ["desktop"],
       "blocks": [
-        { "type": "header", "title": "Конвейер заявок", "actions": ["+ Новая заявка"] },
-        { "type": "kanban", "columns": ["Новые", "Скоринг", "Проверка СБ", "Андеррайтинг", "Решение"] }
+        { "type": "header", "title": "Конвейер заявок", "breadcrumbs": ["Заявки", "Конвейер"], "actions": ["+ Новая заявка"] },
+        { "type": "kanban", "link": "app-card", "columns": ["Новые", "Скоринг", "Проверка СБ", "Андеррайтинг", "Решение"] }
       ]
     },
     {
-      "id": "app-card", "title": "Заявка CL-240118", "nav": "apps", "page": "Заявки", "states": ["default", "no-access"],
+      "id": "app-card", "title": "Заявка CL-240118", "nav": "apps", "states": ["default", "no-access"],
       "blocks": [
         { "type": "header", "title": "Заявка CL-240118", "badge": "Андеррайтинг", "amount": "450 000 KGS", "subtitle": "Потребительский · 24 мес · 21,5% годовых · подана 12.10.2026, 09:14 · приложение", "breadcrumbs": ["Заявки", "CL-240118"], "actions": ["Отклонить", "Запросить документы", "+ Одобрить кредит"] },
         { "type": "stepper", "steps": ["Подана", "Скоринг", "Проверка СБ", "Андеррайтинг", "Решение"], "current": 3 },
@@ -70,7 +70,17 @@
       ]
     },
     {
-      "id": "client-new", "title": "Новый клиент", "nav": "clients", "page": "Клиенты", "states": ["default", "error"],
+      "id": "clients", "title": "Клиенты", "nav": "clients", "states": ["default", "loading", "empty"],
+      "empty": { "title": "Клиентов пока нет", "text": "Добавьте первого клиента, чтобы оформить на него заявку", "action": "+ Новый клиент → client-new" },
+      "blocks": [
+        { "type": "header", "title": "Клиенты", "breadcrumbs": ["CRM", "Клиенты"], "actions": ["+ Новый клиент → client-new"] },
+        { "type": "toolbar", "search": "Поиск по ФИО или телефону", "filters": ["Город", "Сегмент"] },
+        { "type": "table", "rows": 8, "columns": ["Номер:id", "Клиент:person", "Телефон:phone", "Город:city", "Заявок:number", "Создан:date", ":actions"] },
+        { "type": "pagination", "summary": "Показано 1–8 из 2 412" }
+      ]
+    },
+    {
+      "id": "client-new", "title": "Новый клиент", "nav": "clients", "states": ["default", "error"],
       "blocks": [
         { "type": "header", "title": "Новый клиент", "breadcrumbs": ["Клиенты", "Новый"] },
         { "type": "form", "title": "Данные клиента", "subtitle": "Поля со звёздочкой обязательны", "width": 760, "fields": [
@@ -80,11 +90,11 @@
           { "label": "Город", "type": "select" },
           { "label": "Ежемесячный доход", "type": "money", "hint": "Подтверждается выпиской" },
           { "label": "Согласие на обработку данных", "type": "checkbox" }
-        ], "submit": "Создать клиента" }
+        ], "submit": "Создать клиента", "to": "clients" }
       ]
     },
     {
-      "id": "reports", "title": "Отчёты", "nav": "reports", "page": "Отчёты", "states": ["default", "empty"],
+      "id": "reports", "title": "Отчёты", "nav": "reports", "states": ["default", "empty"],
       "blocks": [
         { "type": "header", "title": "Отчёты" },
         { "type": "cards", "columns": 3, "items": [
@@ -94,5 +104,8 @@
         ] }
       ]
     }
+  ],
+  "links": [
+    { "from": "dashboard", "on": "Экспорт", "to": "reports" }
   ]
 }

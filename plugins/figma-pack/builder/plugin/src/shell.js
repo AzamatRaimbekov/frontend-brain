@@ -1,5 +1,5 @@
 // App frames around the content: sidebar app, plain page, mobile app.
-import { box, text, add, fill } from './draw.js';
+import { box, text, add, fill, link } from './draw.js';
 import { input, avatar } from './kit.js';
 import { icon, guessIcon } from './icons.js';
 
@@ -10,7 +10,7 @@ async function navItem(ctx, item, active, compact) {
   const it = box(ctx, `Nav / ${item.label}`, { dir: 'H', gap: 10, pad: compact ? [10, 10] : [8, 12], radius: 'md', align: 'CENTER', fill: active ? 'sidebar-accent' : null, w: compact ? 'hug' : 'fill', justify: compact ? 'CENTER' : 'MIN' });
   add(it, icon(ctx, item.icon || guessIcon(item.label), active ? 'sidebar-accent-foreground' : 'sidebar-foreground', 16));
   if (!compact) add(it, await text(ctx, item.label, { size: 'sm', weight: active ? 'medium' : 'regular', color: active ? 'sidebar-accent-foreground' : 'sidebar-foreground', w: 'fill' }));
-  return it;
+  return link(it, `nav:${item.id}`);
 }
 
 async function logo(ctx, spec, compact) {
@@ -46,7 +46,7 @@ async function topbar(ctx, spec, screen, vp) {
 
 async function mobileBar(ctx, screen) {
   const bar = box(ctx, 'App bar', { dir: 'H', gap: 12, pad: [12, 16], align: 'CENTER', fill: 'background', w: 'fill', h: 56 });
-  if (screen.back) add(bar, icon(ctx, 'back', 'foreground', 22));
+  if (screen.back) add(bar, link(icon(ctx, 'back', 'foreground', 22), 'back'));
   return add(bar, await text(ctx, screen.title, { size: 'lg', weight: 'semibold', w: 'fill', truncate: true }), icon(ctx, 'bell', 'foreground', 20));
 }
 
@@ -54,7 +54,7 @@ async function tabbar(ctx, spec, screen) {
   const bar = box(ctx, 'Tab bar', { dir: 'H', pad: [8, 8, 24, 8], fill: 'background', stroke: 'border', w: 'fill', justify: 'SPACE_BETWEEN' });
   for (const item of spec.nav.slice(0, 5)) {
     const on = item.id === screen.nav;
-    const it = box(ctx, `Tab / ${item.label}`, { gap: 4, align: 'CENTER', pad: [4, 6], w: 'fill' });
+    const it = link(box(ctx, `Tab / ${item.label}`, { gap: 4, align: 'CENTER', pad: [4, 6], w: 'fill' }), `nav:${item.id}`);
     add(bar, add(it, icon(ctx, item.icon || guessIcon(item.label), on ? 'primary' : 'muted-foreground', 22), await text(ctx, item.label, { size: 'xs', weight: on ? 'medium' : 'regular', color: on ? 'primary' : 'muted-foreground', align: 'CENTER' })));
   }
   return bar;

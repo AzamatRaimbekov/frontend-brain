@@ -3,7 +3,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { generateTokens, validateTokens, contrastReport } from '../core/tokens.js';
 import { toShadcnCss } from '../core/css.js';
-import { validateSpec, framePlan } from '../core/spec.js';
+import { validateSpec, framePlan, normalizeSpec } from '../core/spec.js';
+import { resolveLinks, validateLinks } from '../core/links.js';
 
 const [, , area, cmd, ...rest] = process.argv;
 const flags = {};
@@ -44,11 +45,17 @@ if (area === 'tokens' && cmd === 'new') {
   process.exit(bad ? 1 : 0);
 } else if (area === 'spec' && cmd === 'check') {
   const spec = read(args[0]);
-  const errors = validateSpec(spec);
+  const errors = [...validateSpec(spec), ...validateLinks(spec)];
   if (errors.length) fail(`spec invalid:\n  ${errors.join('\n  ')}`);
   const plan = framePlan(spec);
   console.log(`ok: ${spec.screens.length} screens -> ${plan.length} frames`);
   for (const f of plan) console.log(`  ${f.page} / ${f.name}`);
+  // Prototype: links and screens no click reaches from the first screen.
+  const links = resolveLinks(normalizeSpec(spec));
+  const seen = new Set([spec.screens[0].id]);
+  for (const id of seen) for (const l of links) if (l.from === id) seen.add(l.to);
+  const lost = spec.screens.filter((s) => !seen.has(s.id)).map((s) => s.id);
+  console.log(`links: ${links.length}${lost.length ? `; unreachable from ${spec.screens[0].id}: ${lost.join(', ')}` : ''}`);
 } else {
   console.log(HELP);
   process.exit(area ? 1 : 0);
