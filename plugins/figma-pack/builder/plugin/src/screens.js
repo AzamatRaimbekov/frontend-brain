@@ -6,6 +6,8 @@ import { shell } from './shell.js';
 import { setFrameModes } from './brand.js';
 import * as data from './blocks-data.js';
 import * as ui from './blocks-ui.js';
+import { resolveLinks } from '../../core/links.js';
+import { pageFor, wirePage, buildPrototype, SCREEN_KEY } from './prototype.js';
 
 const BUILDERS = { ...data, ...ui };
 const GAP = 120;
@@ -85,13 +87,9 @@ export async function buildFrame(base, spec, screen, state, vp, seed) {
   return frame;
 }
 
-async function pageFor(name) {
-  await figma.loadAllPagesAsync();
-  return figma.root.children.find((p) => p.name === name) || Object.assign(figma.createPage(), { name });
-}
-
 /**
- * Builds the whole spec. opts: { vars, radius, kit, font, brand, style, theme: 'light'|'dark', only: [screenId] }.
+ * Builds the whole spec. opts: { vars, radius, kit, font, brand, style, theme: 'light'|'dark', only: [screenId],
+ * prototype: false to skip links and the «Прототип» page }.
  * onProgress(done, total, label) is called after every frame.
  */
 export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
@@ -104,8 +102,9 @@ export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
   const result = { frames: [], sections: [], stats: base.stats, font, fallbackFonts: false };
   let done = 0;
   const yByPage = {};
+  const touched = new Map();
 
-  for (const [si, screen] of screens.entries()) {
+  for (const screen of screens) {
     const page = await pageFor(screen.page);
     await figma.setCurrentPageAsync(page);
     const title = `${spec.project} / ${screen.title}`;
@@ -120,7 +119,8 @@ export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
       let x = GAP;
       let rowH = 0;
       for (const vp of screen.viewports) {
-        const f = await buildFrame(base, spec, screen, state, vp, si * 13);
+        const f = await buildFrame(base, spec, screen, state, vp, spec.screens.indexOf(screen) * 13);
+        f.setPluginData(SCREEN_KEY, [spec.project, screen.id, state, vp].join('|'));
         section.appendChild(f);
         f.x = x;
         f.y = y;
@@ -138,6 +138,18 @@ export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
     section.y = yByPage[page.id];
     yByPage[page.id] += y + GAP;
     result.sections.push({ id: section.id, name: title, page: page.name });
+    touched.set(page.id, page);
+  }
+  if (opts.prototype !== false) {
+    // Links: same-page clicks on every rebuilt section page, then the whole-product «Прототип» page.
+    const links = resolveLinks(spec);
+    for (const page of touched.values()) await wirePage(page, spec, links);
+    result.prototype = await buildPrototype(spec, links, base, async (screen, state, vp) => {
+      const f = await buildFrame(base, spec, screen, state, vp, spec.screens.indexOf(screen) * 13);
+      await setFrameModes(f, { brand: opts.brand, style: opts.style, theme: opts.theme || 'light' });
+      return f;
+    });
+    result.links = links.length;
   }
   result.fallbackFonts = base.stats.fallbackFonts;
   return result;

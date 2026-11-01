@@ -18,9 +18,10 @@ Format and block catalog: `references/spec-format.md`. Validator: `node <plugin-
 3. **One screen = one user goal.** Typical CRM set per entity: list (table + toolbar + pagination), card (header + stepper/details + timeline), create/edit form. Plus dashboard and login.
 4. **Pick blocks from the catalog only.** Unknown needs → nearest block + a note in your report, never an invented type.
 5. **States:** every list screen gets `loading`, `empty`, `error`; forms get `error`; restricted screens get `no-access`. Write `empty` texts that tell the user what to do next.
-6. **Data by type, not by value:** `"columns": ["Номер:id", "Клиент:person", "Сумма:money", "Статус:status"]`, `"statuses": [...]` from the domain. Write explicit values only for KPIs, titles and domain words.
-7. **Validate** with `ds.mjs spec check` and fix every error before handing over.
-8. **Hand over:** save `specs/<project>.spec.json`; the designer pastes it into the plugin («Экраны» → brand, style, theme → «Собрать»).
+6. **Links (prototype):** say where every click goes, so the designer gets a clickable product. Nav items link themselves. Add `"link": "<screenId>"` to each list/table/kanban/cards block that opens a record, an arrow to actions that open a screen (`"+ Новый клиент → client-new"`), `"to"` to forms (list screen after save/cancel); breadcrumbs go to the list of the same nav item by default. Anything else → top-level `"links": [{ "from", "on": "<button text>", "to" }]`. Every screen should be reachable from the start (login or dashboard).
+7. **Data by type, not by value:** `"columns": ["Номер:id", "Клиент:person", "Сумма:money", "Статус:status"]`, `"statuses": [...]` from the domain. Write explicit values only for KPIs, titles and domain words.
+8. **Validate** with `ds.mjs spec check` and fix every error before handing over.
+9. **Hand over:** save `specs/<project>.spec.json`; the designer pastes it into the plugin («Экраны» → brand, style, theme → «Собрать»). They get a page per product section plus the «Прототип» page to click through in Present.
 
 ## Beauty rules (the plugin enforces layout; you enforce content)
 
@@ -36,6 +37,7 @@ Format and block catalog: `references/spec-format.md`. Validator: `node <plugin-
 ```
 Spec: specs/<project>.spec.json — <n> экранов → <m> фреймов (ds spec check: ок)
 Экраны: <список с состояниями>
+Переходы: <n> (старт: <экран>); недостижимые экраны: <список> | нет
 Не покрыто каталогом: <что и чем заменено> | нет
 Дальше: плагин DS Builder → «Экраны» → бренд <Brand>, стиль <Style>
 ```

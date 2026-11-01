@@ -4,6 +4,7 @@ import { scanKit } from './kit.js';
 import { buildSpec } from './screens.js';
 import { auditFrames } from './audit.js';
 import { validateSpec } from '../../core/spec.js';
+import { validateLinks } from '../../core/links.js';
 import { toShadcnCss } from '../../core/css.js';
 import { COLOR_TOKENS } from '../../core/tokens.js';
 import { contractHandlers } from './contracts.js';
@@ -54,7 +55,7 @@ const handlers = {
     return { tokens, css: toShadcnCss(tokens) };
   },
   async build(m) {
-    const errors = validateSpec(m.spec);
+    const errors = [...validateSpec(m.spec), ...validateLinks(m.spec)];
     if (errors.length) return { errors };
     const { vars, radius } = await modeVars();
     const k = await kit();
@@ -62,7 +63,13 @@ const handlers = {
       (done, total, label) => post('progress', { done, total, label }));
     const audit = await auditFrames(res.frames.map((f) => f.id));
     const first = res.sections[0] && (await figma.getNodeByIdAsync(res.sections[0].id));
-    if (first) figma.viewport.scrollAndZoomIntoView([first]);
+    if (first) {
+      // The build ends on the «Прототип» page; come back to the first built section.
+      let page = first.parent;
+      while (page && page.type !== 'PAGE') page = page.parent;
+      if (page) await figma.setCurrentPageAsync(page);
+      figma.viewport.scrollAndZoomIntoView([first]);
+    }
     return { result: res, audit };
   },
   ...contractHandlers(BUNDLED_CONTRACTS),

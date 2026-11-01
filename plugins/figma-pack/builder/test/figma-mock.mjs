@@ -98,6 +98,20 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     setSharedPluginData(ns, k, v) { this.spd = this.spd || {}; const m = (this.spd[ns] = this.spd[ns] || {}); if (v === '') delete m[k]; else m[k] = String(v); }
     getSharedPluginData(ns, k) { return (this.spd && this.spd[ns] && this.spd[ns][k]) || ''; }
     getSharedPluginDataKeys(ns) { return Object.keys((this.spd && this.spd[ns]) || {}); }
+    // Prototype: NAVIGATE only to a live top-level frame (or a frame in a section) on the same page,
+    // never from a node inside an instance — the rules Figma enforces.
+    get reactions() { return this._reactions || []; }
+    set reactions(list) {
+      const page = (n) => { for (let p = n; p; p = p.parent) { if (p.removed) return null; if (p.type === 'PAGE') return p; } return null; };
+      for (let p = this.parent; p; p = p.parent) if (p.type === 'INSTANCE') throw new Error(`reactions inside an instance (${this.name})`);
+      for (const r of list) for (const a of r.actions || []) {
+        const dest = nodes.get(a.destinationId);
+        if (!dest || dest.type !== 'FRAME' || !['PAGE', 'SECTION'].includes(dest.parent?.type)) throw new Error(`bad destination ${a.destinationId}`);
+        if (page(dest) !== page(this)) throw new Error('destination on another page');
+      }
+      this._reactions = list.map((r) => JSON.parse(JSON.stringify(r)));
+    }
+    async setReactionsAsync(list) { this.reactions = list; }
   }
 
   // Components: a set's children are COMPONENT variants named 'prop=value, ...'.
@@ -136,7 +150,7 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     getRangeAllFontNames() { return [this._font]; }
   }
 
-  const page = (name) => Object.assign(new Node('PAGE'), { name });
+  const page = (name) => Object.assign(new Node('PAGE'), { name, flowStartingPoints: [] });
   const imported = new Map();
   const libCol = { id: 'VariableCollectionId:library', name: 'library', modes: [{ modeId: 'm', name: 'Mode 1' }], defaultModeId: 'm', variableIds: [] };
   function importByKey(kind, key) {
