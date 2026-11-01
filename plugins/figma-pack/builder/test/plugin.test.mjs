@@ -5,7 +5,7 @@ import { createFigma, seedKit } from './figma-mock.mjs';
 import { COLOR_TOKENS, EXTENSION_TOKENS, generateTokens, BRAND_KEYS } from '../core/tokens.js';
 
 const KIT_TOKENS = COLOR_TOKENS.filter((t) => !EXTENSION_TOKENS.includes(t));
-const spec = JSON.parse(readFileSync(new URL('../examples/credit-crm.spec.json', import.meta.url)));
+const spec = JSON.parse(readFileSync(new URL('./fixtures/credit-crm-mini.spec.json', import.meta.url)));
 
 async function fresh() {
   const m = createFigma();

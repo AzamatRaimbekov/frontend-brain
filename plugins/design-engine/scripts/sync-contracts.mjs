@@ -24,6 +24,7 @@ export const CONTRACTS = [
   },
   { id: 'spec-core', owner: ['figma-pack', 'builder/core/spec.js'], copy: ['frontend-pack', 'scripts/spec-to-code/spec.mjs'], transform: toMjs },
   { id: 'spec-fake', owner: ['figma-pack', 'builder/core/fake.js'], copy: ['frontend-pack', 'scripts/spec-to-code/fake.mjs'], transform: toMjs },
+  { id: 'spec-example', owner: ['figma-pack', 'builder/examples/credit-crm.spec.json'], copy: ['frontend-pack', 'scripts/spec-to-code/fixtures/credit-crm.spec.json'] },
   { id: 'components', owner: ['figma-pack', 'builder/contracts'], copy: ['frontend-pack', 'registry/mbank/contracts'], dir: '.json' },
 ];
 

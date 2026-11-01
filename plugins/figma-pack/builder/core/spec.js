@@ -24,10 +24,20 @@ export const BLOCKS = {
   empty: [],
   login: [],
   split: ['columns'],
+  // Credit pipeline CRM (blocks-crm.js)
+  funnel: ['items'],
+  meters: ['items'],
+  score: ['value'],
+  decision: ['items'],
+  files: ['items'],
+  checks: ['items'],
+  comments: ['items'],
+  profile: ['name'],
+  breakdown: ['items'],
 };
 
 // Blocks that show data and therefore change in loading / empty states.
-export const DATA_BLOCKS = ['stats', 'table', 'kanban', 'chart', 'list', 'timeline', 'cards', 'details'];
+export const DATA_BLOCKS = ['stats', 'table', 'kanban', 'chart', 'list', 'timeline', 'cards', 'details', 'funnel', 'meters', 'score', 'files', 'checks', 'comments', 'breakdown'];
 
 function checkBlock(b, path, errors) {
   if (!b || typeof b !== 'object') return errors.push(`${path}: block must be an object`);

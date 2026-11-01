@@ -11,8 +11,8 @@ import { crawled, tempRoot } from './helpers.mjs';
 test('templates: real structure from files, example fills the rest, every spec passes the validator', async () => {
   const { report } = await crawled();
   const { templates, skipped } = buildTemplates(report);
-  assert.deepEqual(Object.keys(templates).sort(), ['board', 'dashboard', 'form', 'list', 'login', 'record']);
-  assert.deepEqual(skipped.map((s) => s.archetype), ['wizard']);
+  assert.deepEqual(Object.keys(templates).sort(), ['board', 'dashboard', 'form', 'list', 'login', 'record', 'wizard']);
+  assert.deepEqual(skipped, [], 'the credit CRM example has a wizard (Новая заявка: stepper + form)');
   for (const [a, spec] of Object.entries(templates)) {
     assert.deepEqual(validateSpec(spec), [], a);
     assert.equal(spec.template.archetype, a);

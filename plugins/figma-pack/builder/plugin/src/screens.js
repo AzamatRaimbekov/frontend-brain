@@ -6,10 +6,11 @@ import { shell } from './shell.js';
 import { setFrameModes } from './brand.js';
 import * as data from './blocks-data.js';
 import * as ui from './blocks-ui.js';
+import * as crm from './blocks-crm.js';
 import { resolveLinks } from '../../core/links.js';
 import { pageFor, wirePage, buildPrototype, SCREEN_KEY } from './prototype.js';
 
-const BUILDERS = { ...data, ...ui };
+const BUILDERS = { ...data, ...ui, ...crm };
 const GAP = 120;
 const LISTS = ['table', 'list', 'kanban', 'cards'];
 

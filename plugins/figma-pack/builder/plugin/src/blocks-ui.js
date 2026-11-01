@@ -16,9 +16,10 @@ export async function header(ctx, b) {
   add(titleRow, await text(ctx, b.title, { size: mobile ? 'xl' : '2xl', weight: 'bold' }), b.badge && (await badge(ctx, b.badge, 'secondary')));
   add(left, titleRow, b.subtitle && (await text(ctx, b.subtitle, { size: 'sm', color: 'muted-foreground' })));
   add(h, left);
-  if (b.actions?.length) {
+  if (b.actions?.length || b.period) {
     const acts = box(ctx, 'Actions', { dir: 'H', gap: 8, align: 'CENTER', wrap: mobile });
-    for (const a of b.actions) add(acts, await actionButton(ctx, a, isPrimary(a) ? 'default' : 'outline'));
+    if (b.period) add(acts, await tabs(ctx, { items: mobile ? b.period.slice(0, 3) : b.period, active: b.periodActive ?? 0 }));
+    for (const a of b.actions || []) add(acts, await actionButton(ctx, a, isPrimary(a) ? 'default' : 'outline'));
     add(h, acts);
   }
   return h;

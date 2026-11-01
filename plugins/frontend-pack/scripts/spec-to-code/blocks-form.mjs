@@ -37,14 +37,14 @@ export function emitFormLib(b, ctx) {
   const P = ctx.pascal;
   const C = ctx.camel;
   const defaults = Object.fromEntries(b.fields.map((f) => [f.key, f.type === 'checkbox' ? false : f.type === 'select' && f.required ? f.options[0] : '']));
+  const rules = b.fields.map((x) => `  ${x.key}: ${rule(x)},`).join('\n');
+  // Optional plain text fields have no messages: no unused `f` (noUnusedLocals).
+  const copy = /\bf\./.test(rules) ? `import { ${ctx.m} as m } from './messages'\n\nconst f = m.blocks.${b.key}\n` : '';
   return `import { z } from 'zod'
-import { ${ctx.m} as m } from './messages'
-
-const f = m.blocks.${b.key}
-
+${copy}
 /** Client-side validation of the spec form; the server validates again. */
 export const ${C}FormSchema = z.object({
-${b.fields.map((x) => `  ${x.key}: ${rule(x)},`).join('\n')}
+${rules}
 })
 
 export type ${P}Values = z.infer<typeof ${C}FormSchema>

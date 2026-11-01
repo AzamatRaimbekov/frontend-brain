@@ -94,12 +94,14 @@ function navigation(model, screens, kit) {
   const imp = new Imports(kit);
   if (icons.length) imp.add('@/shared/components/crm/crm-icons', ...icons);
   imp.type('@/shared/components/crm/side-menu-types', 'SideMenuItemData', 'SideMenuSectionData');
+  const badges = model.nav.some((n) => n.badge != null);
+  if (badges) imp.add('react', 'createElement').add('@/shared/ui/badge', 'Badge');
   const sections = [...groups.entries()].map(([title, items], i) => `  {
     id: ${q(`section-${i + 1}`)},
     title: ${q(title)},
     collapsible: true,
     items: [
-${items.map((n) => `      item(${q(n.id)}, ${q(n.label)}, ${q(n.href)}, ${n.icon}),`).join('\n')}
+${items.map((n) => `      item(${q(n.id)}, ${q(n.label)}, ${q(n.href)}, ${n.icon}${n.badge != null ? `, ${q(n.badge)}` : ''}),`).join('\n')}
     ],
   },`);
   const implemented = model.nav.filter((n) => screens.some((s) => s.path === n.href)).map((n) => n.id);
@@ -109,7 +111,14 @@ ${items.map((n) => `      item(${q(n.id)}, ${q(n.label)}, ${q(n.href)}, ${n.icon
  * Side menu from spec.nav (spec-to-code). A menu item opens the spec screen with the same id
  * (or the first screen that names it in "nav"); items without a screen open SectionPage.
  */
-const item = (id: string, label: string, href: string, icon: SideMenuItemData['icon']): SideMenuItemData => ({ id, label, href, icon })
+${badges ? `// Counter after the label (spec nav "badge"), e.g. open applications.
+const item = (id: string, label: string, href: string, icon: SideMenuItemData['icon'], badge?: string): SideMenuItemData => ({
+  id,
+  label,
+  href,
+  icon,
+  badge: badge && createElement(Badge, { size: 'sm', tone: 'neutral' }, badge),
+})` : "const item = (id: string, label: string, href: string, icon: SideMenuItemData['icon']): SideMenuItemData => ({ id, label, href, icon })"}
 
 export const mainSections: SideMenuSectionData[] = [
 ${sections.join('\n')}

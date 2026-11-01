@@ -1,6 +1,8 @@
 // One feature folder per spec screen: api (schemas, query keys, fixtures, MSW handlers, mutations),
 // lib (messages, status tones, form schema), ui (one component per block + the screen view), index.ts.
+import { emitCrmBlock } from './blocks-crm.mjs';
 import { DATA_TEXTS, dataSchema, emitDataBlock, emptyExpr } from './blocks-data.mjs';
+import { CRM_TEXTS, CRM_TYPES } from './crm-data.mjs';
 import { emitForm, emitFormLib, emitLogin, emitMutations, FORM_TEXTS } from './blocks-form.mjs';
 import { clean, emitUiBlock, headerHasBody, UI_TEXTS } from './blocks-ui.mjs';
 import { Imports, lit, q } from './util.mjs';
@@ -11,10 +13,12 @@ export function screenCtx(s, model, kit) {
 }
 
 export const hasSearch = (s) => Boolean(s.search.q || s.search.filters.length || s.search.tabs || s.search.page);
+/** The mock payload filters by the URL only through the first table (kanban, lists ignore it). */
+export const payloadTakesSearch = (s) => hasSearch(s) && s.data.some((b) => b.type === 'table');
 const firstTable = (s) => s.flat.find((b) => b.type === 'table');
 
 function messages(s, ctx) {
-  const texts = { ...DATA_TEXTS, ...UI_TEXTS, ...FORM_TEXTS };
+  const texts = { ...DATA_TEXTS, ...UI_TEXTS, ...FORM_TEXTS, ...CRM_TEXTS };
   const blocks = Object.fromEntries(s.flat.filter((b) => texts[b.type]).map((b) => [b.key, texts[b.type](b, s)]));
   const e = s.empty;
   const m = {
@@ -104,12 +108,11 @@ function handlers(s, ctx) {
   const imp = new Imports(ctx.kit);
   imp.add('msw', 'http', 'HttpResponse').add('@/mocks/lib', 'latency');
   if (s.lists.length || s.form || s.login) imp.add('@/mocks/lib', 'scenario');
-  const searchable = hasSearch(s);
   const parts = [];
   let payload = '';
   if (s.data.length) {
     imp.add('@/mocks/lib', 'failure').add(`./${s.dir}.fixtures`, `${ctx.camel}Fixtures as seed`).type('./schemas', ctx.dataType);
-    if (searchable) imp.add('@/mocks/lib', 'searchOf').add('./schemas', `${ctx.camel}SearchSchema`).type('./schemas', ctx.searchType);
+    if (payloadTakesSearch(s)) imp.add('@/mocks/lib', 'searchOf').add('./schemas', `${ctx.camel}SearchSchema`).type('./schemas', ctx.searchType);
     const table = firstTable(s);
     if (s.data.some((b) => b.type === 'table')) imp.add('@/mocks/lib', 'pageOf');
     if (table) imp.add('@/mocks/lib', 'filterRows');
@@ -127,7 +130,7 @@ function handlers(s, ctx) {
       return b.list ? `empty ? [] : seed.${b.key}` : `seed.${b.key}`;
     };
     payload = `${s.search.tabs ? `const tabs = [${s.search.tabs.map((t) => q(t.value)).join(', ')}]\n\n` : ''}/** Screen payload; \`empty\` = the empty state. Tests use it to arrange data. */
-export function ${ctx.camel}Payload(${[searchable && `search: ${ctx.searchType} = {}`, s.lists.length && 'empty = false'].filter(Boolean).join(', ')}): ${ctx.dataType} {
+export function ${ctx.camel}Payload(${[payloadTakesSearch(s) && `search: ${ctx.searchType} = {}`, s.lists.length && 'empty = false'].filter(Boolean).join(', ')}): ${ctx.dataType} {
   return {
 ${s.data.map((b) => `    ${b.key}: ${value(b)},`).join('\n')}
   }
@@ -139,7 +142,7 @@ ${s.data.map((b) => `    ${b.key}: ${value(b)},`).join('\n')}
     const url = new URL(request.url)
     const failed = failure(url)
     if (failed) return failed
-    return HttpResponse.json(${ctx.camel}Payload(${[searchable && `${ctx.camel}SearchSchema.parse(searchOf(url))`, s.lists.length && "scenario(url) === 'empty'"].filter(Boolean).join(', ')}))
+    return HttpResponse.json(${ctx.camel}Payload(${[payloadTakesSearch(s) && `${ctx.camel}SearchSchema.parse(searchOf(url))`, s.lists.length && "scenario(url) === 'empty'"].filter(Boolean).join(', ')}))
   }),`);
   }
   if (s.form) parts.push(`  http.post('${ctx.endpoint}', async ({ request }) => {
@@ -168,7 +171,7 @@ function call(b, s) {
   switch (b.type) {
     case 'header': return headerHasBody(b, s) ? `<${b.comp} />` : null;
     case 'toolbar': return `<${b.comp} search={search} onChange={onSearchChange} />`;
-    case 'tabs': return `<${b.comp} value={search.tab ?? 'all'} onChange={(tab) => onSearchChange({ tab: tab === 'all' ? undefined : tab, page: undefined })} />`;
+    case 'tabs': return `<${b.comp} value={search.tab ?? 'all'} onChange={(tab) => onSearchChange({ tab: tab === 'all' ? undefined : tab${s.search.page ? ', page: undefined' : ''} })} />`;
     case 'pagination': {
       const total = table ? `data?.${table.key}.total` : s.lists[0] && s.lists[0].type !== 'kanban' ? `data?.${s.lists[0].key}.length` : 'undefined';
       return `<${b.comp} page={search.page ?? 1} pageSize={${table?.pageSize ?? 10}} total={${total}} onPageChange={(page) => onSearchChange({ page: page === 1 ? undefined : page })} />`;
@@ -207,7 +210,10 @@ function view(s, ctx) {
   const props = [];
   if (searchable) { props.push(`search: ${ctx.searchType}`, `onSearchChange: (patch: Partial<${ctx.searchType}>) => void`); imp.type('../api/schemas', ctx.searchType); }
   if (s.login) props.push('onLoggedIn: () => void');
-  const sig = props.length ? `{ ${props.map((p) => p.split(':')[0]).join(', ')} }: ${s.pascal}ViewProps` : '';
+  // A screen whose URL state has no control on it (a table without toolbar / tabs / pagination) only reads `search`.
+  const changes = s.flat.some((b) => ['toolbar', 'tabs', 'pagination'].includes(b.type));
+  const names = props.map((p) => p.split(':')[0]).filter((n) => n !== 'onSearchChange' || changes);
+  const sig = props.length ? `{ ${names.join(', ')} }: ${s.pascal}ViewProps` : '';
   const propsType = props.length ? `type ${s.pascal}ViewProps = { ${props.join('; ')} }\n\n` : '';
   const doc = `/** Spec screen "${s.id}" (${s.title}): blocks in spec order, states in pages/${s.dir}/UX.md. */`;
   if (!s.data.length) {
@@ -294,7 +300,8 @@ export function featureFiles(s, ctx) {
     } else if (b.type === 'login') {
       if (b === s.login) files.push({ path: `${base}/ui/${b.comp}.tsx`, content: emitLogin(b, ctx) });
     } else {
-      files.push({ path: `${base}/ui/${b.comp}.tsx`, content: b.data ? emitDataBlock(b, ctx) : emitUiBlock(b, ctx, s) });
+      const content = CRM_TYPES.includes(b.type) ? emitCrmBlock(b, ctx) : b.data ? emitDataBlock(b, ctx) : emitUiBlock(b, ctx, s);
+      files.push({ path: `${base}/ui/${b.comp}.tsx`, content });
     }
   }
   return files;

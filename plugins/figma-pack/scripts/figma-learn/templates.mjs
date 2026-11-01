@@ -16,9 +16,12 @@ export function archetypeOfSpecScreen(s) {
   const b = s.blocks || [];
   if (has(b, 'login')) return 'login';
   if (has(b, 'kanban')) return 'board';
+  // KPIs next to charts make an overview even when a short table sits below them.
+  if (has(b, 'stats') && ['chart', 'funnel', 'meters', 'breakdown'].some((t) => has(b, t))) return 'dashboard';
+  if (has(b, 'profile')) return 'record';
   if (has(b, 'table')) return 'list';
   if (has(b, 'form')) return has(b, 'stepper') ? 'wizard' : 'form';
-  if (has(b, 'stepper') || has(b, 'details') || has(b, 'timeline')) return 'record';
+  if (['stepper', 'details', 'timeline', 'score', 'decision'].some((t) => has(b, t))) return 'record';
   if (has(b, 'stats') || has(b, 'chart')) return 'dashboard';
   return 'other';
 }

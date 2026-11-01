@@ -33,14 +33,14 @@ App files: `src/app/router.tsx` (routes, `/` → first menu screen, placeholder 
 
 | Spec block | Code |
 |---|---|
-| `header` | Figma title row: h1 20/28 bold on the background + `+ …` primary (`PlusIcon`) + `period` → `PeriodSwitch`; TopHeader shows the product (`spec.project`, `titleAs="p"`) or `Breadcrumbs`; other actions ("Экспорт") → dark `Экспорт ˅` in TopHeader (`staticData.header.actions`). Breadcrumbs + `badge`/`amount` → `SummaryHeader` card (amount, `subtitle` = meta line, all actions: «Отклонить» destructive, others soft link-blue, `+` primary) |
+| `header` | Figma title row: h1 20/28 bold on the background + `+ …` primary (`PlusIcon`) + `period` → `PeriodSwitch` (`periodActive` = start index); TopHeader shows the product (`spec.project`, `titleAs="p"`) or `Breadcrumbs`; other actions ("Экспорт") → dark `Экспорт ˅` in TopHeader (`staticData.header.actions`). Breadcrumbs + `badge`/`amount` → `SummaryHeader` card (amount, `subtitle` = meta line, all actions: «Отклонить» destructive, others soft link-blue, `+` primary) |
 | `stats` | `KpiCard` grid, `loading` skeletons; `delta` split by `statDelta` (spec core): "+14%" toned by `better` (`up`/`down`), "к вчера" muted |
 | `table` | kit `Table` (caption, skeleton rows), `Badge` for `status`, `Checkbox` for `selectable`, ghost `Button` + `MoreVerticalIcon` for `actions` |
 | `toolbar` | `Input type=search` (`?q=`), kit `Select` per filter (`?<filter>=`, options from the table column with that label) |
 | `pagination` | outline `Button`s + "Показано a–b из N" (`?page=`) |
 | `tabs` | kit `Tabs` `line` (`?tab=`) |
 | `kanban` | `Board` + `BoardColumn` + `ApplicationCard` (link to the screen with `details`/`stepper` in the same menu item), `BoardSkeleton` |
-| `chart` | `Card` + bars on tokens (no chart library in the kit) |
+| `chart` | `Card` + bars on tokens (no chart library in the kit); `series` → grouped bars + legend, `labels` → x labels |
 | `list` | `Card` + `Avatar` + `Badge` rows |
 | `details` | `KeyValueSection` + `KeyValueRow` |
 | `timeline` | `Timeline` + `TimelineItem` |
@@ -51,6 +51,17 @@ App files: `src/app/router.tsx` (routes, `/` → first menu screen, placeholder 
 | `login` | `Card` + email / password `FormField`s, POST `/session`, 401 → error `Alert`, success → first menu screen |
 | `empty` | `EmptyState` |
 | `split` | CSS grid `lg:grid-cols-[2fr_1fr]` from `ratio` |
+| `funnel` | `Card` region: stage rows, bar width by `value`, `rate` on the right, `hint` under the label |
+| `meters` | `Card` region + kit `Progress` per item (`tone` success / warning / danger → error / info → brand) |
+| `score` | `Card` region: value «из max», `grade` `Badge`, 5-zone risk scale with a marker (`role="img"`), factors `+48` green / `−12` red |
+| `decision` | `Card` region: terms grid (`dl`, `columns`), `note`, actions (`Отказать`-like destructive, first / `+` primary, rest outline; default Одобрить / На доработку / Отказать, `[]` = none) |
+| `files` | `Card` region: `FileIcon` tile, name + meta, status `Badge`, ghost menu button |
+| `checks` | `Card` region: status icon `ok` / `warn` / `fail` / `wait`, label + hint, `result` in the status colour |
+| `comments` | `Card` region: `Avatar` + bubble per comment, reply `Input` + «Отправить» (added locally until the API exists) |
+| `profile` | `Card` region: `Avatar` initials, name h2, meta, `badges`, actions (`+` primary), key facts `dl` |
+| `breakdown` | `Card` region: stacked bar by `share` (`role="img"`) + legend rows (dot, label, value, share) |
+| `more` on funnel / meters / score / files / checks / breakdown | «Отчёт → reports» → `Link` in the card header to that screen or menu item |
+| `nav[].icon` / `nav[].badge` | crm-icons by name (`home`, `inbox`, `check`, `shield`, `users`, `history`, `chart`, …); counter `Badge` after the label |
 | unknown type | `<Screen><Type>.tsx` with a `TODO(spec-to-code)` note + a warning |
 
 ## States
@@ -67,3 +78,4 @@ Each generated file starts with `@generated spec-to-code <hash>`. On the next ru
 - The API contract is invented (`/api/screens/<id>`, all values pre-formatted strings): replace schemas and handlers with the real API when it exists.
 - Forms use zod + `useState` (react-hook-form is not in the template). Required selects default to their first option.
 - Roles: the `no-access` state is wired to 403, there is no route guard.
+- `stats` item `icon`: `KpiCard` has no icon slot yet, the icon is ignored. Actions of `decision` / `profile` and the file menu of `files` are `TODO(spec-to-code)` buttons.

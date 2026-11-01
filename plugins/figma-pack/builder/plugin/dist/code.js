@@ -887,9 +887,19 @@
     alert: ["text"],
     empty: [],
     login: [],
-    split: ["columns"]
+    split: ["columns"],
+    // Credit pipeline CRM (blocks-crm.js)
+    funnel: ["items"],
+    meters: ["items"],
+    score: ["value"],
+    decision: ["items"],
+    files: ["items"],
+    checks: ["items"],
+    comments: ["items"],
+    profile: ["name"],
+    breakdown: ["items"]
   };
-  var DATA_BLOCKS = ["stats", "table", "kanban", "chart", "list", "timeline", "cards", "details"];
+  var DATA_BLOCKS = ["stats", "table", "kanban", "chart", "list", "timeline", "cards", "details", "funnel", "meters", "score", "files", "checks", "comments", "breakdown"];
   function checkBlock(b, path, errors) {
     if (!b || typeof b !== "object") return errors.push(`${path}: block must be an object`);
     const req = BLOCKS[b.type];
@@ -1050,6 +1060,7 @@
     const it = box(ctx, `Nav / ${item.label}`, { dir: "H", gap: 10, pad: compact ? [10, 10] : [8, 12], radius: "md", align: "CENTER", fill: active ? "sidebar-accent" : null, w: compact ? "hug" : "fill", justify: compact ? "CENTER" : "MIN" });
     add(it, icon(ctx, item.icon || guessIcon(item.label), active ? "sidebar-accent-foreground" : "sidebar-foreground", 16));
     if (!compact) add(it, await text(ctx, item.label, { size: "sm", weight: active ? "medium" : "regular", color: active ? "sidebar-accent-foreground" : "sidebar-foreground", w: "fill" }));
+    if (!compact && item.badge) add(it, await badge(ctx, String(item.badge), active ? "default" : "secondary"));
     return link(it, `nav:${item.id}`);
   }
   async function logo(ctx, spec, compact) {
@@ -1064,8 +1075,11 @@
     const compact = vp === "tablet";
     const s = box(ctx, "Sidebar", { gap: 4, pad: compact ? [16, 12] : [16, 12], fill: "sidebar", stroke: "sidebar-border", w: SIDEBAR[vp], h: "fill", align: compact ? "CENTER" : "MIN" });
     add(s, await logo(ctx, spec, compact), box(ctx, "Gap", { h: 16 }));
+    let group = null;
     for (const item of spec.nav) {
-      if (item.group && !compact) add(s, add(box(ctx, "Group", { pad: [12, 12, 4, 12], w: "fill" }), await text(ctx, item.group, { size: "xs", weight: "medium", color: "muted-foreground" })));
+      const changed = item.group && item.group !== group;
+      group = item.group || group;
+      if (changed && !compact) add(s, add(box(ctx, "Group", { pad: [12, 12, 4, 12], w: "fill" }), await text(ctx, item.group, { size: "xs", weight: "medium", color: "muted-foreground" })));
       add(s, await navItem(ctx, item, item.id === screen.nav, compact));
     }
     add(s, box(ctx, "Spacer", { h: "fill" }));
@@ -1081,18 +1095,18 @@
     return add(t, icon(ctx, "bell", "muted-foreground", 18), await avatar(ctx, spec.user.name));
   }
   async function mobileBar(ctx, screen) {
-    const bar = box(ctx, "App bar", { dir: "H", gap: 12, pad: [12, 16], align: "CENTER", fill: "background", w: "fill", h: 56 });
-    if (screen.back) add(bar, link(icon(ctx, "back", "foreground", 22), "back"));
-    return add(bar, await text(ctx, screen.title, { size: "lg", weight: "semibold", w: "fill", truncate: true }), icon(ctx, "bell", "foreground", 20));
+    const bar2 = box(ctx, "App bar", { dir: "H", gap: 12, pad: [12, 16], align: "CENTER", fill: "background", w: "fill", h: 56 });
+    if (screen.back) add(bar2, link(icon(ctx, "back", "foreground", 22), "back"));
+    return add(bar2, await text(ctx, screen.title, { size: "lg", weight: "semibold", w: "fill", truncate: true }), icon(ctx, "bell", "foreground", 20));
   }
   async function tabbar(ctx, spec, screen) {
-    const bar = box(ctx, "Tab bar", { dir: "H", pad: [8, 8, 24, 8], fill: "background", stroke: "border", w: "fill", justify: "SPACE_BETWEEN" });
+    const bar2 = box(ctx, "Tab bar", { dir: "H", pad: [8, 8, 24, 8], fill: "background", stroke: "border", w: "fill", justify: "SPACE_BETWEEN" });
     for (const item of spec.nav.slice(0, 5)) {
       const on = item.id === screen.nav;
       const it = link(box(ctx, `Tab / ${item.label}`, { gap: 4, align: "CENTER", pad: [4, 6], w: "fill" }), `nav:${item.id}`);
-      add(bar, add(it, icon(ctx, item.icon || guessIcon(item.label), on ? "primary" : "muted-foreground", 22), await text(ctx, item.label, { size: "xs", weight: on ? "medium" : "regular", color: on ? "primary" : "muted-foreground", align: "CENTER" })));
+      add(bar2, add(it, icon(ctx, item.icon || guessIcon(item.label), on ? "primary" : "muted-foreground", 22), await text(ctx, item.label, { size: "xs", weight: on ? "medium" : "regular", color: on ? "primary" : "muted-foreground", align: "CENTER" })));
     }
-    return bar;
+    return bar2;
   }
   async function shell(ctx, spec, screen, vp, frameWidth) {
     const frame = box(ctx, "Screen", { dir: screen.shell === "sidebar" && vp !== "mobile" ? "H" : "V", fill: "background", w: frameWidth, clip: true });
@@ -1147,7 +1161,7 @@
   var cols = (ctx, desktop) => ctx.vp === "mobile" ? Math.min(desktop, 1) : ctx.vp === "tablet" ? Math.min(desktop, 2) : desktop;
   async function stats(ctx, b) {
     const row = box(ctx, "Stats", { dir: "H", gap: 16, w: "fill", wrap: true });
-    const per = cols(ctx, b.items.length > 4 ? 4 : b.items.length);
+    const per = ctx.vp === "mobile" ? 2 : cols(ctx, b.items.length > 4 ? 4 : b.items.length);
     const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
     for (const it of b.items) {
       const c = card(ctx, `Stat / ${it.label}`, { gap: 8, pad: 20, w });
@@ -1161,10 +1175,17 @@
           await text(ctx, d.value, { size: "xs", weight: "medium", color: tone[d.tone] }),
           d.label && await text(ctx, d.label, { size: "xs", color: "muted-foreground" })
         ) : null;
+        const top = box(ctx, "Top", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
+        add(top, await text(ctx, it.label, { size: "sm", weight: "medium", color: "muted-foreground", w: "fill" }));
+        if (it.icon && ctx.vp !== "mobile") {
+          const tile = box(ctx, "Icon", { dir: "H", w: 32, h: 32, radius: "md", align: "CENTER", justify: "CENTER" });
+          fill(tile, ctx, "primary", 0.1);
+          add(top, add(tile, icon(ctx, it.icon, "primary", 16)));
+        }
         add(
           c,
-          await text(ctx, it.label, { size: "sm", weight: "medium", color: "muted-foreground" }),
-          await text(ctx, value, { size: "2xl", weight: "bold" }),
+          top,
+          await text(ctx, value, { size: ctx.vp === "mobile" ? "xl" : "2xl", weight: "bold" }),
           delta || it.hint && await text(ctx, it.hint, { size: "xs", color: "muted-foreground" })
         );
       }
@@ -1267,14 +1288,34 @@
   }
   async function chart(ctx, b) {
     const c = card(ctx, b.title || "Chart");
-    add(c, await cardTitle(ctx, b.title || "\u0414\u0438\u043D\u0430\u043C\u0438\u043A\u0430", b.subtitle));
-    const plot = box(ctx, "Plot", { dir: "H", gap: ctx.vp === "mobile" ? 4 : 8, align: "MAX", w: "fill", h: b.height || 200 });
+    const head = box(ctx, "Chart head", { dir: ctx.vp === "mobile" ? "V" : "H", gap: 12, align: ctx.vp === "mobile" ? "MIN" : "CENTER", w: "fill" });
+    add(head, await cardTitle(ctx, b.title || "\u0414\u0438\u043D\u0430\u043C\u0438\u043A\u0430", b.subtitle));
+    const series = b.series || [];
+    if (series.length) {
+      const legend = box(ctx, "Legend", { dir: "H", gap: 16, align: "CENTER" });
+      for (const [i, name] of series.entries()) add(legend, add(box(ctx, `Legend / ${name}`, { dir: "H", gap: 6, align: "CENTER" }), rect(ctx, "Dot", 8, 8, `chart-${i + 1}`, "full"), await text(ctx, name, { size: "xs", color: "muted-foreground" })));
+      add(head, legend);
+    }
+    add(c, head);
+    const labels = b.labels || (ctx.vp === "mobile" ? ["09", "11", "13", "15", "17", "19", "21"] : ["09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"]);
+    const n = ctx.vp === "mobile" ? Math.min(7, labels.length) : labels.length;
+    const k = Math.max(1, series.length);
+    const gap = ctx.vp === "mobile" ? 6 : 12;
+    const slot = Math.floor((ctx.width - 48 - (n - 1) * gap) / n);
+    const barW = Math.max(4, Math.floor((slot - (k - 1) * 3) / k));
+    const H = b.height || 200;
+    const plot = box(ctx, "Plot", { dir: "H", gap, align: "MAX", w: "fill" });
     const r = rng(5 + ctx.seed);
-    const n = ctx.vp === "mobile" ? 7 : b.points || 12;
-    const barW = Math.max(6, Math.floor((ctx.width - 48 - (n - 1) * (ctx.vp === "mobile" ? 4 : 8)) / n));
     for (let i = 0; i < n; i++) {
-      const h = ctx.state === "loading" ? 40 + i * 37 % 120 : Math.round(40 + r() * 150);
-      add(plot, rect(ctx, "Bar", barW, h, ctx.state === "loading" ? "muted" : i === n - 2 ? "chart-1" : "chart-2", "sm"));
+      const col = box(ctx, `Slot / ${labels[i]}`, { gap: 8, align: "CENTER", w: slot });
+      const bars = box(ctx, "Bars", { dir: "H", gap: 3, align: "MAX", h: H });
+      for (let j = 0; j < k; j++) {
+        const h = ctx.state === "loading" ? 40 + (i * 37 + j * 19) % 120 : Math.round((j ? 0.25 : 0.45) * H + r() * (j ? 0.25 : 0.5) * H);
+        const tone = ctx.state === "loading" ? "muted" : k > 1 ? `chart-${j + 1}` : i === n - 2 ? "chart-1" : "chart-2";
+        add(bars, rect(ctx, "Bar", barW, h, tone, "sm"));
+      }
+      add(col, bars, await text(ctx, labels[i], { size: "xs", color: "muted-foreground" }));
+      add(plot, col);
     }
     return add(c, plot);
   }
@@ -1399,6 +1440,7 @@
         for (const it of b.type === "cards" ? b.items || [] : []) if (it == null ? void 0 : it.link) out.push({ path: `${bp}.items.link`, to: it.link });
         for (const a of b.actions || []) act(a, `${bp}.actions`);
         if (b.action) act(b.action, `${bp}.action`);
+        if (b.more) act(b.more, `${bp}.more`);
       });
     });
     (spec.links || []).forEach((l, i) => {
@@ -1455,6 +1497,7 @@
         }
         for (const a of b.actions || []) action(a);
         if (b.action && ["empty", "alert"].includes(b.type)) action(b.action);
+        if (b.more) action(b.more);
         if (b.type === "form") {
           put("submit", b.to || parentOf2(s));
           put("cancel", b.cancelTo || b.to || parentOf2(s));
@@ -1469,7 +1512,7 @@
   // plugin/src/blocks-ui.js
   var actionButton = async (ctx, a, variant, sz) => link(await button(ctx, actionLabel(a), variant, sz), `action:${actionLabel(a)}`);
   async function header(ctx, b) {
-    var _a;
+    var _a, _b;
     const mobile = ctx.vp === "mobile";
     const h = box(ctx, "Page header", { dir: mobile ? "V" : "H", gap: 16, align: mobile ? "MIN" : "CENTER", justify: "SPACE_BETWEEN", w: "fill" });
     const left = box(ctx, "Title", { gap: 6, w: mobile ? "fill" : "hug" });
@@ -1478,9 +1521,10 @@
     add(titleRow, await text(ctx, b.title, { size: mobile ? "xl" : "2xl", weight: "bold" }), b.badge && await badge(ctx, b.badge, "secondary"));
     add(left, titleRow, b.subtitle && await text(ctx, b.subtitle, { size: "sm", color: "muted-foreground" }));
     add(h, left);
-    if ((_a = b.actions) == null ? void 0 : _a.length) {
+    if (((_a = b.actions) == null ? void 0 : _a.length) || b.period) {
       const acts = box(ctx, "Actions", { dir: "H", gap: 8, align: "CENTER", wrap: mobile });
-      for (const a of b.actions) add(acts, await actionButton(ctx, a, isPrimaryAction(a) ? "default" : "outline"));
+      if (b.period) add(acts, await tabs(ctx, { items: mobile ? b.period.slice(0, 3) : b.period, active: (_b = b.periodActive) != null ? _b : 0 }));
+      for (const a of b.actions || []) add(acts, await actionButton(ctx, a, isPrimaryAction(a) ? "default" : "outline"));
       add(h, acts);
     }
     return h;
@@ -1605,6 +1649,254 @@
     return add(wrap, c);
   }
   var SPLIT_GAP = 24;
+
+  // plugin/src/blocks-crm.js
+  var blocks_crm_exports = {};
+  __export(blocks_crm_exports, {
+    breakdown: () => breakdown,
+    cardHead: () => cardHead,
+    checks: () => checks,
+    comments: () => comments,
+    decision: () => decision,
+    files: () => files,
+    funnel: () => funnel,
+    meters: () => meters,
+    profile: () => profile,
+    score: () => score
+  });
+  var CHART = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
+  var TONE = { success: "success", warning: "warning", danger: "destructive", destructive: "destructive", info: "info", default: "primary" };
+  var loading = (ctx) => ctx.state === "loading";
+  var pairOf = (it) => Array.isArray(it) ? it : typeof it === "string" ? it.split(":") : [it.label, it.value];
+  async function cardHead(ctx, b) {
+    const h = box(ctx, "Card header", { dir: "H", gap: 12, align: "CENTER", w: "fill" });
+    const t = box(ctx, "Titles", { gap: 2, w: "fill" });
+    add(t, await text(ctx, b.title, { size: "base", weight: "semibold", w: "fill" }), b.subtitle && await text(ctx, b.subtitle, { size: "sm", color: "muted-foreground", w: "fill" }));
+    add(h, t);
+    if (b.more) add(h, link(await text(ctx, actionLabel(b.more), { size: "sm", weight: "medium", color: "primary" }), `action:${actionLabel(b.more)}`));
+    return h;
+  }
+  function bar(ctx, width, share, token, h = 8) {
+    const track = box(ctx, "Track", { dir: "H", fill: "muted", radius: "full", w: width, h, clip: true });
+    add(track, rect(ctx, "Fill", Math.max(h, Math.round(width * Math.min(1, share))), h, token, "full"));
+    return track;
+  }
+  async function funnel(ctx, b) {
+    const c = card(ctx, b.title || "Funnel");
+    add(c, await cardHead(ctx, b));
+    const max = Math.max(...b.items.map((it) => Number(String(it.value).replace(/\D/g, "")) || 0), 1);
+    const barW = ctx.width - 48 - (ctx.vp === "mobile" ? 0 : 220);
+    for (const [i, it] of b.items.entries()) {
+      const row = box(ctx, `Stage / ${it.label}`, { dir: ctx.vp === "mobile" ? "V" : "H", gap: ctx.vp === "mobile" ? 6 : 16, align: ctx.vp === "mobile" ? "MIN" : "CENTER", w: "fill" });
+      if (loading(ctx)) {
+        add(c, add(row, skel(ctx, 120, 12), skel(ctx, Math.round(barW * (1 - i * 0.15)), 28, "md")));
+        continue;
+      }
+      const label2 = box(ctx, "Label", { gap: 2, w: ctx.vp === "mobile" ? "fill" : 140 });
+      add(label2, await text(ctx, it.label, { size: "sm", weight: "medium", w: "fill" }), it.hint && await text(ctx, it.hint, { size: "xs", color: "muted-foreground", w: "fill" }));
+      const share = (Number(String(it.value).replace(/\D/g, "")) || 0) / max;
+      const w = Math.max(48, Math.round(barW * share));
+      const fillBar = box(ctx, "Bar", { dir: "H", pad: [0, 12], align: "CENTER", fill: CHART[i % CHART.length], radius: "md", w, h: 32 });
+      add(fillBar, await text(ctx, String(it.value), { size: "sm", weight: "semibold", color: "primary-foreground" }));
+      const lane = box(ctx, "Lane", { dir: "H", w: ctx.vp === "mobile" ? "fill" : barW });
+      add(lane, fillBar);
+      add(row, label2, lane);
+      if (ctx.vp !== "mobile") add(row, add(box(ctx, "Rate", { dir: "H", justify: "MAX", w: 56 }), it.rate ? await text(ctx, it.rate, { size: "sm", weight: "medium", color: "muted-foreground" }) : null));
+      add(c, row);
+    }
+    return c;
+  }
+  async function meters(ctx, b) {
+    var _a, _b;
+    const c = card(ctx, b.title || "Meters");
+    add(c, await cardHead(ctx, b));
+    const inner = ctx.width - 48;
+    for (const it of b.items) {
+      const m = box(ctx, `Meter / ${it.label}`, { gap: 8, w: "fill" });
+      if (loading(ctx)) {
+        add(c, add(m, skel(ctx, 160, 12), skel(ctx, inner, 8, "full")));
+        continue;
+      }
+      const top = box(ctx, "Top", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
+      const pct = Number(String((_a = it.percent) != null ? _a : 0).replace(/[^\d.]/g, "")) || 0;
+      const tone = TONE[it.tone] || (pct >= 90 ? "destructive" : pct >= 75 ? "warning" : "primary");
+      add(top, await text(ctx, it.label, { size: "sm", weight: "medium", w: "fill", truncate: true }), await text(ctx, (_b = it.value) != null ? _b : `${pct}%`, { size: "sm", weight: "semibold", color: tone === "primary" ? "foreground" : tone }));
+      add(m, top, bar(ctx, inner, pct / 100, tone), it.hint && await text(ctx, it.hint, { size: "xs", color: "muted-foreground" }));
+      add(c, m);
+    }
+    return c;
+  }
+  async function score(ctx, b) {
+    var _a;
+    const c = card(ctx, b.title || "\u0421\u043A\u043E\u0440\u0438\u043D\u0433", { gap: 20 });
+    add(c, await cardHead(ctx, { title: b.title || "\u0421\u043A\u043E\u0440\u0438\u043D\u0433", subtitle: b.subtitle, more: b.more }));
+    const inner = ctx.width - 48;
+    if (loading(ctx)) return add(c, skel(ctx, 120, 40, "md"), skel(ctx, inner, 10, "full"), skel(ctx, 200, 12), skel(ctx, 160, 12));
+    const max = b.max || 850;
+    const top = box(ctx, "Value", { dir: "H", gap: 12, align: "MAX", w: "fill" });
+    add(top, await text(ctx, String(b.value), { size: "4xl", weight: "bold" }), await text(ctx, `\u0438\u0437 ${max}`, { size: "sm", color: "muted-foreground" }), box(ctx, "Spacer", { w: "fill" }), b.grade && await badge(ctx, b.grade, statusVariant(b.grade)));
+    const zones = ["destructive", "warning", "chart-3", "chart-2", "success"];
+    const gap = 4;
+    const zw = Math.floor((inner - gap * 4) / 5);
+    const scale = box(ctx, "Scale", { dir: "H", gap, w: "fill" });
+    for (const z of zones) add(scale, rect(ctx, "Zone", zw, 8, z, "full"));
+    const markerRow = box(ctx, "Marker row", { dir: "H", w: "fill", h: 12 });
+    const pos = Math.round(Math.min(1, b.value / max) * inner);
+    add(markerRow, box(ctx, "Offset", { w: Math.max(0, pos - 6), h: 1 }), rect(ctx, "Marker", 12, 12, "foreground", "full"));
+    const legend = box(ctx, "Legend", { dir: "H", justify: "SPACE_BETWEEN", w: "fill" });
+    add(legend, await text(ctx, "\u0412\u044B\u0441\u043E\u043A\u0438\u0439 \u0440\u0438\u0441\u043A", { size: "xs", color: "muted-foreground" }), await text(ctx, "\u041D\u0438\u0437\u043A\u0438\u0439 \u0440\u0438\u0441\u043A", { size: "xs", color: "muted-foreground" }));
+    add(c, top, add(box(ctx, "Gauge", { gap: 6, w: "fill" }), markerRow, scale, legend));
+    if ((_a = b.items) == null ? void 0 : _a.length) {
+      const list2 = box(ctx, "Factors", { gap: 10, w: "fill" });
+      add(list2, await text(ctx, b.factorsTitle || "\u0427\u0442\u043E \u043F\u043E\u0432\u043B\u0438\u044F\u043B\u043E", { size: "xs", weight: "medium", color: "muted-foreground" }));
+      for (const it of b.items) {
+        const [label2, impact] = pairOf(it);
+        const good = /^[+▲]/.test(String(impact).trim());
+        const row = box(ctx, `Factor / ${label2}`, { dir: "H", gap: 10, align: "CENTER", w: "fill" });
+        add(row, rect(ctx, "Dot", 8, 8, good ? "success" : "destructive", "full"), await text(ctx, label2, { size: "sm", w: "fill" }), await text(ctx, impact, { size: "sm", weight: "semibold", color: good ? "success" : "destructive" }));
+        add(list2, row);
+      }
+      add(c, list2);
+    }
+    return c;
+  }
+  async function decision(ctx, b) {
+    const c = card(ctx, b.title || "\u0420\u0435\u0448\u0435\u043D\u0438\u0435", { gap: 20 });
+    add(c, await cardHead(ctx, { title: b.title || "\u0420\u0435\u0448\u0435\u043D\u0438\u0435", subtitle: b.subtitle }));
+    const per = ctx.vp === "mobile" ? 2 : b.columns || 2;
+    const inner = ctx.width - 48;
+    const w = Math.floor((inner - 12 * (per - 1)) / per);
+    const grid = box(ctx, "Terms", { dir: "H", gap: 12, wrap: true, w: "fill" });
+    for (const it of b.items) {
+      const [label2, value] = pairOf(it);
+      const cell2 = box(ctx, `Term / ${label2}`, { gap: 4, pad: [12, 14], fill: "muted", fillOpacity: 0.5, radius: "lg", w });
+      add(cell2, await text(ctx, label2, { size: "xs", color: "muted-foreground" }), loading(ctx) ? skel(ctx, 80, 14) : await text(ctx, value, { size: "base", weight: "semibold" }));
+      add(grid, cell2);
+    }
+    add(c, grid);
+    if (b.note) add(c, await text(ctx, b.note, { size: "sm", color: "muted-foreground", w: "fill" }));
+    const acts = box(ctx, "Decision actions", { dir: "H", gap: 8, wrap: true, w: "fill" });
+    const list2 = b.actions || ["\u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C", "\u041D\u0430 \u0434\u043E\u0440\u0430\u0431\u043E\u0442\u043A\u0443", "\u041E\u0442\u043A\u0430\u0437\u0430\u0442\u044C"];
+    for (const a of list2) {
+      const variant = /отказ|отклон|reject/i.test(a) ? "destructive" : isPrimaryAction(a) || a === list2[0] ? "default" : "outline";
+      add(acts, link(await button(ctx, actionLabel(a), variant), `action:${actionLabel(a)}`));
+    }
+    return list2.length ? add(c, acts) : c;
+  }
+  async function files(ctx, b) {
+    const c = card(ctx, b.title || "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B", { gap: 4 });
+    add(c, add(box(ctx, "Head", { pad: [0, 0, 8, 0], w: "fill" }), await cardHead(ctx, { title: b.title || "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B", subtitle: b.subtitle, more: b.more })));
+    for (const it of b.items) {
+      const f = typeof it === "string" ? { name: it } : it;
+      const row = box(ctx, `File / ${f.name}`, { dir: "H", gap: 12, pad: [10, 0], align: "CENTER", w: "fill" });
+      const tile = box(ctx, "File icon", { dir: "H", w: 36, h: 36, radius: "md", fill: "muted", align: "CENTER", justify: "CENTER" });
+      add(tile, icon(ctx, "file", "muted-foreground", 18));
+      const t = box(ctx, "Name", { gap: 2, w: "fill" });
+      if (loading(ctx)) add(t, skel(ctx, 160, 12), skel(ctx, 90, 10));
+      else add(t, await text(ctx, f.name, { size: "sm", weight: "medium", w: "fill", truncate: true }), f.meta && await text(ctx, f.meta, { size: "xs", color: "muted-foreground" }));
+      add(c, add(row, tile, t, !loading(ctx) && f.status && await badge(ctx, f.status, statusVariant(f.status)), icon(ctx, "more", "muted-foreground", 16)));
+    }
+    return c;
+  }
+  var CHECK = { ok: ["check", "success"], warn: ["info", "warning"], fail: ["shield", "destructive"], wait: ["history", "muted-foreground"] };
+  async function checks(ctx, b) {
+    const c = card(ctx, b.title || "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438", { gap: 0 });
+    add(c, add(box(ctx, "Head", { pad: [0, 0, 12, 0], w: "fill" }), await cardHead(ctx, { title: b.title || "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438", subtitle: b.subtitle, more: b.more })));
+    for (const [i, it] of b.items.entries()) {
+      const ch = typeof it === "string" ? { label: it, status: "ok" } : it;
+      const [ic, tone] = CHECK[ch.status] || CHECK.ok;
+      const row = box(ctx, `Check / ${ch.label}`, { dir: "H", gap: 12, pad: [12, 0], align: "CENTER", w: "fill" });
+      if (i) add(c, rect(ctx, "Divider", ctx.width - 48, 1, "border"));
+      const dot = box(ctx, "Status", { dir: "H", w: 28, h: 28, radius: "full", align: "CENTER", justify: "CENTER" });
+      fill(dot, ctx, tone === "muted-foreground" ? "muted" : tone, tone === "muted-foreground" ? 1 : 0.12);
+      add(dot, icon(ctx, ic, tone, 14));
+      const t = box(ctx, "Text", { gap: 2, w: "fill" });
+      if (loading(ctx)) add(t, skel(ctx, 180, 12), skel(ctx, 100, 10));
+      else add(t, await text(ctx, ch.label, { size: "sm", weight: "medium", w: "fill" }), ch.hint && await text(ctx, ch.hint, { size: "xs", color: "muted-foreground", w: "fill" }));
+      add(c, add(row, dot, t, !loading(ctx) && ch.result && await text(ctx, ch.result, { size: "sm", weight: "medium", color: tone === "muted-foreground" ? "muted-foreground" : tone })));
+    }
+    return c;
+  }
+  async function comments(ctx, b) {
+    const c = card(ctx, b.title || "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0438", { gap: 16 });
+    add(c, await cardHead(ctx, { title: b.title || "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0438", subtitle: b.subtitle }));
+    for (const it of b.items) {
+      const m = Array.isArray(it) ? { who: it[0], time: it[1], text: it[2] } : it;
+      const row = box(ctx, `Comment / ${m.who}`, { dir: "H", gap: 12, w: "fill" });
+      const body = box(ctx, "Body", { gap: 4, w: "fill" });
+      if (loading(ctx)) {
+        add(c, add(row, skel(ctx, 32, 32, "full"), add(body, skel(ctx, 140, 12), skel(ctx, "fill", 10))));
+        continue;
+      }
+      const head = box(ctx, "Who", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
+      add(head, await text(ctx, m.who, { size: "sm", weight: "semibold" }), m.time && await text(ctx, m.time, { size: "xs", color: "muted-foreground" }));
+      const bubble = box(ctx, "Bubble", { pad: [10, 12], fill: "muted", fillOpacity: 0.6, radius: "lg", w: "fill" });
+      add(bubble, await text(ctx, m.text, { size: "sm", w: "fill" }));
+      add(c, add(row, await avatar(ctx, m.who), add(body, head, bubble)));
+    }
+    const reply = box(ctx, "Reply", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
+    const field2 = await input(ctx, b.placeholder || "\u041D\u0430\u043F\u0438\u0441\u0430\u0442\u044C \u043A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439\u2026");
+    add(reply, field2, await button(ctx, "\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C", "default"));
+    if ("layoutSizingHorizontal" in field2) field2.layoutSizingHorizontal = "FILL";
+    return add(c, reply);
+  }
+  async function profile(ctx, b) {
+    var _a, _b, _c;
+    const mobile = ctx.vp === "mobile";
+    const c = card(ctx, `Profile / ${b.name}`, { gap: 20 });
+    const top = box(ctx, "Top", { dir: mobile ? "V" : "H", gap: 16, align: mobile ? "MIN" : "CENTER", w: "fill" });
+    const who = box(ctx, "Who", { dir: "H", gap: 16, align: "CENTER", w: mobile ? "fill" : "hug" });
+    const t = box(ctx, "Name", { gap: 4 });
+    const badges = box(ctx, "Badges", { dir: "H", gap: 6, wrap: true });
+    for (const x of b.badges || []) add(badges, await badge(ctx, x, statusVariant(x)));
+    add(t, await text(ctx, b.name, { size: "xl", weight: "bold" }), b.meta && await text(ctx, b.meta, { size: "sm", color: "muted-foreground" }), ((_a = b.badges) == null ? void 0 : _a.length) && badges);
+    add(who, await avatar(ctx, b.name, 56), t);
+    add(top, who);
+    if ((_b = b.actions) == null ? void 0 : _b.length) {
+      if (!mobile) add(top, box(ctx, "Spacer", { w: "fill" }));
+      const acts = box(ctx, "Actions", { dir: "H", gap: 8, wrap: true });
+      for (const a of b.actions) add(acts, link(await button(ctx, actionLabel(a), isPrimaryAction(a) ? "default" : "outline"), `action:${actionLabel(a)}`));
+      add(top, acts);
+    }
+    add(c, top);
+    if ((_c = b.items) == null ? void 0 : _c.length) {
+      const per = mobile ? 2 : Math.min(b.items.length, 5);
+      const inner = ctx.width - 48;
+      const w = Math.floor((inner - 16 * (per - 1)) / per);
+      const facts = box(ctx, "Facts", { dir: "H", gap: 16, wrap: true, pad: [16, 0, 0, 0], w: "fill" });
+      for (const it of b.items) {
+        const [label2, value] = pairOf(it);
+        const f = box(ctx, `Fact / ${label2}`, { gap: 4, w });
+        add(f, await text(ctx, label2, { size: "xs", color: "muted-foreground" }), loading(ctx) ? skel(ctx, 90, 14) : await text(ctx, value, { size: "sm", weight: "semibold", w: "fill" }));
+        add(facts, f);
+      }
+      add(c, rect(ctx, "Divider", inner, 1, "border"), facts);
+    }
+    return c;
+  }
+  async function breakdown(ctx, b) {
+    const c = card(ctx, b.title || "\u0421\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430");
+    add(c, await cardHead(ctx, b));
+    const inner = ctx.width - 48;
+    if (loading(ctx)) return add(c, skel(ctx, inner, 12, "full"), skel(ctx, 180, 12), skel(ctx, 160, 12), skel(ctx, 140, 12));
+    const shares = b.items.map((it) => Number(String(it.share).replace(/[^\d.]/g, "")) || 0);
+    const total = shares.reduce((a, x) => a + x, 0) || 1;
+    const stack = box(ctx, "Stack", { dir: "H", gap: 2, w: "fill", radius: "full", clip: true });
+    b.items.forEach((it, i) => add(stack, rect(ctx, `Part / ${it.label}`, Math.max(4, Math.floor((inner - 2 * (b.items.length - 1)) * shares[i] / total)), 12, CHART[i % CHART.length])));
+    add(c, stack);
+    for (const [i, it] of b.items.entries()) {
+      const row = box(ctx, `Legend / ${it.label}`, { dir: "H", gap: 10, align: "CENTER", w: "fill" });
+      add(
+        row,
+        rect(ctx, "Dot", 10, 10, CHART[i % CHART.length], "full"),
+        await text(ctx, it.label, { size: "sm", w: "fill" }),
+        it.value && await text(ctx, it.value, { size: "sm", weight: "medium" }),
+        add(box(ctx, "Share", { dir: "H", justify: "MAX", w: 48 }), await text(ctx, String(it.share), { size: "sm", color: "muted-foreground" }))
+      );
+      add(c, row);
+    }
+    return c;
+  }
 
   // plugin/src/prototype.js
   var PROTO_PAGE = "\u041F\u0440\u043E\u0442\u043E\u0442\u0438\u043F";
@@ -1739,7 +2031,7 @@
   }
 
   // plugin/src/screens.js
-  var BUILDERS = __spreadValues(__spreadValues({}, blocks_data_exports), blocks_ui_exports);
+  var BUILDERS = __spreadValues(__spreadValues(__spreadValues({}, blocks_data_exports), blocks_ui_exports), blocks_crm_exports);
   var GAP2 = 120;
   var LISTS2 = ["table", "list", "kanban", "cards"];
   function blocksForState(screen, state) {
@@ -3495,16 +3787,81 @@
   var credit_crm_spec_default = {
     $schema: "ds-builder/spec@1",
     project: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u044B\u0439 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440",
-    subtitle: "CRM \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430",
+    subtitle: "CRM \xB7 \u0420\u043E\u0437\u043D\u0438\u0447\u043D\u043E\u0435 \u043A\u0440\u0435\u0434\u0438\u0442\u043E\u0432\u0430\u043D\u0438\u0435",
     platform: "web",
-    viewports: ["desktop", "mobile"],
-    user: { name: "\u0410\u0439\u0433\u0443\u043B\u044C \u0422\u043E\u043A\u0442\u043E\u0433\u0443\u043B\u043E\u0432\u0430", role: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u044B\u0439 \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A" },
+    viewports: [
+      "desktop",
+      "mobile"
+    ],
+    searchPlaceholder: "\u041F\u043E\u0438\u0441\u043A \u0437\u0430\u044F\u0432\u043A\u0438, \u043A\u043B\u0438\u0435\u043D\u0442\u0430, \u0434\u043E\u0433\u043E\u0432\u043E\u0440\u0430\u2026",
+    user: {
+      name: "\u0410\u0439\u0433\u0443\u043B\u044C \u0422\u043E\u043A\u0442\u043E\u0433\u0443\u043B\u043E\u0432\u0430",
+      role: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u044B\u0439 \u0430\u043D\u0430\u043B\u0438\u0442\u0438\u043A"
+    },
     nav: [
-      { id: "dashboard", label: "\u041E\u0431\u0437\u043E\u0440" },
-      { id: "apps", label: "\u0417\u0430\u044F\u0432\u043A\u0438" },
-      { id: "clients", label: "\u041A\u043B\u0438\u0435\u043D\u0442\u044B" },
-      { id: "reports", label: "\u041E\u0442\u0447\u0451\u0442\u044B" },
-      { id: "settings", label: "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438", group: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430" }
+      {
+        id: "dashboard",
+        label: "\u041E\u0431\u0437\u043E\u0440",
+        icon: "home",
+        group: "\u0420\u0430\u0431\u043E\u0442\u0430"
+      },
+      {
+        id: "apps",
+        label: "\u0417\u0430\u044F\u0432\u043A\u0438",
+        icon: "inbox",
+        badge: 24
+      },
+      {
+        id: "underwriting",
+        label: "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+        icon: "check",
+        badge: 7
+      },
+      {
+        id: "security",
+        label: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 \u0421\u0411",
+        icon: "shield",
+        badge: 3
+      },
+      {
+        id: "clients",
+        label: "\u041A\u043B\u0438\u0435\u043D\u0442\u044B",
+        icon: "users",
+        group: "\u041F\u043E\u0440\u0442\u0444\u0435\u043B\u044C"
+      },
+      {
+        id: "loans",
+        label: "\u041A\u0440\u0435\u0434\u0438\u0442\u044B",
+        icon: "wallet"
+      },
+      {
+        id: "collection",
+        label: "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430",
+        icon: "history",
+        badge: 12
+      },
+      {
+        id: "reports",
+        label: "\u041E\u0442\u0447\u0451\u0442\u044B",
+        icon: "chart",
+        group: "\u0410\u043D\u0430\u043B\u0438\u0442\u0438\u043A\u0430"
+      },
+      {
+        id: "products",
+        label: "\u041F\u0440\u043E\u0434\u0443\u043A\u0442\u044B",
+        icon: "layers",
+        group: "\u0421\u0438\u0441\u0442\u0435\u043C\u0430"
+      },
+      {
+        id: "staff",
+        label: "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A\u0438",
+        icon: "users"
+      },
+      {
+        id: "settings",
+        label: "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438",
+        icon: "settings"
+      }
     ],
     screens: [
       {
@@ -3512,127 +3869,1944 @@
         title: "\u0412\u0445\u043E\u0434",
         page: "\u0412\u0445\u043E\u0434",
         shell: "plain",
-        states: ["default", "error"],
-        blocks: [{ type: "login", title: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u044B\u0439 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440", subtitle: "\u0412\u043E\u0439\u0434\u0438\u0442\u0435 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043F\u043E\u0447\u0442\u043E\u0439" }]
+        states: [
+          "default",
+          "error"
+        ],
+        blocks: [
+          {
+            type: "login",
+            title: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u044B\u0439 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440",
+            subtitle: "\u0412\u043E\u0439\u0434\u0438\u0442\u0435 \u0440\u0430\u0431\u043E\u0447\u0435\u0439 \u043F\u043E\u0447\u0442\u043E\u0439 \u0431\u0430\u043D\u043A\u0430"
+          }
+        ]
       },
       {
         id: "dashboard",
         title: "\u041E\u0431\u0437\u043E\u0440",
         nav: "dashboard",
-        states: ["default", "loading"],
+        states: [
+          "default",
+          "loading"
+        ],
         blocks: [
-          { type: "header", title: "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440 \u043D\u0430 12 \u043E\u043A\u0442\u044F\u0431\u0440\u044F", actions: ["\u042D\u043A\u0441\u043F\u043E\u0440\u0442"], period: ["\u0421\u0435\u0433\u043E\u0434\u043D\u044F", "\u041D\u0435\u0434\u0435\u043B\u044F", "\u041C\u0435\u0441\u044F\u0446", "\u041A\u0432\u0430\u0440\u0442\u0430\u043B"] },
-          { type: "stats", items: [
-            { label: "\u041D\u043E\u0432\u044B\u0445 \u0437\u0430\u044F\u0432\u043E\u043A", value: "86", delta: "+14% \u043A \u0432\u0447\u0435\u0440\u0430" },
-            { label: "\u0423\u0440\u043E\u0432\u0435\u043D\u044C \u043E\u0434\u043E\u0431\u0440\u0435\u043D\u0438\u044F", value: "64%", delta: "+3 \u043F.\u043F. \u043A \u043F\u0440\u043E\u0448\u043B\u043E\u0439 \u043D\u0435\u0434\u0435\u043B\u0435" },
-            { label: "\u0412\u0440\u0435\u043C\u044F \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u044F", value: "2 \u0447 14 \u043C\u0438\u043D", delta: "\u221218 \u043C\u0438\u043D \u043A \u0432\u0447\u0435\u0440\u0430", better: "down" },
-            { label: "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D SLA", value: "9", delta: "+4 \u043A \u0432\u0447\u0435\u0440\u0430", better: "down" }
-          ] },
-          { type: "split", ratio: "2:1", columns: [
-            [{ type: "chart", title: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043F\u043E \u0447\u0430\u0441\u0430\u043C", subtitle: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F" }],
-            [{ type: "list", title: "\u0422\u0440\u0435\u0431\u0443\u044E\u0442 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u044F", link: "app-card", rows: 5, statuses: ["\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D SLA", "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435", "\u041D\u043E\u0432\u0430\u044F"] }]
-          ] }
+          {
+            type: "header",
+            title: "\u0414\u043E\u0431\u0440\u043E\u0435 \u0443\u0442\u0440\u043E, \u0410\u0439\u0433\u0443\u043B\u044C",
+            subtitle: "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440 \u043D\u0430 2 \u043D\u043E\u044F\u0431\u0440\u044F \xB7 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u043E \u0432 09:40",
+            period: [
+              "\u0421\u0435\u0433\u043E\u0434\u043D\u044F",
+              "\u041D\u0435\u0434\u0435\u043B\u044F",
+              "\u041C\u0435\u0441\u044F\u0446",
+              "\u041A\u0432\u0430\u0440\u0442\u0430\u043B"
+            ],
+            actions: [
+              "\u042D\u043A\u0441\u043F\u043E\u0440\u0442",
+              "+ \u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430 \u2192 app-new"
+            ]
+          },
+          {
+            type: "stats",
+            items: [
+              {
+                label: "\u041D\u043E\u0432\u044B\u0435 \u0437\u0430\u044F\u0432\u043A\u0438",
+                value: "86",
+                delta: "+14% \u043A \u0432\u0447\u0435\u0440\u0430",
+                icon: "inbox"
+              },
+              {
+                label: "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u043E",
+                value: "64%",
+                delta: "+3 \u043F.\u043F. \u043A \u043F\u0440\u043E\u0448\u043B\u043E\u0439 \u043D\u0435\u0434\u0435\u043B\u0435",
+                icon: "check"
+              },
+              {
+                label: "\u0412\u0440\u0435\u043C\u044F \u0434\u043E \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
+                value: "2 \u0447 14 \u043C\u0438\u043D",
+                delta: "\u221218 \u043C\u0438\u043D \u043A \u0432\u0447\u0435\u0440\u0430",
+                better: "down",
+                icon: "history"
+              },
+              {
+                label: "\u0412\u044B\u0434\u0430\u043D\u043E",
+                value: "41,2 \u043C\u043B\u043D \u0441",
+                delta: "+8% \u043A \u043F\u043B\u0430\u043D\u0443",
+                icon: "wallet"
+              }
+            ]
+          },
+          {
+            type: "split",
+            ratio: "2:1",
+            columns: [
+              [
+                {
+                  type: "chart",
+                  title: "\u0420\u0435\u0448\u0435\u043D\u0438\u044F \u043F\u043E \u0447\u0430\u0441\u0430\u043C",
+                  subtitle: "\u0421\u0435\u0433\u043E\u0434\u043D\u044F, \u0432\u0441\u0435 \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u044B",
+                  series: [
+                    "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u043E",
+                    "\u041E\u0442\u043A\u0430\u0437"
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "meters",
+                  title: "SLA \u043F\u043E \u044D\u0442\u0430\u043F\u0430\u043C",
+                  subtitle: "\u0414\u043E\u043B\u044F \u0437\u0430\u044F\u0432\u043E\u043A \u0432 \u0441\u0440\u043E\u043A",
+                  items: [
+                    {
+                      label: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+                      value: "98%",
+                      percent: 98,
+                      tone: "success",
+                      hint: "\u043D\u043E\u0440\u043C\u0430\u0442\u0438\u0432 15 \u043C\u0438\u043D"
+                    },
+                    {
+                      label: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411",
+                      value: "86%",
+                      percent: 86,
+                      tone: "warning",
+                      hint: "\u043D\u043E\u0440\u043C\u0430\u0442\u0438\u0432 2 \u0447"
+                    },
+                    {
+                      label: "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+                      value: "71%",
+                      percent: 71,
+                      tone: "danger",
+                      hint: "\u043D\u043E\u0440\u043C\u0430\u0442\u0438\u0432 4 \u0447 \xB7 9 \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D\u043E"
+                    },
+                    {
+                      label: "\u0412\u044B\u0434\u0430\u0447\u0430",
+                      value: "94%",
+                      percent: 94,
+                      tone: "success",
+                      hint: "\u043D\u043E\u0440\u043C\u0430\u0442\u0438\u0432 1 \u0434\u0435\u043D\u044C"
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          {
+            type: "split",
+            ratio: "3:2",
+            columns: [
+              [
+                {
+                  type: "funnel",
+                  title: "\u0412\u043E\u0440\u043E\u043D\u043A\u0430 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440\u0430",
+                  subtitle: "\u0417\u0430 \u0441\u0435\u0433\u043E\u0434\u043D\u044F",
+                  more: "\u041E\u0442\u0447\u0451\u0442 \u2192 reports",
+                  items: [
+                    {
+                      label: "\u041F\u043E\u0441\u0442\u0443\u043F\u0438\u043B\u043E",
+                      value: "312",
+                      rate: "100%"
+                    },
+                    {
+                      label: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433 \u043F\u0440\u043E\u0439\u0434\u0435\u043D",
+                      value: "241",
+                      rate: "77%"
+                    },
+                    {
+                      label: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411",
+                      value: "198",
+                      rate: "63%"
+                    },
+                    {
+                      label: "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u043E",
+                      value: "152",
+                      rate: "49%"
+                    },
+                    {
+                      label: "\u0412\u044B\u0434\u0430\u043D\u043E",
+                      value: "118",
+                      rate: "38%"
+                    }
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "list",
+                  title: "\u0422\u0440\u0435\u0431\u0443\u044E\u0442 \u0432\u043D\u0438\u043C\u0430\u043D\u0438\u044F",
+                  subtitle: "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D SLA \u0438\u043B\u0438 \u043D\u0443\u0436\u0435\u043D \u043E\u0442\u0432\u0435\u0442",
+                  link: "app-card",
+                  rows: 5,
+                  statuses: [
+                    "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D SLA",
+                    "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435",
+                    "\u041D\u043E\u0432\u0430\u044F"
+                  ]
+                }
+              ]
+            ]
+          },
+          {
+            type: "table",
+            title: "\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 \u0437\u0430\u044F\u0432\u043A\u0438",
+            subtitle: "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \u0440\u0435\u0430\u043B\u044C\u043D\u043E\u043C \u0432\u0440\u0435\u043C\u0435\u043D\u0438",
+            link: "app-card",
+            rows: 5,
+            columns: [
+              "\u041D\u043E\u043C\u0435\u0440:id",
+              "\u041A\u043B\u0438\u0435\u043D\u0442:person",
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product",
+              "\u0421\u0443\u043C\u043C\u0430:money",
+              "\u0421\u0442\u0430\u0442\u0443\u0441:status",
+              "\u041F\u043E\u0441\u0442\u0443\u043F\u0438\u043B\u0430:datetime"
+            ],
+            statuses: [
+              "\u041D\u043E\u0432\u0430\u044F",
+              "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+              "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435",
+              "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u0430",
+              "\u041E\u0442\u043A\u0430\u0437"
+            ]
+          }
         ]
       },
       {
         id: "apps",
         title: "\u0417\u0430\u044F\u0432\u043A\u0438",
         nav: "apps",
-        states: ["default", "loading", "empty", "error"],
-        empty: { title: "\u0417\u0430\u044F\u0432\u043E\u043A \u043F\u043E\u043A\u0430 \u043D\u0435\u0442", text: "\u041D\u043E\u0432\u044B\u0435 \u0437\u0430\u044F\u0432\u043A\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438", action: "+ \u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443" },
+        states: [
+          "default",
+          "loading",
+          "empty"
+        ],
+        empty: {
+          title: "\u0417\u0430\u044F\u0432\u043E\u043A \u043F\u043E\u043A\u0430 \u043D\u0435\u0442",
+          text: "\u041D\u043E\u0432\u044B\u0435 \u0437\u0430\u044F\u0432\u043A\u0438 \u0438\u0437 \u043E\u0442\u0434\u0435\u043B\u0435\u043D\u0438\u0439 \u0438 \u043E\u043D\u043B\u0430\u0439\u043D\u0430 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438",
+          action: "+ \u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443 \u2192 app-new"
+        },
         blocks: [
-          { type: "header", title: "\u0417\u0430\u044F\u0432\u043A\u0438", breadcrumbs: ["CRM", "\u0417\u0430\u044F\u0432\u043A\u0438"], actions: ["\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440 \u2192 pipeline", "\u042D\u043A\u0441\u043F\u043E\u0440\u0442", "+ \u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430"] },
-          { type: "tabs", items: ["\u0412\u0441\u0435", "\u041C\u043E\u0438", "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435", "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D\u044B"] },
-          { type: "toolbar", search: "\u041F\u043E\u0438\u0441\u043A \u043F\u043E \u0424\u0418\u041E, \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0443 \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440\u0443", filters: ["\u0421\u0442\u0430\u0442\u0443\u0441", "\u041F\u0440\u043E\u0434\u0443\u043A\u0442", "\u041F\u0435\u0440\u0438\u043E\u0434"] },
+          {
+            type: "header",
+            title: "\u0417\u0430\u044F\u0432\u043A\u0438",
+            subtitle: "128 \u0437\u0430\u044F\u0432\u043E\u043A \u0432 \u0440\u0430\u0431\u043E\u0442\u0435",
+            actions: [
+              "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440 \u2192 pipeline",
+              "\u042D\u043A\u0441\u043F\u043E\u0440\u0442",
+              "+ \u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430 \u2192 app-new"
+            ]
+          },
+          {
+            type: "tabs",
+            items: [
+              "\u0412\u0441\u0435 \xB7 128",
+              "\u041C\u043E\u0438 \xB7 24",
+              "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435 \xB7 31",
+              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D SLA \xB7 9",
+              "\u0410\u0440\u0445\u0438\u0432"
+            ]
+          },
+          {
+            type: "toolbar",
+            search: "\u0424\u0418\u041E, \u0442\u0435\u043B\u0435\u0444\u043E\u043D, \u0418\u041D\u041D \u0438\u043B\u0438 \u043D\u043E\u043C\u0435\u0440 \u0437\u0430\u044F\u0432\u043A\u0438",
+            filters: [
+              "\u0421\u0442\u0430\u0442\u0443\u0441",
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442",
+              "\u041A\u0430\u043D\u0430\u043B",
+              "\u041F\u0435\u0440\u0438\u043E\u0434"
+            ]
+          },
           {
             type: "table",
             link: "app-card",
             selectable: true,
-            rows: 8,
-            columns: ["\u041D\u043E\u043C\u0435\u0440:id", "\u041A\u043B\u0438\u0435\u043D\u0442:person", "\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product", "\u0421\u0443\u043C\u043C\u0430:money", "\u0421\u0442\u0430\u0442\u0443\u0441:status", "\u0414\u0430\u0442\u0430:datetime", ":actions"],
-            statuses: ["\u041D\u043E\u0432\u0430\u044F", "\u0421\u043A\u043E\u0440\u0438\u043D\u0433", "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435", "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u0430", "\u041E\u0442\u043A\u0430\u0437"]
+            rows: 10,
+            columns: [
+              "\u041D\u043E\u043C\u0435\u0440:id",
+              "\u041A\u043B\u0438\u0435\u043D\u0442:person",
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product",
+              "\u0421\u0443\u043C\u043C\u0430:money",
+              "\u0421\u0442\u0430\u0442\u0443\u0441:status",
+              "\u041F\u043E\u0441\u0442\u0443\u043F\u0438\u043B\u0430:datetime",
+              ":actions"
+            ],
+            statuses: [
+              "\u041D\u043E\u0432\u0430\u044F",
+              "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+              "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435",
+              "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u0430",
+              "\u041E\u0442\u043A\u0430\u0437"
+            ]
           },
-          { type: "pagination", summary: "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E 1\u20138 \u0438\u0437 128" }
+          {
+            type: "pagination",
+            summary: "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E 1\u201310 \u0438\u0437 128"
+          }
         ]
       },
       {
         id: "pipeline",
         title: "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440",
         nav: "apps",
-        states: ["default"],
-        viewports: ["desktop"],
+        viewports: [
+          "desktop"
+        ],
         blocks: [
-          { type: "header", title: "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440 \u0437\u0430\u044F\u0432\u043E\u043A", breadcrumbs: ["\u0417\u0430\u044F\u0432\u043A\u0438", "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440"], actions: ["+ \u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430"] },
-          { type: "kanban", link: "app-card", columns: ["\u041D\u043E\u0432\u044B\u0435", "\u0421\u043A\u043E\u0440\u0438\u043D\u0433", "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411", "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433", "\u0420\u0435\u0448\u0435\u043D\u0438\u0435"] }
+          {
+            type: "header",
+            title: "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440 \u0437\u0430\u044F\u0432\u043E\u043A",
+            breadcrumbs: [
+              "\u0417\u0430\u044F\u0432\u043A\u0438",
+              "\u041A\u043E\u043D\u0432\u0435\u0439\u0435\u0440"
+            ],
+            actions: [
+              "\u0421\u043F\u0438\u0441\u043E\u043A \u2192 apps",
+              "+ \u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430 \u2192 app-new"
+            ]
+          },
+          {
+            type: "toolbar",
+            search: "\u041D\u0430\u0439\u0442\u0438 \u043D\u0430 \u0434\u043E\u0441\u043A\u0435",
+            filters: [
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442",
+              "\u041E\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439"
+            ]
+          },
+          {
+            type: "kanban",
+            link: "app-card",
+            columns: [
+              {
+                title: "\u041D\u043E\u0432\u044B\u0435",
+                count: 18
+              },
+              {
+                title: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+                count: 12
+              },
+              {
+                title: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411",
+                count: 9
+              },
+              {
+                title: "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+                count: 7
+              },
+              {
+                title: "\u0412\u044B\u0434\u0430\u0447\u0430",
+                count: 5
+              }
+            ]
+          }
         ]
       },
       {
         id: "app-card",
         title: "\u0417\u0430\u044F\u0432\u043A\u0430 CL-240118",
         nav: "apps",
-        states: ["default", "no-access"],
+        parent: "apps",
+        states: [
+          "default",
+          "no-access"
+        ],
         blocks: [
-          { type: "header", title: "\u0417\u0430\u044F\u0432\u043A\u0430 CL-240118", badge: "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433", amount: "450 000 KGS", subtitle: "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \xB7 24 \u043C\u0435\u0441 \xB7 21,5% \u0433\u043E\u0434\u043E\u0432\u044B\u0445 \xB7 \u043F\u043E\u0434\u0430\u043D\u0430 12.10.2026, 09:14 \xB7 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435", breadcrumbs: ["\u0417\u0430\u044F\u0432\u043A\u0438", "CL-240118"], actions: ["\u041E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u044C", "\u0417\u0430\u043F\u0440\u043E\u0441\u0438\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B", "+ \u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C \u043A\u0440\u0435\u0434\u0438\u0442"] },
-          { type: "stepper", steps: ["\u041F\u043E\u0434\u0430\u043D\u0430", "\u0421\u043A\u043E\u0440\u0438\u043D\u0433", "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411", "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433", "\u0420\u0435\u0448\u0435\u043D\u0438\u0435"], current: 3 },
-          { type: "split", ratio: "2:1", columns: [
-            [
-              { type: "details", title: "\u0417\u0430\u0451\u043C\u0449\u0438\u043A", items: ["\u0424\u0418\u041E:person", "\u0422\u0435\u043B\u0435\u0444\u043E\u043D:phone", "\u0413\u043E\u0440\u043E\u0434:city", "\u0420\u0430\u0431\u043E\u0442\u043E\u0434\u0430\u0442\u0435\u043B\u044C:company"] },
-              { type: "details", title: "\u041A\u0440\u0435\u0434\u0438\u0442", items: ["\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product", "\u0421\u0443\u043C\u043C\u0430:money", ["\u0421\u0440\u043E\u043A", "24 \u043C\u0435\u0441\u044F\u0446\u0430"], ["\u0421\u0442\u0430\u0432\u043A\u0430", "18,5%"]] }
+          {
+            type: "header",
+            title: "\u0417\u0430\u044F\u0432\u043A\u0430 CL-240118",
+            badge: "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+            breadcrumbs: [
+              "\u0417\u0430\u044F\u0432\u043A\u0438",
+              "CL-240118"
             ],
-            [
-              { type: "alert", variant: "warning", title: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433 712", text: "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0440\u0438\u0441\u043A: \u0432\u044B\u0441\u043E\u043A\u0438\u0439 \u0434\u043E\u043B\u0433 \u043A \u0434\u043E\u0445\u043E\u0434\u0443" },
-              { type: "timeline", title: "\u0418\u0441\u0442\u043E\u0440\u0438\u044F" }
+            subtitle: "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \u043A\u0440\u0435\u0434\u0438\u0442 \xB7 \u043F\u043E\u0441\u0442\u0443\u043F\u0438\u043B\u0430 21.10.2026 \u0432 09:12 \xB7 \u043A\u0430\u043D\u0430\u043B: \u043C\u043E\u0431\u0438\u043B\u044C\u043D\u044B\u0439 \u0431\u0430\u043D\u043A",
+            actions: [
+              "\u041D\u0430\u0437\u043D\u0430\u0447\u0438\u0442\u044C",
+              "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u2192 uw-decision"
             ]
-          ] }
+          },
+          {
+            type: "stepper",
+            steps: [
+              "\u0417\u0430\u044F\u0432\u043A\u0430",
+              "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+              "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411",
+              "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+              "\u0412\u044B\u0434\u0430\u0447\u0430"
+            ],
+            current: 3
+          },
+          {
+            type: "split",
+            ratio: "2:1",
+            columns: [
+              [
+                {
+                  type: "details",
+                  title: "\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B \u0437\u0430\u044F\u0432\u043A\u0438",
+                  columns: 3,
+                  items: [
+                    [
+                      "\u041F\u0440\u043E\u0434\u0443\u043A\u0442",
+                      "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439"
+                    ],
+                    [
+                      "\u0421\u0443\u043C\u043C\u0430",
+                      "450 000 \u0441"
+                    ],
+                    [
+                      "\u0421\u0440\u043E\u043A",
+                      "24 \u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u0421\u0442\u0430\u0432\u043A\u0430",
+                      "21,5%"
+                    ],
+                    [
+                      "\u041F\u043B\u0430\u0442\u0451\u0436",
+                      "23 180 \u0441/\u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u0426\u0435\u043B\u044C",
+                      "\u0420\u0435\u043C\u043E\u043D\u0442 \u0436\u0438\u043B\u044C\u044F"
+                    ]
+                  ]
+                },
+                {
+                  type: "details",
+                  title: "\u041A\u043B\u0438\u0435\u043D\u0442",
+                  columns: 3,
+                  items: [
+                    [
+                      "\u0424\u0418\u041E",
+                      "\u0411\u0430\u043A\u044B\u0442 \u0410\u0441\u0430\u043D\u043E\u0432"
+                    ],
+                    [
+                      "\u0418\u041D\u041D",
+                      "20512199000123"
+                    ],
+                    [
+                      "\u0422\u0435\u043B\u0435\u0444\u043E\u043D",
+                      "phone"
+                    ],
+                    [
+                      "\u0420\u0430\u0431\u043E\u0442\u0430",
+                      "\u041E\u0441\u041E\u041E \xAB\u0410\u043B\u0430-\u0422\u043E\u043E \u0422\u0440\u0435\u0439\u0434\xBB"
+                    ],
+                    [
+                      "\u0414\u043E\u0445\u043E\u0434",
+                      "96 000 \u0441/\u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u0421\u0442\u0430\u0436",
+                      "4 \u0433\u043E\u0434\u0430"
+                    ]
+                  ]
+                },
+                {
+                  type: "files",
+                  title: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B",
+                  subtitle: "4 \u0438\u0437 5 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D\u043E",
+                  items: [
+                    {
+                      name: "\u041F\u0430\u0441\u043F\u043E\u0440\u0442 ID-\u043A\u0430\u0440\u0442\u0430.pdf",
+                      meta: "1,2 \u041C\u0411 \xB7 21.10.2026",
+                      status: "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D"
+                    },
+                    {
+                      name: "\u0421\u043F\u0440\u0430\u0432\u043A\u0430 \u043E \u0434\u043E\u0445\u043E\u0434\u0430\u0445.pdf",
+                      meta: "640 \u041A\u0411 \xB7 21.10.2026",
+                      status: "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D"
+                    },
+                    {
+                      name: "\u0412\u044B\u043F\u0438\u0441\u043A\u0430 \u0413\u041D\u0421.pdf",
+                      meta: "380 \u041A\u0411 \xB7 21.10.2026",
+                      status: "\u041D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435"
+                    },
+                    {
+                      name: "\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u043D\u0430 \u0437\u0430\u043F\u0440\u043E\u0441 \u0432 \u041A\u0418\u0411.pdf",
+                      meta: "120 \u041A\u0411 \xB7 21.10.2026",
+                      status: "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D"
+                    },
+                    {
+                      name: "\u0414\u043E\u0433\u043E\u0432\u043E\u0440 \u0437\u0430\u043B\u043E\u0433\u0430",
+                      meta: "\u041D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D",
+                      status: "\u041E\u0436\u0438\u0434\u0430\u0435\u0442"
+                    }
+                  ]
+                },
+                {
+                  type: "comments",
+                  items: [
+                    [
+                      "\u041D\u0443\u0440\u043B\u0430\u043D \u0418\u0441\u0430\u043A\u043E\u0432",
+                      "\u0441\u0435\u0433\u043E\u0434\u043D\u044F, 10:05",
+                      "\u0414\u043E\u0445\u043E\u0434 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0451\u043D \u0432\u044B\u043F\u0438\u0441\u043A\u043E\u0439 \u0413\u041D\u0421, \u0440\u0430\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0439 \u043D\u0435\u0442."
+                    ],
+                    [
+                      "\u0410\u0441\u0435\u043B\u044C \u0421\u0430\u0434\u044B\u043A\u043E\u0432\u0430",
+                      "\u0441\u0435\u0433\u043E\u0434\u043D\u044F, 10:42",
+                      "\u0421\u0411: \u0441\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0439 \u043F\u043E \u0441\u0442\u043E\u043F-\u043B\u0438\u0441\u0442\u0430\u043C \u043D\u0435\u0442, \u043C\u043E\u0436\u043D\u043E \u043F\u0435\u0440\u0435\u0434\u0430\u0432\u0430\u0442\u044C \u0432 \u0430\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433."
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "score",
+                  title: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+                  subtitle: "\u041C\u043E\u0434\u0435\u043B\u044C \u0440\u043E\u0437\u043D\u0438\u0446\u0430 v3.2",
+                  value: 712,
+                  max: 850,
+                  grade: "\u041D\u0438\u0437\u043A\u0438\u0439 \u0440\u0438\u0441\u043A",
+                  items: [
+                    [
+                      "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u0430\u044F \u0438\u0441\u0442\u043E\u0440\u0438\u044F \u0431\u0435\u0437 \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043A",
+                      "+48"
+                    ],
+                    [
+                      "\u0421\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u044B\u0439 \u0434\u043E\u0445\u043E\u0434 4 \u0433\u043E\u0434\u0430",
+                      "+31"
+                    ],
+                    [
+                      "\u041F\u0414\u041D 38%",
+                      "\u221212"
+                    ],
+                    [
+                      "2 \u0437\u0430\u043F\u0440\u043E\u0441\u0430 \u0432 \u041A\u0418\u0411 \u0437\u0430 \u043C\u0435\u0441\u044F\u0446",
+                      "\u22129"
+                    ]
+                  ]
+                },
+                {
+                  type: "checks",
+                  title: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438",
+                  items: [
+                    {
+                      label: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u043E\u0435 \u0431\u044E\u0440\u043E (\u041A\u0418\u0411)",
+                      hint: "2 \u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u043A\u0440\u0435\u0434\u0438\u0442\u0430",
+                      result: "\u041F\u0440\u043E\u0439\u0434\u0435\u043D\u0430",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u0421\u0442\u043E\u043F-\u043B\u0438\u0441\u0442\u044B \u0438 \u0441\u0430\u043D\u043A\u0446\u0438\u0438",
+                      hint: "\u0441\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0439 \u043D\u0435\u0442",
+                      result: "\u041F\u0440\u043E\u0439\u0434\u0435\u043D\u0430",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u0412\u0435\u0440\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0434\u043E\u0445\u043E\u0434\u0430",
+                      hint: "\u0432\u044B\u043F\u0438\u0441\u043A\u0430 \u0413\u041D\u0421",
+                      result: "\u041F\u0440\u043E\u0439\u0434\u0435\u043D\u0430",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u0417\u0430\u043B\u043E\u0433",
+                      hint: "\u0434\u043E\u0433\u043E\u0432\u043E\u0440 \u043D\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043D",
+                      result: "\u041E\u0436\u0438\u0434\u0430\u0435\u0442",
+                      status: "wait"
+                    }
+                  ]
+                },
+                {
+                  type: "timeline",
+                  title: "\u0418\u0441\u0442\u043E\u0440\u0438\u044F",
+                  items: [
+                    [
+                      "\u0417\u0430\u044F\u0432\u043A\u0430 \u0441\u043E\u0437\u0434\u0430\u043D\u0430",
+                      "21.10.2026, 09:12"
+                    ],
+                    [
+                      "\u0421\u043A\u043E\u0440\u0438\u043D\u0433 \u043F\u0440\u043E\u0439\u0434\u0435\u043D \xB7 712",
+                      "21.10.2026, 09:14"
+                    ],
+                    [
+                      "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411 \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430",
+                      "21.10.2026, 10:42"
+                    ],
+                    [
+                      "\u041F\u0435\u0440\u0435\u0434\u0430\u043D\u0430 \u0432 \u0430\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+                      "21.10.2026, 10:45"
+                    ]
+                  ]
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        id: "app-new",
+        title: "\u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430",
+        nav: "apps",
+        parent: "apps",
+        states: [
+          "default",
+          "error"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430",
+            breadcrumbs: [
+              "\u0417\u0430\u044F\u0432\u043A\u0438",
+              "\u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430"
+            ],
+            subtitle: "\u0428\u0430\u0433 2 \u0438\u0437 4 \u2014 \u043F\u0440\u043E\u0434\u0443\u043A\u0442 \u0438 \u0443\u0441\u043B\u043E\u0432\u0438\u044F"
+          },
+          {
+            type: "stepper",
+            steps: [
+              "\u041A\u043B\u0438\u0435\u043D\u0442",
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442",
+              "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B",
+              "\u041E\u0442\u043F\u0440\u0430\u0432\u043A\u0430"
+            ],
+            current: 1
+          },
+          {
+            type: "split",
+            ratio: "2:1",
+            columns: [
+              [
+                {
+                  type: "form",
+                  title: "\u041F\u0440\u043E\u0434\u0443\u043A\u0442 \u0438 \u0443\u0441\u043B\u043E\u0432\u0438\u044F",
+                  subtitle: "\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B \u043F\u043E\u0434\u0431\u0438\u0440\u0430\u044E\u0442\u0441\u044F \u043F\u043E \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u0430\u043C \u0431\u0430\u043D\u043A\u0430",
+                  submit: "\u0414\u0430\u043B\u0435\u0435",
+                  cancel: "\u041D\u0430\u0437\u0430\u0434",
+                  to: "app-card",
+                  fields: [
+                    {
+                      label: "\u041F\u0440\u043E\u0434\u0443\u043A\u0442",
+                      type: "select",
+                      required: true
+                    },
+                    {
+                      label: "\u0426\u0435\u043B\u044C \u043A\u0440\u0435\u0434\u0438\u0442\u0430",
+                      type: "select"
+                    },
+                    {
+                      label: "\u0421\u0443\u043C\u043C\u0430",
+                      type: "money",
+                      required: true,
+                      hint: "\u043E\u0442 10 000 \u0434\u043E 3 000 000 \u0441"
+                    },
+                    {
+                      label: "\u0421\u0440\u043E\u043A, \u043C\u0435\u0441",
+                      type: "select",
+                      required: true
+                    },
+                    {
+                      label: "\u0415\u0436\u0435\u043C\u0435\u0441\u044F\u0447\u043D\u044B\u0439 \u0434\u043E\u0445\u043E\u0434",
+                      type: "money",
+                      required: true
+                    },
+                    {
+                      label: "\u041A\u0430\u043D\u0430\u043B",
+                      type: "select"
+                    },
+                    {
+                      label: "\u041A\u043E\u043C\u043C\u0435\u043D\u0442\u0430\u0440\u0438\u0439 \u0434\u043B\u044F \u0430\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0435\u0440\u0430",
+                      type: "textarea"
+                    }
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "decision",
+                  title: "\u041F\u0440\u0435\u0434\u0432\u0430\u0440\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0439 \u0440\u0430\u0441\u0447\u0451\u0442",
+                  subtitle: "\u041E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u043F\u0440\u0438 \u0432\u0432\u043E\u0434\u0435",
+                  columns: 2,
+                  actions: [],
+                  items: [
+                    [
+                      "\u041F\u043B\u0430\u0442\u0451\u0436",
+                      "23 180 \u0441"
+                    ],
+                    [
+                      "\u0421\u0442\u0430\u0432\u043A\u0430",
+                      "21,5%"
+                    ],
+                    [
+                      "\u041F\u0435\u0440\u0435\u043F\u043B\u0430\u0442\u0430",
+                      "106 320 \u0441"
+                    ],
+                    [
+                      "\u041F\u0414\u041D",
+                      "38%"
+                    ]
+                  ],
+                  note: "\u0418\u0442\u043E\u0433\u043E\u0432\u044B\u0435 \u0443\u0441\u043B\u043E\u0432\u0438\u044F \u0437\u0430\u0432\u0438\u0441\u044F\u0442 \u043E\u0442 \u0441\u043A\u043E\u0440\u0438\u043D\u0433\u0430 \u0438 \u0440\u0435\u0448\u0435\u043D\u0438\u044F \u0430\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0435\u0440\u0430."
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        id: "underwriting",
+        title: "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+        nav: "underwriting",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u041E\u0447\u0435\u0440\u0435\u0434\u044C \u0430\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433\u0430",
+            subtitle: "\u0417\u0430\u044F\u0432\u043A\u0438, \u043A\u043E\u0442\u043E\u0440\u044B\u043C \u043D\u0443\u0436\u043D\u043E \u0440\u0443\u0447\u043D\u043E\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u0435",
+            actions: [
+              "\u0412\u0437\u044F\u0442\u044C \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0443\u044E \u2192 uw-decision"
+            ]
+          },
+          {
+            type: "stats",
+            items: [
+              {
+                label: "\u0412 \u043E\u0447\u0435\u0440\u0435\u0434\u0438",
+                value: "7",
+                hint: "2 \u0441 \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D\u043D\u044B\u043C SLA",
+                icon: "inbox"
+              },
+              {
+                label: "\u041C\u043E\u0451 \u0440\u0435\u0448\u0435\u043D\u0438\u0435 \u0441\u0435\u0433\u043E\u0434\u043D\u044F",
+                value: "23",
+                delta: "+5 \u043A \u0432\u0447\u0435\u0440\u0430",
+                icon: "check"
+              },
+              {
+                label: "\u0421\u0440\u0435\u0434\u043D\u0435\u0435 \u0432\u0440\u0435\u043C\u044F",
+                value: "38 \u043C\u0438\u043D",
+                delta: "\u22126 \u043C\u0438\u043D \u043A \u043D\u043E\u0440\u043C\u0435",
+                better: "down",
+                icon: "history"
+              },
+              {
+                label: "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u043E \u043C\u043D\u043E\u0439",
+                value: "71%",
+                hint: "\u043F\u043E \u0431\u0430\u043D\u043A\u0443 64%",
+                icon: "chart"
+              }
+            ]
+          },
+          {
+            type: "table",
+            title: "\u041E\u0447\u0435\u0440\u0435\u0434\u044C",
+            link: "uw-decision",
+            rows: 7,
+            columns: [
+              "\u041D\u043E\u043C\u0435\u0440:id",
+              "\u041A\u043B\u0438\u0435\u043D\u0442:person",
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product",
+              "\u0421\u0443\u043C\u043C\u0430:money",
+              "\u0421\u043A\u043E\u0440\u0438\u043D\u0433:number",
+              "SLA:status",
+              "\u041F\u043E\u0441\u0442\u0443\u043F\u0438\u043B\u0430:datetime"
+            ],
+            statuses: [
+              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D SLA",
+              "\u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C 40 \u043C\u0438\u043D",
+              "\u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C 2 \u0447",
+              "\u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C 3 \u0447"
+            ]
+          }
+        ]
+      },
+      {
+        id: "uw-decision",
+        title: "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \u043F\u043E \u0437\u0430\u044F\u0432\u043A\u0435",
+        nav: "underwriting",
+        parent: "underwriting",
+        blocks: [
+          {
+            type: "header",
+            title: "\u0420\u0435\u0448\u0435\u043D\u0438\u0435 \xB7 CL-240118",
+            badge: "SLA 1 \u0447 12 \u043C\u0438\u043D",
+            breadcrumbs: [
+              "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433",
+              "CL-240118"
+            ],
+            subtitle: "\u0411\u0430\u043A\u044B\u0442 \u0410\u0441\u0430\u043D\u043E\u0432 \xB7 \u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \xB7 450 000 \u0441 \u043D\u0430 24 \u043C\u0435\u0441",
+            actions: [
+              "\u0417\u0430\u044F\u0432\u043A\u0430 \u2192 app-card"
+            ]
+          },
+          {
+            type: "split",
+            ratio: "3:2",
+            columns: [
+              [
+                {
+                  type: "score",
+                  title: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+                  subtitle: "\u041C\u043E\u0434\u0435\u043B\u044C \u0440\u043E\u0437\u043D\u0438\u0446\u0430 v3.2 \xB7 21.10.2026",
+                  value: 712,
+                  max: 850,
+                  grade: "\u041D\u0438\u0437\u043A\u0438\u0439 \u0440\u0438\u0441\u043A",
+                  items: [
+                    [
+                      "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u0430\u044F \u0438\u0441\u0442\u043E\u0440\u0438\u044F \u0431\u0435\u0437 \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043A",
+                      "+48"
+                    ],
+                    [
+                      "\u0421\u0442\u0430\u0431\u0438\u043B\u044C\u043D\u044B\u0439 \u0434\u043E\u0445\u043E\u0434 4 \u0433\u043E\u0434\u0430",
+                      "+31"
+                    ],
+                    [
+                      "\u041F\u0414\u041D 38%",
+                      "\u221212"
+                    ],
+                    [
+                      "2 \u0437\u0430\u043F\u0440\u043E\u0441\u0430 \u0432 \u041A\u0418\u0411 \u0437\u0430 \u043C\u0435\u0441\u044F\u0446",
+                      "\u22129"
+                    ]
+                  ]
+                },
+                {
+                  type: "details",
+                  title: "\u0424\u0438\u043D\u0430\u043D\u0441\u043E\u0432\u044B\u0439 \u043F\u0440\u043E\u0444\u0438\u043B\u044C",
+                  columns: 3,
+                  items: [
+                    [
+                      "\u0414\u043E\u0445\u043E\u0434",
+                      "96 000 \u0441/\u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u0420\u0430\u0441\u0445\u043E\u0434\u044B",
+                      "31 000 \u0441/\u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u0414\u0435\u0439\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0435 \u043A\u0440\u0435\u0434\u0438\u0442\u044B",
+                      "2 \xB7 18 400 \u0441/\u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u041F\u0414\u041D \u0441 \u043D\u043E\u0432\u044B\u043C \u043A\u0440\u0435\u0434\u0438\u0442\u043E\u043C",
+                      "38%"
+                    ],
+                    [
+                      "\u041C\u0430\u043A\u0441. \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430",
+                      "\u043D\u0435\u0442"
+                    ],
+                    [
+                      "\u041A\u043B\u0438\u0435\u043D\u0442 \u0431\u0430\u043D\u043A\u0430",
+                      "\u0441 2019 \u0433\u043E\u0434\u0430"
+                    ]
+                  ]
+                },
+                {
+                  type: "meters",
+                  title: "\u041B\u0438\u043C\u0438\u0442\u044B",
+                  items: [
+                    {
+                      label: "\u041F\u0414\u041D",
+                      value: "38% \u0438\u0437 50%",
+                      percent: 76
+                    },
+                    {
+                      label: "\u041B\u0438\u043C\u0438\u0442 \u043D\u0430 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+                      value: "450 000 \u0438\u0437 1 000 000 \u0441",
+                      percent: 45
+                    },
+                    {
+                      label: "\u041A\u043E\u043D\u0446\u0435\u043D\u0442\u0440\u0430\u0446\u0438\u044F \u043F\u043E \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u0443",
+                      value: "12% \u0438\u0437 20%",
+                      percent: 60
+                    }
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "decision",
+                  title: "\u0420\u0435\u0448\u0435\u043D\u0438\u0435",
+                  subtitle: "\u0423\u0441\u043B\u043E\u0432\u0438\u044F \u043C\u043E\u0436\u043D\u043E \u0438\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0435\u0440\u0435\u0434 \u043E\u0434\u043E\u0431\u0440\u0435\u043D\u0438\u0435\u043C",
+                  items: [
+                    [
+                      "\u0421\u0443\u043C\u043C\u0430",
+                      "450 000 \u0441"
+                    ],
+                    [
+                      "\u0421\u0440\u043E\u043A",
+                      "24 \u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u0421\u0442\u0430\u0432\u043A\u0430",
+                      "21,5%"
+                    ],
+                    [
+                      "\u041F\u043B\u0430\u0442\u0451\u0436",
+                      "23 180 \u0441"
+                    ]
+                  ],
+                  actions: [
+                    "\u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C \u2192 app-card",
+                    "\u0412\u0441\u0442\u0440\u0435\u0447\u043D\u043E\u0435 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0435",
+                    "\u041E\u0442\u043A\u0430\u0437\u0430\u0442\u044C"
+                  ]
+                },
+                {
+                  type: "checks",
+                  title: "\u0421\u0442\u043E\u043F-\u0444\u0430\u043A\u0442\u043E\u0440\u044B",
+                  items: [
+                    {
+                      label: "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0438 > 30 \u0434\u043D\u0435\u0439",
+                      result: "\u041D\u0435\u0442",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u0421\u0443\u0434\u0435\u0431\u043D\u044B\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u044F",
+                      result: "\u041D\u0435\u0442",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u041F\u0414\u041D \u0432\u044B\u0448\u0435 50%",
+                      result: "38%",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442",
+                      result: "\u041D\u0435\u0442",
+                      status: "ok"
+                    }
+                  ]
+                },
+                {
+                  type: "comments",
+                  title: "\u041E\u0431\u0441\u0443\u0436\u0434\u0435\u043D\u0438\u0435",
+                  items: [
+                    [
+                      "\u0410\u0441\u0435\u043B\u044C \u0421\u0430\u0434\u044B\u043A\u043E\u0432\u0430",
+                      "\u0441\u0435\u0433\u043E\u0434\u043D\u044F, 10:42",
+                      "\u0421\u0411: \u0441\u043E\u0432\u043F\u0430\u0434\u0435\u043D\u0438\u0439 \u043D\u0435\u0442."
+                    ]
+                  ]
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        id: "security",
+        title: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 \u0421\u0411",
+        nav: "security",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438 \u0441\u043B\u0443\u0436\u0431\u044B \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438",
+            subtitle: "\u0421\u0442\u043E\u043F-\u043B\u0438\u0441\u0442\u044B, \u0441\u0430\u043D\u043A\u0446\u0438\u0438, \u043C\u043E\u0448\u0435\u043D\u043D\u0438\u0447\u0435\u0441\u0442\u0432\u043E"
+          },
+          {
+            type: "tabs",
+            items: [
+              "\u041E\u0436\u0438\u0434\u0430\u044E\u0442 \xB7 3",
+              "\u0412 \u0440\u0430\u0431\u043E\u0442\u0435 \xB7 5",
+              "\u0417\u0430\u0432\u0435\u0440\u0448\u0451\u043D\u043D\u044B\u0435"
+            ]
+          },
+          {
+            type: "split",
+            ratio: "2:1",
+            columns: [
+              [
+                {
+                  type: "table",
+                  title: "\u0417\u0430\u044F\u0432\u043A\u0438 \u043D\u0430 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0435",
+                  link: "app-card",
+                  rows: 6,
+                  columns: [
+                    "\u041D\u043E\u043C\u0435\u0440:id",
+                    "\u041A\u043B\u0438\u0435\u043D\u0442:person",
+                    "\u0421\u0443\u043C\u043C\u0430:money",
+                    "\u0420\u0438\u0441\u043A:status",
+                    "\u041F\u043E\u0441\u0442\u0443\u043F\u0438\u043B\u0430:datetime"
+                  ],
+                  statuses: [
+                    "\u041D\u0438\u0437\u043A\u0438\u0439 \u0440\u0438\u0441\u043A",
+                    "\u0421\u0440\u0435\u0434\u043D\u0438\u0439 \u0440\u0438\u0441\u043A",
+                    "\u0412\u044B\u0441\u043E\u043A\u0438\u0439 \u0440\u0438\u0441\u043A"
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "checks",
+                  title: "\u0418\u0441\u0442\u043E\u0447\u043D\u0438\u043A\u0438",
+                  subtitle: "\u0421\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435 \u0438\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0439",
+                  items: [
+                    {
+                      label: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u043E\u0435 \u0431\u044E\u0440\u043E (\u041A\u0418\u0411)",
+                      hint: "\u043E\u0442\u0432\u0435\u0442 1,2 \u0441",
+                      result: "\u0420\u0430\u0431\u043E\u0442\u0430\u0435\u0442",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u0421\u0430\u043D\u043A\u0446\u0438\u043E\u043D\u043D\u044B\u0435 \u0441\u043F\u0438\u0441\u043A\u0438",
+                      hint: "\u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u043E \u0441\u0435\u0433\u043E\u0434\u043D\u044F 06:00",
+                      result: "\u0420\u0430\u0431\u043E\u0442\u0430\u0435\u0442",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u0413\u041D\u0421: \u0434\u043E\u0445\u043E\u0434\u044B",
+                      hint: "\u043E\u0442\u0432\u0435\u0442 8,4 \u0441",
+                      result: "\u041C\u0435\u0434\u043B\u0435\u043D\u043D\u043E",
+                      status: "warn"
+                    },
+                    {
+                      label: "\u0420\u0435\u0435\u0441\u0442\u0440 \u0437\u0430\u043B\u043E\u0433\u043E\u0432",
+                      hint: "\u043D\u0435\u0442 \u043E\u0442\u0432\u0435\u0442\u0430 14 \u043C\u0438\u043D",
+                      result: "\u0421\u0431\u043E\u0439",
+                      status: "fail"
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
         ]
       },
       {
         id: "clients",
         title: "\u041A\u043B\u0438\u0435\u043D\u0442\u044B",
         nav: "clients",
-        states: ["default", "loading", "empty"],
-        empty: { title: "\u041A\u043B\u0438\u0435\u043D\u0442\u043E\u0432 \u043F\u043E\u043A\u0430 \u043D\u0435\u0442", text: "\u0414\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u043A\u043B\u0438\u0435\u043D\u0442\u0430, \u0447\u0442\u043E\u0431\u044B \u043E\u0444\u043E\u0440\u043C\u0438\u0442\u044C \u043D\u0430 \u043D\u0435\u0433\u043E \u0437\u0430\u044F\u0432\u043A\u0443", action: "+ \u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442 \u2192 client-new" },
+        states: [
+          "default",
+          "empty"
+        ],
+        empty: {
+          title: "\u041A\u043B\u0438\u0435\u043D\u0442\u043E\u0432 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E",
+          text: "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u0435 \u0444\u0438\u043B\u044C\u0442\u0440\u044B \u0438\u043B\u0438 \u0434\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+          action: "+ \u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442 \u2192 client-new"
+        },
         blocks: [
-          { type: "header", title: "\u041A\u043B\u0438\u0435\u043D\u0442\u044B", breadcrumbs: ["CRM", "\u041A\u043B\u0438\u0435\u043D\u0442\u044B"], actions: ["+ \u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442 \u2192 client-new"] },
-          { type: "toolbar", search: "\u041F\u043E\u0438\u0441\u043A \u043F\u043E \u0424\u0418\u041E \u0438\u043B\u0438 \u0442\u0435\u043B\u0435\u0444\u043E\u043D\u0443", filters: ["\u0413\u043E\u0440\u043E\u0434", "\u0421\u0435\u0433\u043C\u0435\u043D\u0442"] },
-          { type: "table", rows: 8, columns: ["\u041D\u043E\u043C\u0435\u0440:id", "\u041A\u043B\u0438\u0435\u043D\u0442:person", "\u0422\u0435\u043B\u0435\u0444\u043E\u043D:phone", "\u0413\u043E\u0440\u043E\u0434:city", "\u0417\u0430\u044F\u0432\u043E\u043A:number", "\u0421\u043E\u0437\u0434\u0430\u043D:date", ":actions"] },
-          { type: "pagination", summary: "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E 1\u20138 \u0438\u0437 2 412" }
+          {
+            type: "header",
+            title: "\u041A\u043B\u0438\u0435\u043D\u0442\u044B",
+            subtitle: "3 412 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u0432",
+            actions: [
+              "\u0418\u043C\u043F\u043E\u0440\u0442",
+              "+ \u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442 \u2192 client-new"
+            ]
+          },
+          {
+            type: "toolbar",
+            search: "\u0424\u0418\u041E, \u0418\u041D\u041D, \u0442\u0435\u043B\u0435\u0444\u043E\u043D",
+            filters: [
+              "\u0421\u0435\u0433\u043C\u0435\u043D\u0442",
+              "\u0413\u043E\u0440\u043E\u0434",
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442"
+            ]
+          },
+          {
+            type: "table",
+            link: "client-card",
+            rows: 10,
+            columns: [
+              "\u041A\u043B\u0438\u0435\u043D\u0442:person",
+              "\u0422\u0435\u043B\u0435\u0444\u043E\u043D:phone",
+              "\u0413\u043E\u0440\u043E\u0434:city",
+              "\u041A\u0440\u0435\u0434\u0438\u0442\u043E\u0432:number",
+              "\u0417\u0430\u0434\u043E\u043B\u0436\u0435\u043D\u043D\u043E\u0441\u0442\u044C:money",
+              "\u0421\u0442\u0430\u0442\u0443\u0441:status"
+            ],
+            statuses: [
+              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+              "\u041D\u043E\u0432\u044B\u0439",
+              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430"
+            ]
+          },
+          {
+            type: "pagination",
+            summary: "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E 1\u201310 \u0438\u0437 3 412"
+          }
+        ]
+      },
+      {
+        id: "client-card",
+        title: "\u0411\u0430\u043A\u044B\u0442 \u0410\u0441\u0430\u043D\u043E\u0432",
+        nav: "clients",
+        parent: "clients",
+        blocks: [
+          {
+            type: "profile",
+            name: "\u0411\u0430\u043A\u044B\u0442 \u0410\u0441\u0430\u043D\u043E\u0432",
+            meta: "\u041A\u043B\u0438\u0435\u043D\u0442 \u0441 2019 \u0433\u043E\u0434\u0430 \xB7 \u0411\u0438\u0448\u043A\u0435\u043A \xB7 \u0418\u041D\u041D 20512199000123",
+            badges: [
+              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+              "\u0417\u0430\u0440\u043F\u043B\u0430\u0442\u043D\u044B\u0439 \u043F\u0440\u043E\u0435\u043A\u0442"
+            ],
+            actions: [
+              "\u041F\u043E\u0437\u0432\u043E\u043D\u0438\u0442\u044C",
+              "+ \u041D\u043E\u0432\u0430\u044F \u0437\u0430\u044F\u0432\u043A\u0430 \u2192 app-new"
+            ],
+            items: [
+              [
+                "\u041A\u0440\u0435\u0434\u0438\u0442\u043E\u0432",
+                "2 \u0430\u043A\u0442\u0438\u0432\u043D\u044B\u0445"
+              ],
+              [
+                "\u0417\u0430\u0434\u043E\u043B\u0436\u0435\u043D\u043D\u043E\u0441\u0442\u044C",
+                "312 400 \u0441"
+              ],
+              [
+                "\u041F\u043B\u0430\u0442\u0451\u0436 \u0432 \u043C\u0435\u0441\u044F\u0446",
+                "18 400 \u0441"
+              ],
+              [
+                "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0438",
+                "\u043D\u0435\u0442"
+              ],
+              [
+                "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+                "712"
+              ]
+            ]
+          },
+          {
+            type: "tabs",
+            items: [
+              "\u041A\u0440\u0435\u0434\u0438\u0442\u044B",
+              "\u0417\u0430\u044F\u0432\u043A\u0438",
+              "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B",
+              "\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
+              "\u0418\u0441\u0442\u043E\u0440\u0438\u044F"
+            ]
+          },
+          {
+            type: "split",
+            ratio: "2:1",
+            columns: [
+              [
+                {
+                  type: "table",
+                  title: "\u041A\u0440\u0435\u0434\u0438\u0442\u044B \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+                  link: "loan-card",
+                  rows: 3,
+                  columns: [
+                    "\u0414\u043E\u0433\u043E\u0432\u043E\u0440:id",
+                    "\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product",
+                    "\u041E\u0441\u0442\u0430\u0442\u043E\u043A:money",
+                    "\u041F\u043B\u0430\u0442\u0451\u0436:money",
+                    "\u0421\u0442\u0430\u0442\u0443\u0441:status"
+                  ],
+                  statuses: [
+                    "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+                    "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+                    "\u041F\u043E\u0433\u0430\u0448\u0435\u043D"
+                  ]
+                },
+                {
+                  type: "files",
+                  title: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+                  items: [
+                    {
+                      name: "\u041F\u0430\u0441\u043F\u043E\u0440\u0442 ID-\u043A\u0430\u0440\u0442\u0430.pdf",
+                      meta: "\u0434\u043E 12.2031",
+                      status: "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D"
+                    },
+                    {
+                      name: "\u0421\u043F\u0440\u0430\u0432\u043A\u0430 \u043E \u0434\u043E\u0445\u043E\u0434\u0430\u0445.pdf",
+                      meta: "\u043E\u043A\u0442\u044F\u0431\u0440\u044C 2026",
+                      status: "\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D"
+                    }
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "details",
+                  title: "\u041A\u043E\u043D\u0442\u0430\u043A\u0442\u044B",
+                  columns: 1,
+                  items: [
+                    [
+                      "\u0422\u0435\u043B\u0435\u0444\u043E\u043D",
+                      "phone"
+                    ],
+                    [
+                      "\u041F\u043E\u0447\u0442\u0430",
+                      "b.asanov@mail.kg"
+                    ],
+                    [
+                      "\u0410\u0434\u0440\u0435\u0441",
+                      "\u0411\u0438\u0448\u043A\u0435\u043A, \u043C\u043A\u0440. \u0410\u0441\u0430\u043D\u0431\u0430\u0439, 12"
+                    ],
+                    [
+                      "\u0420\u0430\u0431\u043E\u0442\u0430",
+                      "\u041E\u0441\u041E\u041E \xAB\u0410\u043B\u0430-\u0422\u043E\u043E \u0422\u0440\u0435\u0439\u0434\xBB, \u043B\u043E\u0433\u0438\u0441\u0442"
+                    ]
+                  ]
+                },
+                {
+                  type: "timeline",
+                  title: "\u0412\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F",
+                  items: [
+                    [
+                      "\u0417\u0432\u043E\u043D\u043E\u043A: \u043D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u0435 \u043E \u043F\u043B\u0430\u0442\u0435\u0436\u0435",
+                      "28.10.2026, 11:20"
+                    ],
+                    [
+                      "\u0417\u0430\u044F\u0432\u043A\u0430 CL-240118 \u0441\u043E\u0437\u0434\u0430\u043D\u0430",
+                      "21.10.2026, 09:12"
+                    ],
+                    [
+                      "\u041A\u0440\u0435\u0434\u0438\u0442 CR-88120 \u043F\u043E\u0433\u0430\u0448\u0435\u043D",
+                      "02.09.2026"
+                    ]
+                  ]
+                }
+              ]
+            ]
+          }
         ]
       },
       {
         id: "client-new",
         title: "\u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442",
         nav: "clients",
-        states: ["default", "error"],
+        parent: "clients",
+        states: [
+          "default",
+          "error"
+        ],
         blocks: [
-          { type: "header", title: "\u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442", breadcrumbs: ["\u041A\u043B\u0438\u0435\u043D\u0442\u044B", "\u041D\u043E\u0432\u044B\u0439"] },
-          { type: "form", title: "\u0414\u0430\u043D\u043D\u044B\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430", subtitle: "\u041F\u043E\u043B\u044F \u0441\u043E \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u043A\u043E\u0439 \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B", width: 760, fields: [
-            { label: "\u0424\u0418\u041E", required: true },
-            { label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D", type: "phone", required: true },
-            { label: "\u0414\u0430\u0442\u0430 \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F", type: "date" },
-            { label: "\u0413\u043E\u0440\u043E\u0434", type: "select" },
-            { label: "\u0415\u0436\u0435\u043C\u0435\u0441\u044F\u0447\u043D\u044B\u0439 \u0434\u043E\u0445\u043E\u0434", type: "money", hint: "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0430\u0435\u0442\u0441\u044F \u0432\u044B\u043F\u0438\u0441\u043A\u043E\u0439" },
-            { label: "\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u043D\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u0434\u0430\u043D\u043D\u044B\u0445", type: "checkbox" }
-          ], submit: "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u043A\u043B\u0438\u0435\u043D\u0442\u0430", to: "clients" }
+          {
+            type: "header",
+            title: "\u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442",
+            breadcrumbs: [
+              "\u041A\u043B\u0438\u0435\u043D\u0442\u044B",
+              "\u041D\u043E\u0432\u044B\u0439 \u043A\u043B\u0438\u0435\u043D\u0442"
+            ]
+          },
+          {
+            type: "form",
+            title: "\u0414\u0430\u043D\u043D\u044B\u0435 \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+            subtitle: "\u041F\u043E\u043B\u044F \u0441\u043E \u0437\u0432\u0451\u0437\u0434\u043E\u0447\u043A\u043E\u0439 \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B",
+            width: 760,
+            submit: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
+            to: "client-card",
+            fields: [
+              {
+                label: "\u0424\u0430\u043C\u0438\u043B\u0438\u044F",
+                required: true
+              },
+              {
+                label: "\u0418\u043C\u044F",
+                required: true
+              },
+              {
+                label: "\u0418\u041D\u041D",
+                required: true,
+                hint: "14 \u0446\u0438\u0444\u0440"
+              },
+              {
+                label: "\u0414\u0430\u0442\u0430 \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F",
+                type: "date",
+                required: true
+              },
+              {
+                label: "\u0422\u0435\u043B\u0435\u0444\u043E\u043D",
+                type: "phone",
+                required: true
+              },
+              {
+                label: "\u041F\u043E\u0447\u0442\u0430",
+                type: "email"
+              },
+              {
+                label: "\u0413\u043E\u0440\u043E\u0434",
+                type: "select"
+              },
+              {
+                label: "\u041C\u0435\u0441\u0442\u043E \u0440\u0430\u0431\u043E\u0442\u044B"
+              },
+              {
+                label: "\u0421\u043E\u0433\u043B\u0430\u0441\u0438\u0435 \u043D\u0430 \u043E\u0431\u0440\u0430\u0431\u043E\u0442\u043A\u0443 \u0434\u0430\u043D\u043D\u044B\u0445",
+                type: "checkbox"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "loans",
+        title: "\u041A\u0440\u0435\u0434\u0438\u0442\u044B",
+        nav: "loans",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u044B\u0439 \u043F\u043E\u0440\u0442\u0444\u0435\u043B\u044C",
+            period: [
+              "\u041C\u0435\u0441\u044F\u0446",
+              "\u041A\u0432\u0430\u0440\u0442\u0430\u043B",
+              "\u0413\u043E\u0434"
+            ],
+            actions: [
+              "\u042D\u043A\u0441\u043F\u043E\u0440\u0442"
+            ]
+          },
+          {
+            type: "stats",
+            items: [
+              {
+                label: "\u041F\u043E\u0440\u0442\u0444\u0435\u043B\u044C",
+                value: "2,84 \u043C\u043B\u0440\u0434 \u0441",
+                delta: "+4,1% \u043A \u043F\u0440\u043E\u0448\u043B\u043E\u043C\u0443 \u043C\u0435\u0441\u044F\u0446\u0443",
+                icon: "wallet"
+              },
+              {
+                label: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0445 \u043A\u0440\u0435\u0434\u0438\u0442\u043E\u0432",
+                value: "18 240",
+                delta: "+612 \u0437\u0430 \u043C\u0435\u0441\u044F\u0446",
+                icon: "file"
+              },
+              {
+                label: "\u0421\u0440\u0435\u0434\u043D\u044F\u044F \u0441\u0442\u0430\u0432\u043A\u0430",
+                value: "19,8%",
+                hint: "\u0432\u0437\u0432\u0435\u0448\u0435\u043D\u043D\u0430\u044F \u043F\u043E \u043E\u0441\u0442\u0430\u0442\u043A\u0443",
+                icon: "chart"
+              },
+              {
+                label: "NPL 90+",
+                value: "3,2%",
+                delta: "\u22120,4 \u043F.\u043F. \u043A \u043F\u0440\u043E\u0448\u043B\u043E\u043C\u0443 \u043C\u0435\u0441\u044F\u0446\u0443",
+                better: "down",
+                icon: "shield"
+              }
+            ]
+          },
+          {
+            type: "split",
+            ratio: "2:1",
+            columns: [
+              [
+                {
+                  type: "chart",
+                  title: "\u0412\u044B\u0434\u0430\u0447\u0438 \u043F\u043E \u043C\u0435\u0441\u044F\u0446\u0430\u043C",
+                  subtitle: "\u043C\u043B\u043D \u0441",
+                  labels: [
+                    "\u042F\u043D\u0432",
+                    "\u0424\u0435\u0432",
+                    "\u041C\u0430\u0440",
+                    "\u0410\u043F\u0440",
+                    "\u041C\u0430\u0439",
+                    "\u0418\u044E\u043D",
+                    "\u0418\u044E\u043B",
+                    "\u0410\u0432\u0433",
+                    "\u0421\u0435\u043D",
+                    "\u041E\u043A\u0442",
+                    "\u041D\u043E\u044F",
+                    "\u0414\u0435\u043A"
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "breakdown",
+                  title: "\u0421\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430 \u043F\u043E\u0440\u0442\u0444\u0435\u043B\u044F",
+                  subtitle: "\u043F\u043E \u043E\u0441\u0442\u0430\u0442\u043A\u0443 \u0434\u043E\u043B\u0433\u0430",
+                  items: [
+                    {
+                      label: "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0435",
+                      value: "1,12 \u043C\u043B\u0440\u0434",
+                      share: "39%"
+                    },
+                    {
+                      label: "\u0418\u043F\u043E\u0442\u0435\u043A\u0430",
+                      value: "0,86 \u043C\u043B\u0440\u0434",
+                      share: "30%"
+                    },
+                    {
+                      label: "\u0411\u0438\u0437\u043D\u0435\u0441",
+                      value: "0,51 \u043C\u043B\u0440\u0434",
+                      share: "18%"
+                    },
+                    {
+                      label: "\u0410\u0432\u0442\u043E",
+                      value: "0,23 \u043C\u043B\u0440\u0434",
+                      share: "8%"
+                    },
+                    {
+                      label: "\u041A\u0430\u0440\u0442\u044B",
+                      value: "0,12 \u043C\u043B\u0440\u0434",
+                      share: "5%"
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          {
+            type: "table",
+            title: "\u041A\u0440\u0435\u0434\u0438\u0442\u044B",
+            link: "loan-card",
+            rows: 6,
+            columns: [
+              "\u0414\u043E\u0433\u043E\u0432\u043E\u0440:id",
+              "\u041A\u043B\u0438\u0435\u043D\u0442:person",
+              "\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product",
+              "\u041E\u0441\u0442\u0430\u0442\u043E\u043A:money",
+              "\u0421\u0442\u0430\u0432\u043A\u0430:percent",
+              "\u0421\u0442\u0430\u0442\u0443\u0441:status"
+            ],
+            statuses: [
+              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430",
+              "\u041F\u043E\u0433\u0430\u0448\u0435\u043D"
+            ]
+          }
+        ]
+      },
+      {
+        id: "loan-card",
+        title: "\u041A\u0440\u0435\u0434\u0438\u0442 CR-90412",
+        nav: "loans",
+        parent: "loans",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u041A\u0440\u0435\u0434\u0438\u0442 CR-90412",
+            badge: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+            breadcrumbs: [
+              "\u041A\u0440\u0435\u0434\u0438\u0442\u044B",
+              "CR-90412"
+            ],
+            subtitle: "\u0411\u0430\u043A\u044B\u0442 \u0410\u0441\u0430\u043D\u043E\u0432 \xB7 \u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \xB7 \u0432\u044B\u0434\u0430\u043D 15.03.2026",
+            actions: [
+              "\u0414\u043E\u0441\u0440\u043E\u0447\u043D\u043E\u0435 \u043F\u043E\u0433\u0430\u0448\u0435\u043D\u0438\u0435",
+              "\u0421\u043F\u0440\u0430\u0432\u043A\u0430"
+            ]
+          },
+          {
+            type: "split",
+            ratio: "2:1",
+            columns: [
+              [
+                {
+                  type: "details",
+                  title: "\u0423\u0441\u043B\u043E\u0432\u0438\u044F",
+                  columns: 3,
+                  items: [
+                    [
+                      "\u0421\u0443\u043C\u043C\u0430",
+                      "300 000 \u0441"
+                    ],
+                    [
+                      "\u041E\u0441\u0442\u0430\u0442\u043E\u043A",
+                      "212 400 \u0441"
+                    ],
+                    [
+                      "\u0421\u0442\u0430\u0432\u043A\u0430",
+                      "19,5%"
+                    ],
+                    [
+                      "\u0421\u0440\u043E\u043A",
+                      "24 \u043C\u0435\u0441"
+                    ],
+                    [
+                      "\u041F\u043B\u0430\u0442\u0451\u0436",
+                      "15 210 \u0441"
+                    ],
+                    [
+                      "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u043F\u043B\u0430\u0442\u0451\u0436",
+                      "15.11.2026"
+                    ]
+                  ]
+                },
+                {
+                  type: "table",
+                  title: "\u0413\u0440\u0430\u0444\u0438\u043A \u043F\u043B\u0430\u0442\u0435\u0436\u0435\u0439",
+                  columns: [
+                    "\u0414\u0430\u0442\u0430:date",
+                    "\u041F\u043B\u0430\u0442\u0451\u0436:money",
+                    "\u041E\u0441\u043D\u043E\u0432\u043D\u043E\u0439 \u0434\u043E\u043B\u0433:money",
+                    "\u041F\u0440\u043E\u0446\u0435\u043D\u0442\u044B:money",
+                    "\u0421\u0442\u0430\u0442\u0443\u0441:status"
+                  ],
+                  data: [
+                    [
+                      "15.08.2026",
+                      "15 210 \u0441",
+                      "11 480 \u0441",
+                      "3 730 \u0441",
+                      "\u041E\u043F\u043B\u0430\u0447\u0435\u043D"
+                    ],
+                    [
+                      "15.09.2026",
+                      "15 210 \u0441",
+                      "11 670 \u0441",
+                      "3 540 \u0441",
+                      "\u041E\u043F\u043B\u0430\u0447\u0435\u043D"
+                    ],
+                    [
+                      "15.10.2026",
+                      "15 210 \u0441",
+                      "11 860 \u0441",
+                      "3 350 \u0441",
+                      "\u041E\u043F\u043B\u0430\u0447\u0435\u043D"
+                    ],
+                    [
+                      "15.11.2026",
+                      "15 210 \u0441",
+                      "12 050 \u0441",
+                      "3 160 \u0441",
+                      "\u041E\u0436\u0438\u0434\u0430\u0435\u0442"
+                    ],
+                    [
+                      "15.12.2026",
+                      "15 210 \u0441",
+                      "12 250 \u0441",
+                      "2 960 \u0441",
+                      "\u041E\u0436\u0438\u0434\u0430\u0435\u0442"
+                    ]
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "meters",
+                  title: "\u041F\u043E\u0433\u0430\u0448\u0435\u043D\u0438\u0435",
+                  items: [
+                    {
+                      label: "\u041F\u043E\u0433\u0430\u0448\u0435\u043D\u043E \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u0433\u043E \u0434\u043E\u043B\u0433\u0430",
+                      value: "29%",
+                      percent: 29,
+                      tone: "success"
+                    },
+                    {
+                      label: "\u041F\u0440\u043E\u0448\u043B\u043E \u0441\u0440\u043E\u043A\u0430",
+                      value: "8 \u0438\u0437 24 \u043C\u0435\u0441",
+                      percent: 33
+                    }
+                  ]
+                },
+                {
+                  type: "timeline",
+                  title: "\u041E\u043F\u0435\u0440\u0430\u0446\u0438\u0438",
+                  items: [
+                    [
+                      "\u041F\u043B\u0430\u0442\u0451\u0436 15 210 \u0441",
+                      "15.10.2026"
+                    ],
+                    [
+                      "\u041F\u043B\u0430\u0442\u0451\u0436 15 210 \u0441",
+                      "15.09.2026"
+                    ],
+                    [
+                      "\u0412\u044B\u0434\u0430\u0447\u0430 300 000 \u0441",
+                      "15.03.2026"
+                    ]
+                  ]
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        id: "collection",
+        title: "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430",
+        nav: "collection",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u0420\u0430\u0431\u043E\u0442\u0430 \u0441 \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u043E\u0439",
+            subtitle: "Soft collection \xB7 \u043E\u0431\u0437\u0432\u043E\u043D \u0438 \u043D\u0430\u043F\u043E\u043C\u0438\u043D\u0430\u043D\u0438\u044F",
+            actions: [
+              "\u041D\u0430\u0437\u043D\u0430\u0447\u0438\u0442\u044C \u043E\u0431\u0437\u0432\u043E\u043D",
+              "\u042D\u043A\u0441\u043F\u043E\u0440\u0442"
+            ]
+          },
+          {
+            type: "stats",
+            items: [
+              {
+                label: "1\u201330 \u0434\u043D\u0435\u0439",
+                value: "184",
+                hint: "6,1 \u043C\u043B\u043D \u0441",
+                icon: "history"
+              },
+              {
+                label: "31\u201360 \u0434\u043D\u0435\u0439",
+                value: "52",
+                hint: "2,4 \u043C\u043B\u043D \u0441",
+                icon: "history"
+              },
+              {
+                label: "61\u201390 \u0434\u043D\u0435\u0439",
+                value: "19",
+                hint: "1,1 \u043C\u043B\u043D \u0441",
+                icon: "shield"
+              },
+              {
+                label: "90+ \u0434\u043D\u0435\u0439",
+                value: "41",
+                hint: "3,8 \u043C\u043B\u043D \u0441",
+                icon: "shield"
+              }
+            ]
+          },
+          {
+            type: "toolbar",
+            search: "\u041A\u043B\u0438\u0435\u043D\u0442 \u0438\u043B\u0438 \u0434\u043E\u0433\u043E\u0432\u043E\u0440",
+            filters: [
+              "\u041A\u043E\u0440\u0437\u0438\u043D\u0430",
+              "\u041E\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439",
+              "\u041E\u0431\u0435\u0449\u0430\u043D\u0438\u0435 \u043E\u043F\u043B\u0430\u0442\u044B"
+            ]
+          },
+          {
+            type: "table",
+            link: "client-card",
+            selectable: true,
+            rows: 8,
+            columns: [
+              "\u0414\u043E\u0433\u043E\u0432\u043E\u0440:id",
+              "\u041A\u043B\u0438\u0435\u043D\u0442:person",
+              "\u0422\u0435\u043B\u0435\u0444\u043E\u043D:phone",
+              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u0435\u043D\u043E:money",
+              "\u0414\u043D\u0435\u0439:number",
+              "\u0421\u0442\u0430\u0442\u0443\u0441:status"
+            ],
+            statuses: [
+              "\u041E\u0431\u0435\u0449\u0430\u043B \u043E\u043F\u043B\u0430\u0442\u0438\u0442\u044C",
+              "\u041D\u0435 \u0434\u043E\u0437\u0432\u043E\u043D\u0438\u043B\u0438\u0441\u044C",
+              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430",
+              "\u041D\u043E\u0432\u044B\u0439"
+            ]
+          },
+          {
+            type: "pagination",
+            summary: "\u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E 1\u20138 \u0438\u0437 296"
+          }
         ]
       },
       {
         id: "reports",
         title: "\u041E\u0442\u0447\u0451\u0442\u044B",
         nav: "reports",
-        states: ["default", "empty"],
+        viewports: [
+          "desktop"
+        ],
         blocks: [
-          { type: "header", title: "\u041E\u0442\u0447\u0451\u0442\u044B" },
-          { type: "cards", columns: 3, items: [
-            { title: "\u0412\u043E\u0440\u043E\u043D\u043A\u0430 \u0437\u0430\u044F\u0432\u043E\u043A", text: "\u041A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u044F \u043F\u043E \u044D\u0442\u0430\u043F\u0430\u043C \u0437\u0430 \u043F\u0435\u0440\u0438\u043E\u0434", badge: "\u0415\u0436\u0435\u0434\u043D\u0435\u0432\u043D\u043E" },
-            { title: "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0438 SLA", text: "\u0413\u0434\u0435 \u0438 \u043F\u043E\u0447\u0435\u043C\u0443 \u0437\u0430\u044F\u0432\u043A\u0438 \u0437\u0430\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u044E\u0442\u0441\u044F", badge: "\u0412\u0430\u0436\u043D\u043E" },
-            { title: "\u041F\u043E\u0440\u0442\u0444\u0435\u043B\u044C", text: "\u0412\u044B\u0434\u0430\u0447\u0438 \u043F\u043E \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u0430\u043C \u0438 \u0433\u043E\u0440\u043E\u0434\u0430\u043C", badge: "\u0415\u0436\u0435\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u043E" }
-          ] }
+          {
+            type: "header",
+            title: "\u041E\u0442\u0447\u0451\u0442\u044B",
+            period: [
+              "\u041D\u0435\u0434\u0435\u043B\u044F",
+              "\u041C\u0435\u0441\u044F\u0446",
+              "\u041A\u0432\u0430\u0440\u0442\u0430\u043B",
+              "\u0413\u043E\u0434"
+            ],
+            periodActive: 1,
+            actions: [
+              "\u042D\u043A\u0441\u043F\u043E\u0440\u0442 \u0432 Excel"
+            ]
+          },
+          {
+            type: "split",
+            ratio: "1:1",
+            columns: [
+              [
+                {
+                  type: "funnel",
+                  title: "\u041A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u044F \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440\u0430",
+                  subtitle: "\u041E\u043A\u0442\u044F\u0431\u0440\u044C 2026",
+                  items: [
+                    {
+                      label: "\u041F\u043E\u0441\u0442\u0443\u043F\u0438\u043B\u043E",
+                      value: "8 412",
+                      rate: "100%"
+                    },
+                    {
+                      label: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433",
+                      value: "6 590",
+                      rate: "78%"
+                    },
+                    {
+                      label: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411",
+                      value: "5 870",
+                      rate: "70%"
+                    },
+                    {
+                      label: "\u041E\u0434\u043E\u0431\u0440\u0435\u043D\u043E",
+                      value: "4 310",
+                      rate: "51%"
+                    },
+                    {
+                      label: "\u0412\u044B\u0434\u0430\u043D\u043E",
+                      value: "3 640",
+                      rate: "43%"
+                    }
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "breakdown",
+                  title: "\u041F\u0440\u0438\u0447\u0438\u043D\u044B \u043E\u0442\u043A\u0430\u0437\u043E\u0432",
+                  subtitle: "\u041E\u043A\u0442\u044F\u0431\u0440\u044C 2026",
+                  items: [
+                    {
+                      label: "\u0412\u044B\u0441\u043E\u043A\u0438\u0439 \u041F\u0414\u041D",
+                      value: "1 204",
+                      share: "39%"
+                    },
+                    {
+                      label: "\u041D\u0435\u0433\u0430\u0442\u0438\u0432\u043D\u0430\u044F \u0438\u0441\u0442\u043E\u0440\u0438\u044F",
+                      value: "861",
+                      share: "28%"
+                    },
+                    {
+                      label: "\u0414\u043E\u0445\u043E\u0434 \u043D\u0435 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0451\u043D",
+                      value: "520",
+                      share: "17%"
+                    },
+                    {
+                      label: "\u0421\u0442\u043E\u043F-\u043B\u0438\u0441\u0442\u044B",
+                      value: "286",
+                      share: "9%"
+                    },
+                    {
+                      label: "\u041F\u0440\u043E\u0447\u0435\u0435",
+                      value: "231",
+                      share: "7%"
+                    }
+                  ]
+                }
+              ]
+            ]
+          },
+          {
+            type: "cards",
+            columns: 3,
+            items: [
+              {
+                title: "\u0412\u044B\u0434\u0430\u0447\u0438 \u043F\u043E \u0444\u0438\u043B\u0438\u0430\u043B\u0430\u043C",
+                text: "\u041E\u0431\u044A\u0451\u043C \u0438 \u043A\u043E\u043B\u0438\u0447\u0435\u0441\u0442\u0432\u043E \u0432\u044B\u0434\u0430\u0447, \u043F\u043B\u0430\u043D/\u0444\u0430\u043A\u0442 \u043F\u043E \u043E\u0442\u0434\u0435\u043B\u0435\u043D\u0438\u044F\u043C",
+                badge: "\u0415\u0436\u0435\u0434\u043D\u0435\u0432\u043D\u043E"
+              },
+              {
+                title: "\u042D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u044C \u0430\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0435\u0440\u043E\u0432",
+                text: "\u0420\u0435\u0448\u0435\u043D\u0438\u044F, \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0438 \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u043F\u043E\u0440\u0442\u0444\u0435\u043B\u044F \u043F\u043E \u0441\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A\u0430\u043C",
+                badge: "\u0415\u0436\u0435\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u043E"
+              },
+              {
+                title: "\u0412\u0438\u043D\u0442\u0430\u0436\u043D\u044B\u0439 \u0430\u043D\u0430\u043B\u0438\u0437",
+                text: "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430 \u043F\u043E \u043F\u043E\u043A\u043E\u043B\u0435\u043D\u0438\u044F\u043C \u0432\u044B\u0434\u0430\u0447 \u0434\u043B\u044F \u0440\u0438\u0441\u043A-\u043C\u0435\u043D\u0435\u0434\u0436\u043C\u0435\u043D\u0442\u0430",
+                badge: "\u0415\u0436\u0435\u043C\u0435\u0441\u044F\u0447\u043D\u043E"
+              },
+              {
+                title: "\u041E\u0442\u0447\u0451\u0442 \u0434\u043B\u044F \u041D\u0411\u041A\u0420",
+                text: "\u0420\u0435\u0433\u0443\u043B\u044F\u0442\u043E\u0440\u043D\u0430\u044F \u0444\u043E\u0440\u043C\u0430 \u043F\u043E \u043A\u0440\u0435\u0434\u0438\u0442\u043D\u043E\u043C\u0443 \u043F\u043E\u0440\u0442\u0444\u0435\u043B\u044E",
+                badge: "\u0415\u0436\u0435\u043C\u0435\u0441\u044F\u0447\u043D\u043E"
+              },
+              {
+                title: "\u041A\u0430\u043D\u0430\u043B\u044B \u043F\u0440\u0438\u0432\u043B\u0435\u0447\u0435\u043D\u0438\u044F",
+                text: "\u041A\u043E\u043D\u0432\u0435\u0440\u0441\u0438\u044F \u043E\u043D\u043B\u0430\u0439\u043D, \u043E\u0442\u0434\u0435\u043B\u0435\u043D\u0438\u0439 \u0438 \u043F\u0430\u0440\u0442\u043D\u0451\u0440\u043E\u0432",
+                badge: "\u0415\u0436\u0435\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u043E"
+              },
+              {
+                title: "SLA \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440\u0430",
+                text: "\u0412\u0440\u0435\u043C\u044F \u043D\u0430 \u043A\u0430\u0436\u0434\u043E\u043C \u044D\u0442\u0430\u043F\u0435 \u0438 \u043D\u0430\u0440\u0443\u0448\u0435\u043D\u0438\u044F \u043D\u043E\u0440\u043C\u0430\u0442\u0438\u0432\u0430",
+                badge: "\u0415\u0436\u0435\u0434\u043D\u0435\u0432\u043D\u043E"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "products",
+        title: "\u041F\u0440\u043E\u0434\u0443\u043A\u0442\u044B",
+        nav: "products",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u044B\u0435 \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u044B",
+            subtitle: "\u0423\u0441\u043B\u043E\u0432\u0438\u044F, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0432\u0438\u0434\u0438\u0442 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440 \u043F\u0440\u0438 \u0440\u0430\u0441\u0447\u0451\u0442\u0435",
+            actions: [
+              "+ \u041D\u043E\u0432\u044B\u0439 \u043F\u0440\u043E\u0434\u0443\u043A\u0442"
+            ]
+          },
+          {
+            type: "cards",
+            columns: 3,
+            items: [
+              {
+                title: "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439",
+                text: "10 000 \u2013 3 000 000 \u0441 \xB7 6\u201360 \u043C\u0435\u0441 \xB7 \u043E\u0442 19,5%",
+                badge: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              },
+              {
+                title: "\u0418\u043F\u043E\u0442\u0435\u043A\u0430",
+                text: "\u0434\u043E 15 000 000 \u0441 \xB7 \u0434\u043E 20 \u043B\u0435\u0442 \xB7 \u043E\u0442 12%",
+                badge: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              },
+              {
+                title: "\u0410\u0432\u0442\u043E\u043A\u0440\u0435\u0434\u0438\u0442",
+                text: "\u0434\u043E 5 000 000 \u0441 \xB7 \u0434\u043E 7 \u043B\u0435\u0442 \xB7 \u043E\u0442 16%",
+                badge: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              },
+              {
+                title: "\u0411\u0438\u0437\u043D\u0435\u0441-\u043A\u0440\u0435\u0434\u0438\u0442",
+                text: "\u0434\u043E 20 000 000 \u0441 \xB7 \u0434\u043E 5 \u043B\u0435\u0442 \xB7 \u043E\u0442 17%",
+                badge: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              },
+              {
+                title: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u0430\u044F \u043A\u0430\u0440\u0442\u0430",
+                text: "\u043B\u0438\u043C\u0438\u0442 \u0434\u043E 500 000 \u0441 \xB7 \u043B\u044C\u0433\u043E\u0442\u043D\u044B\u0439 \u043F\u0435\u0440\u0438\u043E\u0434 55 \u0434\u043D\u0435\u0439",
+                badge: "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              },
+              {
+                title: "\u0420\u0430\u0441\u0441\u0440\u043E\u0447\u043A\u0430 \u0443 \u043F\u0430\u0440\u0442\u043D\u0451\u0440\u043E\u0432",
+                text: "0% \xB7 3\u201312 \u043C\u0435\u0441 \xB7 \u043A\u043E\u043C\u0438\u0441\u0441\u0438\u044F \u043F\u0430\u0440\u0442\u043D\u0451\u0440\u0430",
+                badge: "\u0427\u0435\u0440\u043D\u043E\u0432\u0438\u043A"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "staff",
+        title: "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A\u0438",
+        nav: "staff",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A\u0438 \u0438 \u0440\u043E\u043B\u0438",
+            actions: [
+              "+ \u041F\u0440\u0438\u0433\u043B\u0430\u0441\u0438\u0442\u044C"
+            ]
+          },
+          {
+            type: "tabs",
+            items: [
+              "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A\u0438 \xB7 46",
+              "\u0420\u043E\u043B\u0438 \xB7 6",
+              "\u0416\u0443\u0440\u043D\u0430\u043B \u0434\u043E\u0441\u0442\u0443\u043F\u0430"
+            ]
+          },
+          {
+            type: "table",
+            rows: 8,
+            columns: [
+              "\u0421\u043E\u0442\u0440\u0443\u0434\u043D\u0438\u043A:person",
+              "\u041F\u043E\u0447\u0442\u0430:email",
+              "\u0420\u043E\u043B\u044C:product",
+              "\u041E\u0442\u0434\u0435\u043B\u0435\u043D\u0438\u0435:city",
+              "\u0421\u0442\u0430\u0442\u0443\u0441:status"
+            ],
+            statuses: [
+              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
+              "\u041F\u0440\u0438\u0433\u043B\u0430\u0448\u0451\u043D",
+              "\u0417\u0430\u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u0430\u043D"
+            ]
+          }
+        ]
+      },
+      {
+        id: "settings",
+        title: "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438",
+        nav: "settings",
+        viewports: [
+          "desktop"
+        ],
+        blocks: [
+          {
+            type: "header",
+            title: "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u043A\u043E\u043D\u0432\u0435\u0439\u0435\u0440\u0430",
+            subtitle: "\u041D\u043E\u0440\u043C\u0430\u0442\u0438\u0432\u044B SLA \u0438 \u043F\u0440\u0430\u0432\u0438\u043B\u0430 \u043C\u0430\u0440\u0448\u0440\u0443\u0442\u0438\u0437\u0430\u0446\u0438\u0438"
+          },
+          {
+            type: "split",
+            ratio: "3:2",
+            columns: [
+              [
+                {
+                  type: "form",
+                  title: "\u041D\u043E\u0440\u043C\u0430\u0442\u0438\u0432\u044B SLA",
+                  submit: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C",
+                  fields: [
+                    {
+                      label: "\u0421\u043A\u043E\u0440\u0438\u043D\u0433, \u043C\u0438\u043D",
+                      hint: "\u0441\u0435\u0439\u0447\u0430\u0441 15"
+                    },
+                    {
+                      label: "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0421\u0411, \u0447",
+                      hint: "\u0441\u0435\u0439\u0447\u0430\u0441 2"
+                    },
+                    {
+                      label: "\u0410\u043D\u0434\u0435\u0440\u0440\u0430\u0439\u0442\u0438\u043D\u0433, \u0447",
+                      hint: "\u0441\u0435\u0439\u0447\u0430\u0441 4"
+                    },
+                    {
+                      label: "\u0412\u044B\u0434\u0430\u0447\u0430, \u0434\u043D\u0435\u0439",
+                      hint: "\u0441\u0435\u0439\u0447\u0430\u0441 1"
+                    },
+                    {
+                      label: "\u0410\u0432\u0442\u043E\u043E\u0434\u043E\u0431\u0440\u0435\u043D\u0438\u0435 \u043F\u0440\u0438 \u0441\u043A\u043E\u0440\u0438\u043D\u0433\u0435 \u043E\u0442",
+                      hint: "\u0431\u0430\u043B\u043B\u043E\u0432 \u0438\u0437 850"
+                    },
+                    {
+                      label: "\u0410\u0432\u0442\u043E\u043E\u0442\u043A\u0430\u0437 \u043F\u0440\u0438 \u0441\u043A\u043E\u0440\u0438\u043D\u0433\u0435 \u043D\u0438\u0436\u0435",
+                      hint: "\u0431\u0430\u043B\u043B\u043E\u0432 \u0438\u0437 850"
+                    },
+                    {
+                      label: "\u0423\u0432\u0435\u0434\u043E\u043C\u043B\u044F\u0442\u044C \u0440\u0443\u043A\u043E\u0432\u043E\u0434\u0438\u0442\u0435\u043B\u044F \u043E \u043F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0435 SLA",
+                      type: "checkbox"
+                    }
+                  ]
+                }
+              ],
+              [
+                {
+                  type: "checks",
+                  title: "\u0418\u043D\u0442\u0435\u0433\u0440\u0430\u0446\u0438\u0438",
+                  items: [
+                    {
+                      label: "\u0410\u0411\u0421 \u0431\u0430\u043D\u043A\u0430",
+                      result: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u0430",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u043E\u0435 \u0431\u044E\u0440\u043E",
+                      result: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043E",
+                      status: "ok"
+                    },
+                    {
+                      label: "\u0413\u041D\u0421",
+                      result: "\u041C\u0435\u0434\u043B\u0435\u043D\u043D\u043E",
+                      status: "warn"
+                    },
+                    {
+                      label: "SMS-\u0448\u043B\u044E\u0437",
+                      result: "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D",
+                      status: "ok"
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
         ]
       }
-    ],
-    links: [
-      { from: "dashboard", on: "\u042D\u043A\u0441\u043F\u043E\u0440\u0442", to: "reports" }
     ]
   };
 

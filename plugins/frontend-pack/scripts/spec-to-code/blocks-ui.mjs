@@ -15,6 +15,7 @@ export const UI_TEXTS = {
     actions: s.pageActions.map((a) => ({ label: a.label })),
     period: Array.isArray(b.spec.period) ? b.spec.period.map(String) : undefined,
     periodLabel: Array.isArray(b.spec.period) ? 'Период' : undefined,
+    periodActive: Array.isArray(b.spec.period) ? String(b.spec.period[b.spec.periodActive ?? 0] ?? b.spec.period[0]) : undefined,
   }),
   toolbar: (b, s) => ({ search: s.search.q ?? undefined, searchLabel: `Поиск: ${s.title}`, all: 'Все', filters: s.search.filters.map((f) => ({ label: f.label, options: f.options })) }),
   tabs: (b, s) => ({ label: b.spec.title || 'Вкладки', items: s.search.tabs }),
@@ -96,7 +97,7 @@ const t = m.blocks.${b.key}
 ${period ? 'const periods = t.period.map((label) => ({ value: label, label }))\n' : ''}
 /** Spec block "header": Figma page title row — h1 (20/28 bold) on the background${period ? ', period segment' : ''}${acts.length ? ', page actions' : ''} on the right. */
 export function ${b.comp}() {
-${period ? "  // TODO(spec-to-code): the period only switches the segment; send it to the screen query when the API takes it\n  const [period, setPeriod] = useState<string>(t.period[0])\n" : ''}  return (
+${period ? "  // TODO(spec-to-code): the period only switches the segment; send it to the screen query when the API takes it\n  const [period, setPeriod] = useState<string>(t.periodActive)\n" : ''}  return (
     <div className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-3">
@@ -119,7 +120,7 @@ ${acts.length ? `${actionButtons(acts, '        ', true)}\n` : ''}${period ? '  
     imp.type('../api/schemas', ctx.searchType);
     const selects = filters.map((f, i) => `        <Select
           value={search.${f.key} ?? ALL}
-          onValueChange={(value) => onChange({ ${f.key}: value === ALL ? undefined : value, page: undefined })}
+          onValueChange={(value) => onChange({ ${f.key}: value === ALL ? undefined : value${s.search.page ? ', page: undefined' : ''} })}
         >
           <SelectTrigger size="sm" className="w-full sm:w-48" aria-label={t.filters[${i}].label}>
             <SelectValue />
@@ -136,7 +137,7 @@ ${acts.length ? `${actionButtons(acts, '        ', true)}\n` : ''}${period ? '  
     const searchForm = s.search.q ? `  const [text, setText] = useState(search.q ?? '')
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    onChange({ q: text.trim() || undefined, page: undefined })
+    onChange({ q: text.trim() || undefined${s.search.page ? ', page: undefined' : ''} })
   }
 ` : '';
     return `${imp}

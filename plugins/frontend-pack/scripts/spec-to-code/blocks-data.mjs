@@ -1,5 +1,6 @@
 // Data blocks (stats, table, kanban, chart, list, timeline, cards, details) -> feature ui components.
 // Each component gets `data` from the screen query; `data === undefined` means loading (skeletons).
+import { crmSchema } from './crm-data.mjs';
 import { Imports, q } from './util.mjs';
 
 const MUTED = ['id', 'date', 'datetime', 'phone', 'email'];
@@ -11,7 +12,7 @@ export const DATA_TEXTS = {
   stats: (b) => ({ label: b.spec.label || 'Показатели', labels: b.fixture.map((k) => k.label) }),
   table: (b, s) => ({ label: b.spec.title || s.title, columns: b.columns.filter((c) => c.type !== 'actions').map((c) => c.label), selectAll: 'Выбрать все строки', selectRow: 'Выбрать строку', actions: 'Действия' }),
   kanban: (b) => ({ label: b.spec.title || 'Этапы', loading: 'Загружаем доску' }),
-  chart: (b) => ({ title: b.spec.title || 'Динамика', subtitle: b.spec.subtitle }),
+  chart: (b) => ({ title: b.spec.title || 'Динамика', subtitle: b.spec.subtitle, series: b.spec.series?.length ? b.spec.series.map(String) : undefined }),
   list: (b) => ({ title: b.spec.title || 'Список', subtitle: b.spec.subtitle }),
   timeline: (b) => ({ title: b.spec.title || 'История', empty: 'Событий пока нет' }),
   cards: (b, s) => ({ label: b.spec.title || s.title }),
@@ -169,6 +170,7 @@ ${sel ? `                  <TableCell>
   },
 
   chart(b, ctx) {
+    if (b.spec.series?.length) return seriesChart(b, ctx);
     const imp = head(ctx, b, [['@/shared/ui/card', 'Card'], ['@/shared/ui/skeleton', 'Skeleton']]);
     return file(imp, b, ctx, 'Spec block "chart": bar chart from tokens (no chart library in the kit yet).', `  const max = Math.max(1, ...(data ?? []).map((point) => point.value))
   return (
@@ -305,6 +307,56 @@ const initials = (name: string) =>
   },
 };
 
+/** Chart with spec "series": grouped bars per label + legend (Figma blocks-data.js chart). */
+function seriesChart(b, ctx) {
+  const imp = head(ctx, b, [['@/shared/ui/card', 'Card'], ['@/shared/ui/skeleton', 'Skeleton']]);
+  return file(imp, b, ctx, 'Spec block "chart" with series: grouped bars from tokens + legend.', `  const max = Math.max(1, ...(data ?? []).flatMap((point) => point.values))
+  return (
+    <Card className="gap-4 border-transparent px-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-base font-bold text-foreground">{t.title}</h2>
+${b.spec.subtitle ? '          <p className="text-sm text-muted-foreground">{t.subtitle}</p>\n' : ''}        </div>
+        <ul className="flex flex-wrap gap-3 text-caption text-muted-foreground">
+          {t.series.map((name, k) => (
+            <li key={name} className="flex items-center gap-1.5">
+              <span aria-hidden="true" className={\`size-2 rounded-full \${SERIES[k % SERIES.length]}\`} />
+              {name}
+            </li>
+          ))}
+        </ul>
+      </div>
+      {!data ? (
+        <Skeleton className="h-48 w-full" />
+      ) : (
+        <div>
+          <div
+            role="img"
+            aria-label={\`\${t.title}: \${data.map((point) => \`\${point.label} — \${point.values.map((v, k) => \`\${t.series[k]} \${v}\`).join(', ')}\`).join('; ')}\`}
+            className="flex h-48 items-end gap-1 sm:gap-2"
+          >
+            {data.map((point) => (
+              <div key={point.label} className="flex h-full flex-1 items-end gap-0.5">
+                {point.values.map((value, k) => (
+                  <div key={t.series[k]} className={\`flex-1 rounded-t-sm \${SERIES[k % SERIES.length]}\`} style={{ height: \`\${(value / max) * 100}%\` }} />
+                ))}
+              </div>
+            ))}
+          </div>
+          <div aria-hidden="true" className="mt-2 flex gap-1 text-caption text-muted-foreground sm:gap-2">
+            {data.map((point) => (
+              <span key={point.label} className="flex-1 truncate text-center">
+                {point.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </Card>
+  )`).replace(`const t = m.blocks.${b.key}`, `const t = m.blocks.${b.key}
+const SERIES = ['bg-brand', 'bg-status-error', 'bg-supportive-6', 'bg-supportive-7']`);
+}
+
 export const emitDataBlock = (b, ctx) => EMIT[b.type](b, ctx);
 
 /** Zod schema of one data block's payload (api/schemas.ts). */
@@ -317,12 +369,12 @@ export function dataSchema(b) {
       return `z.object({ rows: z.array(z.object({ id: ${str}${cols.length ? `, ${cols.join(', ')}` : ''} })), total: z.number().int() })`;
     }
     case 'kanban': return `z.array(z.object({ id: ${str}, title: ${str}, total: z.number().int(), items: z.array(z.object({ id: ${str}, title: ${str}, amount: ${str}, time: ${str}, meta: ${str}, status: ${str} })) }))`;
-    case 'chart': return `z.array(z.object({ label: ${str}, value: z.number() }))`;
+    case 'chart': return b.spec.series?.length ? `z.array(z.object({ label: ${str}, values: z.array(z.number()) }))` : `z.array(z.object({ label: ${str}, value: z.number() }))`;
     case 'list': return `z.array(z.object({ id: ${str}, title: ${str}, subtitle: ${str}.optional(), status: ${str}.optional() }))`;
     case 'timeline': return `z.array(z.object({ id: ${str}, title: ${str}, time: ${str} }))`;
     case 'cards': return `z.array(z.object({ id: ${str}, title: ${str}, text: ${str}.optional(), badge: ${str}.optional() }))`;
     case 'details': return `z.array(z.object({ id: ${str}, label: ${str}, value: ${str} }))`;
-    default: return 'z.unknown()';
+    default: return crmSchema(b);
   }
 }
 

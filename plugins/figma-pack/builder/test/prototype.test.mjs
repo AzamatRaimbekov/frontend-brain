@@ -7,7 +7,7 @@ import { COLOR_TOKENS, EXTENSION_TOKENS } from '../core/tokens.js';
 import { normalizeSpec, validateSpec } from '../core/spec.js';
 import { resolveLinks, parseAction, actionLabel, validateLinks } from '../core/links.js';
 
-const spec = JSON.parse(readFileSync(new URL('../examples/credit-crm.spec.json', import.meta.url)));
+const spec = JSON.parse(readFileSync(new URL('./fixtures/credit-crm-mini.spec.json', import.meta.url)));
 const clone = (x) => JSON.parse(JSON.stringify(x));
 const to = (links, from, on) => links.find((l) => l.from === from && l.on === on)?.to;
 

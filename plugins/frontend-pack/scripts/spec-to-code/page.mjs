@@ -1,5 +1,5 @@
 // pages/<screen>/: route component, UX.md brief from the spec, page tests (renderRoute + MSW).
-import { hasSearch } from './feature.mjs';
+import { hasSearch, payloadTakesSearch } from './feature.mjs';
 import { headerHasBody } from './blocks-ui.mjs';
 import { q } from './util.mjs';
 
@@ -7,6 +7,8 @@ const BLOCK_RU = {
   header: 'шапка', stats: 'KPI', toolbar: 'поиск и фильтры', table: 'таблица', pagination: 'пагинация', tabs: 'вкладки',
   form: 'форма', details: 'карточка данных', kanban: 'канбан', chart: 'график', list: 'список', timeline: 'история',
   stepper: 'этапы', cards: 'карточки', alert: 'предупреждение', empty: 'пустое состояние', login: 'вход', todo: 'TODO-блок',
+  funnel: 'воронка', meters: 'индикаторы', score: 'скоринг', decision: 'решение', files: 'документы', checks: 'проверки',
+  comments: 'комментарии', profile: 'профиль', breakdown: 'структура',
 };
 
 export const h1Of = (s) => (s.login ? s.login.spec.title || 'Вход' : s.header?.spec.title || s.title);
@@ -122,8 +124,14 @@ function assertions(s) {
     if (b.type === 'kanban') lines.push(`    const ${b.key} = ${firstOf('list', `${t}.label`)}`, `    expect(within(${b.key}).getAllByRole('heading', { level: 3 })).toHaveLength(${b.fixture.length})`);
     if (b.type === 'chart') lines.push(`    expect(await screen.findByRole('img', { name: (name) => name.startsWith(${t}.title) })).toBeInTheDocument()`);
     if (b.type === 'list') lines.push(`    expect(await screen.findAllByText(${q(b.fixture[0].title)})).not.toHaveLength(0)`);
-    if (b.type === 'timeline') lines.push(`    const ${b.key} = ${firstOf('region', `${t}.title`)}`, `    expect(await within(${b.key}).findByText(${q(b.fixture[0].title)})).toBeInTheDocument()`);
+    if (b.type === 'timeline') lines.push(`    const ${b.key} = ${firstOf('region', `${t}.title`)}`, `    expect(await within(${b.key}).findAllByText(${q(b.fixture[0].title)})).not.toHaveLength(0)`);
     if (b.type === 'cards') lines.push(`    const ${b.key} = ${firstOf('list', `${t}.label`)}`, `    expect(await within(${b.key}).findByText(${q(b.fixture[0].title)})).toBeInTheDocument()`);
+    // Credit CRM blocks (blocks-crm.mjs): a Card region named by the title + the first item's text.
+    const region = (text) => text != null && lines.push(`    const ${b.key} = ${firstOf('region', `${t}.title`)}`, `    expect(await within(${b.key}).findAllByText(${q(text)})).not.toHaveLength(0)`);
+    if (['funnel', 'meters', 'checks', 'breakdown'].includes(b.type)) region(b.fixture[0]?.label);
+    if (b.type === 'files') region(b.fixture[0]?.name);
+    if (b.type === 'comments') region(b.fixture[0]?.text);
+    if (b.type === 'score') region(String(b.fixture.value));
     if (b.type === 'details') lines.push(`    const ${b.key} = ${firstOf('region', `${t}.title`)}`, `    expect(await within(${b.key}).findAllByText(${q(b.fixture[0].value)})).not.toHaveLength(0)`);
   }
   return lines;
@@ -141,7 +149,7 @@ function formTests(s) {
     const user = userEvent.setup()
     renderRoute(${q(s.path)})
     await user.click(await screen.findByRole('button', { name: t.submit }))
-    expect(screen.getAllByText(t.required)).toHaveLength(${required.length})
+    expect(screen.${required.length ? 'getAllByText' : 'queryAllByText'}(t.required)).toHaveLength(${required.length})
   })
 
   it('submits the form', async () => {
@@ -194,7 +202,7 @@ function loginTests(s, model) {
 function dataTests(s) {
   const asserts = assertions(s);
   const first = asserts.slice(0, 2).join('\n');
-  const payload = `${s.camel}Payload(${hasSearch(s) ? '{}, ' : ''}true)`;
+  const payload = `${s.camel}Payload(${payloadTakesSearch(s) ? '{}, ' : ''}true)`;
   const table = s.flat.find((b) => b.type === 'table');
   const pager = s.flat.find((b) => b.type === 'pagination');
   const out = [`  it('shows the screen data', async () => {

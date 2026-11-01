@@ -51,6 +51,7 @@ export function linkTargets(spec) {
       for (const it of b.type === 'cards' ? b.items || [] : []) if (it?.link) out.push({ path: `${bp}.items.link`, to: it.link });
       for (const a of b.actions || []) act(a, `${bp}.actions`);
       if (b.action) act(b.action, `${bp}.action`);
+      if (b.more) act(b.more, `${bp}.more`);
     });
   });
   (spec.links || []).forEach((l, i) => {
@@ -105,6 +106,7 @@ export function resolveLinks(spec) {
       if (b.type === 'cards') for (const it of b.items || []) if (it?.link) put(`row:${it.link}`, it.link);
       for (const a of b.actions || []) action(a);
       if (b.action && ['empty', 'alert'].includes(b.type)) action(b.action);
+      if (b.more) action(b.more); // «Все заявки → apps» in a card header
       if (b.type === 'form') { put('submit', b.to || parentOf(s)); put('cancel', b.cancelTo || b.to || parentOf(s)); }
       if (b.type === 'login') put('submit', b.to || home);
     });

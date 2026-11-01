@@ -1,5 +1,6 @@
 // Data blocks: they change in loading / empty states.
-import { box, text, add, skel, rect, sizing, link } from './draw.js';
+import { box, text, add, skel, rect, sizing, link, fill } from './draw.js';
+import { icon } from './icons.js';
 import { badge, avatar, checkbox, statusVariant } from './kit.js';
 import { fakeRows, parseColumn, rng } from '../../core/fake.js';
 import { statDelta } from '../../core/spec.js';
@@ -16,7 +17,7 @@ const cols = (ctx, desktop) => (ctx.vp === 'mobile' ? Math.min(desktop, 1) : ctx
 
 export async function stats(ctx, b) {
   const row = box(ctx, 'Stats', { dir: 'H', gap: 16, w: 'fill', wrap: true });
-  const per = cols(ctx, b.items.length > 4 ? 4 : b.items.length);
+  const per = ctx.vp === 'mobile' ? 2 : cols(ctx, b.items.length > 4 ? 4 : b.items.length);
   const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
   for (const it of b.items) {
     const c = card(ctx, `Stat / ${it.label}`, { gap: 8, pad: 20, w });
@@ -31,8 +32,15 @@ export async function stats(ctx, b) {
           await text(ctx, d.value, { size: 'xs', weight: 'medium', color: tone[d.tone] }),
           d.label && (await text(ctx, d.label, { size: 'xs', color: 'muted-foreground' })))
         : null;
-      add(c, await text(ctx, it.label, { size: 'sm', weight: 'medium', color: 'muted-foreground' }),
-        await text(ctx, value, { size: '2xl', weight: 'bold' }),
+      const top = box(ctx, 'Top', { dir: 'H', gap: 8, align: 'CENTER', w: 'fill' });
+      add(top, await text(ctx, it.label, { size: 'sm', weight: 'medium', color: 'muted-foreground', w: 'fill' }));
+      if (it.icon && ctx.vp !== 'mobile') {
+        const tile = box(ctx, 'Icon', { dir: 'H', w: 32, h: 32, radius: 'md', align: 'CENTER', justify: 'CENTER' });
+        fill(tile, ctx, 'primary', 0.1);
+        add(top, add(tile, icon(ctx, it.icon, 'primary', 16)));
+      }
+      add(c, top,
+        await text(ctx, value, { size: ctx.vp === 'mobile' ? 'xl' : '2xl', weight: 'bold' }),
         delta || (it.hint && (await text(ctx, it.hint, { size: 'xs', color: 'muted-foreground' }))));
     }
     add(row, c);
@@ -135,16 +143,37 @@ export async function kanban(ctx, b) {
   return board;
 }
 
+// Bars with x labels; b.series: ["Одобрено", "Отказ"] draws grouped bars with a legend.
 export async function chart(ctx, b) {
   const c = card(ctx, b.title || 'Chart');
-  add(c, await cardTitle(ctx, b.title || 'Динамика', b.subtitle));
-  const plot = box(ctx, 'Plot', { dir: 'H', gap: ctx.vp === 'mobile' ? 4 : 8, align: 'MAX', w: 'fill', h: b.height || 200 });
+  const head = box(ctx, 'Chart head', { dir: ctx.vp === 'mobile' ? 'V' : 'H', gap: 12, align: ctx.vp === 'mobile' ? 'MIN' : 'CENTER', w: 'fill' });
+  add(head, await cardTitle(ctx, b.title || 'Динамика', b.subtitle));
+  const series = b.series || [];
+  if (series.length) {
+    const legend = box(ctx, 'Legend', { dir: 'H', gap: 16, align: 'CENTER' });
+    for (const [i, name] of series.entries()) add(legend, add(box(ctx, `Legend / ${name}`, { dir: 'H', gap: 6, align: 'CENTER' }), rect(ctx, 'Dot', 8, 8, `chart-${i + 1}`, 'full'), await text(ctx, name, { size: 'xs', color: 'muted-foreground' })));
+    add(head, legend);
+  }
+  add(c, head);
+  const labels = b.labels || (ctx.vp === 'mobile' ? ['09', '11', '13', '15', '17', '19', '21'] : ['09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']);
+  const n = ctx.vp === 'mobile' ? Math.min(7, labels.length) : labels.length;
+  const k = Math.max(1, series.length);
+  const gap = ctx.vp === 'mobile' ? 6 : 12;
+  const slot = Math.floor((ctx.width - 48 - (n - 1) * gap) / n);
+  const barW = Math.max(4, Math.floor((slot - (k - 1) * 3) / k));
+  const H = b.height || 200;
+  const plot = box(ctx, 'Plot', { dir: 'H', gap, align: 'MAX', w: 'fill' });
   const r = rng(5 + ctx.seed);
-  const n = ctx.vp === 'mobile' ? 7 : b.points || 12;
-  const barW = Math.max(6, Math.floor((ctx.width - 48 - (n - 1) * (ctx.vp === 'mobile' ? 4 : 8)) / n));
   for (let i = 0; i < n; i++) {
-    const h = ctx.state === 'loading' ? 40 + ((i * 37) % 120) : Math.round(40 + r() * 150);
-    add(plot, rect(ctx, 'Bar', barW, h, ctx.state === 'loading' ? 'muted' : i === n - 2 ? 'chart-1' : 'chart-2', 'sm'));
+    const col = box(ctx, `Slot / ${labels[i]}`, { gap: 8, align: 'CENTER', w: slot });
+    const bars = box(ctx, 'Bars', { dir: 'H', gap: 3, align: 'MAX', h: H });
+    for (let j = 0; j < k; j++) {
+      const h = ctx.state === 'loading' ? 40 + ((i * 37 + j * 19) % 120) : Math.round((j ? 0.25 : 0.45) * H + r() * (j ? 0.25 : 0.5) * H);
+      const tone = ctx.state === 'loading' ? 'muted' : k > 1 ? `chart-${j + 1}` : i === n - 2 ? 'chart-1' : 'chart-2';
+      add(bars, rect(ctx, 'Bar', barW, h, tone, 'sm'));
+    }
+    add(col, bars, await text(ctx, labels[i], { size: 'xs', color: 'muted-foreground' }));
+    add(plot, col);
   }
   return add(c, plot);
 }

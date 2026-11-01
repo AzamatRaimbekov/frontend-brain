@@ -3,6 +3,7 @@
 import { BLOCKS, DATA_BLOCKS, normalizeSpec, statDelta, validateSpec } from './spec.mjs';
 import { DEFAULT_STATUSES, fakeRows, fakeValue, FIELD_TYPES, parseColumn, rng } from './fake.mjs';
 import { splitHeaderActions } from './blocks-ui.mjs';
+import { crmFixture, crmStatuses } from './crm-data.mjs';
 import { camel, kebab, keyOf, pascal } from './util.mjs';
 
 export const LIST_BLOCKS = ['table', 'list', 'kanban', 'cards'];
@@ -19,6 +20,8 @@ export function checkSpec(spec) {
 
 export function toneOf(label) {
   const s = String(label).toLowerCase();
+  if (/низк\S* риск|проверен|пройден/.test(s)) return 'success';
+  if (/высок\S* риск/.test(s)) return 'error';
   if (/отказ|отклон|просроч|ошиб|блок/.test(s)) return 'error';
   if (/одобр|выдан|готов|успеш|заверш|активн|оплач/.test(s)) return 'success';
   if (/риск|провер|скоринг|андеррайт|ожид|жд[её]т|работе|важно/.test(s)) return 'warning';
@@ -57,9 +60,13 @@ function fixture(b, seed, ctx) {
         return { id: `col${ci + 1}`, title, total, items };
       });
     case 'chart': {
-      const n = b.points || 12;
+      // b.series: grouped bars, one value per series; b.labels: the x labels (Figma blocks-data.js chart).
+      const labels = Array.isArray(b.labels) && b.labels.length ? b.labels.map(String) : null;
+      const n = labels?.length || b.points || 12;
       const hourly = /час/i.test(`${b.title} ${b.subtitle}`);
-      return Array.from({ length: n }, (_, i) => ({ label: hourly ? `${String(8 + i).padStart(2, '0')}:00` : MONTHS[i % 12], value: Math.round(40 + r() * 150) }));
+      const label = (i) => labels?.[i] ?? (hourly ? `${String(8 + i).padStart(2, '0')}:00` : MONTHS[i % 12]);
+      if (b.series?.length) return Array.from({ length: n }, (_, i) => ({ label: label(i), values: b.series.map((_, k) => Math.round((40 + r() * 150) / (k + 1))) }));
+      return Array.from({ length: n }, (_, i) => ({ label: label(i), value: Math.round(40 + r() * 150) }));
     }
     case 'list': {
       const rows = b.items || fakeRows([':person', ':text', ':status'], b.rows || 5, seed, b.statuses);
@@ -81,7 +88,7 @@ function fixture(b, seed, ctx) {
         return { id: `field${i + 1}`, label: String(label), value: String(v) };
       });
     default:
-      return null;
+      return crmFixture(b);
   }
 }
 
@@ -149,7 +156,13 @@ const NAV_ICONS = [
   [/report|отч[её]т|analyt|аналит/, 'ChartIcon'], [/setting|настро/, 'SettingsIcon'], [/pipeline|конвейер/, 'LayersIcon'],
   [/audit|журнал/, 'EyeIcon'], [/doc|документ/, 'FileCheckIcon'], [/role|доступ/, 'ShieldIcon'], [/help|помощ|поддерж/, 'LifeBuoyIcon'],
 ];
-const iconOf = (item) => NAV_ICONS.find(([re]) => re.test(`${item.id} ${item.label}`.toLowerCase()))?.[1] || 'ListIcon';
+// Spec nav icon names (figma-pack builder icons.js) -> crm-icons; unknown names fall back to the label match.
+const SPEC_ICONS = {
+  home: 'HomeIcon', inbox: 'FileIcon', file: 'FileIcon', check: 'FileCheckIcon', shield: 'ShieldIcon', users: 'UsersIcon', user: 'UserIcon',
+  wallet: 'LayersIcon', history: 'ClockIcon', clock: 'ClockIcon', chart: 'ChartIcon', layers: 'LayersIcon', settings: 'SettingsIcon',
+  eye: 'EyeIcon', book: 'BookIcon', list: 'ListIcon', map: 'MapPinIcon', scan: 'ScanIcon', download: 'DownloadIcon', alert: 'AlertIcon', help: 'LifeBuoyIcon',
+};
+const iconOf = (item) => SPEC_ICONS[item.icon] || NAV_ICONS.find(([re]) => re.test(`${item.id} ${item.label}`.toLowerCase()))?.[1] || 'ListIcon';
 
 export function buildModel(input) {
   const warnings = [];
@@ -186,7 +199,7 @@ export function buildModel(input) {
   const byNav = (id) => screens.find((s) => s.id === id && !s.plain) || screens.find((s) => s.spec.nav === id && !s.plain);
   const nav = spec.nav.map((item) => {
     const screen = byNav(item.id);
-    return { id: item.id, label: item.label, group: item.group, icon: iconOf(item), href: screen ? screen.path : `/${kebab(item.id) || item.id}`, implemented: Boolean(screen) };
+    return { id: item.id, label: item.label, group: item.group, icon: iconOf(item), badge: item.badge ?? undefined, href: screen ? screen.path : `/${kebab(item.id) || item.id}`, implemented: Boolean(screen) };
   });
   const home = nav.find((n) => n.implemented)?.href || screens.find((s) => !s.plain)?.path || screens[0].path;
   for (const s of screens) {
@@ -195,6 +208,11 @@ export function buildModel(input) {
       const href = target ? target.href || target.path : undefined;
       return { label: String(label), href: i < all.length - 1 && href !== s.path ? href : undefined };
     });
+    // «Отчёт → reports» in a card header: a link to that screen or menu section.
+    for (const b of s.flat.filter((x) => x.spec.more)) {
+      const to = typeof b.spec.more === 'object' ? b.spec.more.to : String(b.spec.more).match(/(?:→|->)\s*([\w-]+)\s*$/)?.[1];
+      b.moreHref = screens.find((x) => x.id === to)?.path || nav.find((n) => n.id === to)?.href;
+    }
     const kanban = s.flat.find((b) => b.type === 'kanban');
     if (kanban) kanban.href = screens.find((x) => x !== s && x.spec.nav === s.spec.nav && x.flat.some((b) => b.type === 'details' || b.type === 'stepper'))?.path || s.path;
   }
@@ -213,6 +231,7 @@ function statusesOf(screen) {
     if (b.type === 'kanban') labels.push(...b.fixture.flatMap((c) => c.items.map((it) => it.status)));
     if (b.type === 'cards') labels.push(...b.fixture.map((it) => it.badge));
     if (b.type === 'header' && b.spec.badge) labels.push(b.spec.badge);
+    labels.push(...crmStatuses(b));
   }
   return Object.fromEntries(distinct(labels).map((l) => [l, toneOf(l)]));
 }

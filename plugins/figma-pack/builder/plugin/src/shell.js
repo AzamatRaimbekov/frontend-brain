@@ -1,6 +1,6 @@
 // App frames around the content: sidebar app, plain page, mobile app.
 import { box, text, add, fill, link } from './draw.js';
-import { input, avatar } from './kit.js';
+import { input, avatar, badge } from './kit.js';
 import { icon, guessIcon } from './icons.js';
 
 export const SIDEBAR = { desktop: 256, tablet: 72 };
@@ -10,6 +10,7 @@ async function navItem(ctx, item, active, compact) {
   const it = box(ctx, `Nav / ${item.label}`, { dir: 'H', gap: 10, pad: compact ? [10, 10] : [8, 12], radius: 'md', align: 'CENTER', fill: active ? 'sidebar-accent' : null, w: compact ? 'hug' : 'fill', justify: compact ? 'CENTER' : 'MIN' });
   add(it, icon(ctx, item.icon || guessIcon(item.label), active ? 'sidebar-accent-foreground' : 'sidebar-foreground', 16));
   if (!compact) add(it, await text(ctx, item.label, { size: 'sm', weight: active ? 'medium' : 'regular', color: active ? 'sidebar-accent-foreground' : 'sidebar-foreground', w: 'fill' }));
+  if (!compact && item.badge) add(it, await badge(ctx, String(item.badge), active ? 'default' : 'secondary'));
   return link(it, `nav:${item.id}`);
 }
 
@@ -26,8 +27,11 @@ async function sidebar(ctx, spec, screen, vp) {
   const compact = vp === 'tablet';
   const s = box(ctx, 'Sidebar', { gap: 4, pad: compact ? [16, 12] : [16, 12], fill: 'sidebar', stroke: 'sidebar-border', w: SIDEBAR[vp], h: 'fill', align: compact ? 'CENTER' : 'MIN' });
   add(s, await logo(ctx, spec, compact), box(ctx, 'Gap', { h: 16 }));
+  let group = null;
   for (const item of spec.nav) {
-    if (item.group && !compact) add(s, add(box(ctx, 'Group', { pad: [12, 12, 4, 12], w: 'fill' }), await text(ctx, item.group, { size: 'xs', weight: 'medium', color: 'muted-foreground' })));
+    const changed = item.group && item.group !== group;
+    group = item.group || group;
+    if (changed && !compact) add(s, add(box(ctx, 'Group', { pad: [12, 12, 4, 12], w: 'fill' }), await text(ctx, item.group, { size: 'xs', weight: 'medium', color: 'muted-foreground' })));
     add(s, await navItem(ctx, item, item.id === screen.nav, compact));
   }
   add(s, box(ctx, 'Spacer', { h: 'fill' }));
