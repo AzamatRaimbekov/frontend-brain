@@ -2480,20 +2480,43 @@
     };
   }
 
-  // plugin/src/contracts.js
+  // plugin/src/shared-contracts.js
+  var NAMESPACE = "mbank";
   var PREFIX = "contract:";
-  function stored() {
+  function sharedContracts() {
     const out = {};
-    for (const key of figma.root.getPluginDataKeys().filter((k) => k.startsWith(PREFIX))) {
+    for (const key of figma.root.getSharedPluginDataKeys(NAMESPACE).filter((k) => k.startsWith(PREFIX))) {
+      const raw = figma.root.getSharedPluginData(NAMESPACE, key);
+      if (!raw) continue;
       try {
-        out[key.slice(PREFIX.length)] = JSON.parse(figma.root.getPluginData(key));
+        out[key.slice(PREFIX.length)] = JSON.parse(raw);
       } catch (e) {
       }
     }
     return out;
   }
+  function putSharedContract(contract) {
+    figma.root.setSharedPluginData(NAMESPACE, PREFIX + contract.name, JSON.stringify(contract));
+  }
+  function dropSharedContract(name) {
+    figma.root.setSharedPluginData(NAMESPACE, PREFIX + name, "");
+  }
+
+  // plugin/src/contracts.js
+  var PREFIX2 = "contract:";
+  function stored() {
+    const out = {};
+    for (const key of figma.root.getPluginDataKeys().filter((k) => k.startsWith(PREFIX2))) {
+      try {
+        out[key.slice(PREFIX2.length)] = JSON.parse(figma.root.getPluginData(key));
+      } catch (e) {
+      }
+    }
+    return __spreadValues(__spreadValues({}, out), sharedContracts());
+  }
   function putContract(c) {
-    figma.root.setPluginData(PREFIX + c.name, JSON.stringify(c));
+    putSharedContract(c);
+    figma.root.setPluginData(PREFIX2 + c.name, "");
   }
   function allContracts(bundled) {
     const out = /* @__PURE__ */ new Map();
@@ -2574,7 +2597,8 @@
         return __spreadProps(__spreadValues({}, res), { contracts: await summary(bundled) });
       },
       async "contract-reset"(m) {
-        figma.root.setPluginData(PREFIX + m.name, "");
+        figma.root.setPluginData(PREFIX2 + m.name, "");
+        dropSharedContract(m.name);
         return { contracts: await summary(bundled) };
       },
       async "contract-export"(m) {

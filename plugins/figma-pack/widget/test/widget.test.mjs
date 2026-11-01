@@ -169,3 +169,37 @@ test('scan of an empty file shows missing variables and FigJam refuses to apply'
   assert.equal(w.sent.length, 0);
   await assert.rejects(ui.send('apply', {}), /FigJam/);
 });
+
+test('a file that connects Foundation as a library refuses apply (dry run still works)', async () => {
+  const { w } = boot((f) => {
+    f.teamLibrary = {
+      getAvailableLibraryVariableCollectionsAsync: async () => [
+        { key: 'k1', name: '2.theme', libraryName: 'Foundation' },
+        { key: 'k2', name: '1.brand', libraryName: 'Foundation' },
+      ],
+      getVariablesInLibraryCollectionAsync: async () => [],
+    };
+  });
+  const ui = await openWindow(w, 'apply');
+  const r = await ui.send('apply', { dryRun: true, all: true });
+  assert.equal(r.done.report.dryRun, true);
+  await assert.rejects(ui.send('apply', { all: true }), /библиотеки «Foundation»/);
+});
+
+test('bindings are shared with DS Builder through document sharedPluginData "mbank"', async () => {
+  const { w } = boot();
+  const ui = await openWindow(w);
+  let r = await ui.send('contract', { name: 'button' });
+  const bg = r.done.contract.rows.find((x) => x.prop === 'bg');
+  await ui.send('binding', { contract: 'button', rowId: bg.id, path: bg.path, key: bg.key, value: 'brand' });
+  const stored = JSON.parse(figma.root.getSharedPluginData('mbank', 'contract:button'));
+  assert.equal(stored.name, 'button');
+  assert.ok(JSON.stringify(stored).includes('"brand"'), 'the edited binding is in the shared contract');
+  // An edit made by DS Builder (written to the same place) shows up in the widget.
+  stored.title = 'Button (DS Builder)';
+  figma.root.setSharedPluginData('mbank', 'contract:button', JSON.stringify(stored));
+  r = await ui.send('contract', { name: 'button' });
+  assert.equal(r.done.contract.title, 'Button (DS Builder)');
+  await ui.send('binding-reset', { contract: 'button' });
+  assert.equal(figma.root.getSharedPluginData('mbank', 'contract:button'), '');
+});

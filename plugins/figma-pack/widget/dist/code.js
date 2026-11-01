@@ -31,7 +31,7 @@
     return target;
   };
 
-  // plugins/figma-pack/builder/core/color.js
+  // ../builder/core/color.js
   function hexToRgb(hex) {
     let h = String(hex).trim().replace(/^#/, "");
     if (h.length === 3 || h.length === 4) h = h.split("").map((c) => c + c).join("");
@@ -106,7 +106,7 @@
     return contrast(light, fill) >= contrast(dark, fill) ? light : dark;
   }
 
-  // plugins/figma-pack/builder/core/token-map.js
+  // ../builder/core/token-map.js
   var TOKEN_MAP = {
     colors: {
       "background": { "figma": "background/surface/light", "collection": "2.theme" },
@@ -277,7 +277,7 @@
     }
   };
 
-  // plugins/figma-pack/builder/core/naming.js
+  // ../builder/core/naming.js
   var kebab = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9а-яё]+/gi, "-").replace(/^-+|-+$/g, "");
   function customName(project, role) {
     const p = kebab(project);
@@ -291,7 +291,7 @@
     return parts[0] === "custom" ? `--${parts.slice(1).join("-")}` : `--${parts[parts.length - 1]}`;
   }
 
-  // plugins/figma-pack/widget/core/model.js
+  // core/model.js
   var BRANDS = ["bank", "kassa", "travel", "artwin", "koko"];
   var MODES = ["light", "dark"];
   var THEME = "2.theme";
@@ -435,7 +435,7 @@
     };
   }
 
-  // plugins/figma-pack/widget/src/theme.js
+  // src/theme.js
   var paint = (hex) => {
     try {
       const { r, g, b, a } = hexToRgb(hex);
@@ -487,7 +487,7 @@
     brand: ["accentSoft", "accentText"]
   };
 
-  // plugins/figma-pack/builder/core/tokens.js
+  // ../builder/core/tokens.js
   function scopesFor(token) {
     const t = token.split("/").pop();
     if (/(^|-)foreground$/.test(t) || /(^|-)(txt|text)(-|$)/.test(t)) return ["TEXT_FILL", "SHAPE_FILL", "STROKE_COLOR"];
@@ -597,7 +597,7 @@
     };
   }
 
-  // plugins/figma-pack/widget/core/sync.js
+  // core/sync.js
   var STATUS = {
     bound: { label: "\u2713 \u0432 \u0444\u0430\u0439\u043B\u0435", tone: "success" },
     differs: { label: "\u2260 \u0444\u0430\u0439\u043B", tone: "warning" },
@@ -696,7 +696,7 @@
     return { writes, skipped };
   }
 
-  // plugins/figma-pack/widget/src/board.jsx
+  // src/board.jsx
   var { AutoLayout, Text, Rectangle } = figma.widget;
   var W = 960;
   var COL = { swatch: 132, css: 250, figma: 300, status: 190 };
@@ -766,7 +766,7 @@
     return /* @__PURE__ */ figma.widget.h(AutoLayout, { direction: "vertical", width: W, padding: 24, spacing: 16, fill: p.c.page, cornerRadius: 20, stroke: c.border }, /* @__PURE__ */ figma.widget.h(Header, { c, brand: p.brand, brands: p.brands, onBrand: p.handlers.brand, source: p.source }), /* @__PURE__ */ figma.widget.h(AutoLayout, { width: "fill-parent", spacing: 8 }, /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0442\u043E\u043A\u0435\u043D\u043E\u0432", value: p.counters.tokens, tone: "neutral" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0430", value: p.counters.extras, tone: "info" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E", value: p.counters.edited, tone: "brand" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u043F\u0440\u043E\u0431\u043B\u0435\u043C \u043A\u043E\u043D\u0442\u0440\u0430\u0441\u0442\u0430 AA", value: p.counters.contrast, tone: p.counters.contrast ? "error" : "success" })), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.muted, width: "fill-parent" }, fileLine), p.report ? /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.text, width: "fill-parent" }, p.report) : null, /* @__PURE__ */ figma.widget.h(Tabs, { c, groups: p.groups, group: p.group, counts, onGroup: p.handlers.group }), /* @__PURE__ */ figma.widget.h(AutoLayout, { direction: "vertical", width: "fill-parent", fill: c.card, cornerRadius: 12, stroke: c.border, padding: { vertical: 6 } }, /* @__PURE__ */ figma.widget.h(AutoLayout, { width: "fill-parent", spacing: 12, padding: { vertical: 6, horizontal: 12 } }, /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.swatch / 2 }, "light"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.swatch / 2 }, "dark"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.css }, "CSS-\u0442\u043E\u043A\u0435\u043D"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.figma }, "\u041F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u0430\u044F Figma"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.status }, "\u0421\u0442\u0430\u0442\u0443\u0441")), visible.length ? visible.map((r) => /* @__PURE__ */ figma.widget.h(Row, { key: r.key, c, row: r, status: p.status[r.key], issue: issueOf[r.css], onOpen: p.handlers.open })) : /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.muted, width: "fill-parent", horizontalAlignText: "center" }, "\u041F\u0443\u0441\u0442\u043E. \u0422\u043E\u043A\u0435\u043D \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0434\u043E\u0431\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \xAB\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C\xBB \u2192 \xAB\u041D\u043E\u0432\u044B\u0439 \u0442\u043E\u043A\u0435\u043D\xBB.")), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fill: c.muted, width: "fill-parent" }, "\u0421\u0432\u043E\u0439\u0441\u0442\u0432\u0430 \u0432\u0438\u0434\u0436\u0435\u0442\u0430: \u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \xB7 \u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0444\u0430\u0439\u043B \xB7 \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0432 Figma \xB7 \u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u0441 \u043A\u043E\u0434\u043E\u043C. \u041A\u043B\u0438\u043A \u043F\u043E \u0441\u0442\u0440\u043E\u043A\u0435 \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442 \u0442\u043E\u043A\u0435\u043D."));
   }
 
-  // plugins/figma-pack/skills/mbank-figma-patterns/references/tokens.json
+  // ../skills/mbank-figma-patterns/references/tokens.json
   var tokens_default = {
     source: "Full-seat read of Foundation, Mobile KIT and Web components via use_figma (devmd8, 2026-10-09)",
     fonts: {
@@ -3943,7 +3943,7 @@
   // mbank:contracts
   var contracts_default = [{ "$schema": "mbank/component@1", "name": "alert", "title": "Alert", "figma": { "name": "alert-text", "key": "862527fc2fc9aad902f137eb72e3d82620897a9d", "nodeId": "3012:33" }, "parts": ["root", "icon", "title"], "props": { "tone": { "values": ["clear", "accent", "info", "success", "warning", "error"], "default": "clear" } }, "base": { "root": { "radius": "md", "px": 4, "py": 3, "text": "sm", "align": "start" }, "icon": { "size": 5 }, "title": { "weight": "bold" } }, "variants": { "tone": { "clear": { "root": { "bg": "status-clear-muted", "fg": "status-clear-foreground" } }, "accent": { "root": { "bg": "status-accent-muted", "fg": "status-accent-foreground" } }, "info": { "root": { "bg": "status-info-muted", "fg": "status-info-foreground" } }, "success": { "root": { "bg": "status-success-muted", "fg": "status-success-foreground" } }, "warning": { "root": { "bg": "status-warning-muted", "fg": "status-warning-foreground" } }, "error": { "root": { "bg": "status-error-muted", "fg": "status-error-foreground" } } } }, "states": ["default"], "code": { "file": "alert.tsx", "export": "alertVariants", "template": "card-like", "parts": { "icon": "[&>svg]" }, "blocks": ["title"], "extra": "relative grid w-full grid-cols-[0_1fr] gap-y-0.5 has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] has-[>svg]:gap-x-3 [&>svg]:translate-y-0.5 [&>svg]:text-current", "extras": { "title": "col-start-2" } } }, { "$schema": "mbank/component@1", "name": "avatar", "title": "Avatar", "figma": { "name": "Avatars", "key": "a3d5e7947473b09bf719839c62a18d751927d7a8", "nodeId": "3174:1503" }, "parts": ["root", "fallback"], "props": { "size": { "values": ["xs", "sm", "md", "lg", "xl"], "default": "md" } }, "base": { "root": { "radius": "full", "layout": "row" }, "fallback": { "radius": "full", "bg": "surface-2", "weight": "medium", "fg": "soft-foreground", "layout": "row", "align": "center" } }, "variants": { "size": { "xs": { "root": { "size": 6, "text": "xs" } }, "sm": { "root": { "size": 8, "text": "xs" } }, "md": { "root": { "size": 10, "text": "sm" } }, "lg": { "root": { "size": 14, "text": "base" } }, "xl": { "root": { "size": 18, "text": "xl" } } } }, "states": ["default"], "code": { "file": "avatar.tsx", "export": "avatarVariants", "template": "badge-like", "blocks": ["fallback"], "extra": "relative shrink-0 overflow-hidden", "extras": { "fallback": "size-full justify-center" } } }, { "$schema": "mbank/component@1", "name": "badge", "title": "Badge", "figma": { "name": "Badge-status", "key": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd", "nodeId": "2348:2631" }, "parts": ["root", "icon"], "props": { "tone": { "values": ["neutral", "accent", "success", "warning", "error", "info", "clear"], "default": "neutral" }, "fill": { "values": ["ghost", "solid"], "default": "ghost" }, "shape": { "values": ["rounded", "square"], "default": "rounded" }, "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 1, "weight": "medium", "align": "center" }, "icon": { "size": 3 } }, "variants": { "tone": { "neutral": { "root": { "bg": "status-neutral-muted", "fg": "status-neutral-foreground" } }, "accent": { "root": { "bg": "status-accent-muted", "fg": "status-accent-foreground" } }, "success": { "root": { "bg": "status-success-muted", "fg": "status-success-foreground" } }, "warning": { "root": { "bg": "status-warning-muted", "fg": "status-warning-foreground" } }, "error": { "root": { "bg": "status-error-muted", "fg": "status-error-foreground" } }, "info": { "root": { "bg": "status-info-muted", "fg": "status-info-foreground" } }, "clear": { "root": { "bg": "status-clear-muted", "fg": "status-clear-foreground" } } }, "fill": { "ghost": {}, "solid": { "root": { "fg": "status-filled-foreground" } } }, "shape": { "rounded": { "root": { "radius": "full" } }, "square": { "root": { "radius": "xs" } } }, "size": { "sm": { "root": { "height": 5, "px": 1.5, "text": "xs" } }, "md": { "root": { "height": 6, "px": 2, "text": "xs" } }, "lg": { "root": { "height": 7, "px": 2.5, "text": "sm" } } } }, "compound": [{ "when": { "fill": "solid", "tone": "neutral" }, "root": { "bg": "status-neutral" } }, { "when": { "fill": "solid", "tone": "accent" }, "root": { "bg": "status-accent" } }, { "when": { "fill": "solid", "tone": "success" }, "root": { "bg": "status-success" } }, { "when": { "fill": "solid", "tone": "warning" }, "root": { "bg": "status-warning" } }, { "when": { "fill": "solid", "tone": "error" }, "root": { "bg": "status-error" } }, { "when": { "fill": "solid", "tone": "info" }, "root": { "bg": "status-info" } }, { "when": { "fill": "solid", "tone": "clear" }, "root": { "bg": "status-clear" } }], "states": ["default"], "code": { "file": "badge.tsx", "export": "badgeVariants", "template": "badge-like", "parts": { "icon": "[&>svg]" }, "extra": "inline-flex w-fit shrink-0 justify-center overflow-hidden whitespace-nowrap [&>svg]:pointer-events-none" } }, { "$schema": "mbank/component@1", "name": "button", "title": "Button", "figma": { "name": "button/default", "key": "713c90401df3b5d7ddf00e3af4d7ea5870c4c120", "nodeId": "2077:341" }, "parts": ["root", "icon"], "props": { "variant": { "values": ["primary", "brand", "secondary", "destructive", "success", "soft", "ghost", "outline", "static", "link"], "default": "primary" }, "size": { "values": ["xs", "sm", "md", "lg", "icon-sm", "icon", "icon-lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "weight": "medium", "opacity:disabled": 50, "align": "center", "focus-ring": "ring/50" }, "icon": { "size": 5 } }, "variants": { "variant": { "primary": { "root": { "bg": "primary", "fg": "primary-foreground", "bg:hover": "primary-hover", "bg:active": "primary-active" } }, "brand": { "root": { "bg": "brand", "fg": "brand-foreground", "bg:hover": "brand-hover", "bg:active": "brand-active" } }, "secondary": { "root": { "bg": "secondary", "fg": "secondary-foreground", "bg:hover": "secondary-hover", "bg:active": "secondary-active" } }, "destructive": { "root": { "bg": "destructive", "fg": "destructive-foreground", "bg:hover": "destructive-hover", "bg:active": "destructive-active" } }, "success": { "root": { "bg": "success", "fg": "success-foreground", "bg:hover": "success-hover", "bg:active": "success-active" } }, "soft": { "root": { "bg": "soft", "fg": "soft-foreground-strong", "bg:hover": "soft-hover" } }, "ghost": { "root": { "bg": "ghost", "fg": "ghost-foreground", "bg:hover": "ghost-hover" } }, "outline": { "root": { "border-width": 1, "border": "outline", "bg": "background", "fg": "outline-foreground", "border:hover": "outline-hover", "bg:hover": "muted" } }, "static": { "root": { "bg": "static", "fg": "static-foreground", "bg:hover": "static-hover", "bg:active": "static-active" } }, "link": { "root": { "px": 0, "fg": "link" } } }, "size": { "xs": { "root": { "height": 8, "px": 3, "text": "xs" }, "icon": { "size": 4 } }, "sm": { "root": { "height": 9, "px": 3, "text": "sm" }, "icon": { "size": 4 } }, "md": { "root": { "height": 11, "px": 4, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 6, "text": "base" } }, "icon-sm": { "root": { "size": 9 } }, "icon": { "root": { "size": 11 } }, "icon-lg": { "root": { "size": 14 } } } }, "states": ["default", "hover", "active", "focus", "disabled"], "code": { "file": "button.tsx", "export": "buttonVariants", "template": "button-like", "parts": { "icon": "[&_svg:not([class*='size-'])]" }, "extra": "inline-flex shrink-0 justify-center whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30", "extras": { "variant=link": "h-auto underline-offset-4 hover:underline" } } }, { "$schema": "mbank/component@1", "name": "card", "title": "Card", "parts": ["root", "header", "title", "description", "content", "footer"], "props": {}, "base": { "root": { "gap": 4, "radius": "lg", "border-width": 1, "border": "border", "bg": "card", "py": 5, "fg": "card-foreground", "layout": "column" }, "header": { "gap": 1, "px": 5, "align": "start" }, "title": { "text": "base", "weight": "bold" }, "description": { "text": "sm", "fg": "muted-foreground" }, "content": { "px": 5 }, "footer": { "gap": 2, "px": 5, "layout": "row", "align": "center" } }, "variants": {}, "states": ["default"], "code": { "file": "card.tsx", "shape": "classes", "template": "card-like", "blocks": ["header", "title", "description", "content", "footer"], "extras": { "header": "grid auto-rows-min grid-rows-[auto_auto] has-data-[slot=card-action]:grid-cols-[1fr_auto]", "footer": "[.border-t]:pt-4" } } }, { "$schema": "mbank/component@1", "name": "checkbox", "title": "Checkbox", "figma": { "name": "Switchers - Check", "key": "be053b3924b63e289a38bfd661b7180deb83236e", "nodeId": "2280:9729" }, "parts": ["root"], "props": {}, "base": { "root": { "size": 5, "radius": "xs", "border-width": 1, "border": "input", "bg": "background", "border:hover": "input-hover", "border:disabled": "input-disabled", "bg:disabled": "muted", "border:invalid": "border-destructive", "border:checked": "brand", "bg:checked": "brand", "fg:checked": "brand-foreground", "border:indeterminate": "brand", "bg:indeterminate": "brand", "fg:indeterminate": "brand-foreground", "focus-ring": "ring/30" } }, "variants": {}, "states": ["default", "hover", "focus", "disabled", "invalid", "checked", "indeterminate"], "code": { "file": "checkbox.tsx", "shape": "classes", "template": "button-like", "modifiers": { "checked": "data-[state=checked]", "indeterminate": "data-[state=indeterminate]" }, "extra": "peer shrink-0 transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50" } }, { "$schema": "mbank/component@1", "name": "input", "title": "Input", "figma": { "name": "input/default", "key": "9b99d128100afd0ac499d5fc2cfdedf0ae6aa44b", "nodeId": "2184:1939" }, "parts": ["root", "placeholder"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "border:invalid": "border-destructive", "layout": "row", "focus-ring": "ring/30" }, "placeholder": { "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9, "text": "sm" } }, "md": { "root": { "height": 11, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "hover", "focus", "disabled", "invalid"], "code": { "file": "input.tsx", "export": "inputVariants", "template": "input-like", "parts": { "placeholder": "placeholder" }, "extra": "w-full min-w-0 transition-colors outline-none disabled:pointer-events-none file:border-0 file:bg-transparent file:text-sm file:font-medium aria-invalid:ring-border-destructive/20" } }, { "$schema": "mbank/component@1", "name": "pagination", "title": "Pagination item", "figma": { "name": "item/pagintaion / buttons", "key": "2255ec920c853b652f1389adbc4bd30779ee35d7", "nodeId": "4141:5990" }, "parts": ["root", "icon"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "radius": "sm", "weight": "medium", "fg": "foreground", "bg:hover": "accent", "fg:disabled": "disabled-foreground", "bg:selected": "secondary", "fg:selected": "secondary-foreground", "align": "center", "focus-ring": "ring/30" }, "icon": { "size": 5 } }, "variants": { "size": { "sm": { "root": { "height": 8, "px": 1.5, "text": "xs" } }, "md": { "root": { "height": 9, "px": 2, "text": "sm" } }, "lg": { "root": { "height": 10, "px": 2.5, "text": "sm" } } } }, "states": ["default", "hover", "focus", "disabled", "selected"], "code": { "file": "pagination.tsx", "export": "paginationItemVariants", "template": "button-like", "parts": { "icon": "[&_svg]" }, "modifiers": { "selected": "aria-[current=page]" }, "extra": "inline-flex shrink-0 justify-center tabular-nums transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:shrink-0", "extras": { "size=sm": "min-w-8", "size=md": "min-w-9", "size=lg": "min-w-10" } } }, { "$schema": "mbank/component@1", "name": "progress", "title": "Progress", "figma": { "name": "Progress bar / Determinate", "key": "cf47478133f9b8625225affab7ae57b7b022c9bd", "nodeId": "4823:334" }, "parts": ["root", "indicator"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" }, "shape": { "values": ["rounded", "square"], "default": "rounded" }, "tone": { "values": ["brand", "success", "error", "warning"], "default": "brand" } }, "base": { "root": { "bg": "surface-2" } }, "variants": { "size": { "sm": { "root": { "height": 1 } }, "md": { "root": { "height": 2 } }, "lg": { "root": { "height": 3 } } }, "shape": { "rounded": { "root": { "radius": "full" } }, "square": { "root": { "radius": "none" } } }, "tone": { "brand": { "indicator": { "bg": "brand" } }, "success": { "indicator": { "bg": "status-success" } }, "error": { "indicator": { "bg": "status-error" } }, "warning": { "indicator": { "bg": "status-warning" } } } }, "states": ["default"], "code": { "file": "progress.tsx", "export": "progressVariants", "template": "card-like", "maps": { "tone": { "const": "indicatorTones", "part": "indicator" } }, "extra": "relative w-full overflow-hidden" } }, { "$schema": "mbank/component@1", "name": "select-trigger", "title": "Select trigger", "figma": { "name": "input/dropdown", "key": "a51f7990a9914a36e511d08aeb2684c412634c09", "nodeId": "2431:11731" }, "parts": ["root", "placeholder"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "text": "sm", "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "border:invalid": "border-destructive", "layout": "row", "align": "between", "focus-ring": "ring/30" }, "placeholder": { "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9 } }, "md": { "root": { "height": 11 } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "hover", "focus", "disabled", "invalid"], "code": { "file": "select.tsx", "shape": "classes", "template": "button-like", "parts": { "placeholder": "data-[placeholder]" }, "maps": { "size": { "const": "triggerSizes", "part": "root" } }, "extra": "w-full whitespace-nowrap transition-colors outline-none disabled:pointer-events-none *:data-[slot=select-value]:truncate" } }, { "$schema": "mbank/component@1", "name": "skeleton", "title": "Skeleton", "parts": ["root"], "props": {}, "base": { "root": { "radius": "md", "bg": "surface-2" } }, "variants": {}, "states": ["default"], "code": { "file": "skeleton.tsx", "shape": "classes", "template": "card-like", "extra": "animate-pulse motion-reduce:animate-none" } }, { "$schema": "mbank/component@1", "name": "switch", "title": "Switch", "parts": ["root"], "props": {}, "base": { "root": { "height": 6, "radius": "full", "border-width": 2, "opacity:disabled": 50, "bg:checked": "brand", "bg:unchecked": "surface-3", "align": "center", "focus-ring": "ring/30" } }, "variants": {}, "states": ["default", "focus", "disabled", "checked", "unchecked"], "code": { "file": "switch.tsx", "shape": "classes", "template": "button-like", "modifiers": { "checked": "data-[state=checked]", "unchecked": "data-[state=unchecked]" }, "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30" } }, { "$schema": "mbank/component@1", "name": "table-cell", "title": "Table cell", "figma": { "name": "TableCell", "key": "75d931d4c1075a08c944e2a7ba1b34b1c4e787d0", "nodeId": "1309:22504" }, "parts": ["root"], "props": {}, "base": { "root": { "height": 11, "px": 3, "py": 3, "text": "sm" } }, "variants": {}, "states": ["default"], "code": { "file": "table.tsx", "shape": "classes", "template": "card-like", "extra": "align-middle leading-5 whitespace-nowrap tabular-nums [&:has([role=checkbox])]:pr-0" } }, { "$schema": "mbank/component@1", "name": "tabs-list", "title": "Tabs list", "figma": { "name": "segment", "key": "f28915a7224a6ba85128b9cbab0b9d706c9285a8", "nodeId": "2371:564" }, "parts": ["root"], "props": { "variant": { "values": ["segment", "outline", "line"], "default": "segment" } }, "base": { "root": { "align": "center" } }, "variants": { "variant": { "segment": { "root": { "gap": 1, "radius": "md", "bg": "muted" } }, "outline": { "root": { "gap": 2 } }, "line": { "root": { "gap": 6, "border": "border" } } } }, "states": ["default"], "code": { "file": "tabs.tsx", "export": "tabsListVariants", "template": "card-like", "extra": "group/tabs-list inline-flex w-fit", "extras": { "variant=segment": "p-1", "variant=line": "border-b" } } }, { "$schema": "mbank/component@1", "name": "tabs-trigger", "title": "Tabs trigger", "figma": { "name": "Item / segmentButtons", "key": "d3dce4a16063872d9bd8a43a3a4901ca546452a5", "nodeId": "2370:4860" }, "parts": ["root", "icon"], "props": { "variant": { "values": ["segment", "outline", "line"], "default": "segment" } }, "base": { "root": { "height": 9, "gap": 2, "px": 3, "text": "sm", "weight": "medium", "fg": "muted-foreground", "fg:hover": "foreground", "fg:disabled": "disabled-foreground", "align": "center", "focus-ring": "ring/30" }, "icon": { "size": 4 } }, "variants": { "variant": { "segment": { "root": { "radius": "sm", "bg:selected": "background", "fg:selected": "foreground", "shadow:selected": "xs" } }, "outline": { "root": { "radius": "md", "border-width": 1, "border": "border", "border:selected": "secondary", "bg:selected": "secondary", "fg:selected": "secondary-foreground" } }, "line": { "root": { "px": 0, "border:selected": "brand", "fg:selected": "foreground" } } } }, "states": ["default", "hover", "focus", "disabled", "selected"], "code": { "file": "tabs.tsx", "shape": "classes", "template": "button-like", "parts": { "icon": "[&_svg]" }, "modifiers": { "selected": "data-[state=active]" }, "prefix": { "variant": "group-data-[variant={value}]/tabs-list" }, "extra": "inline-flex justify-center whitespace-nowrap transition-colors outline-none disabled:pointer-events-none [&_svg]:shrink-0", "extras": { "variant=line": "-mb-px border-b-2 border-transparent" } } }, { "$schema": "mbank/component@1", "name": "textarea", "title": "Textarea", "figma": { "name": "TextArea", "key": "f5e8ed2faaef70b5702fa5e0f70d9c65a370a8ed", "nodeId": "3069:1804" }, "parts": ["root", "placeholder"], "props": {}, "base": { "root": { "min-height": 24, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "py": 2.5, "text": "sm", "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "border:invalid": "border-destructive", "layout": "row", "focus-ring": "ring/30" }, "placeholder": { "fg": "muted-foreground" } }, "variants": {}, "states": ["default", "hover", "focus", "disabled", "invalid"], "code": { "file": "textarea.tsx", "shape": "classes", "template": "input-like", "parts": { "placeholder": "placeholder" }, "extra": "field-sizing-content w-full min-w-0 transition-colors outline-none disabled:pointer-events-none aria-invalid:ring-border-destructive/20" } }];
 
-  // plugins/figma-pack/widget/core/checks.js
+  // core/checks.js
   var MIN_TEXT = 4.5;
   var KEBAB = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
   var LENGTH = /^(0|\d+(\.\d+)?(px|rem)?)$/;
@@ -4022,7 +4022,7 @@
     return __spreadValues({ name: token.name, kind: token.kind, light, dark: dark == null ? light : dark }, token.pairWith ? { pairWith: token.pairWith } : {});
   }
 
-  // plugins/figma-pack/widget/core/brand-gen.js
+  // core/brand-gen.js
   var BRAND_SLOTS = [
     "default",
     "hover",
@@ -4103,7 +4103,7 @@
     return edits;
   }
 
-  // plugins/figma-pack/widget/core/exports.js
+  // core/exports.js
   var clone = (x) => JSON.parse(JSON.stringify(x));
   var str = (v) => typeof v === "number" ? String(Number(v.toFixed(4))) : v;
   function exportTokensJson(tokens, { edits = {}, extras = [] } = {}) {
@@ -4289,7 +4289,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     return out;
   }
 
-  // plugins/figma-pack/builder/core/contract.js
+  // ../builder/core/contract.js
   var SCHEMA = "mbank/component@1";
   var STATES = ["default", "hover", "active", "focus", "disabled"];
   var statesAllowed = (c) => [.../* @__PURE__ */ new Set([...STATES, ...c && c.states || []])];
@@ -4413,7 +4413,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     return next;
   }
 
-  // plugins/figma-pack/widget/core/io.js
+  // core/io.js
   function importTokens(source, text) {
     let data;
     try {
@@ -4456,16 +4456,16 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   function bindingTable(contract) {
     return bindingRows(contract).filter((r) => r.kind === "color" || r.kind === "radius").map((r) => ({ id: r.id, source: r.source, part: r.part, prop: r.prop, state: r.state, kind: r.kind, value: r.value, path: r.path, key: r.key }));
   }
-  function editedContracts(bundled, bindingEdits) {
+  function editedContracts(bundled, bindingEdits, isShared = () => false) {
     const byContract = {};
     for (const e of bindingEdits) (byContract[e.contract] = byContract[e.contract] || []).push(e);
-    return bundled.filter((c) => byContract[c.name]).map((c) => {
-      const next = applyBindings(c, byContract[c.name]);
+    return bundled.filter((c) => byContract[c.name] || isShared(c)).map((c) => {
+      const next = applyBindings(c, byContract[c.name] || []);
       return { name: c.name, contract: next, errors: validateContract(next) };
     });
   }
 
-  // plugins/figma-pack/widget/src/figma-io.js
+  // src/figma-io.js
   var isAlias = (x) => x && typeof x === "object" && x.type === "VARIABLE_ALIAS";
   var OURS = [THEME, BRAND];
   var MODES_OF = { [THEME]: MODES, [BRAND]: BRANDS };
@@ -4575,10 +4575,28 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     const { r, g, b, a } = hexToRgb(hex);
     return { r, g, b, a };
   };
+  async function libraryGuard(ix) {
+    if (OURS.every((n) => ix.col[n])) return null;
+    if (!figma.teamLibrary) return null;
+    let libs = [];
+    try {
+      libs = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+    } catch (e) {
+      return null;
+    }
+    const connected = libs.filter((l) => OURS.includes(String(l.name).trim()));
+    if (!connected.length) return null;
+    const from = [...new Set(connected.map((l) => l.libraryName).filter(Boolean))].join(", ") || "Foundation";
+    return `\u0424\u0430\u0439\u043B \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u0442\u043E\u043A\u0435\u043D\u044B \u0438\u0437 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438 \xAB${from}\xBB. \u041F\u0440\u0438\u043C\u0435\u043D\u044F\u0442\u044C \u043D\u0443\u0436\u043D\u043E \u0432 \u0441\u0430\u043C\u043E\u043C \u0444\u0430\u0439\u043B\u0435 Foundation \u0438\u043B\u0438 \u0432 \u0435\u0433\u043E \u0432\u0435\u0442\u043A\u0435, \u0438\u043D\u0430\u0447\u0435 \u0437\u0434\u0435\u0441\u044C \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0435 \u043A\u043E\u043F\u0438\u0438 \u043A\u043E\u043B\u043B\u0435\u043A\u0446\u0438\u0439 ${OURS.join(" \u0438 ")}. \u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 (\u043F\u0440\u043E\u0431\u043D\u044B\u0439 \u043F\u0440\u043E\u0433\u043E\u043D) \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.`;
+  }
   async function applyWrites(writes, opts = {}) {
     if (figma.editorType && figma.editorType !== "figma") throw new Error("\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043C\u043E\u0436\u043D\u043E \u0442\u043E\u043B\u044C\u043A\u043E \u0432 \u0444\u0430\u0439\u043B\u0435 Figma Design (\u043D\u0435 FigJam)");
     const dryRun = !!opts.dryRun;
     const ix = await loadLocal();
+    if (!dryRun) {
+      const reason = await libraryGuard(ix);
+      if (reason) throw new Error(reason);
+    }
     const prims = await primitiveIndex(ix);
     const report = { dryRun, collectionsCreated: [], modesAdded: [], created: [], updated: [], aliased: [], raw: [], unchanged: 0, errors: [] };
     for (const w of writes) {
@@ -4648,7 +4666,26 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     return `${r.dryRun ? "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430" : "\u041F\u0440\u0438\u043C\u0435\u043D\u0435\u043D\u043E"}: ${parts.join(" \xB7 ")}`;
   }
 
-  // plugins/figma-pack/widget/src/actions.js
+  // ../builder/plugin/src/shared-contracts.js
+  var NAMESPACE = "mbank";
+  var PREFIX = "contract:";
+  function sharedContract(name) {
+    const raw = figma.root.getSharedPluginData(NAMESPACE, PREFIX + name);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+  function putSharedContract(contract) {
+    figma.root.setSharedPluginData(NAMESPACE, PREFIX + contract.name, JSON.stringify(contract));
+  }
+  function dropSharedContract(name) {
+    figma.root.setSharedPluginData(NAMESPACE, PREFIX + name, "");
+  }
+
+  // src/actions.js
   function readState(store, brand = store.brand) {
     return {
       brand,
@@ -4709,18 +4746,23 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     for (const [k, v] of Object.entries(edits)) store.edits.set(k, v);
     return Object.keys(edits).length;
   }
+  var fileContract = (name) => sharedContract(name) || contracts_default.find((c) => c.name === name) || null;
   function contractView(store, name) {
-    const base = contracts_default.find((c) => c.name === name);
+    const base = fileContract(name);
     if (!base) return null;
     const mine = store.bindings.values().filter((b) => b.contract === name);
     const contract = applyBindings(base, mine);
     return { name, title: contract.title || name, rows: bindingTable(contract), errors: validateContract(contract), edited: mine.length };
   }
   function setBinding2(store, { contract, rowId, path, key, value }) {
-    store.bindings.set(bindingKey(contract, rowId), { contract, path, key, value: isEmpty(value) ? null : value });
+    const edit = { contract, path, key, value: isEmpty(value) ? null : value };
+    store.bindings.set(bindingKey(contract, rowId), edit);
+    const base = fileContract(contract);
+    if (base) putSharedContract(applyBindings(base, [edit]));
   }
   function resetBindings(store, contract) {
     for (const k of store.bindings.keys()) if (k.startsWith(`${contract}|`)) store.bindings.delete(k);
+    dropSharedContract(contract);
   }
   function importInto(store, text) {
     const res = importTokens(tokens_default, text);
@@ -4735,7 +4777,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     const state = readState(store, brand);
     const json = exportTokensJson(tokens_default, state);
     const model = buildModel(tokens_default, state);
-    const contracts = editedContracts(contracts_default, state.bindings);
+    const contracts = editedContracts(contracts_default.map((c) => sharedContract(c.name) || c), state.bindings, (c) => !!sharedContract(c.name));
     const files = [
       { name: "tokens.json", mime: "application/json", text: JSON.stringify(json, null, 1) },
       { name: "mbank-tokens-raw.json", mime: "application/json", text: `${JSON.stringify(rawDump(json), null, 1)}
@@ -4781,7 +4823,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     };
   }
 
-  // plugins/figma-pack/widget/src/ui-bridge.js
+  // src/ui-bridge.js
   var SIZE = { width: 760, height: 720 };
   function openUI(store, tab = "tokens", focus = null) {
     const s = __spreadProps(__spreadValues({}, store), {
@@ -4859,7 +4901,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     });
   }
 
-  // plugins/figma-pack/widget/src/code.jsx
+  // src/code.jsx
   var { widget } = figma;
   var { useSyncedState, useSyncedMap, usePropertyMenu } = widget;
   var BRAND_LABEL = { bank: "Bank", kassa: "Kassa", travel: "Travel", artwin: "Artwin", koko: "Koko" };

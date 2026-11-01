@@ -10,6 +10,7 @@ import { exportTokensJson, rawDump, registryBase, tokensCss, syncCommands } from
 import { importTokens, bindingKey, bindingTable, applyBindings, editedContracts } from '../core/io.js';
 import { validateContract } from '../../builder/core/contract.js';
 import { scanFile, applyWrites } from './figma-io.js';
+import { sharedContract, putSharedContract, dropSharedContract } from '../../builder/plugin/src/shared-contracts.js';
 
 export { TOKENS, CONTRACTS };
 
@@ -85,8 +86,11 @@ export function applyGenerated(store, brand, hex) {
   return Object.keys(edits).length;
 }
 
+// A contract as the file has it: the shared copy (edited here or in DS Builder) or the bundled one.
+const fileContract = (name) => sharedContract(name) || CONTRACTS.find((c) => c.name === name) || null;
+
 export function contractView(store, name) {
-  const base = CONTRACTS.find((c) => c.name === name);
+  const base = fileContract(name);
   if (!base) return null;
   const mine = store.bindings.values().filter((b) => b.contract === name);
   const contract = applyBindings(base, mine);
@@ -94,11 +98,16 @@ export function contractView(store, name) {
 }
 
 export function setBinding(store, { contract, rowId, path, key, value }) {
-  store.bindings.set(bindingKey(contract, rowId), { contract, path, key, value: isEmpty(value) ? null : value });
+  const edit = { contract, path, key, value: isEmpty(value) ? null : value };
+  store.bindings.set(bindingKey(contract, rowId), edit);
+  // Shared with DS Builder: its «Компоненты» tab builds the same contract from the same document data.
+  const base = fileContract(contract);
+  if (base) putSharedContract(applyBindings(base, [edit]));
 }
 
 export function resetBindings(store, contract) {
   for (const k of store.bindings.keys()) if (k.startsWith(`${contract}|`)) store.bindings.delete(k);
+  dropSharedContract(contract);
 }
 
 export function importInto(store, text) {
@@ -116,7 +125,8 @@ export function exportsOf(store, brand) {
   const state = readState(store, brand);
   const json = exportTokensJson(TOKENS, state);
   const model = buildModel(TOKENS, state);
-  const contracts = editedContracts(CONTRACTS, state.bindings);
+  // Contracts edited in this file by the widget or by DS Builder (both write the shared copy).
+  const contracts = editedContracts(CONTRACTS.map((c) => sharedContract(c.name) || c), state.bindings, (c) => !!sharedContract(c.name));
   const files = [
     { name: 'tokens.json', mime: 'application/json', text: JSON.stringify(json, null, 1) },
     { name: 'mbank-tokens-raw.json', mime: 'application/json', text: `${JSON.stringify(rawDump(json), null, 1)}\n` },

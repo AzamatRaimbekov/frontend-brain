@@ -115,10 +115,29 @@ const rgba = (hex) => { const { r, g, b, a } = hexToRgb(hex); return { r, g, b, 
  * Executes planWrites().writes. Every created variable, raw hex and replaced alias is in the report;
  * nothing is written silently. opts.dryRun: same report, no writes.
  */
+/**
+ * The tokens live in Foundation. A file that only connects Foundation as a library must not get local copies of
+ * 2.theme / 1.brand: they would shadow the library and drift. Returns the reason to refuse, or null.
+ */
+export async function libraryGuard(ix) {
+  if (OURS.every((n) => ix.col[n])) return null; // Foundation itself or its branch: collections are local
+  if (!figma.teamLibrary) return null;
+  let libs = [];
+  try { libs = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync(); } catch (e) { return null; }
+  const connected = libs.filter((l) => OURS.includes(String(l.name).trim()));
+  if (!connected.length) return null;
+  const from = [...new Set(connected.map((l) => l.libraryName).filter(Boolean))].join(', ') || 'Foundation';
+  return `Файл подключает токены из библиотеки «${from}». Применять нужно в самом файле Foundation или в его ветке, иначе здесь появятся локальные копии коллекций ${OURS.join(' и ')}. Проверка (пробный прогон) доступна.`;
+}
+
 export async function applyWrites(writes, opts = {}) {
   if (figma.editorType && figma.editorType !== 'figma') throw new Error('Применить можно только в файле Figma Design (не FigJam)');
   const dryRun = !!opts.dryRun;
   const ix = await loadLocal();
+  if (!dryRun) {
+    const reason = await libraryGuard(ix);
+    if (reason) throw new Error(reason);
+  }
   const prims = await primitiveIndex(ix);
   const report = { dryRun, collectionsCreated: [], modesAdded: [], created: [], updated: [], aliased: [], raw: [], unchanged: 0, errors: [] };
   for (const w of writes) {

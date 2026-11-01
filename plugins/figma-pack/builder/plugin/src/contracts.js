@@ -1,11 +1,14 @@
 // «Компоненты» tab: contract storage and message handlers.
 // Contracts come from the build (builder/contracts/*.json) and from the file itself: imported,
 // created or edited contracts live in document plugin data (one key per contract), so the whole
-// team sees them in this Figma file. Edited bundled contracts shadow the bundled copy.
+// team sees them in this Figma file. Edited bundled contracts shadow the bundled copy. The store is the
+// document sharedPluginData namespace "mbank" (shared-contracts.js), so the Mbank Tokens widget sees the same
+// contracts; keys written by older builds into this plugin's private data are still read.
 import { validateContract, bindingRows, setBinding, variantList, SCHEMA } from '../../core/contract.js';
 import { newContract, TEMPLATES } from '../../core/contract-templates.js';
 import { renderContract, componentsPage, findSet } from './components.js';
 import { listVariables } from './tokens-resolve.js';
+import { sharedContracts, putSharedContract, dropSharedContract } from './shared-contracts.js';
 
 const PREFIX = 'contract:';
 
@@ -14,10 +17,13 @@ function stored() {
   for (const key of figma.root.getPluginDataKeys().filter((k) => k.startsWith(PREFIX))) {
     try { out[key.slice(PREFIX.length)] = JSON.parse(figma.root.getPluginData(key)); } catch (e) { /* broken entry */ }
   }
-  return out;
+  return { ...out, ...sharedContracts() };
 }
 
-export function putContract(c) { figma.root.setPluginData(PREFIX + c.name, JSON.stringify(c)); }
+export function putContract(c) {
+  putSharedContract(c);
+  figma.root.setPluginData(PREFIX + c.name, ''); // the shared copy replaces the private one
+}
 
 export function allContracts(bundled) {
   const out = new Map();
@@ -97,6 +103,7 @@ export function contractHandlers(bundled) {
     },
     async 'contract-reset'(m) {
       figma.root.setPluginData(PREFIX + m.name, '');
+      dropSharedContract(m.name);
       return { contracts: await summary(bundled) };
     },
     async 'contract-export'(m) {

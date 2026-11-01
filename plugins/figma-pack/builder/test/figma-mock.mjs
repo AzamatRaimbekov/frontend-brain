@@ -91,6 +91,10 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
     setPluginData(k, v) { this.pd = this.pd || {}; if (v === '') delete this.pd[k]; else this.pd[k] = String(v); }
     getPluginData(k) { return (this.pd && this.pd[k]) || ''; }
     getPluginDataKeys() { return Object.keys(this.pd || {}); }
+    // sharedPluginData: one namespace visible to every plugin and widget (DS Builder <-> Mbank Tokens)
+    setSharedPluginData(ns, k, v) { this.spd = this.spd || {}; const m = (this.spd[ns] = this.spd[ns] || {}); if (v === '') delete m[k]; else m[k] = String(v); }
+    getSharedPluginData(ns, k) { return (this.spd && this.spd[ns] && this.spd[ns][k]) || ''; }
+    getSharedPluginDataKeys(ns) { return Object.keys((this.spd && this.spd[ns]) || {}); }
   }
 
   // Components: a set's children are COMPONENT variants named 'prop=value, ...'.

@@ -56,13 +56,13 @@ export function bindingTable(contract) {
 }
 
 /** Contracts the team changed in the widget: [{ name, contract, errors }]. */
-export function editedContracts(bundled, bindingEdits) {
+export function editedContracts(bundled, bindingEdits, isShared = () => false) {
   const byContract = {};
   for (const e of bindingEdits) (byContract[e.contract] = byContract[e.contract] || []).push(e);
   return bundled
-    .filter((c) => byContract[c.name])
+    .filter((c) => byContract[c.name] || isShared(c))
     .map((c) => {
-      const next = applyBindings(c, byContract[c.name]);
+      const next = applyBindings(c, byContract[c.name] || []);
       return { name: c.name, contract: next, errors: validateContract(next) };
     });
 }
