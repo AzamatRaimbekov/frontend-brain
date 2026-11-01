@@ -32,8 +32,8 @@ export function groupOf(css, collection) {
 }
 
 // Figma mode names may contain look-alike Cyrillic letters (the "artwin" mode does).
-const HOMOGLYPHS = { а: 'a', в: 'b', е: 'e', к: 'k', м: 'm', н: 'h', о: 'o', р: 'p', с: 'c', т: 't', у: 'y', х: 'x', і: 'i' };
-export const modeName = (name) => [...String(name).trim().toLowerCase()].map((ch) => HOMOGLYPHS[ch] || ch).join('');
+const CYR_TO_LAT = { а: 'a', в: 'b', е: 'e', к: 'k', м: 'm', н: 'h', о: 'o', р: 'p', с: 'c', т: 't', у: 'y', х: 'x', і: 'i' };
+export const modeName = (name) => [...String(name).trim().toLowerCase()].map((ch) => CYR_TO_LAT[ch] || ch).join('');
 
 /** Lower-case #rrggbb / #rrggbbaa (opaque alpha dropped); null when not a colour. */
 export function normHex(value) {

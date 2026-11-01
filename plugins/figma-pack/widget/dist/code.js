@@ -507,8 +507,8 @@
     if (/^(primary|secondary|soft-hover|soft$|soft-foreground-strong|ghost|outline|static|neutral|accent|overlay)/.test(css)) return "accent";
     return "surface";
   }
-  var HOMOGLYPHS = { \u0430: "a", \u0432: "b", \u0435: "e", \u043A: "k", \u043C: "m", \u043D: "h", \u043E: "o", \u0440: "p", \u0441: "c", \u0442: "t", \u0443: "y", \u0445: "x", \u0456: "i" };
-  var modeName = (name) => [...String(name).trim().toLowerCase()].map((ch) => HOMOGLYPHS[ch] || ch).join("");
+  var CYR_TO_LAT = { \u0430: "a", \u0432: "b", \u0435: "e", \u043A: "k", \u043C: "m", \u043D: "h", \u043E: "o", \u0440: "p", \u0441: "c", \u0442: "t", \u0443: "y", \u0445: "x", \u0456: "i" };
+  var modeName = (name) => [...String(name).trim().toLowerCase()].map((ch) => CYR_TO_LAT[ch] || ch).join("");
   function normHex(value) {
     if (value == null) return null;
     let h = String(value).trim().toLowerCase().replace(/^#/, "");
