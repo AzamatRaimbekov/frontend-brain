@@ -59,7 +59,10 @@ const strip = ({ example, ...c }) => c; // build-time flag, not part of the cont
 
 async function summary(bundled) {
   const pageNamed = (name) => figma.root.children.find((p) => p.name === name);
-  return [...allContracts(bundled).values()].map(({ contract: c, source }) => ({
+  const list = [...allContracts(bundled).values()];
+  // dynamic-page files: a page must be loaded before findOne on it
+  for (const name of new Set(list.map(({ contract }) => pageOf(contract)))) { const p = pageNamed(name); if (p && p.loadAsync) await p.loadAsync(); }
+  return list.map(({ contract: c, source }) => ({
     name: c.name, title: c.title || c.name, source, errors: validateContract(c),
     variants: validateContract(c).length ? 0 : variantList(c).length,
     rendered: !!(pageNamed(pageOf(c)) && findSet(pageNamed(pageOf(c)), c)),

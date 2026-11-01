@@ -3200,7 +3200,12 @@
   };
   async function summary(bundled) {
     const pageNamed = (name) => figma.root.children.find((p) => p.name === name);
-    return [...allContracts(bundled).values()].map(({ contract: c, source }) => ({
+    const list2 = [...allContracts(bundled).values()];
+    for (const name of new Set(list2.map(({ contract }) => pageOf(contract)))) {
+      const p = pageNamed(name);
+      if (p && p.loadAsync) await p.loadAsync();
+    }
+    return list2.map(({ contract: c, source }) => ({
       name: c.name,
       title: c.title || c.name,
       source,
