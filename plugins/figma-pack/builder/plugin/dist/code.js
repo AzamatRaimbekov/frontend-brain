@@ -3140,6 +3140,24 @@
 
   // plugin/src/contracts.js
   var PREFIX2 = "contract:";
+  var GRID_GAP = 160;
+  var ROW_WIDTH = 4e3;
+  function layoutAll(nodes) {
+    let x = GRID_GAP;
+    let y = GRID_GAP;
+    let rowH = 0;
+    for (const n of [...nodes].sort((a, b) => a.name.localeCompare(b.name))) {
+      if (x > GRID_GAP && x + n.width > ROW_WIDTH) {
+        x = GRID_GAP;
+        y += rowH + GRID_GAP;
+        rowH = 0;
+      }
+      n.x = x;
+      n.y = y;
+      x += n.width + GRID_GAP;
+      rowH = Math.max(rowH, n.height);
+    }
+  }
   function stored() {
     const out = {};
     for (const key of figma.root.getPluginDataKeys().filter((k) => k.startsWith(PREFIX2))) {
@@ -3211,6 +3229,27 @@
         if (m.states) c = __spreadProps(__spreadValues({}, c), { states: m.states });
         const res = await render(c, m);
         return __spreadProps(__spreadValues({}, res), { contracts: await summary(bundled) });
+      },
+      // New project: every component on one page (PAGE), laid out in a grid; again = update in place.
+      async "contract-render-all"(m) {
+        const done = [];
+        const failed = [];
+        for (const { contract } of allContracts(bundled).values()) {
+          if (validateContract(contract).length) {
+            failed.push(contract.name);
+            continue;
+          }
+          const c = __spreadProps(__spreadValues({}, contract), { figma: __spreadProps(__spreadValues({}, contract.figma || {}), { page: PAGE }) });
+          const res = await render(c, __spreadProps(__spreadValues({}, m), { focus: false }));
+          if (res.errors) failed.push(c.name);
+          else done.push(res.report.setId);
+        }
+        const page = await componentsPage(PAGE);
+        const nodes = (await Promise.all(done.map((id) => figma.getNodeByIdAsync(id)))).filter(Boolean);
+        layoutAll(nodes);
+        await figma.setCurrentPageAsync(page);
+        if (nodes.length) figma.viewport.scrollAndZoomIntoView(nodes);
+        return { built: nodes.length, failed, page: page.name, contracts: await summary(bundled) };
       },
       async "contract-rows"(m) {
         const c = get(bundled, m.name);

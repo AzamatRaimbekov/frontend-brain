@@ -81,6 +81,20 @@ async function primitiveIndex(ix) {
   return out;
 }
 
+// A plan with a mode limit (free/Starter drafts: 1 mode) refuses every addMode the same way: one line in the
+// report per collection, the rest of that collection's modes are skipped quietly.
+function modeFailed(report, collection, mode, e) {
+  report.modesFailed = report.modesFailed || {};
+  const list = report.modesFailed[collection] || (report.modesFailed[collection] = []);
+  if (list.includes(mode)) return;
+  list.push(mode);
+  const limit = /Limited to (\d+) modes?/i.exec(e.message || '');
+  if (list.length > 1) return;
+  report.errors.push(limit
+    ? `${collection}: тариф файла разрешает ${limit[1]} режим(а) переменных — записан только «${collection === THEME ? 'light' : 'первый бренд'}». Нужен файл в команде Professional+ (или Foundation), чтобы были dark и все бренды.`
+    : `${collection}: режим «${mode}» не добавлен (${e.message})`);
+}
+
 function ensureCollection(ix, name, report, dryRun) {
   if (ix.col[name]) return ix.col[name];
   if (report.collectionsCreated.includes(name)) return null; // dry run: already counted
@@ -90,7 +104,7 @@ function ensureCollection(ix, name, report, dryRun) {
   const modes = MODES_OF[name];
   c.renameMode(c.modes[0].modeId, modes[0]);
   for (const m of modes.slice(1)) {
-    try { c.addMode(m); } catch (e) { report.errors.push(`${name}: режим «${m}» не добавлен (${e.message})`); }
+    try { c.addMode(m); } catch (e) { modeFailed(report, name, m, e); }
   }
   ix.col[name] = c;
   return c;
@@ -105,8 +119,8 @@ function modeIdsFor(c, key, report, dryRun) {
     if (!report.modesAdded.includes(`${c.name}/${key}`)) report.modesAdded.push(`${c.name}/${key}`);
     return [];
   }
-  report.modesAdded.push(`${c.name}/${key}`);
-  try { return [c.addMode(key)]; } catch (e) { report.errors.push(`${c.name}: режим «${key}» не добавлен (${e.message})`); return []; }
+  if (report.modesFailed && report.modesFailed[c.name]) { modeFailed(report, c.name, key, {}); return []; }
+  try { const id = c.addMode(key); report.modesAdded.push(`${c.name}/${key}`); return [id]; } catch (e) { modeFailed(report, c.name, key, e); return []; }
 }
 
 const rgba = (hex) => { const { r, g, b, a } = hexToRgb(hex); return { r, g, b, a }; };

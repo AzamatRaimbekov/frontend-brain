@@ -114,6 +114,7 @@ export function initComponents({ $, esc, send, toast }) {
   }
   let exportMode = null;
   $('cExportOne').onclick = () => { exportMode = 'one'; send('contract-export', { name: sel() }); };
+  $('cRenderAll').onclick = () => { busy(true); send('contract-render-all', { create: $('cCreate').checked }); };
   $('cExportAll').onclick = () => { exportMode = 'all'; send('contract-export', {}); };
   $('cCopy').onclick = () => { $('cJson').select(); document.execCommand('copy'); toast('JSON скопирован'); };
   $('cReset').onclick = () => sel() && send('contract-reset', { name: sel() });
@@ -136,6 +137,13 @@ export function initComponents({ $, esc, send, toast }) {
       contracts = m.contracts;
       renderList();
       renderReport(m.report);
+    },
+    'contract-render-all:done': (m) => {
+      busy(false);
+      contracts = m.contracts;
+      renderList();
+      $('cOut').textContent = `Страница «${m.page}»: собрано ${m.built}${m.failed.length ? `, не собраны: ${m.failed.join(', ')}` : ''}. Меняй привязки ниже — компонент обновится на месте.`;
+      toast(`Собрано компонентов: ${m.built}`);
     },
     'contract-new:done': (m) => { handlers['contract-render:done'](m); if (m.contract) { $('cSel').value = m.contract.name; send('contract-rows', { name: m.contract.name }); toast(`Создан ${m.contract.name}`); } },
     'contract-rows:done': (m) => { current = m; renderStates(m.contract); tokenLists(m.vars); renderRows(); },

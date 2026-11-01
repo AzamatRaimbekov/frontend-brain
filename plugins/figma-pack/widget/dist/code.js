@@ -4920,6 +4920,15 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     }
     return out;
   }
+  function modeFailed(report2, collection, mode, e) {
+    report2.modesFailed = report2.modesFailed || {};
+    const list = report2.modesFailed[collection] || (report2.modesFailed[collection] = []);
+    if (list.includes(mode)) return;
+    list.push(mode);
+    const limit = /Limited to (\d+) modes?/i.exec(e.message || "");
+    if (list.length > 1) return;
+    report2.errors.push(limit ? `${collection}: \u0442\u0430\u0440\u0438\u0444 \u0444\u0430\u0439\u043B\u0430 \u0440\u0430\u0437\u0440\u0435\u0448\u0430\u0435\u0442 ${limit[1]} \u0440\u0435\u0436\u0438\u043C(\u0430) \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445 \u2014 \u0437\u0430\u043F\u0438\u0441\u0430\u043D \u0442\u043E\u043B\u044C\u043A\u043E \xAB${collection === THEME ? "light" : "\u043F\u0435\u0440\u0432\u044B\u0439 \u0431\u0440\u0435\u043D\u0434"}\xBB. \u041D\u0443\u0436\u0435\u043D \u0444\u0430\u0439\u043B \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u0435 Professional+ (\u0438\u043B\u0438 Foundation), \u0447\u0442\u043E\u0431\u044B \u0431\u044B\u043B\u0438 dark \u0438 \u0432\u0441\u0435 \u0431\u0440\u0435\u043D\u0434\u044B.` : `${collection}: \u0440\u0435\u0436\u0438\u043C \xAB${mode}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
+  }
   function ensureCollection(ix, name, report2, dryRun) {
     if (ix.col[name]) return ix.col[name];
     if (report2.collectionsCreated.includes(name)) return null;
@@ -4932,7 +4941,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       try {
         c.addMode(m);
       } catch (e) {
-        report2.errors.push(`${name}: \u0440\u0435\u0436\u0438\u043C \xAB${m}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
+        modeFailed(report2, name, m, e);
       }
     }
     ix.col[name] = c;
@@ -4947,11 +4956,16 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       if (!report2.modesAdded.includes(`${c.name}/${key}`)) report2.modesAdded.push(`${c.name}/${key}`);
       return [];
     }
-    report2.modesAdded.push(`${c.name}/${key}`);
+    if (report2.modesFailed && report2.modesFailed[c.name]) {
+      modeFailed(report2, c.name, key, {});
+      return [];
+    }
     try {
-      return [c.addMode(key)];
+      const id = c.addMode(key);
+      report2.modesAdded.push(`${c.name}/${key}`);
+      return [id];
     } catch (e) {
-      report2.errors.push(`${c.name}: \u0440\u0435\u0436\u0438\u043C \xAB${key}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
+      modeFailed(report2, c.name, key, e);
       return [];
     }
   }

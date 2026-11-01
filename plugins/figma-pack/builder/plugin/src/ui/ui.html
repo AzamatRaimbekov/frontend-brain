@@ -115,6 +115,7 @@
     <h3>Контракты компонентов</h3>
     <p class="muted">Контракт — JSON компонента: части, свойства, какой токен на каком свойстве. Из него плагин собирает компонент в Figma, а генератор — React-код. Рисовать руками не нужно.</p>
     <div class="row"><select id="cSel"></select><button class="btn primary" id="cRender">Собрать в Figma</button><button class="btn" id="cRefresh" title="Обновить список">Обновить</button></div>
+    <div class="row"><button class="btn primary" id="cRenderAll">Собрать все компоненты на одну страницу</button></div>
     <div class="row muted">Состояния: <span id="cStates"></span></div>
     <label class="row"><input type="checkbox" id="cCreate" checked> Недостающие цветовые токены создать в Brand (заглушка, потом задать значение)</label>
     <label class="row"><input type="checkbox" id="cPrune"> Удалить варианты, которых больше нет в контракте</label>
