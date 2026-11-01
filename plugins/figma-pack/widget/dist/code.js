@@ -5274,6 +5274,10 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     if (!list.length) return null;
     return collection && list.find((v) => (t.colName.get(v.variableCollectionId) || "").startsWith(collection)) || list[0];
   }
+  var projectVar = (token) => {
+    const i = String(token).indexOf("-");
+    return i > 0 ? `custom/${token.slice(0, i)}/${token.slice(i + 1)}` : null;
+  };
   function findColor(t, token, depth = 0) {
     var _a;
     const mode = (_a = t.ix.named[C.mode]) == null ? void 0 : _a.get(token);
@@ -5284,13 +5288,13 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       const v = pick(t, m.figma, "COLOR", m.collection);
       if (v) return v;
     }
-    return pick(t, token, "COLOR") || pick(t, `color/${token}`, "COLOR");
+    return pick(t, token, "COLOR") || pick(t, `color/${token}`, "COLOR") || pick(t, projectVar(token), "COLOR");
   }
   function findRadius(t, key) {
     var _a;
     const style = (_a = t.ix.named[C.style]) == null ? void 0 : _a.get(`radius/${key}`);
     if (style) return style;
-    return TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], "FLOAT") || pick(t, `radius/${key}`, "FLOAT") || pick(t, `rounded/${key}`, "FLOAT");
+    return TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], "FLOAT") || pick(t, `radius/${key}`, "FLOAT") || pick(t, `rounded/${key}`, "FLOAT") || pick(t, projectVar(key), "FLOAT");
   }
   function findSpace(t, step2) {
     const s = String(step2).replace(".", "-");

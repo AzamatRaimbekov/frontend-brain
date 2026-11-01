@@ -48,19 +48,22 @@ function pick(t, name, type, collection) {
   return (collection && list.find((v) => (t.colName.get(v.variableCollectionId) || '').startsWith(collection))) || list[0];
 }
 
+// Project token (widget «Токены проекта»): mb-promo-surface -> custom/mb/promo-surface.
+const projectVar = (token) => { const i = String(token).indexOf('-'); return i > 0 ? `custom/${token.slice(0, i)}/${token.slice(i + 1)}` : null; };
+
 export function findColor(t, token, depth = 0) {
   const mode = t.ix.named[C.mode]?.get(token);
   if (mode && mode.resolvedType === 'COLOR') return mode;
   const m = TOKEN_MAP.colors[token];
   if (m && m.alias && depth < 4) return findColor(t, m.alias, depth + 1);
   if (m && m.figma) { const v = pick(t, m.figma, 'COLOR', m.collection); if (v) return v; }
-  return pick(t, token, 'COLOR') || pick(t, `color/${token}`, 'COLOR');
+  return pick(t, token, 'COLOR') || pick(t, `color/${token}`, 'COLOR') || pick(t, projectVar(token), 'COLOR');
 }
 
 export function findRadius(t, key) {
   const style = t.ix.named[C.style]?.get(`radius/${key}`);
   if (style) return style;
-  return (TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], 'FLOAT')) || pick(t, `radius/${key}`, 'FLOAT') || pick(t, `rounded/${key}`, 'FLOAT');
+  return (TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], 'FLOAT')) || pick(t, `radius/${key}`, 'FLOAT') || pick(t, `rounded/${key}`, 'FLOAT') || pick(t, projectVar(key), 'FLOAT');
 }
 
 /** Spacing step (11 = 44 px): Tailwind spacing/<step>, web spacing/<px>, then the Mbank name (spacing/s-1 = 12 px). */

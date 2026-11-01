@@ -2702,6 +2702,10 @@
     if (!list2.length) return null;
     return collection && list2.find((v) => (t.colName.get(v.variableCollectionId) || "").startsWith(collection)) || list2[0];
   }
+  var projectVar = (token) => {
+    const i = String(token).indexOf("-");
+    return i > 0 ? `custom/${token.slice(0, i)}/${token.slice(i + 1)}` : null;
+  };
   function findColor(t, token, depth = 0) {
     var _a;
     const mode = (_a = t.ix.named[C.mode]) == null ? void 0 : _a.get(token);
@@ -2712,13 +2716,13 @@
       const v = pick2(t, m.figma, "COLOR", m.collection);
       if (v) return v;
     }
-    return pick2(t, token, "COLOR") || pick2(t, `color/${token}`, "COLOR");
+    return pick2(t, token, "COLOR") || pick2(t, `color/${token}`, "COLOR") || pick2(t, projectVar(token), "COLOR");
   }
   function findRadius(t, key) {
     var _a;
     const style = (_a = t.ix.named[C.style]) == null ? void 0 : _a.get(`radius/${key}`);
     if (style) return style;
-    return TOKEN_MAP.radius[key] && pick2(t, TOKEN_MAP.radius[key], "FLOAT") || pick2(t, `radius/${key}`, "FLOAT") || pick2(t, `rounded/${key}`, "FLOAT");
+    return TOKEN_MAP.radius[key] && pick2(t, TOKEN_MAP.radius[key], "FLOAT") || pick2(t, `radius/${key}`, "FLOAT") || pick2(t, `rounded/${key}`, "FLOAT") || pick2(t, projectVar(key), "FLOAT");
   }
   function findSpace(t, step) {
     const s = String(step).replace(".", "-");
