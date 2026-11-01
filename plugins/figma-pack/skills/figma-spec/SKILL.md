@@ -11,6 +11,13 @@ Format and block catalog: `references/spec-format.md`. Validator: `node <plugin-
 
 **Start from a template.** `<plugin-root>/builder/templates/<archetype>.spec.json` (`list`, `record`, `form`, `dashboard`, `login`, `board`, …) holds the block structure our designers actually use for that kind of screen, refreshed from the team's Figma files by `figma-learn` (`template.derivedFrom` says from how many screens). Copy the screen, rename it, adjust columns and copy to the ТЗ; keep the block order unless the ТЗ needs another.
 
+## New project: order
+
+1. **Tokens first.** The designer opens the «Mbank Tokens» widget in the project file: brand, edits, «Токены проекта» for project-only tokens, «Применить в Figma». Components that need a project token get it in the widget's «Компоненты» tab → «Обновить компонент в файле» (instances everywhere follow). Do not build screens before this: they bind to these variables.
+2. **ТЗ → spec** by the steps below, with links, so every screen is reachable by clicks.
+3. **DS Builder → «Экраны» → «Собрать»:** one Figma page per product section (all states × widths) + page «Прототип» with every screen linked; Present starts at login or the first menu screen.
+4. Designer reviews and approves; then code from the same spec (`design-to-code`).
+
 ## Steps
 
 1. **Read the ТЗ once** and list: roles, entities, user goals, required screens. If the ТЗ is silent on platform or widths, take web desktop + mobile; ask only what changes the screens (see `figma-brief`).
