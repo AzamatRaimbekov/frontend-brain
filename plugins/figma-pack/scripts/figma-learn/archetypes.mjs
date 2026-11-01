@@ -205,6 +205,10 @@ export function extractBlocks(frame, maps) {
     }
     const kids = (node.children || []).filter((c) => c.visible !== false);
     const parts = kids.map((c) => ({ c, blocks: visit(c, depth + 1) })).filter((p) => p.blocks.length);
+    // Board columns: 3+ narrow siblings in a row, each starting with a header (column title + count).
+    if (depth > 0 && node.layoutMode === 'HORIZONTAL' && parts.length >= 3 && parts.every((p) => p.blocks[0]?.type === 'header' && sizeOf(p.c).width < 400)) {
+      return [{ type: 'kanban', columns: short(parts.map((p) => p.blocks[0].title), 8), _y: posOf(node).y }];
+    }
     const wide = parts.filter((p) => sizeOf(p.c).width >= 240);
     if (depth > 0 && node.layoutMode === 'HORIZONTAL' && wide.length >= 2 && wide.length === parts.length) {
       const [a, b] = wide.map((p) => sizeOf(p.c).width);
@@ -213,8 +217,29 @@ export function extractBlocks(frame, maps) {
     }
     return parts.flatMap((p) => p.blocks).sort((x, y) => x._y - y._y);
   };
-  const blocks = visit(frame, 0).map(strip);
+  const blocks = compact(visit(frame, 0).map(strip));
   return { blocks, nav: ctx.nav, empty: ctx.empty };
+}
+
+// Real files draw one row per fact: consecutive key-value rows are one `details` block, repeated steps one `stepper`.
+function compact(blocks) {
+  const out = [];
+  for (const b of blocks) {
+    const block = b.type === 'split' ? { ...b, columns: b.columns.map(compact) } : b;
+    const prev = out.at(-1);
+    if (prev?.type === 'details' && block.type === 'details') {
+      // A single key-value row reads as {title: label, items: [value]}: only its label is a field.
+      const rows = (x) => x._rows || ((x.items || []).length <= 1 ? [x.title] : [x.title, ...x.items.map((i) => i.split(':')[0])]);
+      prev._rows = [...rows(prev), ...rows(block)];
+      continue;
+    }
+    if (prev?.type === 'stepper' && block.type === 'stepper') {
+      prev.steps = uniq([...prev.steps, ...block.steps]);
+      continue;
+    }
+    out.push({ ...block });
+  }
+  return out.map(({ _rows, ...b }) => (_rows ? { ...b, title: 'Данные', items: short(_rows, 12).map((x) => `${x}:${columnType(x)}`) } : b));
 }
 
 const strip = ({ _y, ...b }) => b;

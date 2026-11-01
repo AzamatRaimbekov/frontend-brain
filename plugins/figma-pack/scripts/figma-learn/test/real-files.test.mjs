@@ -33,3 +33,20 @@ test('a colour far from every token is off-palette, not a near miss', () => {
   const far = nearestToken('#445371', tokens);
   assert.ok(far.distance > FAR && far.far);
 });
+
+test('one key-value row per fact becomes one details block; narrow columns with headers become kanban', async () => {
+  const { extractBlocks } = await import('../archetypes.mjs');
+  const kv = (i, label) => ({ id: `k:${i}`, type: 'INSTANCE', name: 'CRM / Key-value row', componentId: 'c', absoluteBoundingBox: { x: 0, y: i * 40, width: 480, height: 36 },
+    children: [{ id: `t:${i}`, type: 'TEXT', name: 'Label', characters: label }, { id: `v:${i}`, type: 'TEXT', name: 'Value', characters: 'x' }] });
+  const col = (i, title) => ({ id: `c:${i}`, type: 'FRAME', name: 'Column', absoluteBoundingBox: { x: i * 220, y: 400, width: 210, height: 600 }, children: [
+    { id: `h:${i}`, type: 'FRAME', name: 'Header', absoluteBoundingBox: { x: i * 220, y: 400, width: 210, height: 40 }, children: [{ id: `ht:${i}`, type: 'TEXT', name: 'Title', characters: title }] }] });
+  const frame = { id: '0:1', type: 'FRAME', name: 'CRM / Заявка / Default / 1440', children: [
+    { id: 'g', type: 'FRAME', name: 'Facts', layoutMode: 'VERTICAL', absoluteBoundingBox: { x: 0, y: 0, width: 480, height: 200 }, children: [kv(1, 'ФИО'), kv(2, 'Телефон'), kv(3, 'Сумма')] },
+    { id: 'b', type: 'FRAME', name: 'Board', layoutMode: 'HORIZONTAL', absoluteBoundingBox: { x: 0, y: 400, width: 1100, height: 600 }, children: [col(1, 'Новые'), col(2, 'Скоринг'), col(3, 'Решение')] },
+  ] };
+  const maps = { components: { c: { name: 'CRM / Key-value row' } }, componentSets: {}, names: new Set() };
+  const { blocks } = extractBlocks(frame, maps);
+  assert.deepEqual(blocks.map((b) => b.type), ['details', 'kanban']);
+  assert.deepEqual(blocks[0].items, ['ФИО:person', 'Телефон:phone', 'Сумма:money']);
+  assert.deepEqual(blocks[1].columns, ['Новые', 'Скоринг', 'Решение']);
+});
