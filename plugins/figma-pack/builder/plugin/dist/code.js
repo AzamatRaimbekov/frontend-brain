@@ -3157,7 +3157,7 @@
     let x = GRID_GAP;
     let y = GRID_GAP;
     let rowH = 0;
-    for (const n of [...nodes].sort((a, b) => a.name.localeCompare(b.name))) {
+    for (const n of [...nodes].sort((a, b) => a.height - b.height || a.name.localeCompare(b.name))) {
       if (x > GRID_GAP && x + n.width > ROW_WIDTH) {
         x = GRID_GAP;
         y += rowH + GRID_GAP;

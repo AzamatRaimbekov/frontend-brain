@@ -15,12 +15,12 @@ const PREFIX = 'contract:';
 const GRID_GAP = 160;
 const ROW_WIDTH = 4000;
 
-// Component sets in rows by name: small ones share a row, a wide set starts its own.
+// Component sets in rows, short ones first: small ones share a row, a wide set starts its own.
 function layoutAll(nodes) {
   let x = GRID_GAP;
   let y = GRID_GAP;
   let rowH = 0;
-  for (const n of [...nodes].sort((a, b) => a.name.localeCompare(b.name))) {
+  for (const n of [...nodes].sort((a, b) => a.height - b.height || a.name.localeCompare(b.name))) { // small first, the tall Button last
     if (x > GRID_GAP && x + n.width > ROW_WIDTH) { x = GRID_GAP; y += rowH + GRID_GAP; rowH = 0; }
     n.x = x;
     n.y = y;
