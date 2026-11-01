@@ -9,7 +9,8 @@
   },
   "parts": [
     "root",
-    "icon"
+    "icon",
+    "label"
   ],
   "props": {
     "size": {
@@ -34,7 +35,8 @@
       "focus-ring": "ring/30"
     },
     "icon": {
-      "size": 5
+      "size": 5,
+      "hidden": true
     }
   },
   "variants": {

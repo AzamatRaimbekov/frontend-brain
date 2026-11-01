@@ -9,7 +9,8 @@
   },
   "parts": [
     "root",
-    "icon"
+    "icon",
+    "label"
   ],
   "props": {
     "tone": {
@@ -54,7 +55,8 @@
       "align": "center"
     },
     "icon": {
-      "size": 3
+      "size": 3,
+      "hidden": true
     }
   },
   "variants": {

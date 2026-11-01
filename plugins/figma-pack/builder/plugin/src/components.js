@@ -132,7 +132,8 @@ async function libraryStyle(name) {
   return importByKey(() => figma.importStyleByKeyAsync(key));
 }
 
-const defaultText = (part, c) => ({ placeholder: 'Placeholder', description: 'Описание', value: 'Значение', hint: 'Подсказка' })[part] || c.title || c.name;
+const LABELS = { button: 'Кнопка', badge: 'Статус', pagination: '1', 'tabs-trigger': 'Вкладка', avatar: 'АТ' };
+const defaultText = (part, c) => ({ placeholder: 'Placeholder', description: 'Описание', value: 'Значение', hint: 'Подсказка' })[part] || LABELS[c.name] || c.title || c.name;
 
 async function applyText(r, node, style, part, c, a = {}) {
   const size = inherited(style, part, 'text', 'sm');
@@ -202,6 +203,7 @@ async function renderVariant(r, comp, c, props, state) {
   const keep = new Set();
   for (const part of c.parts.filter((p) => p !== 'root')) {
     const node = await renderPart(r, holders.get(parentOf(c, part)), style, part, c);
+    node.visible = !(style[part] && style[part].hidden); // e.g. label off on icon-only buttons
     holders.set(part, node);
     keep.add(node);
   }
@@ -228,6 +230,19 @@ const reportOf = (r, t, extra) => ({
 // Figma keeps the placeholder colour of a bound paint when it replaces an existing paint on the same node
 // (seen in Figma Desktop: variants stayed magenta though bound to valid variables). Clearing the list and
 // assigning the bound paints again makes Figma resolve them.
+// The label part becomes the set's «Label» text property, so screens (and designers) set the text on instances.
+function textProperty(set, c) {
+  const part = ['label', 'text'].find((p) => c.parts.includes(p));
+  if (!part || set.type !== 'COMPONENT_SET') return;
+  const defs = set.componentPropertyDefinitions;
+  let key = Object.keys(defs).find((k) => defs[k].type === 'TEXT' && /^Label#/.test(k));
+  if (!key) key = set.addComponentProperty('Label', 'TEXT', defaultText(part, c));
+  for (const v of set.children) {
+    const t = v.findOne((n) => n.type === 'TEXT' && n.name === part);
+    if (t) t.componentPropertyReferences = { characters: key };
+  }
+}
+
 async function refreshPaints(root) {
   const nodes = [root, ...(root.findAll ? root.findAll(() => true) : [])];
   for (const n of nodes) {
@@ -294,6 +309,7 @@ export async function renderContract(c, opts = {}) {
   } else for (const n of fresh) set.appendChild(n);
   for (const s of diff.stale) if (opts.prune) set.children.find((n) => n.id === s.id)?.remove();
   layoutGrid(set, c, comps);
+  textProperty(set, c);
   await refreshPaints(set);
   const contract = finish(set, c);
   return {

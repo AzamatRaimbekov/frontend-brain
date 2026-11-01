@@ -12,7 +12,7 @@ export const STEP = 4; // contract spacing unit: 11 = 44 px
 const KINDS = {
   bg: 'color', fg: 'color', border: 'color', 'focus-ring': 'color',
   radius: 'radius', height: 'space', 'min-height': 'space', px: 'space', py: 'space', pt: 'space', pb: 'space', gap: 'space', size: 'space',
-  text: 'text', weight: 'weight', 'border-width': 'number', opacity: 'number', shadow: 'shadow', layout: 'layout', align: 'layout',
+  text: 'text', weight: 'weight', 'border-width': 'number', opacity: 'number', shadow: 'shadow', layout: 'layout', align: 'layout', hidden: 'flag',
 };
 export const PROPS = Object.keys(KINDS);
 export const WEIGHTS = ['regular', 'medium', 'semibold', 'bold'];
@@ -85,6 +85,7 @@ function checkStyles(errors, where, styles, c) {
       if (KINDS[prop] === 'color' && (typeof value !== 'string' || /^#|^rgb|^oklch/i.test(value)))
         errors.push(`${where}.${part}.${key}: цвет — только имя токена, не «${value}»`);
       if (KINDS[prop] === 'space' && !(typeof value === 'number' && value >= 0)) errors.push(`${where}.${part}.${key}: шаг сетки — число`);
+      if (KINDS[prop] === 'flag' && typeof value !== 'boolean') errors.push(`${where}.${part}.${key}: true или false`);
       if (prop === 'weight' && !WEIGHTS.includes(value)) errors.push(`${where}.${part}.weight: ${WEIGHTS.join(' | ')}`);
     }
   }

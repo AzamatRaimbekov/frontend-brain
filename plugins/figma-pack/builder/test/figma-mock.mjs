@@ -136,7 +136,12 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
         const d = (defs[k] = defs[k] || { type: 'VARIANT', defaultValue: v, variantOptions: [] });
         if (!d.variantOptions.includes(v)) d.variantOptions.push(v);
       }
-      return defs;
+      return { ...defs, ...(this.textProps || {}) };
+    }
+    addComponentProperty(name, type, defaultValue) {
+      const key = `${name}#${Object.keys(this.textProps || {}).length + 1}:0`;
+      this.textProps = { ...(this.textProps || {}), [key]: { type, defaultValue } };
+      return key;
     }
     appendChild(c) { if (c.type !== 'COMPONENT') throw new Error('component set takes components only'); super.appendChild(c); }
   }

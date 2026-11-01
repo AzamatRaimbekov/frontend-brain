@@ -46,7 +46,8 @@ test('button contract -> component set with every token bound', async () => {
   assert.equal(set.getPluginData('mbank-contract'), 'button');
   assert.equal(set.children.length, 60);
   const defs = set.componentPropertyDefinitions;
-  assert.deepEqual(Object.keys(defs), ['variant', 'size', 'state']);
+  assert.deepEqual(Object.keys(defs).filter((k) => defs[k].type === 'VARIANT'), ['variant', 'size', 'state']);
+  assert.ok(Object.keys(defs).some((k) => /^Label#/.test(k)), 'the label is a text property');
   assert.deepEqual(defs.state.variantOptions, ['default', 'hover', 'active', 'focus', 'disabled']);
 
   const md = variant(set, 'variant=primary, size=md, state=default');
@@ -58,7 +59,7 @@ test('button contract -> component set with every token bound', async () => {
   assert.equal(md.boundVariables.itemSpacing.id, m.spacing[2].id);
   assert.equal(m.vars.get(md.boundVariables.topLeftRadius.id).name, 'radius/md');
   const label = md.children.find((n) => n.name === 'label');
-  assert.equal(label.characters, 'Button');
+  assert.equal(label.characters, 'Кнопка');
   assert.ok(label.textStyleId, 'label has a text style');
   assert.equal(fillVar(m, label).name, 'primary-foreground');
   assert.deepEqual(md.children.map((n) => n.name), ['label', 'icon']);
@@ -235,4 +236,24 @@ test('a library import that never settles (no access) times out instead of freez
   assert.ok(Date.now() - t1 < 50);
   resetLibraryImports();
   assert.equal(await importByKey(() => Promise.resolve('x')), 'x');
+});
+
+test('button: a «Label» text property drives the label; icon sizes hide the label and show the icon', async () => {
+  await fresh();
+  const button = JSON.parse(readFileSync(new URL('../contracts/button.json', import.meta.url), 'utf8'));
+  const { renderContract } = await import('../plugin/src/components.js');
+  const res = await renderContract(button);
+  assert.deepEqual(res.errors, undefined);
+  const set = await figma.getNodeByIdAsync(res.report.setId);
+  const key = Object.keys(set.componentPropertyDefinitions).find((k) => /^Label#/.test(k));
+  assert.ok(key, 'Label property');
+  const md = set.children.find((v) => v.name === 'variant=primary, size=md, state=default');
+  const icon = set.children.find((v) => v.name === 'variant=primary, size=icon, state=default');
+  const label = (v) => v.findOne((n) => n.name === 'label');
+  assert.equal(label(md).visible, true);
+  assert.equal(label(md).componentPropertyReferences.characters, key);
+  assert.equal(label(md).characters, 'Кнопка');
+  assert.equal(label(icon).visible, false);
+  assert.equal(icon.findOne((n) => n.name === 'icon').visible, true);
+  assert.equal(md.findOne((n) => n.name === 'icon').visible, false);
 });

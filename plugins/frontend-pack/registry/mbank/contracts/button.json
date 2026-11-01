@@ -9,7 +9,8 @@
   },
   "parts": [
     "root",
-    "icon"
+    "icon",
+    "label"
   ],
   "props": {
     "variant": {
@@ -50,7 +51,8 @@
       "focus-ring": "ring/50"
     },
     "icon": {
-      "size": 5
+      "size": 5,
+      "hidden": true
     }
   },
   "variants": {
@@ -172,16 +174,34 @@
       "icon-sm": {
         "root": {
           "size": 9
+        },
+        "label": {
+          "hidden": true
+        },
+        "icon": {
+          "hidden": false
         }
       },
       "icon": {
         "root": {
           "size": 11
+        },
+        "label": {
+          "hidden": true
+        },
+        "icon": {
+          "hidden": false
         }
       },
       "icon-lg": {
         "root": {
           "size": 14
+        },
+        "label": {
+          "hidden": true
+        },
+        "icon": {
+          "hidden": false
         }
       }
     }

@@ -9,7 +9,8 @@
   },
   "parts": [
     "root",
-    "fallback"
+    "fallback",
+    "text"
   ],
   "props": {
     "size": {
@@ -35,6 +36,10 @@
       "fg": "soft-foreground",
       "layout": "row",
       "align": "center"
+    },
+    "text": {
+      "fg": "muted-foreground",
+      "weight": "medium"
     }
   },
   "variants": {
