@@ -705,21 +705,21 @@
     }
     return chosen;
   }
-  async function setLabel(inst, label) {
+  async function setLabel(inst, label2) {
     const defs = inst.componentProperties || {};
     const key = Object.keys(defs).find((k) => defs[k].type === "TEXT" && /label|text|title|placeholder|value/i.test(k)) || Object.keys(defs).find((k) => defs[k].type === "TEXT");
     if (key) {
-      inst.setProperties({ [key]: label });
+      inst.setProperties({ [key]: label2 });
       return true;
     }
     const t = inst.findOne((n) => n.type === "TEXT" && n.visible);
     if (!t) return false;
     const fonts = t.getRangeAllFontNames(0, t.characters.length);
     for (const f of fonts) await figma.loadFontAsync(f);
-    t.characters = label;
+    t.characters = label2;
     return true;
   }
-  async function instance(ctx, role, want, label) {
+  async function instance(ctx, role, want, label2) {
     const ref = ctx.kit[role];
     if (!ref) return null;
     const node = await figma.getNodeByIdAsync(ref.id);
@@ -733,9 +733,9 @@
       } catch (e) {
       }
     }
-    if (label != null) {
+    if (label2 != null) {
       try {
-        await setLabel(inst, label);
+        await setLabel(inst, label2);
       } catch (e) {
         inst.remove();
         return null;
@@ -751,13 +751,13 @@
     ghost: [null, "foreground", null],
     destructive: ["destructive", "destructive-foreground", null]
   };
-  async function button(ctx, label, variant = "default", sz = "default") {
-    const inst = await instance(ctx, "button", { variant, size: sz, type: variant, style: variant }, label);
+  async function button(ctx, label2, variant = "default", sz = "default") {
+    const inst = await instance(ctx, "button", { variant, size: sz, type: variant, style: variant }, label2);
     if (inst) return inst;
     ctx.stats.fallbacks++;
     const [bg, fg, border] = BTN[variant] || BTN.default;
     const b = box(ctx, `Button / ${variant}`, { dir: "H", gap: 8, pad: sz === "sm" ? [6, 12] : [8, 16], fill: bg, stroke: border, radius: "md", align: "CENTER", justify: "CENTER" });
-    return add(b, await text(ctx, label, { size: "sm", weight: "medium", color: fg }));
+    return add(b, await text(ctx, label2, { size: "sm", weight: "medium", color: fg }));
   }
   var BADGE = {
     default: ["primary", "primary-foreground"],
@@ -768,14 +768,14 @@
     warning: ["warning", "warning-foreground"],
     info: ["info", "info-foreground"]
   };
-  async function badge(ctx, label, variant = "secondary") {
+  async function badge(ctx, label2, variant = "secondary") {
     const kitVariant = ["success", "warning", "info"].includes(variant) ? null : variant;
-    const inst = kitVariant && await instance(ctx, "badge", { variant: kitVariant, type: kitVariant }, label);
+    const inst = kitVariant && await instance(ctx, "badge", { variant: kitVariant, type: kitVariant }, label2);
     if (inst) return inst;
     ctx.stats.fallbacks++;
     const [bg, fg] = BADGE[variant] || BADGE.secondary;
     const b = box(ctx, `Badge / ${variant}`, { dir: "H", pad: [2, 8], fill: bg, stroke: variant === "outline" ? "border" : null, radius: "full", align: "CENTER" });
-    return add(b, await text(ctx, label, { size: "xs", weight: "medium", color: fg }));
+    return add(b, await text(ctx, label2, { size: "xs", weight: "medium", color: fg }));
   }
   async function input(ctx, placeholder, o = {}) {
     const inst = await instance(ctx, "input", { state: o.error ? "error" : "default" }, placeholder);
@@ -805,8 +805,8 @@
     round(c, ctx, "sm");
     return c;
   }
-  function statusVariant(label) {
-    const s = String(label).toLowerCase();
+  function statusVariant(label2) {
+    const s = String(label2).toLowerCase();
     if (/одобр|выдан|оплач|успеш|актив|готов|approved|done|paid|active/.test(s)) return "success";
     if (/отказ|отклон|ошиб|просроч|блок|rejected|failed|overdue|blocked/.test(s)) return "destructive";
     if (/провер|ожида|скоринг|review|pending|wait/.test(s)) return "warning";
@@ -852,8 +852,8 @@
   var FIELD_TYPES = [...Object.keys(GEN), "status", "actions"];
   function parseColumn(col) {
     if (typeof col === "object") return { label: col.label, type: col.type || "text" };
-    const [label, type = "text"] = String(col).split(":");
-    return { label: label.trim(), type: type.trim() };
+    const [label2, type = "text"] = String(col).split(":");
+    return { label: label2.trim(), type: type.trim() };
   }
   function fakeValue(type, r, i = 0, statuses = DEFAULT_STATUSES) {
     if (type === "status") return statuses[(i + Math.floor(r() * 2)) % statuses.length];
@@ -948,10 +948,10 @@
     if (!raw) return null;
     const at = raw.search(/\s(?=(к|за|от|vs|против|в сравнении)(\s|$))/i);
     const value = at > 0 ? raw.slice(0, at) : raw;
-    const label = at > 0 ? raw.slice(at + 1) : "";
+    const label2 = at > 0 ? raw.slice(at + 1) : "";
     const sign = /^[+▲↑]/.test(value) ? "up" : /^[-−–▼↓]/.test(value) ? "down" : null;
     const tone = item.tone || (!sign ? "neutral" : sign === (item.better || "up") ? "positive" : "negative");
-    return { value, label, tone };
+    return { value, label: label2, tone };
   }
   function normalizeSpec(spec) {
     var _a;
@@ -1002,8 +1002,8 @@
     layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>'
   };
   var ICONS = Object.keys(P);
-  function guessIcon(label = "") {
-    const s = label.toLowerCase();
+  function guessIcon(label2 = "") {
+    const s = label2.toLowerCase();
     const rules = [
       [/главн|обзор|дашборд|home|dashboard/, "home"],
       [/заявк|входящ|inbox|очеред/, "inbox"],
@@ -1327,10 +1327,10 @@
     const grid = box(ctx, "Fields", { dir: "H", gap: 16, w: "fill", wrap: true });
     const w = Math.floor((ctx.width - 48 - 16 * (per - 1)) / per);
     for (const it of b.items) {
-      const [label, value] = Array.isArray(it) ? it : typeof it === "string" ? it.split(":") : [it.label, it.value];
-      const f = box(ctx, `Field / ${label}`, { gap: 4, w });
-      const v = value && !["money", "person", "phone", "date", "id", "product", "city", "company"].includes(value) ? value : fakeRows([`x:${value || "text"}`], 1, label.length + ctx.seed)[0][0];
-      add(f, await text(ctx, label, { size: "xs", color: "muted-foreground" }), ctx.state === "loading" ? skel(ctx, 120, 12) : await text(ctx, v, { size: "sm", weight: "medium", w: "fill" }));
+      const [label2, value] = Array.isArray(it) ? it : typeof it === "string" ? it.split(":") : [it.label, it.value];
+      const f = box(ctx, `Field / ${label2}`, { gap: 4, w });
+      const v = value && !["money", "person", "phone", "date", "id", "product", "city", "company"].includes(value) ? value : fakeRows([`x:${value || "text"}`], 1, label2.length + ctx.seed)[0][0];
+      add(f, await text(ctx, label2, { size: "xs", color: "muted-foreground" }), ctx.state === "loading" ? skel(ctx, 120, 12) : await text(ctx, v, { size: "sm", weight: "medium", w: "fill" }));
       add(grid, f);
     }
     return add(c, grid);
@@ -1510,9 +1510,9 @@
     var _a;
     const t = box(ctx, "Tabs", { dir: "H", gap: 4, pad: 4, fill: "muted", radius: "lg" });
     const active = (_a = b.active) != null ? _a : 0;
-    for (const [i, label] of b.items.entries()) {
-      const tab = box(ctx, `Tab / ${label}`, { dir: "H", pad: [6, 12], radius: "md", fill: i === active ? "background" : null, align: "CENTER" });
-      add(t, add(tab, await text(ctx, label, { size: "sm", weight: "medium", color: i === active ? "foreground" : "muted-foreground" })));
+    for (const [i, label2] of b.items.entries()) {
+      const tab = box(ctx, `Tab / ${label2}`, { dir: "H", pad: [6, 12], radius: "md", fill: i === active ? "background" : null, align: "CENTER" });
+      add(t, add(tab, await text(ctx, label2, { size: "sm", weight: "medium", color: i === active ? "foreground" : "muted-foreground" })));
     }
     return t;
   }
@@ -1549,12 +1549,12 @@
     var _a;
     const s = box(ctx, "Stepper", { dir: ctx.vp === "mobile" ? "V" : "H", gap: 8, align: "CENTER", w: "fill" });
     const cur = (_a = b.current) != null ? _a : 1;
-    for (const [i, label] of b.steps.entries()) {
+    for (const [i, label2] of b.steps.entries()) {
       const done = i < cur;
-      const st = box(ctx, `Step / ${label}`, { dir: "H", gap: 8, align: "CENTER" });
+      const st = box(ctx, `Step / ${label2}`, { dir: "H", gap: 8, align: "CENTER" });
       const dot = box(ctx, "Dot", { dir: "H", w: 24, h: 24, radius: "full", align: "CENTER", justify: "CENTER", fill: i <= cur ? "primary" : "muted" });
       add(dot, await text(ctx, done ? "\u2713" : String(i + 1), { size: "xs", weight: "semibold", color: i <= cur ? "primary-foreground" : "muted-foreground" }));
-      add(st, dot, await text(ctx, label, { size: "sm", weight: i === cur ? "semibold" : "regular", color: i <= cur ? "foreground" : "muted-foreground" }));
+      add(st, dot, await text(ctx, label2, { size: "sm", weight: i === cur ? "semibold" : "regular", color: i <= cur ? "foreground" : "muted-foreground" }));
       add(s, st);
       if (i < b.steps.length - 1 && ctx.vp !== "mobile") add(s, rect(ctx, "Line", 32, 1, done ? "primary" : "border"));
     }
@@ -1591,9 +1591,9 @@
     const err = ctx.state === "error";
     if (err) add(c, await alert(ctx, { variant: "destructive", text: b.error || "\u041D\u0435\u0432\u0435\u0440\u043D\u0430\u044F \u043F\u043E\u0447\u0442\u0430 \u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C" }));
     for (const f of b.fields || ["\u041F\u043E\u0447\u0442\u0430:email", "\u041F\u0430\u0440\u043E\u043B\u044C:password"]) {
-      const [label, type] = f.split(":");
-      const fw = box(ctx, `Field / ${label}`, { gap: 6, w: "fill" });
-      add(c, add(fw, await text(ctx, label, { size: "sm", weight: "medium" }), await input(ctx, type === "password" ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" : "name@company.kg", { error: err })));
+      const [label2, type] = f.split(":");
+      const fw = box(ctx, `Field / ${label2}`, { gap: 6, w: "fill" });
+      add(c, add(fw, await text(ctx, label2, { size: "sm", weight: "medium" }), await input(ctx, type === "password" ? "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" : "name@company.kg", { error: err })));
     }
     const btn = link(await button(ctx, b.submit || "\u0412\u043E\u0439\u0442\u0438", "default"), "submit");
     add(c, btn);
@@ -1694,7 +1694,7 @@
       page.appendChild(n);
       return n;
     };
-    const label = async (value, size2, py) => {
+    const label2 = async (value, size2, py) => {
       const t = tag(await text(base, value, { size: size2, weight: "bold", color: "muted-foreground" }));
       t.x = 0;
       t.y = py;
@@ -1704,10 +1704,10 @@
     const flows = [];
     for (const vp of vps) {
       const screens = spec.screens.filter((s) => s.viewports.includes(vp));
-      y += await label(flowName(spec, vp, vp === "desktop" ? "\u0434\u0435\u0441\u043A\u0442\u043E\u043F" : null), "3xl", y) + 48;
+      y += await label2(flowName(spec, vp, vp === "desktop" ? "\u0434\u0435\u0441\u043A\u0442\u043E\u043F" : null), "3xl", y) + 48;
       const frames = /* @__PURE__ */ new Map();
       for (const section of [...new Set(screens.map((s) => s.page))]) {
-        y += await label(section, "xl", y) + 24;
+        y += await label2(section, "xl", y) + 24;
         let x = 0;
         let rowH = 0;
         for (const s of screens.filter((x2) => x2.page === section)) {
@@ -2985,11 +2985,11 @@
       return null;
     }
     const inst = main.createInstance();
-    const label = a.sample && inst.findOne && inst.findOne((n) => n.type === "TEXT");
-    if (label) {
+    const label2 = a.sample && inst.findOne && inst.findOne((n) => n.type === "TEXT");
+    if (label2) {
       try {
-        await figma.loadFontAsync(label.fontName);
-        label.characters = a.sample;
+        await figma.loadFontAsync(label2.fontName);
+        label2.characters = a.sample;
       } catch (e) {
       }
     }
@@ -3127,6 +3127,129 @@
     };
   }
 
+  // plugin/src/kit-sheet.js
+  var GROUPS = [
+    { title: "\u041E\u0441\u043D\u043E\u0432\u0430", names: ["button", "badge", "avatar", "card"] },
+    { title: "\u0424\u043E\u0440\u043C\u044B", names: ["input", "textarea", "select-trigger", "checkbox", "switch"] },
+    { title: "\u041D\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u044F", names: ["tabs-list", "tabs-trigger", "pagination"] },
+    { title: "\u041E\u0431\u0440\u0430\u0442\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C", names: ["alert", "progress", "skeleton"] },
+    { title: "\u0414\u0430\u043D\u043D\u044B\u0435", names: ["table-cell"] },
+    { title: "CRM", names: ["crm-kpi-card", "crm-application-card", "crm-key-value-row", "crm-timeline-item", "crm-transfer-row"] }
+  ];
+  var DOC = "mbank-doc";
+  var GAP4 = 48;
+  var SECTION_GAP = 160;
+  var PAD2 = 64;
+  var ROW_WIDTH = 2400;
+  var groupOf = (name) => (GROUPS.find((g) => g.names.includes(name)) || { title: "\u0414\u0440\u0443\u0433\u043E\u0435" }).title;
+  function propsLine(c) {
+    const parts = Object.entries(c.props || {}).map(([p, d]) => `${p}: ${(d.values || []).join(", ")}`);
+    const states = (c.states || []).filter((s) => s !== "default");
+    if (states.length) parts.push(`\u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u044F: ${states.join(", ")}`);
+    return parts.join("   \xB7   ") || "\u043E\u0434\u0438\u043D \u0432\u0430\u0440\u0438\u0430\u043D\u0442";
+  }
+  async function paint2(t, token, fallback) {
+    const v = await colorVar(t, token, { create: false });
+    const base = { type: "SOLID", color: fallback };
+    return v ? figma.variables.setBoundVariableForPaint(base, "color", v) : base;
+  }
+  function label(font, chars, size2, style, fills) {
+    const n = figma.createText();
+    n.fontName = { family: font, style };
+    n.fontSize = size2;
+    n.characters = chars;
+    n.fills = fills;
+    return n;
+  }
+  async function card2(page, c, set, look) {
+    let doc = page.findOne((n) => n.type === "FRAME" && n.getPluginData(DOC) === c.name);
+    if (!doc) {
+      doc = figma.createFrame();
+      doc.setPluginData(DOC, c.name);
+      page.appendChild(doc);
+    }
+    doc.name = `Doc / ${c.title || c.name}`;
+    doc.layoutMode = "VERTICAL";
+    doc.primaryAxisSizingMode = "AUTO";
+    doc.counterAxisSizingMode = "AUTO";
+    doc.itemSpacing = 16;
+    doc.paddingTop = doc.paddingBottom = doc.paddingLeft = doc.paddingRight = 32;
+    doc.cornerRadius = 24;
+    doc.fills = [look.card];
+    doc.strokes = [look.border];
+    doc.strokeWeight = 1;
+    for (const n of [...doc.children]) if (n !== set) n.remove();
+    const variants = set.type === "COMPONENT_SET" ? set.children.length : 1;
+    doc.insertChild(0, label(look.font, c.title || c.name, 28, "Bold", [look.text]));
+    doc.insertChild(1, label(look.font, `${variants} ${variants === 1 ? "\u0432\u0430\u0440\u0438\u0430\u043D\u0442" : "\u0432\u0430\u0440\u0438\u0430\u043D\u0442\u043E\u0432"}   \xB7   ${propsLine(c)}`, 14, "Regular", [look.muted]));
+    set.fills = [look.surface];
+    set.cornerRadius = 16;
+    if (set.parent !== doc) doc.appendChild(set);
+    return doc;
+  }
+  async function kitSheet(page, items) {
+    const t = await tokenIndex();
+    const font = await loadFonts("Inter");
+    const look = {
+      font,
+      card: await paint2(t, "card", { r: 1, g: 1, b: 1 }),
+      surface: await paint2(t, "muted", { r: 0.96, g: 0.96, b: 0.97 }),
+      border: await paint2(t, "border", { r: 0.9, g: 0.9, b: 0.92 }),
+      text: await paint2(t, "foreground", { r: 0.06, g: 0.06, b: 0.07 }),
+      muted: await paint2(t, "muted-foreground", { r: 0.45, g: 0.47, b: 0.5 }),
+      page: await paint2(t, "background", { r: 0.97, g: 0.97, b: 0.98 })
+    };
+    const byGroup = /* @__PURE__ */ new Map();
+    for (const it of items) {
+      const g = groupOf(it.contract.name);
+      if (!byGroup.has(g)) byGroup.set(g, []);
+      byGroup.get(g).push(it);
+    }
+    const order = [...GROUPS.map((g) => g.title), "\u0414\u0440\u0443\u0433\u043E\u0435"].filter((g) => byGroup.has(g));
+    const sections = [];
+    let y = 0;
+    for (const g of order) {
+      let section = page.findOne((n) => n.type === "SECTION" && n.getPluginData(DOC) === `group:${g}`);
+      if (!section) {
+        section = figma.createSection();
+        section.setPluginData(DOC, `group:${g}`);
+        page.appendChild(section);
+      }
+      section.name = g;
+      section.fills = [look.page];
+      const list2 = byGroup.get(g).sort((a, b) => {
+        var _a, _b;
+        return (((_a = GROUPS.find((x2) => x2.title === g)) == null ? void 0 : _a.names) || []).indexOf(a.contract.name) - (((_b = GROUPS.find((x2) => x2.title === g)) == null ? void 0 : _b.names) || []).indexOf(b.contract.name);
+      });
+      let x = PAD2;
+      let rowY = PAD2 + 40;
+      let rowH = 0;
+      let maxX = 0;
+      for (const it of list2) {
+        const set = await figma.getNodeByIdAsync(it.setId);
+        if (!set) continue;
+        const doc = await card2(page, it.contract, set, look);
+        section.appendChild(doc);
+        if (x > PAD2 && x + doc.width > ROW_WIDTH) {
+          x = PAD2;
+          rowY += rowH + GAP4;
+          rowH = 0;
+        }
+        doc.x = x;
+        doc.y = rowY;
+        x += doc.width + GAP4;
+        rowH = Math.max(rowH, doc.height);
+        maxX = Math.max(maxX, doc.x + doc.width);
+      }
+      section.resizeWithoutConstraints(Math.max(maxX + PAD2, 800), rowY + rowH + PAD2);
+      section.x = 0;
+      section.y = y;
+      y += section.height + SECTION_GAP;
+      sections.push(section);
+    }
+    return sections;
+  }
+
   // plugin/src/shared-contracts.js
   var NAMESPACE = "mbank";
   var PREFIX = "contract:";
@@ -3151,23 +3274,24 @@
 
   // plugin/src/contracts.js
   var PREFIX2 = "contract:";
-  var GRID_GAP = 160;
-  var ROW_WIDTH = 4e3;
-  function layoutAll(nodes) {
-    let x = GRID_GAP;
-    let y = GRID_GAP;
-    let rowH = 0;
-    for (const n of [...nodes].sort((a, b) => a.height - b.height || a.name.localeCompare(b.name))) {
-      if (x > GRID_GAP && x + n.width > ROW_WIDTH) {
-        x = GRID_GAP;
-        y += rowH + GRID_GAP;
-        rowH = 0;
+  async function dropStrays(page, names) {
+    let removed = 0;
+    await figma.loadAllPagesAsync();
+    for (const other of figma.root.children.filter((p) => p !== page)) {
+      for (const n of other.findAll((x) => (x.type === "COMPONENT_SET" || x.type === "COMPONENT") && names.includes(x.getPluginData("mbank-contract")))) {
+        const parts = n.type === "COMPONENT_SET" ? n.children : [n];
+        let used = false;
+        for (const p of parts) if ((await p.getInstancesAsync()).length) {
+          used = true;
+          break;
+        }
+        if (!used) {
+          n.remove();
+          removed++;
+        }
       }
-      n.x = x;
-      n.y = y;
-      x += n.width + GRID_GAP;
-      rowH = Math.max(rowH, n.height);
     }
+    return removed;
   }
   function stored() {
     const out = {};
@@ -3259,14 +3383,14 @@
           const c = __spreadProps(__spreadValues({}, contract), { figma: __spreadProps(__spreadValues({}, contract.figma || {}), { page: PAGE }) });
           const res = await render(c, __spreadProps(__spreadValues({}, m), { focus: false }));
           if (res.errors) failed.push(c.name);
-          else done.push(res.report.setId);
+          else done.push({ contract: res.contract, setId: res.report.setId });
         }
         const page = await componentsPage(PAGE);
-        const nodes = (await Promise.all(done.map((id) => figma.getNodeByIdAsync(id)))).filter(Boolean);
-        layoutAll(nodes);
+        const removed = await dropStrays(page, done.map((d) => d.contract.name));
+        const sections = await kitSheet(page, done);
         await figma.setCurrentPageAsync(page);
-        if (nodes.length) figma.viewport.scrollAndZoomIntoView(nodes);
-        return { built: nodes.length, failed, page: page.name, contracts: await summary(bundled) };
+        if (sections.length) figma.viewport.scrollAndZoomIntoView(sections);
+        return { built: done.length, failed, removed, page: page.name, contracts: await summary(bundled) };
       },
       async "contract-rows"(m) {
         const c = get(bundled, m.name);
@@ -3386,7 +3510,7 @@
       const res = await buildSpec(
         m.spec,
         { vars, radius, kit: k.kit, font: m.font, brand: m.brand, style: m.style, theme: m.theme, only: m.only },
-        (done, total, label) => post("progress", { done, total, label })
+        (done, total, label2) => post("progress", { done, total, label: label2 })
       );
       const audit = await auditFrames(res.frames.map((f) => f.id));
       const first = res.sections[0] && await figma.getNodeByIdAsync(res.sections[0].id);

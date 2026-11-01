@@ -76,6 +76,7 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     get layoutSizingVertical() { return this._lsv; }
     set layoutSizingVertical(v) { SIZING_OK(this, v); this._lsv = v; }
     appendChild(c) { if (c.parent) c.parent.children = c.parent.children.filter((x) => x !== c); c.parent = this; this.children.push(c); this._grow(c); }
+    insertChild(i, c) { if (c.parent) c.parent.children = c.parent.children.filter((x) => x !== c); c.parent = this; this.children.splice(i, 0, c); this._grow(c); }
     _grow(c) { if (this.layoutMode === 'VERTICAL') this.height = (this.height || 0) + c.height; }
     resize(w, h) { if (!(w > 0 && h > 0)) throw new Error(`bad size ${w}x${h} on ${this.name}`); this.width = w; this.height = h; }
     resizeWithoutConstraints(w, h) { this.resize(w, h); }

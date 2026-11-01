@@ -9,24 +9,24 @@ import { newContract, TEMPLATES } from '../../core/contract-templates.js';
 import { renderContract, componentsPage, findSet, pageOf, PAGE } from './components.js';
 import { listVariables } from './tokens-resolve.js';
 import { resetLibraryImports } from './library-import.js';
+import { kitSheet } from './kit-sheet.js';
 import { sharedContracts, putSharedContract, dropSharedContract } from './shared-contracts.js';
 
 const PREFIX = 'contract:';
-const GRID_GAP = 160;
-const ROW_WIDTH = 4000;
 
-// Component sets in rows, short ones first: small ones share a row, a wide set starts its own.
-function layoutAll(nodes) {
-  let x = GRID_GAP;
-  let y = GRID_GAP;
-  let rowH = 0;
-  for (const n of [...nodes].sort((a, b) => a.height - b.height || a.name.localeCompare(b.name))) { // small first, the tall Button last
-    if (x > GRID_GAP && x + n.width > ROW_WIDTH) { x = GRID_GAP; y += rowH + GRID_GAP; rowH = 0; }
-    n.x = x;
-    n.y = y;
-    x += n.width + GRID_GAP;
-    rowH = Math.max(rowH, n.height);
+// Leftovers of an interrupted build: our sets of the same contracts on other pages, unused by any instance.
+async function dropStrays(page, names) {
+  let removed = 0;
+  await figma.loadAllPagesAsync();
+  for (const other of figma.root.children.filter((p) => p !== page)) {
+    for (const n of other.findAll((x) => (x.type === 'COMPONENT_SET' || x.type === 'COMPONENT') && names.includes(x.getPluginData('mbank-contract')))) {
+      const parts = n.type === 'COMPONENT_SET' ? n.children : [n];
+      let used = false;
+      for (const p of parts) if ((await p.getInstancesAsync()).length) { used = true; break; }
+      if (!used) { n.remove(); removed++; }
+    }
   }
+  return removed;
 }
 
 function stored() {
@@ -110,14 +110,14 @@ export function contractHandlers(bundled) {
         if (validateContract(contract).length) { failed.push(contract.name); continue; }
         const c = { ...contract, figma: { ...(contract.figma || {}), page: PAGE } };
         const res = await render(c, { ...m, focus: false });
-        if (res.errors) failed.push(c.name); else done.push(res.report.setId);
+        if (res.errors) failed.push(c.name); else done.push({ contract: res.contract, setId: res.report.setId });
       }
       const page = await componentsPage(PAGE);
-      const nodes = (await Promise.all(done.map((id) => figma.getNodeByIdAsync(id)))).filter(Boolean);
-      layoutAll(nodes);
+      const removed = await dropStrays(page, done.map((d) => d.contract.name));
+      const sections = await kitSheet(page, done);
       await figma.setCurrentPageAsync(page);
-      if (nodes.length) figma.viewport.scrollAndZoomIntoView(nodes);
-      return { built: nodes.length, failed, page: page.name, contracts: await summary(bundled) };
+      if (sections.length) figma.viewport.scrollAndZoomIntoView(sections);
+      return { built: done.length, failed, removed, page: page.name, contracts: await summary(bundled) };
     },
     async 'contract-rows'(m) {
       const c = get(bundled, m.name);

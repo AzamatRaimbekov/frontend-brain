@@ -200,20 +200,28 @@ test('dist is built with the Components tab and runs the bundled contracts end t
   assert.ok(built.report.variants > 0 && built.report.bound > 0);
 });
 
-test('render-all: every component on one «Components» page in a grid; again updates in place', async () => {
+test('render-all: a kit sheet — sections by group, a card per component; again updates in place', async () => {
   const m = await fresh();
   const h = m.handlers;
   const first = await h['contract-render-all']({});
   assert.equal(first.built, 3);
   assert.deepEqual(first.failed, []);
   const page = figma.root.children.find((p) => p.name === 'Components');
-  const sets = page.children.filter((n) => /COMPONENT/.test(n.type));
+  const sections = page.children.filter((n) => n.type === 'SECTION');
+  assert.deepEqual(sections.map((s) => s.name), ['Основа', 'Формы'], 'button+badge in Основа, input in Формы');
+  const sets = page.findAll((n) => n.type === 'COMPONENT_SET' || (n.type === 'COMPONENT' && n.parent.type !== 'COMPONENT_SET'));
   assert.equal(sets.length, 3);
-  const boxes = sets.map((n) => [n.x, n.y, n.x + n.width, n.y + n.height]);
-  for (const [i, a] of boxes.entries()) for (const b of boxes.slice(i + 1)) assert.ok(a[2] <= b[0] || b[2] <= a[0] || a[3] <= b[1] || b[3] <= a[1], 'sets do not overlap');
+  for (const s of sets) {
+    assert.equal(s.parent.type, 'FRAME', 'each set sits in its doc card');
+    assert.match(s.parent.name, /^Doc \//);
+    assert.equal(s.parent.children[0].type, 'TEXT', 'title first');
+  }
   const ids = sets.map((n) => n.id).sort();
+  const cards = page.findAll((n) => n.type === 'FRAME' && /^Doc \//.test(n.name)).length;
   await h['contract-render-all']({});
-  assert.deepEqual(page.children.filter((n) => /COMPONENT/.test(n.type)).map((n) => n.id).sort(), ids, 'same nodes: instances stay linked');
+  assert.deepEqual(page.findAll((n) => n.type === 'COMPONENT_SET' || (n.type === 'COMPONENT' && n.parent.type !== 'COMPONENT_SET')).map((n) => n.id).sort(), ids, 'same nodes: instances stay linked');
+  assert.equal(page.findAll((n) => n.type === 'FRAME' && /^Doc \//.test(n.name)).length, cards, 'cards reused, not duplicated');
+  assert.equal(page.children.filter((n) => n.type === 'SECTION').length, 2);
 });
 
 test('a library import that never settles (no access) times out instead of freezing the build', async () => {
