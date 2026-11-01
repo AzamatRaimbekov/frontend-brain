@@ -26,10 +26,18 @@ const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers
 const json = (res, code, body) => { res.writeHead(code, { 'content-type': 'application/json', ...cors }); res.end(JSON.stringify(body)); };
 const body = (req) => new Promise((ok) => { let s = ''; req.on('data', (c) => { s += c; }); req.on('end', () => { try { ok(s ? JSON.parse(s) : {}); } catch (e) { ok({}); } }); });
 
+let proxy = false; // the port is taken by another bridge (e.g. a second Claude session): talk to it over HTTP
+
 export const connected = () => Date.now() - lastPoll < 35000;
 
+async function viaHttp(path, payload) {
+  const res = await fetch(`http://127.0.0.1:${PORT}${path}`, payload ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) } : undefined);
+  return res.json();
+}
+
 /** Queues a command for the plugin and waits for its result. */
-export function run(type, args = {}, timeoutMs = 600000) {
+export async function run(type, args = {}, timeoutMs = 600000) {
+  if (proxy) { const r = await viaHttp('/run', { type, args, timeoutMs }); if (!r.ok) throw new Error(r.error); return r.result; }
   if (!connected()) return Promise.reject(new Error('Плагин не подключён: в Figma Desktop запусти Plugins → Development → DS Builder → «Мост для Claude»'));
   const id = randomUUID();
   return new Promise((resolve, reject) => {
@@ -82,14 +90,16 @@ export function startHttp() {
     }
     json(res, 404, { error: 'not found' });
   });
-  server.on('error', (e) => log(e.code === 'EADDRINUSE' ? `порт ${PORT} занят: мост уже запущен?` : e.message));
+  server.on('error', (e) => {
+    if (e.code === 'EADDRINUSE') { proxy = true; log(`порт ${PORT} занят другим мостом — работаю через него`); } else log(e.message);
+  });
   server.listen(PORT, '127.0.0.1', () => log(`HTTP 127.0.0.1:${PORT}`));
   return server;
 }
 
 const str = (description) => ({ type: 'string', description });
 export const TOOLS = [
-  { name: 'figma_status', description: 'Is the DS Builder plugin connected (Figma Desktop → Plugins → Development → DS Builder → «Мост для Claude») and which file is open.', inputSchema: { type: 'object', properties: {} }, call: async () => ({ connected: connected(), file }) },
+  { name: 'figma_status', description: 'Is the DS Builder plugin connected (Figma Desktop → Plugins → Development → DS Builder → «Мост для Claude») and which file is open.', inputSchema: { type: 'object', properties: {} }, call: async () => (proxy ? viaHttp('/status') : { connected: connected(), file }) },
   { name: 'figma_command', description: 'Runs a DS Builder command in the open file: "render-all" (every component on one «Components» page as a kit sheet), "build" (args.spec: screen spec → section pages + «Прототип»), "contract-render" (args.name), "contract-bind" (args.name, path, key, value), "contracts-list", "tokens-apply" (Mbank tokens → variables), "inspect" (pages, collections, counts).', inputSchema: { type: 'object', properties: { type: str('command name'), args: { type: 'object' } }, required: ['type'] }, call: (a) => run(a.type, a.args || {}) },
   { name: 'figma_export', description: 'Exports nodes as PNG files the agent can look at: args.ids or args.names (top-level frames, sections, component sets, doc cards), args.scale (default 1).', inputSchema: { type: 'object', properties: { ids: { type: 'array', items: { type: 'string' } }, names: { type: 'array', items: { type: 'string' } }, page: str('page name'), scale: { type: 'number' } } }, call: (a) => run('export', a) },
   { name: 'figma_eval', description: 'Runs a short Plugin API snippet in the file (async function body with `figma` in scope, return a JSON-able value). For inspection and small fixes.', inputSchema: { type: 'object', properties: { code: str('function body') }, required: ['code'] }, call: (a) => run('eval', { code: a.code }) },
