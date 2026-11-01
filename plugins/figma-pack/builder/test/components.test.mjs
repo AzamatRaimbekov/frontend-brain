@@ -257,3 +257,17 @@ test('button: a «Label» text property drives the label; icon sizes hide the la
   assert.equal(icon.findOne((n) => n.name === 'icon').visible, true);
   assert.equal(md.findOne((n) => n.name === 'icon').visible, false);
 });
+
+test('avatar: the fallback circle fills the avatar and holds the initials', async () => {
+  await fresh();
+  const avatar = JSON.parse(readFileSync(new URL('../contracts/avatar.json', import.meta.url), 'utf8'));
+  const { renderContract } = await import('../plugin/src/components.js');
+  const res = await renderContract(avatar);
+  assert.equal(res.errors, undefined);
+  const set = await figma.getNodeByIdAsync(res.report.setId);
+  const sm = set.children.find((v) => v.name === 'size=sm');
+  const fb = sm.findOne((n) => n.name === 'fallback');
+  assert.equal(fb.layoutSizingHorizontal, 'FILL');
+  assert.equal(fb.layoutSizingVertical, 'FILL');
+  assert.equal(fb.findOne((n) => n.name === 'text').characters, 'АТ');
+});

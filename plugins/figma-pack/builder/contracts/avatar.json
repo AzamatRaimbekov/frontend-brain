@@ -12,6 +12,15 @@
     "fallback",
     "text"
   ],
+  "anatomy": {
+    "fallback": {
+      "fill": true
+    },
+    "text": {
+      "parent": "fallback",
+      "sample": "АТ"
+    }
+  },
   "props": {
     "size": {
       "values": [

@@ -189,6 +189,8 @@ async function renderPart(r, holder, style, part, c) {
   const column = holder.layoutMode === 'VERTICAL';
   const fill = c.anatomy ? !!a.fill : column && kind !== 'icon';
   if (fill) node.layoutSizingHorizontal = 'FILL';
+  // a filling frame in a fixed-size row (avatar fallback) fills it both ways, so the circle is the frame
+  if (fill && kind === 'frame' && !column && holder.primaryAxisSizingMode === 'FIXED' && holder.counterAxisSizingMode === 'FIXED') node.layoutSizingVertical = 'FILL';
   else if (kind === 'text' && a.width) { node.textAutoResize = 'HEIGHT'; node.resize(a.width, node.height); }
   return node;
 }
