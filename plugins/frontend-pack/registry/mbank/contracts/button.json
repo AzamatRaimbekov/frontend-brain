@@ -223,6 +223,9 @@
     "extra": "inline-flex shrink-0 justify-center whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30",
     "extras": {
       "variant=link": "h-auto underline-offset-4 hover:underline"
-    }
+    },
+    "figmaOnly": [
+      "label"
+    ]
   }
 }

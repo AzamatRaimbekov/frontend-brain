@@ -14,6 +14,7 @@
   "props": {},
   "base": {
     "root": {
+      "border-width": 2,
       "height": 6,
       "radius": "full",
       "opacity:disabled": 50,
@@ -47,6 +48,17 @@
       "checked": "data-[state=checked]",
       "unchecked": "data-[state=unchecked]"
     },
-    "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30"
+    "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30",
+    "figmaOnly": [
+      "thumb"
+    ],
+    "overrides": {
+      "root": {
+        "align": "center",
+        "align:checked": null,
+        "bg": null,
+        "px": null
+      }
+    }
   }
 }

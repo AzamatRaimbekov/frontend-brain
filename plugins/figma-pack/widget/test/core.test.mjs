@@ -59,9 +59,11 @@ test('edits and extra tokens: edited flag, per-brand keys, counters', () => {
 test('contrast: real AA failures of the source are found, a fixed pair passes', () => {
   const bank = buildModel(TOKENS, { brand: 'bank' });
   const failing = contrastIssues(bank.rows).filter((i) => !i.ok);
-  assert.ok(failing.some((i) => i.fg === 'secondary-foreground' && i.bg === 'secondary'));
-  const fixed = buildModel(TOKENS, { edits: { 'secondary-foreground': { light: '#ffffff', dark: '#ffffff' } } });
-  assert.ok(contrastIssues(fixed.rows).filter((i) => i.fg === 'secondary-foreground').every((i) => i.ok));
+  assert.ok(failing.some((i) => i.fg === 'destructive-foreground' && i.bg === 'destructive'));
+  // G04: Figma's neutral/primary/on-accent is dark on dark; the token follows the code workaround (static/light).
+  assert.ok(!failing.some((i) => i.fg === 'secondary-foreground'));
+  const fixed = buildModel(TOKENS, { edits: { 'destructive-foreground': { light: '#ffffff', dark: '#ffffff' }, destructive: { light: '#b91c1c', dark: '#b91c1c' } } });
+  assert.ok(contrastIssues(fixed.rows).filter((i) => i.fg === 'destructive-foreground' && i.bg === 'destructive').every((i) => i.ok));
 });
 
 test('extra token validation (Russian errors) and normalisation', () => {

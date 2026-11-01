@@ -99,6 +99,9 @@
         "part": "root"
       }
     },
-    "extra": "w-full whitespace-nowrap transition-colors outline-none disabled:pointer-events-none *:data-[slot=select-value]:truncate"
+    "extra": "w-full whitespace-nowrap transition-colors outline-none disabled:pointer-events-none *:data-[slot=select-value]:truncate",
+    "figmaOnly": [
+      "icon"
+    ]
   }
 }

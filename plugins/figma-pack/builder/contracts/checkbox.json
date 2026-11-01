@@ -70,6 +70,16 @@
       "checked": "data-[state=checked]",
       "indeterminate": "data-[state=indeterminate]"
     },
-    "extra": "peer shrink-0 transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50"
+    "extra": "peer shrink-0 transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50",
+    "figmaOnly": [
+      "icon",
+      "icon-minus"
+    ],
+    "overrides": {
+      "root": {
+        "align": null,
+        "layout": null
+      }
+    }
   }
 }

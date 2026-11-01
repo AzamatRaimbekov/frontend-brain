@@ -57,7 +57,7 @@
           "border": "border",
           "border:selected": "secondary",
           "bg:selected": "secondary",
-          "fg:selected": "inverse-foreground"
+          "fg:selected": "secondary-foreground"
         }
       },
       "line": {
@@ -92,6 +92,9 @@
     "extra": "inline-flex justify-center whitespace-nowrap transition-colors outline-none disabled:pointer-events-none [&_svg]:shrink-0",
     "extras": {
       "variant=line": "-mb-px border-b-2 border-transparent"
-    }
+    },
+    "figmaOnly": [
+      "label"
+    ]
   }
 }

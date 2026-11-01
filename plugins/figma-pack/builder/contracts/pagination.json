@@ -30,7 +30,7 @@
       "bg:hover": "accent",
       "fg:disabled": "disabled-foreground",
       "bg:selected": "secondary",
-      "fg:selected": "inverse-foreground",
+      "fg:selected": "secondary-foreground",
       "align": "center",
       "focus-ring": "ring/30"
     },
@@ -86,6 +86,9 @@
       "size=sm": "min-w-8",
       "size=md": "min-w-9",
       "size=lg": "min-w-10"
-    }
+    },
+    "figmaOnly": [
+      "label"
+    ]
   }
 }

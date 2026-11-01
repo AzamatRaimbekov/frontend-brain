@@ -38,11 +38,11 @@ test('props.values and variants must describe the same values', () => {
 test('unknown properties, parts, states and figma components are reported', () => {
   const c = button();
   c.base.root.colour = 'primary';
-  c.base.label = { text: 'sm' };
+  c.base.caption = { text: 'sm' };
   c.base.root['bg:pressed'] = 'primary';
   c.figma.key = 'nope';
   const text = errors(c);
-  for (const re of [/unknown property "colour"/, /part "label" is not in parts/, /state "pressed" is not in states/, /figma\.key nope is not in components-map/]) assert.match(text, re);
+  for (const re of [/unknown property "colour"/, /part "caption" is not in parts/, /state "pressed" is not in states/, /figma\.key nope is not in components-map/]) assert.match(text, re);
 });
 
 test('a contract without figma is valid with a warning; the CLI exits 1 on errors', () => {

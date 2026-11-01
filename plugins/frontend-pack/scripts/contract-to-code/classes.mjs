@@ -16,10 +16,11 @@ const ALIGN = ['start', 'center', 'end', 'between'];
 
 // Property -> kind of value. color = token from tokens.css; radius/text/shadow = scale key; number = 4 px grid step.
 // focus-ring = colour token with optional opacity ("ring/50"), always shown in the focus state.
+// hidden = Figma-only flag (an optional part switched off in a variant); code shows such parts when they are passed.
 export const PROPERTIES = {
   bg: 'color', fg: 'color', border: 'color', 'focus-ring': 'color',
   'border-width': 'number', radius: 'radius', text: 'text', weight: 'weight', shadow: 'shadow', opacity: 'number',
-  layout: 'layout', align: 'align',
+  layout: 'layout', align: 'align', hidden: 'flag',
   ...Object.fromEntries(Object.keys(SPACING).map((k) => [k, 'number'])),
 };
 
@@ -48,6 +49,7 @@ export function validValue(prop, value, tokens) {
   if (kind === 'weight') return value in WEIGHTS;
   if (kind === 'layout') return value === 'row' || value === 'column';
   if (kind === 'align') return ALIGN.includes(value);
+  if (kind === 'flag') return typeof value === 'boolean';
   return false;
 }
 
@@ -135,10 +137,19 @@ const modifiersOf = (contract) => ({ ...STATE_MODIFIERS, ...(contract.code?.modi
 export function renderScope(scope, contract, { direct = 'root' } = {}) {
   const mods = modifiersOf(contract);
   const selectors = contract.code?.parts ?? {};
+  const figmaOnly = contract.code?.figmaOnly ?? [];
   const out = [];
   for (const [part, props] of Object.entries(scope ?? {})) {
-    for (const [key, value] of Object.entries(props ?? {})) {
+    if (part !== direct && figmaOnly.includes(part)) continue; // drawn only in Figma (code clips or renders it itself)
+    for (let [key, value] of Object.entries(props ?? {})) {
       const [prop, keyState] = key.split(':');
+      if (prop === 'hidden') continue;
+      // code.overrides { part: { key: value | null } }: Figma auto-layout needs a different value; code keeps its own.
+      const own = contract.code?.overrides?.[part];
+      if (own && key in own) {
+        if (own[key] === null) continue;
+        value = own[key];
+      }
       if (prop === 'focus-ring' && keyState) throw new Error(`${contract.name}: focus-ring takes no state suffix`);
       const state = prop === 'focus-ring' ? 'focus' : keyState;
       const prefix = [];

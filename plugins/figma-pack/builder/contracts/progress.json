@@ -122,6 +122,9 @@
         "part": "indicator"
       }
     },
-    "extra": "relative w-full overflow-hidden"
+    "extra": "relative w-full overflow-hidden",
+    "figmaOnly": [
+      "indicator"
+    ]
   }
 }

@@ -127,6 +127,15 @@
     "extra": "relative grid w-full grid-cols-[0_1fr] gap-y-0.5 has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] has-[>svg]:gap-x-3 [&>svg]:translate-y-0.5 [&>svg]:text-current",
     "extras": {
       "title": "col-start-2"
+    },
+    "figmaOnly": [
+      "body",
+      "description"
+    ],
+    "overrides": {
+      "root": {
+        "gap": null
+      }
     }
   }
 }

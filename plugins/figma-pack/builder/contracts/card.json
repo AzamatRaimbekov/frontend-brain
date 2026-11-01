@@ -107,6 +107,21 @@
     "extras": {
       "header": "grid auto-rows-min grid-rows-[auto_auto] has-data-[slot=card-action]:grid-cols-[1fr_auto]",
       "footer": "[.border-t]:pt-4"
+    },
+    "figmaOnly": [
+      "body",
+      "action"
+    ],
+    "overrides": {
+      "header": {
+        "layout": null
+      },
+      "content": {
+        "layout": null
+      },
+      "footer": {
+        "align": "center"
+      }
     }
   }
 }

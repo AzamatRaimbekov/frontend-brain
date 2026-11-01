@@ -21,7 +21,10 @@ export function bake(map, figmaTokens = null) {
   for (const group of map.root || []) {
     for (const t of group.tokens || []) {
       if (!t.css?.startsWith('--') || !t.figma || t.unit) continue; // unit: radius/size, not a colour
-      put(t.css, { figma: t.figma, collection: collectionOf(cols[t.collection || 'theme']) });
+      // A known gap (unreadable pair in Figma) that code works around with another token: Figma follows the code.
+      const fix = /^var\(--([\w-]+)\)$/.exec(t.light?.value || '');
+      if (t.light?.gap && fix) put(t.css, { alias: fix[1] });
+      else put(t.css, { figma: t.figma, collection: collectionOf(cols[t.collection || 'theme']) });
     }
   }
   for (const t of map.brand?.tokens || []) put(t.css, { figma: t.figma, collection: collectionOf(cols.brand) });

@@ -223,6 +223,9 @@
     "parts": {
       "icon": "[&>svg]"
     },
-    "extra": "inline-flex w-fit shrink-0 justify-center overflow-hidden whitespace-nowrap [&>svg]:pointer-events-none"
+    "extra": "inline-flex w-fit shrink-0 justify-center overflow-hidden whitespace-nowrap [&>svg]:pointer-events-none",
+    "figmaOnly": [
+      "label"
+    ]
   }
 }

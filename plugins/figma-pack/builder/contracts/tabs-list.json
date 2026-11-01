@@ -86,6 +86,12 @@
     "extras": {
       "variant=segment": "p-1",
       "variant=line": "border-b"
+    },
+    "overrides": {
+      "root": {
+        "px": null,
+        "py": null
+      }
     }
   }
 }
