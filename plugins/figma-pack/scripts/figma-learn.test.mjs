@@ -3,4 +3,5 @@
 // No network, no token. Run alone: node --test plugins/figma-pack/scripts/figma-learn/test/*.test.mjs
 import './figma-learn/test/crawl.test.mjs';
 import './figma-learn/test/analyze.test.mjs';
+import './figma-learn/test/real-files.test.mjs';
 import './figma-learn/test/templates-learn.test.mjs';

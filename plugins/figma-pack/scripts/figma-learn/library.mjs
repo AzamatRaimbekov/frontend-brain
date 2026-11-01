@@ -43,6 +43,8 @@ export function libraryIndex({ catalog = null, map = null } = {}) {
     byKey.set(c.key, { name: c.name, status: c.code?.web?.status || 'in-catalog', kit: c.kit });
   }
   for (const m of map?.components || []) if (m.key) byKey.set(m.key, { ...(byKey.get(m.key) || {}), name: m.figma, status: m.status, kit: m.kit });
+  // Library files (Foundation, Web components, CRM UI KIT …) define the kit: not product screens.
+  const libraryFiles = new Set((catalog?.libraries || []).map((l) => l.fileKey).filter(Boolean));
   const names = new Set();
   for (const c of [...(catalog?.components || []), ...(catalog?.blocks || []), ...(map?.components || [])]) {
     const n = String(c.name || c.figma || '').toLowerCase();
@@ -54,12 +56,15 @@ export function libraryIndex({ catalog = null, map = null } = {}) {
     status: (key) => (key && byKey.get(key)?.status) || 'unknown',
     entry: (key) => byKey.get(key) || null,
     isComponentName: (name) => names.has(String(name).toLowerCase()),
+    isLibraryFile: (key) => libraryFiles.has(key),
   };
 }
 
 const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
-/** Raw hex -> { name, hex, exact, distance } from tokens.json 2.theme (light values), or null. */
+export const FAR = 12;
+
+/** Raw hex -> { name, hex, exact, far, distance } from tokens.json 2.theme (light values), or null. */
 export function nearestToken(hex, tokens) {
   const vars = tokens?.theme?.vars || [];
   let best = null;
@@ -70,7 +75,8 @@ export function nearestToken(hex, tokens) {
     const d = Math.round(Math.sqrt((r - r2) ** 2 + (g - g2) ** 2 + (b - b2) ** 2));
     if (!best || d < best.distance) best = { name: v.name, hex: v.light.toLowerCase(), distance: d };
   }
-  return best ? { ...best, exact: best.distance === 0 } : null;
+  // RGB distance above FAR means no token is close: report the colour as off-palette, not as a near miss.
+  return best ? { ...best, exact: best.distance === 0, far: best.distance > FAR } : null;
 }
 
 /** Spacing value -> web token name (tokens.json webSpacing), e.g. 24 -> spacing/l-2. */

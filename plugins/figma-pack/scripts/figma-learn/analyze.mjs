@@ -21,7 +21,7 @@ function inspect(frame, maps, lib, acc) {
     if (ctx.inInstance) return false;
     if (n.type === 'INSTANCE') {
       const r = resolveInstance(n, maps);
-      const status = r.local ? 'local' : lib.status(r.key);
+      const status = r.local ? (acc.library ? 'kit-own' : 'local') : lib.status(r.key);
       const id = r.local ? `local:${r.name}` : r.key || `name:${r.name}`;
       const u = acc.usage[id] || (acc.usage[id] = { key: r.local ? null : r.key, name: r.name, status, count: 0 });
       u.count++;
@@ -100,15 +100,17 @@ export function analyzeFile(dir, lib) {
   const maps = libraryMaps(file, nodes);
   maps.names = new Set([...Object.values(maps.components), ...Object.values(maps.componentSets)].map((c) => String(c.name).toLowerCase()));
   const acc = blank();
+  acc.library = lib.isLibraryFile?.(meta.key) ?? false;
   const screens = [];
   for (const s of screenFrames(file.document)) {
     const frame = nodes.nodes[s.id]?.document;
     if (!frame) continue;
     const parsed = parseFrameName(s.name);
     const title = `${parsed.flow || ''} ${parsed.screen} ${s.section || ''}`;
+    inspect(frame, maps, lib, acc);
+    if (acc.library) continue; // component docs and specimens, not product screens
     const { archetype, scores } = classify(frame, maps, title);
     const { blocks, nav, empty } = extractBlocks(frame, maps);
-    inspect(frame, maps, lib, acc);
     screens.push({
       id: s.id, name: s.name, page: s.page, section: s.section, viewport: s.viewport, width: s.width, height: s.height,
       ready: s.ready, draft: parsed.draft, conventional: parsed.conventional, flow: parsed.flow, screen: parsed.screen, state: parsed.state,
@@ -121,7 +123,7 @@ export function analyzeFile(dir, lib) {
     screens: screens.filter((s) => s.page === p.name).length,
   }));
   return {
-    key: meta.key, name: meta.name || file.name, project: meta.project?.name || null, lastModified: meta.lastModified || file.lastModified,
+    key: meta.key, kind: acc.library ? 'library' : 'product', name: meta.name || file.name, project: meta.project?.name || null, lastModified: meta.lastModified || file.lastModified,
     url: `https://www.figma.com/design/${meta.key}`, truncated: Boolean(meta.truncated),
     pages, screens, groups: groupScreens(screens), acc, score: score(acc, screens),
   };

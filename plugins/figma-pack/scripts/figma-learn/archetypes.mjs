@@ -25,6 +25,8 @@ const SIGNALS = {
   chart: /chart|график|диаграм/,
   kpi: /kpi|stat card|метрик|показател/,
   kanban: /kanban|канбан|board column|колонка доски/,
+  appCard: /application card|карточка заявки|deal card|lead card/,
+  listItem: /cell\/list item|list item|transfer row|operation row|строка операц/,
   tabs: /tabs?\b|tab-|segment|вкладк/,
   alert: /alert|warning|предупрежд|уведомлен/,
   empty: /empty|пусто|нет данных/,
@@ -75,6 +77,10 @@ export function classify(frame, maps, title = frame.name) {
   if (f.stepper && f.input >= 2) s.wizard += 2;
   if (/канбан|kanban|доска|board|конвейер|pipeline/.test(name)) s.board += 2;
   if (f.kanban >= 2) s.board += 2;
+  // A pipeline of application cards in columns is a board even with KPI cards above it.
+  if (f.appCard >= 4) s.board += 3;
+  // Mobile and web lists without a table: repeated list rows.
+  if (f.listItem >= 3) s.list += 3;
   if (f.table) s.record -= 1;
   const [best, score] = Object.entries(s).sort((a, b) => b[1] - a[1])[0];
   return { archetype: score >= 2 ? best : 'other', scores: s, features: f };

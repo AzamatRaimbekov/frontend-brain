@@ -42,7 +42,7 @@ export function renderReport(r) {
   ];
   if (h.rawHex.length) {
     out.push('Сырые hex (чаще всего) и ближайший токен 2.theme:', '');
-    out.push(...table(['hex', 'Раз', 'Токен', 'Совпадение'], h.rawHex.slice(0, 12).map((x) => [x.hex, x.count, x.token?.name || '—', x.token ? (x.token.exact ? 'точное' : `≈ ${x.token.distance}`) : '—'])), '');
+    out.push(...table(['hex', 'Раз', 'Токен', 'Совпадение'], h.rawHex.slice(0, 12).map((x) => [x.hex, x.count, x.token?.name || '—', x.token ? (x.token.exact ? 'точное' : x.token.far ? `далеко, ≈ ${x.token.distance}: цвет вне палитры` : `≈ ${x.token.distance}`) : '—'])), '');
   }
   out.push('## Бэклог кита (топ)', '');
   if (r.gaps.length) out.push(...table(['Что', 'Вид', 'Раз', 'Файлы', 'Действие'], r.gaps.slice(0, 15).map((g) => [esc(g.name), g.kind, g.count, esc(g.files.join(', ')), g.action])), '');
