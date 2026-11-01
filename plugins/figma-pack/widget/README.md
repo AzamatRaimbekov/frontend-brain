@@ -1,0 +1,110 @@
+# Mbank Tokens — виджет Figma для токенов
+
+Виджет живёт прямо на холсте файла: доска токенов Mbank, общая для всей команды (состояние синхронизировано через Figma, все видят одни и те же правки). Отсюда токены правят, проверяют контраст, записывают в переменные Figma и выгружают для кода.
+
+Работает в Figma Design и FigJam (в FigJam — доска, правка и выгрузка; запись в переменные только в Figma Design).
+
+> Проверено на имитации Widget API и Plugin API (`test/`). В настоящей Figma виджет ещё не запускали — первый запуск пришлите скриншотом и отчётом «Применить».
+
+## Поставить (дизайнеру, без сборки)
+
+`dist/` лежит в репозитории, собирать ничего не нужно.
+
+1. Figma Desktop → меню **Widgets** → **Development** → **Import widget from manifest…**
+2. Выбрать файл `plugins/figma-pack/widget/manifest.json`.
+3. На холсте: **Resources** (Shift+I) → **Widgets** → **Development** → **Mbank Tokens** → перетащить на холст.
+
+*[скриншот: доска на холсте]* — шапка «Mbank Tokens», переключатель брендов bank / kassa / travel / artwin / koko, четыре счётчика, вкладки групп и таблица токенов.
+
+## Что видно на доске
+
+- **Бренд** — переключатель сверху (или выпадающий список в свойствах виджета). Меняет столбцы `1.brand`; токены `2.theme` от бренда не зависят.
+- **Счётчики**: токенов в карте Mbank, токенов проекта, изменённых относительно `tokens.json`, проблем контраста AA (текст на своей подложке, light и dark).
+- **Строка**: образцы light и dark, CSS-имя (`--primary`), переменная Figma (`2.theme / accent/primary/default`), чипы статуса:
+  - `✓ в файле` — переменная есть в этом файле и значение совпадает;
+  - `≠ файл` — переменная есть, значение другое;
+  - `нет в файле` — переменной нет;
+  - `в библиотеке` — локальной коллекции нет, но подключённая библиотека публикует переменную с этим именем (значения не сравниваются);
+  - `изменён` / `новый` — отличается от `tokens.json` (источник в репозитории) или это токен проекта;
+  - `AA` — текст не проходит контраст (подсказка при наведении).
+- Клик по строке открывает окно на этом токене.
+
+Статусы появляются после **«Проверить файл»** (свойства виджета). Проверка читает локальные коллекции `2.theme` и `1.brand` этого файла.
+
+## Свойства виджета (выделить виджет → панель сверху)
+
+| Кнопка | Что делает |
+|---|---|
+| Бренд | переключить бренд доски |
+| Редактировать | окно правки (вкладки ниже) |
+| Проверить файл | перечитать переменные файла, обновить статусы |
+| Применить в Figma | окно на вкладке «Figma»: сначала «Что изменится», потом «Применить» |
+| Синхронизация с кодом | окно на вкладке «Код» |
+
+## Окно
+
+1. **Токены** — все токены, поиск и фильтр по группе. Поле light/dark принимает `#hex` или `var(--токен)`. `↺` возвращает значение из `tokens.json`. Строки `--brand-kassa` и т.п. (`2.theme brand/<бренд>/*`) правятся через бренд — они повторяют тёмное значение бренда.
+2. **Новый токен** — токен проекта `<префикс>-<роль>` (kebab-case, префикс по умолчанию `mb`), тип color / radius / size, light и dark, пара для проверки контраста (по умолчанию `X-foreground` проверяется на `X`). Ошибки показываются сразу. В Figma станет `2.theme / custom/<префикс>/<роль>`.
+3. **Бренд из цвета** — один цвет → 12 слотов бренда (default, hover, active, on-accent… ghost-*), предпросмотр с контрастом, «Записать в бренд» меняет текущий бренд на доске.
+4. **Привязки** — контракт компонента (`builder/contracts`, те же 16, что в DS Builder): где × часть × свойство × состояние → токен. Правка хранится в виджете и выгружается во вкладке «Код».
+5. **Код** — выгрузка и загрузка (ниже).
+6. **Figma** — проверка и запись в переменные.
+
+## Применить в Figma
+
+- Пишет в `2.theme` (режимы `light` / `dark`) и `1.brand` (режим на бренд). Нет коллекции или режима — создаёт; всё созданное есть в отчёте.
+- По умолчанию пишет только изменённые токены и токены проекта; галочка «все токены» — для пустого файла.
+- Цвет записывается **ссылкой на примитив** файла с точно таким же значением; если такого нет — hex, и каждая такая запись в отчёте отдельной строкой («Hex без примитива»). Молча hex виджет не ставит.
+- Новым переменным ставятся scopes (текст / обводка / заливка по имени, как в DS Builder) и code syntax `var(--токен)`.
+- «Что изменится (без записи)» показывает тот же отчёт, ничего не меняя.
+
+Важно: в продуктовом файле, где Mbank Foundation подключён библиотекой, «Применить» создаст **локальные** коллекции с теми же именами. Правьте токены в файле Foundation (или в его ветке), а не в продуктовом файле.
+
+## Синхронизация с кодом
+
+Вкладка «Код» → «Скачать»:
+
+| Файл | Для чего |
+|---|---|
+| `tokens.json` | форма контракта-владельца `skills/mbank-figma-patterns/references/tokens.json` |
+| `mbank-tokens-raw.json` | тот же дамп, что даёт `read-tokens.js` (`mbank-figma-raw/1`) |
+| `registry-mbank-<бренд>.json` | shadcn `registry:base` одного бренда |
+| `tokens-<бренд>.css` | тема Tailwind v4 + shadcn для одного бренда (превью; канонический CSS собирает `tokens-build`) |
+| `<компонент>.json` | изменённые контракты компонентов |
+
+Команды (корень репозитория frontend-brain; окно показывает их с кнопкой «Копировать»):
+
+```bash
+cp ~/Downloads/tokens.json plugins/figma-pack/skills/mbank-figma-patterns/references/tokens.json
+node plugins/design-engine/scripts/sync-contracts.mjs      # копия во frontend-pack + tokens.css
+# или из сырого дампа, как после read-tokens.js:
+node plugins/frontend-pack/scripts/tokens-build.mjs --from ~/Downloads/mbank-tokens-raw.json --tokens plugins/figma-pack/skills/mbank-figma-patterns/references/tokens.json
+node plugins/design-engine/scripts/sync-contracts.mjs
+# контракты компонентов:
+cp ~/Downloads/button.json plugins/figma-pack/builder/contracts/
+node plugins/design-engine/scripts/sync-contracts.mjs && node plugins/frontend-pack/scripts/contract-to-code.mjs
+npm test
+```
+
+**Загрузить**: вставить `tokens.json` → отличия от вшитого источника становятся правками доски, `custom/*` — токенами проекта (текущие правки заменяются). Сетевой синхронизации нет: в виджете нет секретов, `networkAccess: none`.
+
+## Разработчику
+
+```
+widget/
+  manifest.json        containsWidget, editorType figma + figjam, permissions teamlibrary
+  core/                чистая логика (node:test): model, checks, brand-gen, sync, exports, io
+  src/code.jsx         виджет: useSyncedState / useSyncedMap / usePropertyMenu
+  src/board.jsx        доска на холсте
+  src/actions.js       действия меню и окна; src/figma-io.js — чтение и запись переменных
+  src/ui/              окно (обычный HTML/JS), цвета — роли Mbank, вшиваются при сборке
+  scripts/build.mjs    esbuild → dist/code.js + dist/ui.html
+  test/                core.test.mjs, widget.test.mjs (dist/code.js на builder/test/figma-mock.mjs)
+```
+
+Источник токенов вшит при сборке: `skills/mbank-figma-patterns/references/tokens.json`, карта CSS ↔ Figma — `builder/core/token-map.js`, контракты — `builder/contracts/*.json`. После их изменения пересоберите `dist`:
+
+```bash
+cd plugins/figma-pack/widget && npm install && npm run build   # esbuild; node_modules не коммитить
+node --test plugins/figma-pack/widget/test/*.test.mjs           # из корня; входит в npm test
+```

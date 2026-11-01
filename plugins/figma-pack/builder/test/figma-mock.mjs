@@ -178,6 +178,65 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
   return { figma, vars, cols, nodes, textStyles, loaded };
 }
 
+/**
+ * Widget API stubs on top of createFigma (figma-pack/widget tests): figma.widget with h, layout
+ * components as plain tags, synced state/maps, property menu; plus the plugin calls a widget uses.
+ * render() runs the registered component and expands function components into a plain tree.
+ */
+export function installWidget(figma) {
+  const state = new Map();
+  const maps = new Map();
+  const sent = [];
+  let menu = null;
+  let component = null;
+  const h = (type, props, ...children) => ({ type, props: props || {}, children: children.flat(Infinity).filter((c) => c !== null && c !== undefined && c !== false) });
+  const syncedMap = () => {
+    const m = new Map();
+    return {
+      get: (k) => m.get(k), set: (k, v) => { m.set(k, JSON.parse(JSON.stringify(v))); }, delete: (k) => { m.delete(k); }, has: (k) => m.has(k),
+      keys: () => [...m.keys()], values: () => [...m.values()], entries: () => [...m.entries()], get size() { return m.size; },
+    };
+  };
+  figma.widget = {
+    h, Fragment: 'Fragment', AutoLayout: 'AutoLayout', Frame: 'Frame', Text: 'Text', Rectangle: 'Rectangle', Ellipse: 'Ellipse', SVG: 'SVG', Input: 'Input', Span: 'Span',
+    useSyncedState(key, init) {
+      if (!state.has(key)) state.set(key, typeof init === 'function' ? init() : init);
+      // Synced state must be JSON-serialisable in Figma: the copy proves it.
+      return [state.get(key), (v) => state.set(key, JSON.parse(JSON.stringify(typeof v === 'function' ? v(state.get(key)) : v === undefined ? null : v)))];
+    },
+    useSyncedMap(name) { if (!maps.has(name)) maps.set(name, syncedMap()); return maps.get(name); },
+    usePropertyMenu(items, handler) {
+      for (const i of items) if (i.itemType !== 'separator' && !i.propertyName) throw new Error('property menu item without propertyName');
+      menu = { items, handler };
+    },
+    useEffect() {},
+    useWidgetNodeId: () => 'widget:1',
+    waitForTask() {},
+    register(fn) { component = fn; },
+  };
+  figma.editorType = 'figma';
+  figma.notifications = [];
+  figma.notify = (text) => { figma.notifications.push(text); return { cancel() {} }; };
+  figma.closePlugin = () => { figma.closed = true; };
+  figma.showUI = (html, opts) => { figma.uiShown = { html, opts }; };
+  figma.ui = { postMessage: (m) => sent.push(m), onmessage: null };
+
+  const expand = (node) => {
+    if (!node || typeof node !== 'object') return node;
+    if (typeof node.type === 'function') return expand(node.type({ ...node.props, children: node.children }));
+    return { ...node, children: node.children.map(expand) };
+  };
+  const walk = (node, fn) => { if (node && typeof node === 'object') { fn(node); node.children.forEach((c) => walk(c, fn)); } };
+  return {
+    state, maps, sent,
+    get menu() { return menu; },
+    get registered() { return !!component; },
+    render() { menu = null; return expand(h(component, {})); },
+    texts(tree) { const out = []; walk(tree, (n) => { if (n.type === 'Text') out.push(n.children.join('')); }); return out; },
+    find(tree, fn) { const out = []; walk(tree, (n) => { if (fn(n)) out.push(n); }); return out; },
+  };
+}
+
 // Builds a small shadcn-kit-shaped file: Tailwind -> Style -> Mode, plus a legacy custom token.
 export async function seedKit(figma, tokens) {
   const v = figma.variables;

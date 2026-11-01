@@ -1,0 +1,16 @@
+{
+  "name": "mbank-tokens-widget",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Figma widget Mbank Tokens: token board on the canvas, editing, apply to Figma variables, export for code",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "@figma/widget-typings": "^1.12.0"
+  }
+}

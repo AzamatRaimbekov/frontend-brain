@@ -15,6 +15,8 @@ design-engine   движок   связка дизайна и кода: конв
 | `claude plugin install frontend-pack@frontend-brain` | фронтендер: правила, кит, генерация страниц из спеки, ревью |
 | `claude plugin install design-engine@frontend-brain` | всё вместе: ТЗ → Figma → код одной командой |
 
+Приложение на стороне Figma — внутри figma-pack: **виджет Mbank Tokens** (`plugins/figma-pack/widget`, токены Mbank на холсте: правка, запись в переменные, выгрузка для кода) и **плагин DS Builder** (`plugins/figma-pack/builder`, экраны и компоненты из спеки и контрактов). Оба импортируются в Figma из `manifest.json` без сборки.
+
 ## Правила границ
 
 1. **Плагин не ссылается на файлы другого плагина.** Никаких относительных путей наружу (`../figma-pack/...`, `../../../frontend-pack/...`): после установки плагины лежат в разных папках кэша с версиями, и такая ссылка ломается. Проверка: `scripts/check-boundaries.mjs` в `npm test`.

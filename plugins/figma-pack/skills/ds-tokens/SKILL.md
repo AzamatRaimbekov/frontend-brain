@@ -43,6 +43,14 @@ Plugin «Токены» → «Новый проектный токен»: projec
 
 Components are generated from contracts, not drawn: plugin tab «Компоненты» renders `builder/contracts/<name>.json` into a component set with every fill, stroke, radius, padding, gap and height bound to a variable, and «Привязки» rebinds a token in Figma and in the contract at once. How bindings work and what to do with tokens the plugin had to create: [references/component-bindings.md](references/component-bindings.md).
 
+## Виджет Mbank Tokens
+
+For Mbank (2.theme + 1.brand, brands bank / kassa / travel / artwin / koko) the team configures tokens in the Figma **widget** Mbank Tokens, not in a separate app: [widget/README.md](../../widget/README.md). Import: Figma Desktop → Widgets → Development → Import widget from manifest → `plugins/figma-pack/widget/manifest.json`, then drop it on the canvas from Resources → Widgets → Development.
+
+- The board on the canvas is shared by everyone in the file: brand switcher, light/dark swatches, CSS name ↔ Figma variable, status against the file (`✓ в файле` / `≠ файл` / `нет в файле`), counters of edits, project tokens and AA contrast problems.
+- Property menu → «Редактировать»: edit a value, add a project token `<prefix>-<role>`, generate a brand from one colour, rebind a component contract. «Применить в Figma» writes `2.theme` / `1.brand` variables (dry run first; every created variable and raw hex is in the report). «Синхронизация с кодом» downloads `tokens.json`, the raw `read-tokens.js` dump, `registry:base` and `tokens.css`, and shows the commands (`sync-contracts.mjs`, `tokens-build.mjs --from`).
+- When the user asks to change Mbank tokens, point them to the widget first; after they export, run the commands it shows and `npm test`.
+
 ## Report
 
 ```

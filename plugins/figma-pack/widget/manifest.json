@@ -1,0 +1,13 @@
+{
+  "name": "Mbank Tokens",
+  "id": "mbank-tokens-mdigital",
+  "api": "1.0.0",
+  "widgetApi": "1.0.0",
+  "containsWidget": true,
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma", "figjam"],
+  "documentAccess": "dynamic-page",
+  "permissions": ["teamlibrary"],
+  "networkAccess": { "allowedDomains": ["none"] }
+}

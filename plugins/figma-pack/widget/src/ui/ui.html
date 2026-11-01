@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+/*CHROME*/
+* { box-sizing: border-box; }
+body { margin: 0; font: 12px/1.45 Inter, system-ui, sans-serif; color: var(--text); background: var(--page); }
+header { display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--page); z-index: 2; }
+header h1 { font-size: 14px; margin: 0 8px 0 0; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav button, .btn { border: 1px solid var(--border); background: var(--card); color: var(--text); border-radius: 8px; padding: 5px 10px; font: inherit; cursor: pointer; }
+nav button.on { background: var(--accentSoft); color: var(--accentText); border-color: var(--accentSoft); font-weight: 600; }
+.btn.primary { background: var(--brand); color: var(--onBrand); border-color: var(--brand); font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: default; }
+main { padding: 12px 14px 40px; }
+section { display: none; }
+section.on { display: block; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
+input, select, textarea { font: inherit; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 4px 6px; }
+input.hex { width: 104px; font-family: ui-monospace, monospace; }
+textarea { width: 100%; min-height: 160px; font-family: ui-monospace, monospace; font-size: 11px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+th { color: var(--muted); font-weight: 600; font-size: 11px; position: sticky; top: 46px; background: var(--page); }
+tr.focus td { background: var(--accentSoft); }
+.sw { display: inline-block; width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border); vertical-align: middle; }
+.muted { color: var(--muted); }
+.mono { font-family: ui-monospace, monospace; }
+.chip { display: inline-block; border-radius: 9px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+.t-success { background: var(--successBg); color: var(--successFg); }
+.t-warning { background: var(--warningBg); color: var(--warningFg); }
+.t-error { background: var(--errorBg); color: var(--errorFg); }
+.t-neutral { background: var(--neutralBg); color: var(--neutralFg); }
+.t-info { background: var(--infoBg); color: var(--infoFg); }
+.t-brand { background: var(--accentSoft); color: var(--accentText); }
+.box { border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin: 8px 0; background: var(--card); }
+.err { color: var(--errorFg); }
+pre { white-space: pre-wrap; margin: 4px 0; background: var(--soft); padding: 8px; border-radius: 8px; font-size: 11px; }
+ul { margin: 4px 0; padding-left: 18px; }
+#toast { position: fixed; bottom: 10px; left: 14px; right: 14px; padding: 8px 10px; border-radius: 8px; display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mbank Tokens</h1>
+  <select id="brand" title="Бренд"></select>
+  <nav id="tabs">
+    <button data-tab="tokens">Токены</button>
+    <button data-tab="extra">Новый токен</button>
+    <button data-tab="generate">Бренд из цвета</button>
+    <button data-tab="bind">Привязки</button>
+    <button data-tab="code">Код</button>
+    <button data-tab="figma">Figma</button>
+  </nav>
+  <span style="flex:1"></span>
+  <button class="btn" id="close">Закрыть</button>
+</header>
+<main>
+  <section id="tab-tokens"></section>
+  <section id="tab-extra"></section>
+  <section id="tab-generate"></section>
+  <section id="tab-bind"></section>
+  <section id="tab-code"></section>
+  <section id="tab-figma"></section>
+</main>
+<div id="toast"></div>
+</body>
+</html>
