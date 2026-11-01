@@ -53,7 +53,11 @@ export function findColor(t, token, depth = 0) {
   if (mode && mode.resolvedType === 'COLOR') return mode;
   const m = TOKEN_MAP.colors[token];
   if (m && m.alias && depth < 4) return findColor(t, m.alias, depth + 1);
-  if (m && m.figma) { const v = pick(t, m.figma, 'COLOR', m.collection); if (v) return v; }
+  if (m && m.figma) {
+    // 1.brand slots are "brand/<slot>" in Foundation and in the widget; older maps name them "<slot>".
+    const v = pick(t, m.figma, 'COLOR', m.collection) || (m.collection === '1.brand' && pick(t, `brand/${m.figma}`, 'COLOR', m.collection));
+    if (v) return v;
+  }
   return pick(t, token, 'COLOR') || pick(t, `color/${token}`, 'COLOR') || pick(t, projectVar(token), 'COLOR');
 }
 

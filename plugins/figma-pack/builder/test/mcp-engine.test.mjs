@@ -55,3 +55,12 @@ test('MCP bundle: chunks under the use_figma limit, hashes match, engine builds 
   const proto = figma.root.children.find((p) => p.name === 'Прототип');
   assert.ok(proto, 'prototype page');
 });
+
+test('brand slots resolve as brand/<slot> in 1.brand (Foundation and widget naming)', async () => {
+  const { figma } = createFigma({ missingFonts: [] });
+  globalThis.figma = figma;
+  const brand = figma.variables.createVariableCollection('1.brand');
+  const v = figma.variables.createVariable('brand/default', brand, 'COLOR');
+  const { findColor, tokenIndex } = await import('../plugin/src/tokens-resolve.js');
+  assert.equal(findColor(await tokenIndex(), 'brand').id, v.id);
+});

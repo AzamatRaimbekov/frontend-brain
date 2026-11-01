@@ -142,7 +142,7 @@ export function initComponents({ $, esc, send, toast }) {
       busy(false);
       contracts = m.contracts;
       renderList();
-      $('cOut').textContent = `Страница «${m.page}»: собрано ${m.built}${m.failed.length ? `, не собраны: ${m.failed.join(', ')}` : ''}. Меняй привязки ниже — компонент обновится на месте.`;
+      $('cOut').textContent = `Страница «${m.page}»: собрано ${m.built}${m.failed.length ? `, не собраны: ${m.failed.join(', ')}` : ''}.${m.missing.length ? ` Нет токенов (${m.missing.length}): ${m.missing.join(', ')}.` : ' Все токены найдены.'} Меняй привязки ниже — компонент обновится на месте.`;
       toast(`Собрано компонентов: ${m.built}`);
     },
     'contract-new:done': (m) => { handlers['contract-render:done'](m); if (m.contract) { $('cSel').value = m.contract.name; send('contract-rows', { name: m.contract.name }); toast(`Создан ${m.contract.name}`); } },

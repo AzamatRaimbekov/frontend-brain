@@ -4,7 +4,38 @@
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "dist/ui.html",
-  "editorType": ["figma"],
+  "editorType": [
+    "figma"
+  ],
   "documentAccess": "dynamic-page",
-  "networkAccess": { "allowedDomains": ["none"] }
+  "networkAccess": {
+    "allowedDomains": [
+      "none"
+    ],
+    "devAllowedDomains": [
+      "http://localhost:3055"
+    ],
+    "reasoning": "Мост для Claude: локальный сервер figma-bridge на этом компьютере."
+  },
+  "menu": [
+    {
+      "name": "Открыть",
+      "command": "open"
+    },
+    {
+      "name": "Мост для Claude",
+      "command": "bridge"
+    },
+    {
+      "separator": true
+    },
+    {
+      "name": "Собрать все компоненты на одну страницу",
+      "command": "render-all"
+    },
+    {
+      "name": "Собрать экраны примера CRM",
+      "command": "build-example"
+    }
+  ]
 }

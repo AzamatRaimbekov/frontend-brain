@@ -225,6 +225,27 @@ const reportOf = (r, t, extra) => ({
   imported: t.imported, instances: r.instances, missingComponents: r.missingComponents,
 });
 
+// Figma keeps the placeholder colour of a bound paint when it replaces an existing paint on the same node
+// (seen in Figma Desktop: variants stayed magenta though bound to valid variables). Clearing the list and
+// assigning the bound paints again makes Figma resolve them.
+async function refreshPaints(root) {
+  const nodes = [root, ...(root.findAll ? root.findAll(() => true) : [])];
+  for (const n of nodes) {
+    for (const key of ['fills', 'strokes']) {
+      const list = n[key];
+      if (!Array.isArray(list) || !list.some((p) => p.boundVariables && p.boundVariables.color)) continue;
+      const next = [];
+      for (const p of list) {
+        const id = p.boundVariables && p.boundVariables.color && p.boundVariables.color.id;
+        const v = id && (await figma.variables.getVariableByIdAsync(id));
+        next.push(v ? figma.variables.setBoundVariableForPaint(p, 'color', v) : p);
+      }
+      n[key] = [];
+      n[key] = next;
+    }
+  }
+}
+
 function finish(node, c) {
   node.name = c.title || c.name;
   node.description = `mbank/component@1 · ${c.name}`;
@@ -238,6 +259,7 @@ async function renderSingle(r, t, page, found, c) {
   const node = found || figma.createComponent();
   if (!found) { page.appendChild(node); node.x = GAP; node.y = GAP + Math.max(0, ...page.children.filter((n) => n !== node).map((n) => n.y + n.height)); }
   await renderVariant(r, node, c, {}, 'default');
+  await refreshPaints(node);
   const contract = finish(node, c);
   return { contract, report: reportOf(r, t, { setId: node.id, page: page.name, variants: 1, created: found ? 0 : 1, updated: found ? 1 : 0, stale: [], pruned: false }) };
 }
@@ -272,6 +294,7 @@ export async function renderContract(c, opts = {}) {
   } else for (const n of fresh) set.appendChild(n);
   for (const s of diff.stale) if (opts.prune) set.children.find((n) => n.id === s.id)?.remove();
   layoutGrid(set, c, comps);
+  await refreshPaints(set);
   const contract = finish(set, c);
   return {
     contract,

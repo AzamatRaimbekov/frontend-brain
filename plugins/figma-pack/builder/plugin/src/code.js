@@ -11,8 +11,12 @@ import { contractHandlers } from './contracts.js';
 import { screenVars } from './tokens-resolve.js';
 // Built in by scripts/build.mjs from builder/contracts/*.json (fixtures until the extractor lands).
 import BUNDLED_CONTRACTS from 'ds:contracts';
+import EXAMPLE_SPEC from '../../examples/credit-crm.spec.json';
+import { startBridge } from './bridge.js';
 
-figma.showUI(__html__, { width: 520, height: 720, themeColors: true });
+// Menu commands (manifest "menu") run without the window: an agent or a designer starts them from Plugins → DS Builder.
+const COMMAND = figma.command && figma.command !== 'open' ? figma.command : null;
+if (COMMAND !== 'bridge') figma.showUI(__html__, { width: 520, height: 720, themeColors: true, visible: !COMMAND });
 
 let kitCache = null;
 const post = (type, data) => figma.ui.postMessage({ type, ...data });
@@ -76,7 +80,7 @@ const handlers = {
   ...contractHandlers(BUNDLED_CONTRACTS),
 };
 
-figma.ui.onmessage = async (m) => {
+if (COMMAND !== 'bridge') figma.ui.onmessage = async (m) => {
   const fn = handlers[m.type];
   if (!fn) return;
   try {
@@ -85,3 +89,29 @@ figma.ui.onmessage = async (m) => {
     post('error', { for: m.type, message: String(e && e.message ? e.message : e) });
   }
 };
+
+const COMMANDS = {
+  async 'render-all'() {
+    const r = await handlers['contract-render-all']({ create: false });
+    return `Компоненты: ${r.built} на странице «${r.page}»${r.failed.length ? `, не собраны: ${r.failed.join(', ')}` : ''}${r.missing.length ? ` · нет токенов (${r.missing.length}): ${r.missing.slice(0, 8).join(', ')}` : ' · все токены найдены'}`;
+  },
+  async 'build-example'() {
+    const r = await handlers.build({ spec: EXAMPLE_SPEC, brand: 'bank', theme: 'light' });
+    if (r.errors) return `Спека с ошибками: ${r.errors.slice(0, 3).join('; ')}`;
+    return `Экраны: ${r.result.frames.length} фреймов, ${r.result.sections.length} экранов · компоненты кита ${r.result.stats.instances}, нарисовано плагином ${r.result.stats.fallbacks}`;
+  },
+};
+
+if (COMMAND === 'bridge') {
+  startBridge({ ...handlers, 'render-all': () => handlers['contract-render-all']({ create: false }) });
+} else if (COMMAND) {
+  (async () => {
+    try {
+      const msg = await COMMANDS[COMMAND]();
+      console.log(`[DS Builder] ${msg}`);
+      figma.closePlugin(msg);
+    } catch (e) {
+      figma.closePlugin(`Ошибка: ${String(e && e.message ? e.message : e)}`);
+    }
+  })();
+}

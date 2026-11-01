@@ -106,18 +106,20 @@ export function contractHandlers(bundled) {
       resetLibraryImports();
       const done = [];
       const failed = [];
+      const missing = new Set();
       for (const { contract } of allContracts(bundled).values()) {
         if (validateContract(contract).length) { failed.push(contract.name); continue; }
         const c = { ...contract, figma: { ...(contract.figma || {}), page: PAGE } };
         const res = await render(c, { ...m, focus: false });
         if (res.errors) failed.push(c.name); else done.push({ contract: res.contract, setId: res.report.setId });
+        for (const x of (res.report && res.report.missing) || []) missing.add(`${x.kind}:${x.token}`);
       }
       const page = await componentsPage(PAGE);
       const removed = await dropStrays(page, done.map((d) => d.contract.name));
       const sections = await kitSheet(page, done);
       await figma.setCurrentPageAsync(page);
       if (sections.length) figma.viewport.scrollAndZoomIntoView(sections);
-      return { built: done.length, failed, removed, page: page.name, contracts: await summary(bundled) };
+      return { built: done.length, failed, removed, missing: [...missing], page: page.name, contracts: await summary(bundled) };
     },
     async 'contract-rows'(m) {
       const c = get(bundled, m.name);

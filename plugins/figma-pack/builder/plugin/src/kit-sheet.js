@@ -25,7 +25,7 @@ export function propsLine(c) {
   const parts = Object.entries(c.props || {}).map(([p, d]) => `${p}: ${(d.values || []).join(', ')}`);
   const states = (c.states || []).filter((s) => s !== 'default');
   if (states.length) parts.push(`состояния: ${states.join(', ')}`);
-  return parts.join('   ·   ') || 'один вариант';
+  return parts.join('   ·   ');
 }
 
 async function paint(t, token, fallback) {
@@ -63,7 +63,7 @@ async function card(page, c, set, look) {
   for (const n of [...doc.children]) if (n !== set) n.remove();
   const variants = set.type === 'COMPONENT_SET' ? set.children.length : 1;
   doc.insertChild(0, label(look.font, c.title || c.name, 28, 'Bold', [look.text]));
-  doc.insertChild(1, label(look.font, `${variants} ${variants === 1 ? 'вариант' : 'вариантов'}   ·   ${propsLine(c)}`, 14, 'Regular', [look.muted]));
+  doc.insertChild(1, label(look.font, [`${variants} ${variants === 1 ? 'вариант' : 'вариантов'}`, propsLine(c)].filter(Boolean).join('   ·   '), 14, 'Regular', [look.muted]));
   set.fills = [look.surface];
   set.cornerRadius = 16;
   if (set.parent !== doc) doc.appendChild(set); // moving a set keeps its instances linked

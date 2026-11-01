@@ -146,3 +146,4 @@ test('prototype: false skips links and the page', async () => {
   assert.equal(page({ figma }, 'Прототип'), undefined);
   assert.equal(res.prototype, undefined);
 });
+

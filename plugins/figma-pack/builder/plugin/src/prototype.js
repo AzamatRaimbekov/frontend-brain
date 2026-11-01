@@ -61,7 +61,12 @@ export async function wireFrames(frames, links) {
 // Replaces this project's flows on a page, keeps everyone else's.
 function setFlows(page, flows) {
   const names = flows.map((f) => f.name);
-  page.flowStartingPoints = [...(page.flowStartingPoints || []).filter((f) => !names.includes(f.name)), ...flows];
+  // Figma rejects two flows on one node: a new flow replaces any old flow (ours or not) that starts on its node,
+  // and only the first flow per node is kept.
+  const nodes = new Set(flows.map((f) => f.nodeId));
+  const seen = new Set();
+  page.flowStartingPoints = [...(page.flowStartingPoints || []).filter((f) => !names.includes(f.name) && !nodes.has(f.nodeId)), ...flows]
+    .filter((f) => (seen.has(f.nodeId) ? false : seen.add(f.nodeId)));
 }
 
 const flowName = (spec, vp, where) => [spec.project, where, vp === 'desktop' ? null : vp].filter(Boolean).join(' · ');

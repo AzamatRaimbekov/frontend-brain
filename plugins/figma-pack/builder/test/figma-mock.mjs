@@ -151,7 +151,16 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     getRangeAllFontNames() { return [this._font]; }
   }
 
-  const page = (name) => Object.assign(new Node('PAGE'), { name, flowStartingPoints: [] });
+  // Like Figma: assigning two flows that start on one node throws.
+  const page = (name) => {
+    const p = Object.assign(new Node('PAGE'), { name });
+    let flows = [];
+    Object.defineProperty(p, 'flowStartingPoints', {
+      get: () => flows,
+      set: (v) => { const ids = v.map((f) => f.nodeId); if (new Set(ids).size !== ids.length) throw new Error('in set_flowStartingPoints: Found duplicate input nodeIds'); flows = v; },
+    });
+    return p;
+  };
   const imported = new Map();
   const libCol = { id: 'VariableCollectionId:library', name: 'library', modes: [{ modeId: 'm', name: 'Mode 1' }], defaultModeId: 'm', variableIds: [] };
   function importByKey(kind, key) {
