@@ -120,7 +120,7 @@ test('bind a project token -> «Обновить компонент в файл�
   assert.equal(fillVar(m, after).name, 'custom/mb/promo-surface', 'fill rebound to the project token');
   assert.equal(fillVar(m, variant(set, 'variant=primary, size=md, state=hover')).name, 'accent/primary/hover', 'state keys untouched');
   assert.equal(m.vars.get(after.boundVariables.topLeftRadius.id).name, 'custom/mb/card-radius');
-  assert.deepEqual(after.children.map((n) => n.name), ['icon'], 'parts kept');
+  assert.deepEqual(after.children.map((n) => n.name), ['icon', 'label'], 'parts kept');
   for (const i of m.figma.root.findAllWithCriteria({ types: ['INSTANCE'] })) assert.ok(ids.includes(i.mainComponent.id), 'instances still linked');
   assert.equal(res.instances, 7);
   assert.deepEqual(res.pages, { Screens: 5, Checkout: 2 });
