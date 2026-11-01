@@ -13,7 +13,9 @@ export function rng(seed = 1) {
 }
 
 const pick = (r, list) => list[Math.floor(r() * list.length)];
-const money = (r) => `${(Math.round(r() * 2400 + 50) * 1000).toLocaleString('ru-RU').replace(/ /g, ' ')} с`;
+// Thousands by hand: Figma's sandbox has no locale data, toLocaleString('ru-RU') gave «956000».
+const groups = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+const money = (r) => `${groups(Math.round(r() * 2400 + 50) * 1000)} с`;
 const date = (r, time) => {
   const d = String(1 + Math.floor(r() * 28)).padStart(2, '0');
   const m = String(1 + Math.floor(r() * 10)).padStart(2, '0');

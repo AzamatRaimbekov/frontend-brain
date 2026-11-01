@@ -751,8 +751,11 @@
     ghost: [null, "foreground", null],
     destructive: ["destructive", "destructive-foreground", null]
   };
+  var BTN_VARIANT = { default: "primary", secondary: "secondary", outline: "outline", ghost: "ghost", destructive: "destructive", link: "link" };
+  var BTN_SIZE = { default: "md", sm: "sm", lg: "lg", icon: "icon" };
+  var BADGE_TONE = { default: "accent", secondary: "neutral", outline: "clear", destructive: "error", success: "success", warning: "warning", info: "info" };
   async function button(ctx, label2, variant = "default", sz = "default") {
-    const inst = await instance(ctx, "button", { variant, size: sz, type: variant, style: variant }, label2);
+    const inst = await instance(ctx, "button", { variant: BTN_VARIANT[variant] || variant, size: BTN_SIZE[sz] || sz, type: variant, style: variant, state: "default" }, label2);
     if (inst) return inst;
     ctx.stats.fallbacks++;
     const [bg, fg, border] = BTN[variant] || BTN.default;
@@ -769,8 +772,7 @@
     info: ["info", "info-foreground"]
   };
   async function badge(ctx, label2, variant = "secondary") {
-    const kitVariant = ["success", "warning", "info"].includes(variant) ? null : variant;
-    const inst = kitVariant && await instance(ctx, "badge", { variant: kitVariant, type: kitVariant }, label2);
+    const inst = await instance(ctx, "badge", { tone: BADGE_TONE[variant] || "neutral", fill: "ghost", shape: "rounded", size: "md", variant, type: variant }, label2);
     if (inst) return inst;
     ctx.stats.fallbacks++;
     const [bg, fg] = BADGE[variant] || BADGE.secondary;
@@ -778,24 +780,27 @@
     return add(b, await text(ctx, label2, { size: "xs", weight: "medium", color: fg }));
   }
   async function input(ctx, placeholder, o = {}) {
-    const inst = await instance(ctx, "input", { state: o.error ? "error" : "default" }, placeholder);
+    const inst = await instance(ctx, "input", { state: o.error ? "invalid" : "default", size: "md" }, placeholder);
+    if (inst) {
+      if (o.w && typeof o.w === "number") inst.resize(o.w, inst.height);
+    }
     if (inst) return inst;
     ctx.stats.fallbacks++;
     const f = box(ctx, "Input", { dir: "H", gap: 8, pad: [8, 12], fill: "background", stroke: o.error ? "destructive" : "input", radius: "md", align: "CENTER", w: o.w || "fill", h: 36 });
     return add(f, await text(ctx, placeholder, { size: "sm", color: "muted-foreground", truncate: true }));
   }
   async function avatar(ctx, name, d = 32) {
-    const inst = await instance(ctx, "avatar", {}, null);
+    const initials = String(name).split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+    const inst = await instance(ctx, "avatar", { size: d <= 24 ? "xs" : d <= 32 ? "sm" : d <= 40 ? "md" : "lg" }, initials);
     if (inst) return inst;
     ctx.stats.fallbacks++;
-    const initials = String(name).split(" ").map((w) => w[0]).slice(0, 2).join("");
     const a = box(ctx, "Avatar", { dir: "H", fill: "muted", radius: "full", align: "CENTER", justify: "CENTER", w: d, h: d });
     a.primaryAxisSizingMode = "FIXED";
     a.counterAxisSizingMode = "FIXED";
     return add(a, await text(ctx, initials, { size: "xs", weight: "medium", color: "muted-foreground" }));
   }
   async function checkbox(ctx, checked = false) {
-    const inst = await instance(ctx, "checkbox", { checked: checked ? "true" : "false", state: checked ? "checked" : "unchecked" }, null);
+    const inst = await instance(ctx, "checkbox", { checked: checked ? "true" : "false", state: checked ? "checked" : "default" }, null);
     if (inst) return inst;
     const c = figma.createRectangle();
     c.name = "Checkbox";
@@ -827,7 +832,8 @@
     return () => (s = s * 1664525 + 1013904223 >>> 0) / 2 ** 32;
   }
   var pick = (r, list2) => list2[Math.floor(r() * list2.length)];
-  var money = (r) => `${(Math.round(r() * 2400 + 50) * 1e3).toLocaleString("ru-RU").replace(/ /g, " ")} \u0441`;
+  var groups = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\xA0");
+  var money = (r) => `${groups(Math.round(r() * 2400 + 50) * 1e3)} \u0441`;
   var date = (r, time) => {
     const d = String(1 + Math.floor(r() * 28)).padStart(2, "0");
     const m = String(1 + Math.floor(r() * 10)).padStart(2, "0");

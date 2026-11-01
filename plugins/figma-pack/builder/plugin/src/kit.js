@@ -90,8 +90,13 @@ const BTN = {
   destructive: ['destructive', 'destructive-foreground', null],
 };
 
+// Screen words -> the Mbank kit's variant names (contracts/button.json, badge.json).
+const BTN_VARIANT = { default: 'primary', secondary: 'secondary', outline: 'outline', ghost: 'ghost', destructive: 'destructive', link: 'link' };
+const BTN_SIZE = { default: 'md', sm: 'sm', lg: 'lg', icon: 'icon' };
+const BADGE_TONE = { default: 'accent', secondary: 'neutral', outline: 'clear', destructive: 'error', success: 'success', warning: 'warning', info: 'info' };
+
 export async function button(ctx, label, variant = 'default', sz = 'default') {
-  const inst = await instance(ctx, 'button', { variant, size: sz, type: variant, style: variant }, label);
+  const inst = await instance(ctx, 'button', { variant: BTN_VARIANT[variant] || variant, size: BTN_SIZE[sz] || sz, type: variant, style: variant, state: 'default' }, label);
   if (inst) return inst;
   ctx.stats.fallbacks++;
   const [bg, fg, border] = BTN[variant] || BTN.default;
@@ -106,8 +111,7 @@ const BADGE = {
 };
 
 export async function badge(ctx, label, variant = 'secondary') {
-  const kitVariant = ['success', 'warning', 'info'].includes(variant) ? null : variant;
-  const inst = kitVariant && (await instance(ctx, 'badge', { variant: kitVariant, type: kitVariant }, label));
+  const inst = await instance(ctx, 'badge', { tone: BADGE_TONE[variant] || 'neutral', fill: 'ghost', shape: 'rounded', size: 'md', variant, type: variant }, label);
   if (inst) return inst;
   ctx.stats.fallbacks++;
   const [bg, fg] = BADGE[variant] || BADGE.secondary;
@@ -116,7 +120,8 @@ export async function badge(ctx, label, variant = 'secondary') {
 }
 
 export async function input(ctx, placeholder, o = {}) {
-  const inst = await instance(ctx, 'input', { state: o.error ? 'error' : 'default' }, placeholder);
+  const inst = await instance(ctx, 'input', { state: o.error ? 'invalid' : 'default', size: 'md' }, placeholder);
+  if (inst) { if (o.w && typeof o.w === 'number') inst.resize(o.w, inst.height); }
   if (inst) return inst;
   ctx.stats.fallbacks++;
   const f = box(ctx, 'Input', { dir: 'H', gap: 8, pad: [8, 12], fill: 'background', stroke: o.error ? 'destructive' : 'input', radius: 'md', align: 'CENTER', w: o.w || 'fill', h: 36 });
@@ -124,10 +129,10 @@ export async function input(ctx, placeholder, o = {}) {
 }
 
 export async function avatar(ctx, name, d = 32) {
-  const inst = await instance(ctx, 'avatar', {}, null);
+  const initials = String(name).split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+  const inst = await instance(ctx, 'avatar', { size: d <= 24 ? 'xs' : d <= 32 ? 'sm' : d <= 40 ? 'md' : 'lg' }, initials);
   if (inst) return inst;
   ctx.stats.fallbacks++;
-  const initials = String(name).split(' ').map((w) => w[0]).slice(0, 2).join('');
   const a = box(ctx, 'Avatar', { dir: 'H', fill: 'muted', radius: 'full', align: 'CENTER', justify: 'CENTER', w: d, h: d });
   a.primaryAxisSizingMode = 'FIXED';
   a.counterAxisSizingMode = 'FIXED';
@@ -135,7 +140,7 @@ export async function avatar(ctx, name, d = 32) {
 }
 
 export async function checkbox(ctx, checked = false) {
-  const inst = await instance(ctx, 'checkbox', { checked: checked ? 'true' : 'false', state: checked ? 'checked' : 'unchecked' }, null);
+  const inst = await instance(ctx, 'checkbox', { checked: checked ? 'true' : 'false', state: checked ? 'checked' : 'default' }, null);
   if (inst) return inst;
   const c = figma.createRectangle();
   c.name = 'Checkbox';
