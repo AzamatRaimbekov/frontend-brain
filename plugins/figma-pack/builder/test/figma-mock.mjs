@@ -3,7 +3,10 @@
 let seq = 0;
 const nid = (p) => `${p}:${++seq}`;
 
-export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
+// library: { variables: [{ key, name, type }], styles: [{ key, name, fontName }], components: [{ key, name }] } —
+// what importVariableByKeyAsync / importStyleByKeyAsync / importComponentByKeyAsync can reach (a file that
+// uses Foundation and Web components as libraries, like CRM UI KIT). Unknown keys throw, like Figma.
+export function createFigma({ missingFonts = ['Inter Mbank'], library = null } = {}) {
   const loaded = new Set();
   const vars = new Map();
   const cols = new Map();
@@ -130,6 +133,19 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
   }
 
   const page = (name) => Object.assign(new Node('PAGE'), { name });
+  const imported = new Map();
+  const libCol = { id: 'VariableCollectionId:library', name: 'library', modes: [{ modeId: 'm', name: 'Mode 1' }], defaultModeId: 'm', variableIds: [] };
+  function importByKey(kind, key) {
+    const hit = library && (library[kind] || []).find((x) => x.key === key);
+    if (!hit) throw new Error(`no published ${kind} with key ${key}`);
+    if (imported.has(key)) return imported.get(key);
+    let out;
+    if (kind === 'variables') { out = new Variable(hit.name, libCol, hit.type); out.remote = true; out.key = key; }
+    else if (kind === 'styles') { out = { id: `S:${key}`, key, name: hit.name, fontName: hit.fontName || { family: 'Inter', style: 'Regular' }, remote: true }; textStyles.push(out); }
+    else { out = new Component(); out.name = hit.name; out.key = key; out.remote = true; const t = new Text(); t.name = 'Label'; out.appendChild(t); out.createInstance = () => { const i = new Node('INSTANCE'); i.mainComponent = out; i.width = 60; i.height = 20; const l = new Text(); l.name = 'Label'; i.appendChild(l); return i; }; }
+    imported.set(key, out);
+    return out;
+  }
   const root = new Node('DOCUMENT');
   root.appendChild(page('Page 1'));
 
@@ -162,10 +178,13 @@ export function createFigma({ missingFonts = ['Inter Mbank'] } = {}) {
     createPage() { const p = page('Page'); root.appendChild(p); return p; },
     createNodeFromSvg(svg) { if (!svg.startsWith('<svg')) throw new Error('bad svg'); const f = new Node('FRAME'); const v = new Node('VECTOR'); v.strokes = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }]; f.appendChild(v); f.width = 24; f.height = 24; return f; },
     createTextStyle() { const s = { id: nid('S'), name: '', fontName: { family: 'Inter', style: 'Regular' } }; textStyles.push(s); return s; },
-    async getLocalTextStylesAsync() { return [...textStyles]; },
+    async getLocalTextStylesAsync() { return textStyles.filter((s) => !s.remote); },
+    async importStyleByKeyAsync(key) { return importByKey('styles', key); },
+    async importComponentByKeyAsync(key) { return importByKey('components', key); },
     variables: {
       async getLocalVariableCollectionsAsync() { return [...cols.values()]; },
-      async getLocalVariablesAsync() { return [...vars.values()]; },
+      async getLocalVariablesAsync() { return [...vars.values()].filter((v) => !v.remote); },
+      async importVariableByKeyAsync(key) { return importByKey('variables', key); },
       async getVariableByIdAsync(id) { return vars.get(id) || null; },
       async getVariableCollectionByIdAsync(id) { return cols.get(id) || null; },
       createVariableCollection: (name) => new Collection(name),

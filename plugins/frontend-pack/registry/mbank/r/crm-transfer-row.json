@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-transfer-row",
+  "type": "registry:component",
+  "title": "crm-transfer-row",
+  "description": "Figma CRM / Transfer row: table row of «Все переводы» (ID, date, sender, recipient, country, amount, channel, status badge), right cell dividers",
+  "dependencies": [],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/table",
+    "@mbank/badge"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/TransferRow.tsx",
+      "type": "registry:component",
+      "content": "import type * as React from \"react\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { Badge } from \"@/registry/mbank/ui/badge\"\nimport { TableCell, TableRow } from \"@/registry/mbank/ui/table\"\n\ntype BadgeTone = React.ComponentProps<typeof Badge>[\"tone\"]\n\nexport type Transfer = {\n  /** \"TR-80421951\". */\n  id: string\n  /** Already formatted: \"12.10.2026, 14:32\". */\n  dateTime: string\n  sender: string\n  recipient: string\n  country: string\n  /** Already formatted: \"185 000 KGS\". */\n  amount: string\n  /** \"Приложение\", \"Интернет-банк\". */\n  channel: string\n  /** { label: \"Успешно\", tone: \"success\" } — Figma Badge-status S rounded. */\n  status: { label: string; tone: BadgeTone }\n}\n\ntype TransferRowProps = {\n  transfer: Transfer\n  /** Opens the transfer card (Карточка перевода): the row becomes keyboard-focusable. */\n  onOpen?: (id: string) => void\n  className?: string\n}\n\n/* Figma TableCell: px 12, 44px row, body/s, right divider border/divider/primary. */\nconst cell = \"border-r border-border\"\n\n/**\n * Figma `CRM / Transfer row` (contract crm-transfer-row), the row of «Все переводы»: 8 cells\n * (ID, Дата и время, Отправитель, Получатель, Страна, Сумма, Канал, Статус), background surface,\n * bottom divider. Put it in <Table><TableBody>; the header row is TableHead cells with the same titles.\n */\nexport function TransferRow({ transfer: t, onOpen, className }: TransferRowProps) {\n  const onKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {\n    if (e.key !== \"Enter\" && e.key !== \" \") return\n    e.preventDefault()\n    onOpen?.(t.id)\n  }\n  return (\n    <TableRow\n      data-slot=\"transfer-row\"\n      tabIndex={onOpen ? 0 : undefined}\n      onClick={onOpen && (() => onOpen(t.id))}\n      onKeyDown={onOpen && onKeyDown}\n      className={cn(\"bg-background\", onOpen && \"cursor-pointer focus-visible:bg-surface-1 focus-visible:outline-none\", className)}\n    >\n      <TableCell data-slot=\"transfer-row-id-cell\" className={cell}>\n        {t.id}\n      </TableCell>\n      <TableCell data-slot=\"transfer-row-date-cell\" className={cell}>\n        {t.dateTime}\n      </TableCell>\n      <TableCell data-slot=\"transfer-row-sender-cell\" className={cell}>\n        {t.sender}\n      </TableCell>\n      <TableCell data-slot=\"transfer-row-recipient-cell\" className={cell}>\n        {t.recipient}\n      </TableCell>\n      <TableCell data-slot=\"transfer-row-country-cell\" className={cell}>\n        {t.country}\n      </TableCell>\n      <TableCell data-slot=\"transfer-row-amount-cell\" className={cell}>\n        {t.amount}\n      </TableCell>\n      <TableCell data-slot=\"transfer-row-channel-cell\" className={cell}>\n        {t.channel}\n      </TableCell>\n      <TableCell data-slot=\"transfer-row-status-cell\" className={cell}>\n        <Badge data-slot=\"transfer-row-status\" size=\"sm\" tone={t.status.tone}>\n          {t.status.label}\n        </Badge>\n      </TableCell>\n    </TableRow>\n  )\n}\n"
+    }
+  ]
+}

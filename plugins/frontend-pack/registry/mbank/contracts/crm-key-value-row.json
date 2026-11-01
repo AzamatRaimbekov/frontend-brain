@@ -1,0 +1,67 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "crm-key-value-row",
+  "title": "CRM / Key-value row",
+  "figma": {
+    "name": "CRM / Key-value row",
+    "page": "☰ CRM blocks",
+    "source": {
+      "file": "vVuM5uw3TsWo1xm3vJelXG",
+      "name": "[draft] Mbank CRM — тест ИИ",
+      "nodeId": "24:6539",
+      "uses": 26
+    }
+  },
+  "parts": [
+    "root",
+    "label",
+    "value"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 480
+    },
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "width": 180,
+      "sample": "Ключ"
+    },
+    "value": {
+      "kind": "text",
+      "layer": "Value",
+      "fill": true,
+      "sample": "Значение"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "row",
+      "align": "start",
+      "gap": 4,
+      "px": 0,
+      "py": 2,
+      "text": "sm"
+    },
+    "label": {
+      "text": "sm",
+      "fg": "muted-foreground",
+      "weight": "regular"
+    },
+    "value": {
+      "text": "sm",
+      "weight": "medium",
+      "fg": "foreground"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "kind": "block",
+    "file": "blocks/crm/KeyValueRow.tsx",
+    "slot": "key-value-row"
+  }
+}

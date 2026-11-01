@@ -48,7 +48,7 @@
 | `border` | цветовой токен | `border border-<t>` | stroke 1 px → `<t>` |
 | `border-width` | число px | `border-<n>` | strokeWeight |
 | `radius` | ключ шкалы (`xs` … `4xl`, `full`) | `rounded-<k>` | cornerRadius → переменная радиуса |
-| `height`, `px`, `py`, `gap`, `size` | шаг сетки 4 px (`11` = 44 px) | `h-11`, `px-4`, `gap-2`, `size-5` | высота, padding, itemSpacing (число или переменная отступа) |
+| `height`, `px`, `py`, `pt`, `pb`, `gap`, `size` | шаг сетки 4 px (`11` = 44 px) | `h-11`, `px-4`, `pt-1`, `gap-2`, `size-5` | высота, padding, itemSpacing (переменная отступа: `spacing/<шаг>` или Mbank `spacing/s-1` = 12 px) |
 | `text` | ключ шкалы текста (`xs` … `7xl`, `caption`) | `text-<k>` | текстовый стиль |
 | `weight` | `regular` / `medium` / `semibold` / `bold` | `font-<w>` | начертание шрифта |
 | `shadow` | ключ шкалы теней | `shadow-<k>` | effect style |
@@ -58,6 +58,47 @@
 Состояние — суффикс свойства: `bg:hover`, `fg:disabled`, `border:focus`. В коде это модификатор (`hover:`), в Figma — отдельный вариант `state=<s>` с тем же набором привязок поверх `default`.
 
 `code.extra` — классы, которые есть только в коде (поведение, svg-селекторы); Figma их не видит. Всё, что видно глазом, должно быть свойством контракта, иначе Figma и код разойдутся.
+
+`pt` / `pb` — отступ только сверху / снизу (шаг сетки, `pt-1`, Figma paddingTop / paddingBottom): так нарисованы подвал карточки заявки и маркер события.
+
+## Анатомия (`anatomy`): блоки, а не только контролы
+
+Необязательное поле — **только структура Figma, без токенов** (токены по-прежнему в `base` / `variants`). Нужно, когда компонент — блок из нескольких рамок, как `CRM / Application card`:
+
+```json
+"anatomy": {
+  "root":  { "width": 200 },
+  "top":   { "kind": "frame", "fill": true },
+  "id":    { "kind": "text", "parent": "top", "sample": "CL-240118" },
+  "badge": { "kind": "instance", "parent": "footer", "sample": "SLA 25 мин",
+             "component": { "name": "Badge-status", "key": "<ключ варианта в библиотеке>" } }
+}
+```
+
+| Поле | Что делает в Figma |
+|---|---|
+| `kind` | `text` / `frame` / `icon` / `instance` — вместо угадывания по имени части |
+| `parent` | вложенность: часть рисуется внутри рамки `parent` (стоит в `parts` раньше) |
+| `layer` | имя слоя в Figma (по умолчанию имя части). Берите имена и вложенность из локальной копии дизайнера — тогда Swap instance сохранит тексты |
+| `width` | фиксированная ширина в px (корень 480, подпись 180) |
+| `fill` | `true` = Fill container по горизонтали; без него — Hug, как нарисовал дизайнер |
+| `sides` | обводка только с этих сторон (`["bottom"]`, `["right"]` — разделители таблицы) |
+| `sample` | текст по умолчанию в слое |
+| `component` | экземпляр компонента библиотеки по ключу (`importComponentByKeyAsync`), иначе локальный с тем же именем |
+
+Контракт без свойств и с одним состоянием собирается **обычным компонентом** с именем `title` (не набором из одного варианта) — как локальные компоненты дизайнеров. `figma.page` — страница, куда плагин кладёт компонент (по умолчанию `Components`).
+
+## Блоки (`code.kind: "block"`)
+
+CRM-блоки (`registry/mbank/blocks/crm/*.tsx`) написаны руками: они собирают компоненты кита (Card, Badge, TableRow) и cva-карты, которую можно генерировать, в них нет. Поэтому для них выбран меньший честный вариант — **проверка, а не генерация**:
+
+```json
+"code": { "kind": "block", "file": "blocks/crm/KpiCard.tsx", "slot": "kpi-card", "inline": [] }
+```
+
+- `contracts-check` (design-engine): каждый токен существует в `tokens.css`, части и `anatomy` согласованы, `code.slot` задан; рендер в cva пропускается. Контракт с `figma` без `key` (компонента ещё нет в библиотеке) требует запись `status: "planned"` с `contract: <name>` в `components-map.json`; после публикации — `key`, `nodeId`, `mapped`.
+- `contract-to-code --check` (frontend-pack): у каждой части есть элемент `data-slot="<slot>"` (корень) / `data-slot="<slot>-<part>"`; части из `code.inline` — текст внутри родителя без своего элемента. `--write` / `--new` блоки не трогают.
+- Классы блока с контрактом не сверяются: значения переносятся в код руками при правке контракта (ревью сравнивает с таблицей привязок).
 
 ## Правила
 

@@ -1,0 +1,393 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "crm-transfer-row",
+  "title": "CRM / Transfer row",
+  "figma": {
+    "name": "CRM / Transfer row",
+    "page": "☰ CRM blocks",
+    "source": {
+      "file": "vVuM5uw3TsWo1xm3vJelXG",
+      "name": "[draft] Mbank CRM — тест ИИ",
+      "nodeId": "23:10079",
+      "uses": 10
+    }
+  },
+  "parts": [
+    "root",
+    "id-cell",
+    "id-content",
+    "id",
+    "date-cell",
+    "date-content",
+    "date",
+    "sender-cell",
+    "sender-content",
+    "sender",
+    "recipient-cell",
+    "recipient-content",
+    "recipient",
+    "country-cell",
+    "country-content",
+    "country",
+    "amount-cell",
+    "amount-content",
+    "amount",
+    "channel-cell",
+    "channel-content",
+    "channel",
+    "status-cell",
+    "status"
+  ],
+  "anatomy": {
+    "root": {
+      "sides": [
+        "bottom"
+      ]
+    },
+    "id-cell": {
+      "kind": "frame",
+      "layer": "TableCell 1",
+      "width": 124,
+      "sides": [
+        "right"
+      ]
+    },
+    "id-content": {
+      "kind": "frame",
+      "layer": "TextContent",
+      "parent": "id-cell",
+      "fill": true
+    },
+    "id": {
+      "kind": "text",
+      "layer": "Label",
+      "parent": "id-content",
+      "fill": true,
+      "sample": "TR-80421951"
+    },
+    "date-cell": {
+      "kind": "frame",
+      "layer": "TableCell 2",
+      "width": 156,
+      "sides": [
+        "right"
+      ]
+    },
+    "date-content": {
+      "kind": "frame",
+      "layer": "TextContent",
+      "parent": "date-cell",
+      "fill": true
+    },
+    "date": {
+      "kind": "text",
+      "layer": "Label",
+      "parent": "date-content",
+      "fill": true,
+      "sample": "12.10.2026, 14:32"
+    },
+    "sender-cell": {
+      "kind": "frame",
+      "layer": "TableCell 3",
+      "width": 160,
+      "sides": [
+        "right"
+      ]
+    },
+    "sender-content": {
+      "kind": "frame",
+      "layer": "TextContent",
+      "parent": "sender-cell",
+      "fill": true
+    },
+    "sender": {
+      "kind": "text",
+      "layer": "Label",
+      "parent": "sender-content",
+      "fill": true,
+      "sample": "Бакыт Токтогулов"
+    },
+    "recipient-cell": {
+      "kind": "frame",
+      "layer": "TableCell 4",
+      "width": 170,
+      "sides": [
+        "right"
+      ]
+    },
+    "recipient-content": {
+      "kind": "frame",
+      "layer": "TextContent",
+      "parent": "recipient-cell",
+      "fill": true
+    },
+    "recipient": {
+      "kind": "text",
+      "layer": "Label",
+      "parent": "recipient-content",
+      "fill": true,
+      "sample": "Иван Петров"
+    },
+    "country-cell": {
+      "kind": "frame",
+      "layer": "TableCell 5",
+      "width": 116,
+      "sides": [
+        "right"
+      ]
+    },
+    "country-content": {
+      "kind": "frame",
+      "layer": "TextContent",
+      "parent": "country-cell",
+      "fill": true
+    },
+    "country": {
+      "kind": "text",
+      "layer": "Label",
+      "parent": "country-content",
+      "fill": true,
+      "sample": "Россия"
+    },
+    "amount-cell": {
+      "kind": "frame",
+      "layer": "TableCell 6",
+      "width": 124,
+      "sides": [
+        "right"
+      ]
+    },
+    "amount-content": {
+      "kind": "frame",
+      "layer": "TextContent",
+      "parent": "amount-cell",
+      "fill": true
+    },
+    "amount": {
+      "kind": "text",
+      "layer": "Label",
+      "parent": "amount-content",
+      "fill": true,
+      "sample": "185 000 KGS"
+    },
+    "channel-cell": {
+      "kind": "frame",
+      "layer": "TableCell 7",
+      "width": 128,
+      "sides": [
+        "right"
+      ]
+    },
+    "channel-content": {
+      "kind": "frame",
+      "layer": "TextContent",
+      "parent": "channel-cell",
+      "fill": true
+    },
+    "channel": {
+      "kind": "text",
+      "layer": "Label",
+      "parent": "channel-content",
+      "fill": true,
+      "sample": "Приложение"
+    },
+    "status-cell": {
+      "kind": "frame",
+      "layer": "TableCell 8",
+      "width": 138,
+      "sides": [
+        "right"
+      ]
+    },
+    "status": {
+      "kind": "instance",
+      "layer": "Badge-status",
+      "parent": "status-cell",
+      "sample": "Успешно",
+      "component": {
+        "name": "Badge-status",
+        "set": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd",
+        "key": "4c16cc198bc2c10f229898b330166c1db17200b6",
+        "variant": "Size=S, Form=rounded, Appearance=Success, Status=Off, Icon=Off, Solid=off"
+      }
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "row",
+      "align": "center",
+      "bg": "background",
+      "border": "border",
+      "border-width": 1,
+      "text": "sm"
+    },
+    "id-cell": {
+      "layout": "row",
+      "align": "start",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1
+    },
+    "id-content": {
+      "layout": "column",
+      "gap": 1,
+      "px": 0,
+      "py": 3
+    },
+    "id": {
+      "text": "sm",
+      "weight": "regular",
+      "fg": "foreground"
+    },
+    "date-cell": {
+      "layout": "row",
+      "align": "start",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1
+    },
+    "date-content": {
+      "layout": "column",
+      "gap": 1,
+      "px": 0,
+      "py": 3
+    },
+    "date": {
+      "text": "sm",
+      "weight": "regular",
+      "fg": "foreground"
+    },
+    "sender-cell": {
+      "layout": "row",
+      "align": "start",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1
+    },
+    "sender-content": {
+      "layout": "column",
+      "gap": 1,
+      "px": 0,
+      "py": 3
+    },
+    "sender": {
+      "text": "sm",
+      "weight": "regular",
+      "fg": "foreground"
+    },
+    "recipient-cell": {
+      "layout": "row",
+      "align": "start",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1
+    },
+    "recipient-content": {
+      "layout": "column",
+      "gap": 1,
+      "px": 0,
+      "py": 3
+    },
+    "recipient": {
+      "text": "sm",
+      "weight": "regular",
+      "fg": "foreground"
+    },
+    "country-cell": {
+      "layout": "row",
+      "align": "start",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1
+    },
+    "country-content": {
+      "layout": "column",
+      "gap": 1,
+      "px": 0,
+      "py": 3
+    },
+    "country": {
+      "text": "sm",
+      "weight": "regular",
+      "fg": "foreground"
+    },
+    "amount-cell": {
+      "layout": "row",
+      "align": "start",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1
+    },
+    "amount-content": {
+      "layout": "column",
+      "gap": 1,
+      "px": 0,
+      "py": 3
+    },
+    "amount": {
+      "text": "sm",
+      "weight": "regular",
+      "fg": "foreground"
+    },
+    "channel-cell": {
+      "layout": "row",
+      "align": "start",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1
+    },
+    "channel-content": {
+      "layout": "column",
+      "gap": 1,
+      "px": 0,
+      "py": 3
+    },
+    "channel": {
+      "text": "sm",
+      "weight": "regular",
+      "fg": "foreground"
+    },
+    "status-cell": {
+      "layout": "row",
+      "align": "center",
+      "gap": 2,
+      "px": 3,
+      "border": "border",
+      "border-width": 1,
+      "py": 3
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "kind": "block",
+    "file": "blocks/crm/TransferRow.tsx",
+    "slot": "transfer-row",
+    "inline": [
+      "id-content",
+      "id",
+      "date-content",
+      "date",
+      "sender-content",
+      "sender",
+      "recipient-content",
+      "recipient",
+      "country-content",
+      "country",
+      "amount-content",
+      "amount",
+      "channel-content",
+      "channel"
+    ]
+  }
+}

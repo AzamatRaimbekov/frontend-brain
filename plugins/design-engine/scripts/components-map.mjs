@@ -23,7 +23,7 @@ export const DEFAULTS = {
   catalog: join(FIGMA, 'skills', 'mbank-design-system', 'references', 'catalog.json'),
   code: join(FRONTEND, 'registry', 'mbank'),
 };
-export const STATUSES = ['mapped', 'partial', 'missing', 'ignore', 'out-of-scope'];
+export const STATUSES = ['mapped', 'partial', 'missing', 'ignore', 'out-of-scope', 'planned'];
 const LINKED = new Set(['mapped', 'partial']);
 const KITS = ['web', 'crm', 'mobile'];
 
@@ -132,12 +132,29 @@ function checkTarget(idx, cat, t, errors) {
   }
 }
 
+// planned: the Figma component is not in the library yet; a contract (figma-pack builder/contracts/<contract>.json)
+// says how DS Builder builds it and the code component already exists. Once it is published and the catalog is
+// re-read, the entry must become mapped / partial with its key.
+function checkPlanned(e, catalog, idx, errors) {
+  const where = `${e.figma} (planned)`;
+  if (e.key || e.nodeId) errors.push(`${where}: a planned entry has no key or nodeId yet`);
+  if (!/^[a-z][a-z0-9-]*$/.test(e.contract ?? '')) errors.push(`${where}: planned needs "contract" (the contract name)`);
+  if (!e.proposal) errors.push(`${where}: planned needs a one-line "proposal" (where and why)`);
+  const published = catalog.components.find((c) => c.name === e.figma && c.kit === e.kit);
+  if (published) errors.push(`${where}: now in the library (${published.key}): set key, nodeId and status mapped`);
+  if (e.component) checkTarget(idx, {}, { ...e, when: null }, errors);
+}
+
 // Validates the map; returns a list of error strings (empty = valid).
 export function check(map, catalog, idx) {
   const errors = [];
   const byId = new Map(catalog.components.map((c) => [entryId(c), c]));
   const seen = new Set();
   for (const e of map.components ?? []) {
+    if (e.status === 'planned') {
+      checkPlanned(e, catalog, idx, errors);
+      continue;
+    }
     const id = e.key ?? `node:${e.nodeId ?? e.figma}`;
     const cat = byId.get(id);
     if (!cat) {

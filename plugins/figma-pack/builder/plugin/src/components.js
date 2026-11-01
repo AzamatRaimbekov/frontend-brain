@@ -1,7 +1,9 @@
 // Contract -> component set on the page «Components». One variant per props x states, auto layout
 // from the contract, every token property bound to a variable. Re-running updates the set in place:
 // variant components keep their node ids (instances stay linked), parts are reused by name.
-import { validateContract, variantList, resolveStyle, inherited, layoutFor, diffVariants, splitToken, partKind, statesOf, STEP } from '../../core/contract.js';
+// contract.anatomy nests parts (parent), fixes widths, fills, stroke sides, sample text and places
+// library instances (Badge-status), so a block like «CRM / Application card» is drawn as the designers drew it.
+import { validateContract, variantList, resolveStyle, inherited, layoutFor, diffVariants, splitToken, partKind, parentOf, statesOf, STEP } from '../../core/contract.js';
 import { TOKEN_MAP } from '../../core/token-map.js';
 import { TYPE_SCALE } from '../../core/tokens.js';
 import { createCtx, loadFonts, textStyle } from './draw.js';
@@ -15,18 +17,27 @@ const RADIUS_PX = { none: 0, '2xs': 2, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, '2xl
 const MAGENTA = { r: 1, g: 0, b: 1 };
 const WEIGHT_SUFFIX = { medium: '-md', semibold: '-strong', bold: '-strong' };
 
-export async function componentsPage() {
+/** Page for the set: contract.figma.page (e.g. «☰ CRM blocks» in CRM UI KIT), default «Components». */
+export async function componentsPage(name = PAGE) {
   await figma.loadAllPagesAsync();
-  const page = figma.root.children.find((p) => p.name === PAGE);
+  const page = figma.root.children.find((p) => p.name === name);
   if (page) return page;
   const p = figma.createPage();
-  p.name = PAGE;
+  p.name = name;
   return p;
 }
+export const pageOf = (c) => (c && c.figma && c.figma.page) || PAGE;
 
+// No props and one state: a plain COMPONENT named by the title (CRM / Key-value row), not a set of one.
+export const isSingle = (c) => !Object.keys(c.props || {}).length && statesOf(c).length === 1;
+
+const findType = (page, c, type) => page.findOne((n) => n.type === type && n.getPluginData(KEY) === c.name)
+  || page.findOne((n) => n.type === type && n.name === (c.title || c.name) && (type === 'COMPONENT_SET' || n.parent === page));
+
+/** The built node: a set, or for a single-variant contract its plain component (a set built before stays a set). */
 export function findSet(page, c) {
-  return page.findOne((n) => n.type === 'COMPONENT_SET' && n.getPluginData(KEY) === c.name)
-    || page.findOne((n) => n.type === 'COMPONENT_SET' && n.name === (c.title || c.name));
+  const set = findType(page, c, 'COMPONENT_SET');
+  return set || (isSingle(c) ? findType(page, c, 'COMPONENT') : null);
 }
 
 async function paintFor(r, value) {
@@ -47,8 +58,8 @@ async function ringFor(r, value) {
   return figma.variables.setBoundVariableForEffect(effect, 'color', v);
 }
 
-function bindFloat(r, node, fields, kind, value) {
-  const v = floatVar(r.t, kind, value);
+async function bindFloat(r, node, fields, kind, value) {
+  const v = await floatVar(r.t, kind, value);
   if (!v) { r.unbound++; return; }
   for (const f of fields) node.setBoundVariable(f, v);
   r.bound++;
@@ -56,28 +67,36 @@ function bindFloat(r, node, fields, kind, value) {
 
 const FLOAT_FIELDS = ['paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom', 'itemSpacing', 'width', 'height', 'minHeight', 'topLeftRadius', 'topRightRadius', 'bottomLeftRadius', 'bottomRightRadius'];
 
-async function applyFrame(r, node, s) {
+async function applyFrame(r, node, s, a = {}) {
   const L = layoutFor(s);
+  if (a.width) { // fixed width along the main axis (row) or the cross axis (column)
+    L.width = a.width;
+    if (L.layoutMode === 'HORIZONTAL') L.primaryAxisSizingMode = 'FIXED'; else L.counterAxisSizingMode = 'FIXED';
+  }
   for (const f of FLOAT_FIELDS) if (node.boundVariables && node.boundVariables[f]) node.setBoundVariable(f, null); // rebind from scratch
   for (const k of ['layoutMode', 'primaryAxisAlignItems', 'counterAxisAlignItems', 'itemSpacing', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom']) node[k] = L[k];
   node.primaryAxisSizingMode = L.primaryAxisSizingMode;
   node.counterAxisSizingMode = L.counterAxisSizingMode;
   if (L.width !== undefined || L.height !== undefined) node.resize(L.width || node.width, L.height || node.height);
   if (L.minHeight !== undefined) node.minHeight = L.minHeight;
-  if (s.px !== undefined) bindFloat(r, node, ['paddingLeft', 'paddingRight'], 'space', s.px);
-  if (s.py !== undefined) bindFloat(r, node, ['paddingTop', 'paddingBottom'], 'space', s.py);
-  if (s.gap !== undefined) bindFloat(r, node, ['itemSpacing'], 'space', s.gap);
-  if (s.size !== undefined) bindFloat(r, node, ['width', 'height'], 'space', s.size);
-  else if (s.height !== undefined) bindFloat(r, node, ['height'], 'space', s.height);
-  if (s['min-height'] !== undefined) bindFloat(r, node, ['minHeight'], 'space', s['min-height']);
+  if (s.px !== undefined) await bindFloat(r, node, ['paddingLeft', 'paddingRight'], 'space', s.px);
+  if (s.py !== undefined) await bindFloat(r, node, ['paddingTop', 'paddingBottom'], 'space', s.py);
+  if (s.pt !== undefined) await bindFloat(r, node, ['paddingTop'], 'space', s.pt);
+  if (s.pb !== undefined) await bindFloat(r, node, ['paddingBottom'], 'space', s.pb);
+  if (s.gap !== undefined) await bindFloat(r, node, ['itemSpacing'], 'space', s.gap);
+  if (s.size !== undefined) await bindFloat(r, node, ['width', 'height'], 'space', s.size);
+  else if (s.height !== undefined) await bindFloat(r, node, ['height'], 'space', s.height);
+  if (s['min-height'] !== undefined) await bindFloat(r, node, ['minHeight'], 'space', s['min-height']);
   node.fills = s.bg ? [await paintFor(r, s.bg)] : [];
   if (s.border) {
     node.strokes = [await paintFor(r, s.border)];
-    node.strokeWeight = s['border-width'] ?? 1;
+    const w = s['border-width'] ?? 1;
+    node.strokeWeight = w;
     node.strokeAlign = 'INSIDE';
+    if (a.sides) for (const side of ['Top', 'Right', 'Bottom', 'Left']) node[`stroke${side}Weight`] = a.sides.includes(side.toLowerCase()) ? w : 0;
   } else node.strokes = [];
   if (s.radius !== undefined) {
-    const v = floatVar(r.t, 'radius', s.radius);
+    const v = await floatVar(r.t, 'radius', s.radius);
     if (v) { for (const f of ['topLeftRadius', 'topRightRadius', 'bottomLeftRadius', 'bottomRightRadius']) node.setBoundVariable(f, v); r.bound++; }
     else node.cornerRadius = RADIUS_PX[s.radius] ?? 8;
   } else node.cornerRadius = 0;
@@ -93,7 +112,7 @@ async function pickTextStyle(r, size, weight) {
   const mapped = TOKEN_MAP.text[size];
   let st = null;
   for (const name of mapped ? [`${mapped}${WEIGHT_SUFFIX[weight] || ''}`, mapped] : []) {
-    const hit = local.get(name);
+    const hit = local.get(name) || (await libraryStyle(name));
     if (!hit) continue;
     try { await figma.loadFontAsync(hit.fontName); st = hit; break; } catch (e) { /* font not installed */ }
   }
@@ -105,15 +124,22 @@ async function pickTextStyle(r, size, weight) {
   return st;
 }
 
+// Web components text style through its baked key (CRM UI KIT uses it as a library).
+async function libraryStyle(name) {
+  const key = TOKEN_MAP.styleKeys && TOKEN_MAP.styleKeys[name];
+  if (!key || !figma.importStyleByKeyAsync) return null;
+  try { return await figma.importStyleByKeyAsync(key); } catch (e) { return null; }
+}
+
 const defaultText = (part, c) => ({ placeholder: 'Placeholder', description: 'Описание', value: 'Значение', hint: 'Подсказка' })[part] || c.title || c.name;
 
-async function applyText(r, node, style, part, c) {
+async function applyText(r, node, style, part, c, a = {}) {
   const size = inherited(style, part, 'text', 'sm');
   const weight = inherited(style, part, 'weight', 'regular');
   const st = await pickTextStyle(r, size, weight);
   try { await figma.loadFontAsync(node.fontName); } catch (e) { /* fresh node */ }
   node.fontName = st.fontName;
-  if (!node.characters) node.characters = defaultText(part, c);
+  if (!node.characters) node.characters = a.sample || defaultText(part, c);
   await node.setTextStyleIdAsync(st.id);
   node.fills = [await paintFor(r, inherited(style, part, 'fg', 'foreground'))];
   r.bound++; // text style
@@ -128,26 +154,57 @@ async function applyIcon(r, comp, style, part) {
   return node;
 }
 
-/** Styles one variant component in place; parts are reused by name so overrides survive. */
+// Library component (Badge-status) by key, else a local set/component with that name; null = not found.
+async function instanceOf(r, a) {
+  const { name, key } = a.component;
+  let main = null;
+  if (key && figma.importComponentByKeyAsync) { try { main = await figma.importComponentByKeyAsync(key); } catch (e) { /* library off */ } }
+  if (!main) {
+    const local = figma.root.findOne((n) => (n.type === 'COMPONENT_SET' || n.type === 'COMPONENT') && n.name === name);
+    main = local && local.type === 'COMPONENT_SET' ? local.defaultVariant : local;
+  }
+  if (!main) { if (!r.missingComponents.includes(name)) r.missingComponents.push(name); return null; }
+  const inst = main.createInstance();
+  const label = a.sample && inst.findOne && inst.findOne((n) => n.type === 'TEXT');
+  if (label) { try { await figma.loadFontAsync(label.fontName); label.characters = a.sample; } catch (e) { /* keep the library text */ } }
+  r.instances++;
+  return inst;
+}
+
+async function renderPart(r, holder, style, part, c) {
+  const kind = partKind(part, c);
+  const a = (c.anatomy && c.anatomy[part]) || {};
+  const layer = a.layer || part;
+  let node = holder.children.find((n) => n.name === layer);
+  const fits = node && (kind === 'text' ? node.type === 'TEXT' : kind === 'instance' ? node.type === 'INSTANCE' : kind === 'frame' && node.type === 'FRAME');
+  if (node && !fits) { node.remove(); node = null; }
+  if (kind === 'icon') node = await applyIcon(r, holder, style, part);
+  else if (kind === 'instance') node = node || (await instanceOf(r, a)) || figma.createFrame();
+  else if (kind === 'text') { node = node || figma.createText(); await applyText(r, node, style, part, c, a); }
+  else { node = node || figma.createFrame(); await applyFrame(r, node, style[part] || {}, a); }
+  node.name = layer;
+  holder.appendChild(node); // keeps contract order
+  const column = holder.layoutMode === 'VERTICAL';
+  const fill = c.anatomy ? !!a.fill : column && kind !== 'icon';
+  if (fill) node.layoutSizingHorizontal = 'FILL';
+  else if (kind === 'text' && a.width) { node.textAutoResize = 'HEIGHT'; node.resize(a.width, node.height); }
+  return node;
+}
+
+/** Styles one variant component in place; parts are reused by name (inside their parent) so overrides survive. */
 async function renderVariant(r, comp, c, props, state) {
   const style = resolveStyle(c, props, state);
-  await applyFrame(r, comp, style.root);
-  const column = comp.layoutMode === 'VERTICAL';
-  if (column && comp.counterAxisSizingMode === 'AUTO') { comp.resize(320, comp.height); comp.counterAxisSizingMode = 'FIXED'; } // FILL children need a fixed width
+  const rootA = (c.anatomy && c.anatomy.root) || {};
+  await applyFrame(r, comp, style.root, rootA);
+  if (comp.layoutMode === 'VERTICAL' && comp.counterAxisSizingMode === 'AUTO') { comp.resize(320, comp.height); comp.counterAxisSizingMode = 'FIXED'; } // FILL children need a fixed width
+  const holders = new Map([['root', comp]]);
   const keep = new Set();
   for (const part of c.parts.filter((p) => p !== 'root')) {
-    const kind = partKind(part);
-    let node = comp.children.find((n) => n.name === part);
-    if (node && (kind === 'icon' || (kind === 'text') !== (node.type === 'TEXT'))) { node.remove(); node = null; }
-    if (kind === 'icon') node = await applyIcon(r, comp, style, part);
-    else if (kind === 'text') { node = node || figma.createText(); await applyText(r, node, style, part, c); }
-    else { node = node || figma.createFrame(); await applyFrame(r, node, style[part] || {}); }
-    node.name = part;
-    comp.appendChild(node); // keeps contract order
-    if (column && kind !== 'icon') node.layoutSizingHorizontal = 'FILL';
+    const node = await renderPart(r, holders.get(parentOf(c, part)), style, part, c);
+    holders.set(part, node);
     keep.add(node);
   }
-  for (const n of [...comp.children]) if (!keep.has(n)) n.remove();
+  for (const h of holders.values()) if (h.type !== 'INSTANCE' && h.children) for (const n of [...h.children]) if (!keep.has(n)) n.remove();
 }
 
 function layoutGrid(set, c, comps) {
@@ -162,6 +219,28 @@ function layoutGrid(set, c, comps) {
   set.resizeWithoutConstraints(GAP + states.length * (w + GAP), GAP + rows * (h + GAP));
 }
 
+const reportOf = (r, t, extra) => ({
+  ...extra, bound: r.bound, unbound: r.unbound, missing: t.missing, createdTokens: t.created, fallbackFonts: r.ctx.stats.fallbackFonts,
+  imported: t.imported, instances: r.instances, missingComponents: r.missingComponents,
+});
+
+function finish(node, c) {
+  node.name = c.title || c.name;
+  node.description = `mbank/component@1 · ${c.name}`;
+  node.setPluginData(KEY, c.name);
+  const contract = { ...c, figma: { ...(c.figma || {}), name: node.name, nodeId: node.id, ...(node.key ? { key: node.key } : {}) } };
+  node.setPluginData('contract-json', JSON.stringify(contract));
+  return contract;
+}
+
+async function renderSingle(r, t, page, found, c) {
+  const node = found || figma.createComponent();
+  if (!found) { page.appendChild(node); node.x = GAP; node.y = GAP + Math.max(0, ...page.children.filter((n) => n !== node).map((n) => n.y + n.height)); }
+  await renderVariant(r, node, c, {}, 'default');
+  const contract = finish(node, c);
+  return { contract, report: reportOf(r, t, { setId: node.id, page: page.name, variants: 1, created: found ? 0 : 1, updated: found ? 1 : 0, stale: [], pruned: false }) };
+}
+
 /**
  * opts: { font, create (missing colour tokens -> Brand; default true), prune (remove stale variants) }.
  * Returns the report and the contract with figma.nodeId filled in.
@@ -169,12 +248,13 @@ function layoutGrid(set, c, comps) {
 export async function renderContract(c, opts = {}) {
   const errors = validateContract(c);
   if (errors.length) return { errors };
-  const page = await componentsPage();
+  const page = await componentsPage(pageOf(c));
   const t = await tokenIndex();
   const font = await loadFonts(opts.font || 'Inter');
-  const r = { t, ctx: createCtx({ vars: {}, radius: {}, font }), textStyles: new Map(), bound: 0, unbound: 0, create: opts.create !== false };
+  const r = { t, ctx: createCtx({ vars: {}, radius: {}, font }), textStyles: new Map(), bound: 0, unbound: 0, instances: 0, missingComponents: [], create: opts.create !== false };
   const wanted = variantList(c);
   let set = findSet(page, c);
+  if (isSingle(c) && (!set || set.type === 'COMPONENT')) return renderSingle(r, t, page, set, c);
   const existing = set ? set.children.filter((n) => n.type === 'COMPONENT').map((n) => ({ id: n.id, name: n.name })) : [];
   const diff = diffVariants(existing, wanted);
   const comps = [];
@@ -190,18 +270,13 @@ export async function renderContract(c, opts = {}) {
     set = figma.combineAsVariants(fresh, page);
   } else for (const n of fresh) set.appendChild(n);
   for (const s of diff.stale) if (opts.prune) set.children.find((n) => n.id === s.id)?.remove();
-  set.name = c.title || c.name;
-  set.description = `mbank/component@1 · ${c.name}`;
-  set.setPluginData(KEY, c.name);
   layoutGrid(set, c, comps);
-  const contract = { ...c, figma: { ...(c.figma || {}), name: set.name, nodeId: set.id, ...(set.key ? { key: set.key } : {}) } };
-  set.setPluginData('contract-json', JSON.stringify(contract));
+  const contract = finish(set, c);
   return {
     contract,
-    report: {
+    report: reportOf(r, t, {
       setId: set.id, page: page.name, variants: wanted.length, created: diff.create.length, updated: diff.keep.length,
-      stale: diff.stale.map((s) => s.name), pruned: !!opts.prune, bound: r.bound, unbound: r.unbound,
-      missing: t.missing, createdTokens: t.created, fallbackFonts: r.ctx.stats.fallbackFonts,
-    },
+      stale: diff.stale.map((s) => s.name), pruned: !!opts.prune,
+    }),
   };
 }

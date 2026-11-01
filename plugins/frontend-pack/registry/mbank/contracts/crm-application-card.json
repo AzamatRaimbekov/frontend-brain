@@ -1,0 +1,137 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "crm-application-card",
+  "title": "CRM / Application card",
+  "figma": {
+    "name": "CRM / Application card",
+    "page": "☰ CRM blocks",
+    "source": {
+      "file": "vVuM5uw3TsWo1xm3vJelXG",
+      "name": "[draft] Mbank CRM — тест ИИ",
+      "nodeId": "33:28",
+      "uses": 15
+    }
+  },
+  "parts": [
+    "root",
+    "top",
+    "id",
+    "time",
+    "name",
+    "amount",
+    "meta",
+    "footer",
+    "badge"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 200
+    },
+    "top": {
+      "kind": "frame",
+      "layer": "Top",
+      "fill": true
+    },
+    "id": {
+      "kind": "text",
+      "layer": "ID",
+      "parent": "top",
+      "sample": "CL-240118"
+    },
+    "time": {
+      "kind": "text",
+      "layer": "Time",
+      "parent": "top",
+      "sample": "09:14"
+    },
+    "name": {
+      "kind": "text",
+      "layer": "Name",
+      "fill": true,
+      "sample": "Асанов Нурлан"
+    },
+    "amount": {
+      "kind": "text",
+      "layer": "Amount",
+      "sample": "450 000 KGS"
+    },
+    "meta": {
+      "kind": "text",
+      "layer": "Meta",
+      "fill": true,
+      "sample": "Потребительский · 24 мес"
+    },
+    "footer": {
+      "kind": "frame",
+      "layer": "Footer",
+      "fill": true
+    },
+    "badge": {
+      "kind": "instance",
+      "layer": "Badge-status",
+      "parent": "footer",
+      "sample": "SLA 25 мин",
+      "component": {
+        "name": "Badge-status",
+        "set": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd",
+        "key": "b68afd3e0714ecefd38ee21793292c14ae240015",
+        "variant": "Size=S, Form=rounded, Appearance=Info, Status=Off, Icon=Off, Solid=off"
+      }
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "column",
+      "gap": 1,
+      "px": 3,
+      "py": 3,
+      "radius": "md",
+      "bg": "card",
+      "fg": "foreground"
+    },
+    "top": {
+      "layout": "row",
+      "align": "between"
+    },
+    "id": {
+      "text": "caption",
+      "fg": "muted-foreground",
+      "weight": "regular"
+    },
+    "time": {
+      "text": "caption",
+      "fg": "muted-foreground",
+      "weight": "regular"
+    },
+    "name": {
+      "text": "sm",
+      "weight": "medium",
+      "fg": "foreground"
+    },
+    "amount": {
+      "text": "base",
+      "weight": "bold",
+      "fg": "foreground"
+    },
+    "meta": {
+      "text": "caption",
+      "fg": "muted-foreground",
+      "weight": "regular"
+    },
+    "footer": {
+      "layout": "row",
+      "align": "start",
+      "pt": 1
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "kind": "block",
+    "file": "blocks/crm/ApplicationCard.tsx",
+    "slot": "application-card"
+  }
+}

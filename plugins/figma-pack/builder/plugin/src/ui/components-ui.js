@@ -37,6 +37,8 @@ export function initComponents({ $, esc, send, toast }) {
       ${r.stale.length ? `<span class="err">Нет в контракте (${r.pruned ? 'удалены' : 'оставлены, экземпляры не сломаны'}): ${r.stale.length}</span><br>` : ''}
       ${created.length ? `<span class="err">Созданы токены, задайте значения на вкладке «Токены»: ${esc(created.join(', '))}</span><br>` : ''}
       ${missing.length ? `<span class="err">Без переменной (${r.unbound}): ${esc(missing.join(', '))}</span><br>` : ''}
+      ${r.imported && r.imported.length ? `<span class="muted">Из библиотек Mbank подключено переменных: ${r.imported.length}</span><br>` : ''}
+      ${r.missingComponents && r.missingComponents.length ? `<span class="err">Не найден компонент библиотеки (подключите Web components): ${esc(r.missingComponents.join(', '))}</span><br>` : ''}
       ${r.fallbackFonts ? '<span class="muted">Шрифт стилей не установлен: использованы ds/* стили</span>' : ''}`;
   }
 

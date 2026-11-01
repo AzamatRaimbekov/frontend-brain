@@ -45,7 +45,7 @@ Card badge tones used in the frame: SLA `info`, SLA at risk `warning`, «Про�
 ## crm-key-value (35:225 cards, 35:228 row)
 
 - `KeyValueSection`: `title` (h2), `children` (rows, inside a `dl`), `action?`. Card p 20, `role="region"` named by the title.
-- `KeyValueRow`: `label`, `children` (value), `tone?: default | error | warning | success | muted`. 36px row, label column 196px; stacks on phones. Problem values (a missing document) use `tone="error"`.
+- `KeyValueRow`: `label`, `children` (value), `tone?: default | error | warning | success | muted`. 36px row, label column 180px + 16 gap, value medium, top-aligned (contract `crm-key-value-row`); stacks on phones. Problem values (a missing document) use `tone="error"`.
 
 ## crm-stage-stepper (35:2217 Stages)
 
@@ -55,7 +55,13 @@ Card badge tones used in the frame: SLA `info`, SLA at risk `warning`, «Про�
 ## crm-timeline (35:267 History, 35:269 item)
 
 - `Timeline`: `title` (h2), `children` (items, newest first, in an `ol`), `empty?`.
-- `TimelineItem`: `title`, `meta?`, `tone?` (dot colour), `dateTime?` (renders `<time>`).
+- `TimelineItem`: `title`, `meta?`, `tone?` (dot colour: border/accent/* as drawn), `dateTime?` (renders `<time>`).
+
+## crm-transfer-row — `TransferRow` (23:10079 `CRM / Transfer row`)
+
+`transfer: { id, dateTime, sender, recipient, country, amount, channel, status: { label, tone } }`, `onOpen?(id)` (row becomes focusable, Enter/Space open the transfer card), `className?`. A `TableRow` of 8 `TableCell`s with right dividers and a Badge-status; put it in `<Table><TableBody>` under `TableHead`s «ID, Дата и время, Отправитель, Получатель, Страна, Сумма, Канал, Статус». Column widths come from the table, not the row.
+
+Contracts: the five blocks the designers re-created locally (Key-value row, Application card, Transfer row, KPI card, Timeline item) have `mbank/component@1` contracts `registry/mbank/contracts/crm-*.json` (`code.kind: "block"`): every part has `data-slot="<slot>-<part>"`, checked by `contract-to-code --check`. Keep the slots when editing these blocks.
 
 ## crm-summary-header — `SummaryHeader` (35:212 Summary)
 
