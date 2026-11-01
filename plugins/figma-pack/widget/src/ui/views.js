@@ -1,9 +1,10 @@
-// Tabs of the iframe that talk to the sandbox per action: brand generator, contract bindings,
-// code sync (exports + import) and Figma apply. Results arrive as '<type>:done' messages (onDone).
+// Tabs of the iframe that talk to the sandbox per action: brand generator, code sync (exports +
+// import) and Figma apply; «Компоненты» is components-view.js. Results arrive as '<type>:done' (onDone).
 import { $, esc, send, ui, chip, swatch, toast } from './ui.js';
+import { propagationBox, onComponentDone } from './components-view.js';
 import { contrast } from '../../../builder/core/color.js';
 
-const view = { preview: null, contract: null, exports: null, report: null, contractName: null };
+const view = { preview: null, exports: null, report: null };
 
 // ---- brand from one colour ----
 export function renderGenerate() {
@@ -28,33 +29,6 @@ export function renderGenerate() {
   $('#g-color').oninput = (e) => { $('#g-hex').value = e.target.value; };
   $('#g-preview').onclick = () => send('gen-preview', { hex: $('#g-hex').value || $('#g-color').value });
   $('#g-apply').onclick = () => p && send('gen-apply', { hex: p.hex });
-}
-
-// ---- component contract bindings ----
-export function renderBind() {
-  const s = ui.state;
-  const c = view.contract;
-  const tokens = s.rows.filter((r) => r.kind === 'color').map((r) => r.css);
-  const radius = s.rows.filter((r) => r.kind === 'radius').map((r) => r.css.replace(/^radius-/, ''));
-  $('#tab-bind').innerHTML = `
-    <p class="muted">Контракт компонента <span class="mono">mbank/component@1</span> (builder/contracts): часть × свойство × состояние → токен. Правка хранится в виджете (видна всей команде), выгружается во вкладке «Код» как <span class="mono">&lt;имя&gt;.json</span>.</p>
-    <div class="row"><select id="b-contract"><option value="">— контракт —</option>${s.contracts.map((x) => `<option value="${esc(x.name)}" ${view.contractName === x.name ? 'selected' : ''}>${esc(x.title)}</option>`).join('')}</select>
-      ${c && c.edited ? `<button class="btn" id="b-reset">Сбросить правки (${c.edited})</button>` : ''}</div>
-    <datalist id="dl-color">${tokens.map((t) => `<option value="${esc(t)}">`).join('')}</datalist>
-    <datalist id="dl-radius">${radius.map((t) => `<option value="${esc(t)}">`).join('')}</datalist>
-    ${c ? `${c.errors.length ? `<div class="box err">${c.errors.map(esc).join('<br>')}</div>` : ''}
-      <table><thead><tr><th>Где</th><th>Часть</th><th>Свойство</th><th>Состояние</th><th>Токен</th></tr></thead><tbody>
-      ${c.rows.map((r) => `<tr><td class="muted">${esc(r.source)}</td><td>${esc(r.part)}</td><td>${esc(r.prop)}</td><td>${esc(r.state)}</td>
-        <td><input data-row="${esc(r.id)}" list="dl-${r.kind === 'radius' ? 'radius' : 'color'}" value="${esc(r.value)}" size="24"></td></tr>`).join('')}
-      </tbody></table>` : ''}`;
-  $('#b-contract').onchange = (e) => { view.contractName = e.target.value; view.contract = null; if (e.target.value) send('contract', { name: e.target.value }); else renderBind(); };
-  if ($('#b-reset')) $('#b-reset').onclick = () => send('binding-reset', { contract: c.name });
-  for (const el of document.querySelectorAll('#tab-bind input[data-row]')) {
-    el.onchange = () => {
-      const r = c.rows.find((x) => x.id === el.dataset.row);
-      send('binding', { contract: c.name, rowId: r.id, path: r.path, key: r.key, value: el.value.trim() });
-    };
-  }
 }
 
 // ---- code sync ----
@@ -115,6 +89,7 @@ export function renderFigma() {
     ${r ? `<h3>${r.dryRun ? 'Предпросмотр' : 'Отчёт'}: создано ${r.created.length}, изменено ${r.updated.length}, ссылок ${r.aliased.length}, hex ${r.raw.length}, без изменений ${r.unchanged}</h3>
       ${list('Ошибки', r.errors, ['проверьте', 'error'])}${list('Новые коллекции', r.collectionsCreated)}${list('Новые режимы', r.modesAdded)}
       ${list('Новые переменные', r.created)}${list('Изменены', r.updated)}${list('Hex без примитива в файле', r.raw, ['не ссылка', 'warning'])}
+      ${propagationBox(r.propagation)}
       ${list('Ссылки на примитивы', r.aliased)}${list('Пропущено', r.skipped)}` : ''}`;
   $('#f-scan').onclick = () => send('scan');
   $('#f-dry').onclick = () => send('apply', { dryRun: true, all: $('#f-all').checked });
@@ -127,12 +102,15 @@ export function onDone(type, m) {
   if (type === 'gen-preview') { view.preview = m.preview; renderGenerate(); }
   else if (type === 'gen-apply') toast(`Записано в бренд: ${m.count} токенов`, 'success');
   else if (type === 'add-extra') toast('Токен добавлен', 'success');
-  else if (type === 'contract' || type === 'binding' || type === 'binding-reset') { view.contract = m.contract; renderBind(); }
+  else if (onComponentDone(type, m)) { /* «Компоненты» */ }
   else if (type === 'export') { view.exports = { files: m.files, commands: m.commands }; renderCode(); }
   else if (type === 'import') {
     const res = m.result;
     if (res.errors.length) toast(res.errors.join('; '), 'error');
     else { toast(`Импорт: ${res.changed} правок, ${res.extras.length} токенов проекта`, 'success'); view.exports = null; }
-  } else if (type === 'apply' && m.report) view.report = m.report; // the 'state' message that follows re-renders
-  if (['set-token', 'reset-token', 'reset-all', 'gen-apply', 'add-extra', 'remove-extra', 'binding', 'binding-reset', 'import', 'brand'].includes(type)) view.exports = null;
+  } else if (type === 'apply' && m.report) {
+    view.report = m.report; // the 'state' message that follows re-renders
+    if (!m.report.dryRun) toast(`Применено: изменено переменных ${m.report.changed.length}, экземпляров затронуто ${m.report.propagation.instances}`, 'success');
+  }
+  if (['set-token', 'reset-token', 'reset-all', 'gen-apply', 'add-extra', 'set-extra', 'remove-extra', 'binding', 'binding-reset', 'import', 'brand'].includes(type)) view.exports = null;
 }

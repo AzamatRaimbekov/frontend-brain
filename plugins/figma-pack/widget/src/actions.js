@@ -1,5 +1,6 @@
 // Widget actions shared by the property menu and the iframe UI. `store` wraps the synced state:
-// { brand, setBrand, scan, setScan, setReport, prefix, setPrefix, edits, extras, bindings } (maps are useSyncedMap).
+// { brand, setBrand, scan, setScan, setReport, setPropagation, prefix, setPrefix, widgetId, edits, extras, bindings }
+// (maps are useSyncedMap).
 import TOKENS from '../../skills/mbank-figma-patterns/references/tokens.json';
 import CONTRACTS from 'mbank:contracts';
 import { buildModel, BRANDS, GROUPS, normHex, sameValue } from '../core/model.js';
@@ -10,7 +11,8 @@ import { exportTokensJson, rawDump, registryBase, tokensCss, syncCommands } from
 import { importTokens, bindingKey, bindingTable, applyBindings, editedContracts } from '../core/io.js';
 import { validateContract } from '../../builder/core/contract.js';
 import { scanFile, applyWrites } from './figma-io.js';
-import { sharedContract, putSharedContract, dropSharedContract } from '../../builder/plugin/src/shared-contracts.js';
+import { sharedContract, sharedContracts, putSharedContract, dropSharedContract } from '../../builder/plugin/src/shared-contracts.js';
+import { componentStatus, updateComponent, insertInstance, propagation } from './components-io.js';
 
 export { TOKENS, CONTRACTS };
 
@@ -39,8 +41,13 @@ export async function apply(store, opts = {}) {
   const report = await applyWrites(plan.writes, opts);
   report.skipped = plan.skipped;
   report.at = new Date().toISOString();
+  // Components bound to the changed variables follow them by themselves: the report shows where.
+  const css = new Set(plan.writes.filter((w) => report.changed.includes(`${w.collection}/${w.name}`)).map((w) => w.css));
+  report.propagation = { ...(await propagation(fileContracts(store), css, report.changed)), at: report.at, dryRun: !!opts.dryRun };
   if (!opts.dryRun) {
     store.setReport(report);
+    // Synced state stays small: the full list of variables is in the window's report.
+    store.setPropagation({ ...report.propagation, variables: report.changed.slice(0, 20), variableCount: report.changed.length });
     await scan(store);
   }
   return report;
@@ -75,6 +82,17 @@ export function addExtra(store, token) {
   return errors;
 }
 
+/** Changes the values of an existing project token (same checks as adding it). */
+export function setExtra(store, token) {
+  const old = store.extras.get(token.name);
+  if (!old) return [`Нет токена проекта ${token.name}`];
+  const next = { ...old, ...token, kind: old.kind };
+  const taken = new Set(modelOf(store).rows.map((r) => r.css).filter((c) => c !== token.name));
+  const errors = validateExtra(next, store.prefix, taken);
+  if (!errors.length) store.extras.set(token.name, normalizeExtra(next));
+  return errors;
+}
+
 export function generatePreview(hex) {
   const slots = generateBrand(hex);
   return { hex, slots: BRAND_SLOTS.map((s) => ({ slot: s, light: slots.light[s], dark: slots.dark[s] })) };
@@ -89,25 +107,70 @@ export function applyGenerated(store, brand, hex) {
 // A contract as the file has it: the shared copy (edited here or in DS Builder) or the bundled one.
 const fileContract = (name) => sharedContract(name) || CONTRACTS.find((c) => c.name === name) || null;
 
-export function contractView(store, name) {
+const mineOf = (store, name) => store.bindings.values().filter((b) => b.contract === name);
+
+/** The contract with this file's binding edits: what the component in the file is built from. */
+export function contractOf(store, name) {
   const base = fileContract(name);
-  if (!base) return null;
-  const mine = store.bindings.values().filter((b) => b.contract === name);
-  const contract = applyBindings(base, mine);
-  return { name, title: contract.title || name, rows: bindingTable(contract), errors: validateContract(contract), edited: mine.length };
+  return base ? applyBindings(base, mineOf(store, name)) : null;
 }
 
-export function setBinding(store, { contract, rowId, path, key, value }) {
-  const edit = { contract, path, key, value: isEmpty(value) ? null : value };
+/** Every contract of the file (bundled, edited, created in DS Builder) with the widget's edits. */
+export function fileContracts(store, { valid = true } = {}) {
+  const names = [...new Set([...CONTRACTS.map((c) => c.name), ...Object.keys(sharedContracts())])];
+  return names.map((n) => contractOf(store, n)).filter((c) => c && (!valid || !validateContract(c).length));
+}
+
+export function contractView(store, name) {
+  const contract = contractOf(store, name);
+  if (!contract) return null;
+  return { name, title: contract.title || name, rows: bindingTable(contract), errors: validateContract(contract), edited: mineOf(store, name).length };
+}
+
+export function setBinding(store, { contract, rowId, path, key, value, kind }) {
+  const val = isEmpty(value) ? null : kind === 'space' ? Number(value) : value;
+  if (kind === 'space' && val !== null && !(val >= 0)) return [`Отступ — шаг сетки 4 px числом (2 = 8 px), а не «${value}»`];
+  const edit = { contract, path, key, value: val };
   store.bindings.set(bindingKey(contract, rowId), edit);
   // Shared with DS Builder: its «Компоненты» tab builds the same contract from the same document data.
   const base = fileContract(contract);
   if (base) putSharedContract(applyBindings(base, [edit]));
+  return [];
 }
 
 export function resetBindings(store, contract) {
   for (const k of store.bindings.keys()) if (k.startsWith(`${contract}|`)) store.bindings.delete(k);
   dropSharedContract(contract);
+}
+
+// Project tokens of the board as the component update needs them: css name -> 2.theme custom/* variable.
+const extrasOf = (store) => modelOf(store).rows.filter((r) => r.extra).map((r) => ({ css: r.css, figma: r.figma, kind: r.kind }));
+
+export async function componentInfo(store, name) {
+  const c = contractOf(store, name);
+  return c ? componentStatus(c) : null;
+}
+
+/** «Обновить компонент в файле» (build: «Собрать компонент»): re-render in place + where it reached. */
+export async function updateInFile(store, name, { build = false } = {}) {
+  if (figma.editorType && figma.editorType !== 'figma') throw new Error('Компоненты обновляются только в файле Figma Design (не FigJam)');
+  const c = contractOf(store, name);
+  if (!c) throw new Error(`Нет контракта «${name}»`);
+  const errors = validateContract(c);
+  if (errors.length) throw new Error(`Контракт с ошибками: ${errors.join('; ')}`);
+  const res = await updateComponent(c, extrasOf(store), { build });
+  if (res.needsBuild) return res;
+  store.setPropagation({
+    kind: build && res.built ? 'build' : 'component', at: new Date().toISOString(), variables: [], setsUpdated: 1, instances: res.instances,
+    components: [{ name: res.name, title: res.title, inFile: true, instances: res.instances, pages: res.pages, variants: res.variants, kept: res.kept }],
+  });
+  return res;
+}
+
+export async function insertComponent(store, name) {
+  const c = contractOf(store, name);
+  if (!c) throw new Error(`Нет контракта «${name}»`);
+  return insertInstance(c, store.widgetId);
 }
 
 export function importInto(store, text) {
@@ -150,6 +213,7 @@ export function uiState(store, brand) {
     brand, brands: BRANDS, groups: GROUPS, prefix: store.prefix, rows,
     issues: issues.filter((i) => !i.ok), totals: status.totals,
     scan: store.scan ? { scannedAt: store.scan.scannedAt, count: store.scan.count, collections: store.scan.collections } : null,
-    contracts: CONTRACTS.map((c) => ({ name: c.name, title: c.title || c.name })),
+    contracts: fileContracts(store, { valid: false }).map((c) => ({ name: c.name, title: c.title || c.name })),
+    propagation: store.propagation || null,
   };
 }

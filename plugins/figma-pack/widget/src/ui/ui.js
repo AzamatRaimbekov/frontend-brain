@@ -1,7 +1,8 @@
 // Iframe of the Mbank Tokens widget: plain DOM, talks to the sandbox (src/ui-bridge.js) by messages.
-// Tabs: tokens, new project token, brand from one colour, component bindings, code sync, Figma apply.
+// Tabs: tokens, project tokens, brand from one colour, components, code sync, Figma apply.
 import { validateExtra, KINDS } from '../../core/checks.js';
-import { renderGenerate, renderBind, renderCode, renderFigma, onDone } from './views.js';
+import { renderGenerate, renderCode, renderFigma, onDone } from './views.js';
+import { renderBind, propagationBox } from './components-view.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
@@ -42,7 +43,7 @@ function renderTokens() {
     <table><thead><tr><th>light</th><th>dark</th><th>CSS-токен</th><th>Переменная Figma</th><th>Статус</th><th></th></tr></thead><tbody>
     ${rows.map((r) => {
       const [label, tone] = STATUS[r.status] || STATUS.unknown;
-      const input = (mode) => `${r.kind === 'color' ? swatch(r[mode]) : ''} <input class="hex" data-key="${esc(r.key)}" data-mode="${mode}" value="${esc(r[mode])}" ${r.extra || r.derivedFrom ? 'disabled' : ''}>`;
+      const input = (mode) => `${r.kind === 'color' ? swatch(r[mode]) : ''} <input class="hex" data-key="${esc(r.key)}" data-mode="${mode}" value="${esc(r[mode])}" ${r.derivedFrom ? 'disabled' : ''}>`;
       return `<tr class="${ui.focus === r.key ? 'focus' : ''}" id="row-${esc(r.key)}">
         <td>${input('light')}</td><td>${input('dark')}</td>
         <td class="mono">--${esc(r.css)}${r.note ? `<div class="muted">${esc(r.note)}</div>` : ''}${r.derivedFrom ? `<div class="muted">следует за ${esc(r.derivedFrom)}</div>` : ''}</td>
@@ -59,7 +60,9 @@ function renderTokens() {
     el.onchange = () => {
       const key = el.dataset.key;
       const other = document.querySelector(`#tab-tokens input[data-key="${CSS.escape(key)}"][data-mode="${el.dataset.mode === 'light' ? 'dark' : 'light'}"]`);
-      send('set-token', { key, [el.dataset.mode]: el.value, [other.dataset.mode]: other.value });
+      const values = { [el.dataset.mode]: el.value, [other.dataset.mode]: other.value };
+      if (key.startsWith('extra:')) send('set-extra', { token: { name: key.slice(6), ...values } });
+      else send('set-token', { key, ...values });
     };
   }
   for (const b of document.querySelectorAll('[data-reset]')) b.onclick = () => send('reset-token', { key: b.dataset.reset });
@@ -84,7 +87,14 @@ function renderExtra() {
       <button class="btn primary" id="x-add">Добавить токен</button>
     </div>
     <h3>Токены проекта (${extras.length})</h3>
-    ${extras.length ? `<table><tbody>${extras.map((r) => `<tr><td>${r.kind === 'color' ? swatch(r.light) + swatch(r.dark) : esc(`${r.light}px / ${r.dark}px`)}</td><td class="mono">--${esc(r.css)}</td><td class="muted">${esc(r.figma)}</td><td><button class="btn" data-remove="${esc(r.css)}">Удалить</button></td></tr>`).join('')}</tbody></table>` : '<p class="muted">Пока нет.</p>'}`;
+    ${extras.length ? `<table><thead><tr><th>light</th><th>dark</th><th>CSS-токен</th><th>Переменная Figma</th><th>Статус</th><th></th></tr></thead><tbody>${extras.map((r) => {
+      const [label, tone] = STATUS[r.status] || STATUS.unknown;
+      const input = (mode) => `${r.kind === 'color' ? swatch(r[mode]) : ''} <input class="hex" data-extra="${esc(r.css)}" data-mode="${mode}" value="${esc(r[mode])}">`;
+      return `<tr><td>${input('light')}</td><td>${input('dark')}</td><td class="mono">--${esc(r.css)}</td><td class="muted">${esc(r.collection)} / ${esc(r.figma)}</td><td>${chip(label, tone)}</td><td><button class="btn" data-remove="${esc(r.css)}">Удалить</button></td></tr>`;
+    }).join('')}</tbody></table>
+    <div class="row"><button class="btn primary" id="x-apply">Применить в Figma</button><button class="btn" id="x-dry">Что изменится</button>
+      <span class="muted">Создаёт или меняет переменные 2.theme / custom/… (light и dark). Дальше — вкладка «Компоненты».</span></div>
+    ${propagationBox(s.propagation && s.propagation.kind === 'apply' ? s.propagation : null)}` : '<p class="muted">Пока нет.</p>'}`;
   const token = () => ({ name: $('#x-name').value.trim(), kind: $('#x-kind').value, light: $('#x-light').value, dark: $('#x-dark').value || $('#x-light').value, pairWith: $('#x-pair').value || undefined });
   const check = () => {
     const taken = new Set(s.rows.map((r) => r.css));
@@ -97,6 +107,14 @@ function renderExtra() {
   $('#x-prefix').oninput = check;
   $('#x-add').onclick = () => send('add-extra', { token: token() });
   for (const b of document.querySelectorAll('#tab-extra [data-remove]')) b.onclick = () => send('remove-extra', { name: b.dataset.remove });
+  for (const el of document.querySelectorAll('#tab-extra input[data-extra]')) {
+    el.onchange = () => {
+      const other = document.querySelector(`#tab-extra input[data-extra="${CSS.escape(el.dataset.extra)}"][data-mode="${el.dataset.mode === 'light' ? 'dark' : 'light'}"]`);
+      send('set-extra', { token: { name: el.dataset.extra, [el.dataset.mode]: el.value, [other.dataset.mode]: other.value } });
+    };
+  }
+  if ($('#x-apply')) $('#x-apply').onclick = () => send('apply', {});
+  if ($('#x-dry')) $('#x-dry').onclick = () => { send('apply', { dryRun: true }); show('figma'); };
   check();
 }
 
@@ -116,7 +134,7 @@ window.onmessage = (e) => {
   if (m.type === 'state') {
     ui.state = m.state;
     $('#brand').innerHTML = m.state.brands.map((b) => `<option ${b === m.state.brand ? 'selected' : ''}>${b}</option>`).join('');
-    if (ui.pendingTab) { const t = ui.pendingTab; ui.pendingTab = null; show(t); } else if (['tokens', 'extra', 'figma'].includes(ui.tab)) RENDER[ui.tab]();
+    if (ui.pendingTab) { const t = ui.pendingTab; ui.pendingTab = null; show(t); } else if (['tokens', 'extra', 'bind', 'figma'].includes(ui.tab)) RENDER[ui.tab]();
     return;
   }
   if (m.type === 'error') { toast(`${m.for}: ${m.message}`, 'error'); return; }

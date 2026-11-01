@@ -76,7 +76,7 @@ export function planWrites(model, opts = {}) {
     if (!opts.all && !r.edited) continue;
     if (r.light == null) { skipped.push({ css: r.css, reason: 'нет значения' }); continue; }
     const base = { css: r.css, rowKey: r.key, scopes: scopesOf(r) };
-    if (r.kind === 'radius') {
+    if (r.kind === 'radius' && !r.extra) { // project radius tokens live in 2.theme like every custom/* token
       writes.push({ ...base, collection: BRAND, name: r.figma, type: 'FLOAT', values: { '*': Number(r.light) } });
       continue;
     }
@@ -119,4 +119,39 @@ export function planAllBrands(build, brands, opts = {}) {
     skipped.push(...plan.skipped);
   });
   return { writes, skipped };
+}
+
+const SOURCE = { apply: 'Применить в Figma', component: 'Обновить компонент в файле', build: 'Собрать компонент' };
+
+/**
+ * "Changed once -> changed everywhere" in words, for the board and the window.
+ * p: { kind, at, dryRun?, variables, variableCount?, components: [{ title, instances, inFile, library, variants?, kept? }], setsUpdated, instances }.
+ * -> { title, summary, components: [line], variables: line | null, note }
+ */
+export function propagationLines(p) {
+  if (!p) return null;
+  const at = String(p.at || '').slice(0, 16).replace('T', ' ');
+  const vars = p.variableCount !== undefined ? p.variableCount : (p.variables || []).length;
+  const summary = [
+    ...(p.kind === 'apply' ? [`переменных ${vars}`] : []),
+    `компонентов ${p.components.length}`,
+    ...(p.setsUpdated ? [`обновлено наборов ${p.setsUpdated}`] : []),
+    `экземпляров в файле ${p.instances}`,
+  ].join(' · ');
+  const components = p.components.slice(0, 8).map((x) => {
+    const where = x.inFile ? '' : x.library ? ' (из библиотеки)' : ' (компонента нет в файле)';
+    const same = x.kept !== undefined ? ` · вариантов ${x.variants}, те же узлы ${x.kept}` : '';
+    return `${x.title}: ${x.instances} экз.${where}${same}`;
+  });
+  if (p.components.length > 8) components.push(`…и ещё ${p.components.length - 8}`);
+  const names = p.variables || [];
+  return {
+    title: `${p.dryRun ? 'Что поменяется' : 'Где поменялось'} — ${SOURCE[p.kind] || p.kind}${at ? `, ${at}` : ''}`,
+    summary,
+    components,
+    variables: names.length ? `Переменные: ${names.slice(0, 6).join(', ')}${vars > 6 ? ` и ещё ${vars - 6}` : ''}` : null,
+    note: p.kind === 'apply'
+      ? (p.components.length ? 'Компоненты привязаны к этим переменным: они и все их экземпляры уже показывают новые значения.' : 'Ни один контракт компонента не использует эти токены.')
+      : 'Главный компонент обновлён на месте: все его экземпляры в файле уже показывают изменения.',
+  };
 }
