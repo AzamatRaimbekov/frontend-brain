@@ -131,13 +131,14 @@ export async function kanban(ctx, b) {
       if (ctx.state === 'loading') add(k, skel(ctx, 80, 10), skel(ctx, 'fill', 12), skel(ctx, 60, 10));
       else {
         const [id, who, sum, product] = fakeRows([':id', ':person', ':money', ':product'], 1, 31 + ci * 5 + i + ctx.seed)[0];
-        const top = box(ctx, 'Top', { dir: 'H', align: 'CENTER', justify: 'SPACE_BETWEEN', w: 'fill' });
+        const inner = colW - 48; // column and card padding: rows get real widths, so nothing overlaps
+        const top = box(ctx, 'Top', { dir: 'H', align: 'CENTER', justify: 'SPACE_BETWEEN', w: inner });
         const late = i === 0 && ci === 1;
         add(top, await text(ctx, id, { size: 'xs', color: 'muted-foreground' }), b.badge !== false && (await badge(ctx, late ? 'SLA' : `${10 + i * 7} мин`, late ? 'destructive' : 'secondary')));
-        const who_ = box(ctx, 'Client', { dir: 'H', gap: 8, align: 'CENTER', w: 'fill' });
+        const who_ = box(ctx, 'Client', { dir: 'H', gap: 8, align: 'CENTER', w: inner });
         add(who_, await avatar(ctx, who, 24), await text(ctx, who, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }));
-        const foot = box(ctx, 'Sum', { dir: 'H', align: 'CENTER', justify: 'SPACE_BETWEEN', w: 'fill' });
-        add(foot, await text(ctx, product, { size: 'xs', color: 'muted-foreground' }), await text(ctx, sum, { size: 'sm', weight: 'semibold' }));
+        const foot = box(ctx, 'Sum', { dir: 'H', gap: 8, align: 'CENTER', w: inner });
+        add(foot, await text(ctx, product, { size: 'xs', color: 'muted-foreground', w: 'fill', truncate: true }), await text(ctx, sum, { size: 'sm', weight: 'semibold' }));
         add(k, top, who_, foot);
       }
       add(c, k);

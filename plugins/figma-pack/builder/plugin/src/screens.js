@@ -54,6 +54,7 @@ async function renderBlock(ctx, b) {
     const ratio = (b.ratio || b.columns.map(() => 1).join(':')).split(':').map(Number);
     const total = ratio.reduce((a, c) => a + c, 0);
     const avail = ctx.width - ui.SPLIT_GAP * (b.columns.length - 1);
+    const cols = [];
     for (const [i, col] of b.columns.entries()) {
       const w = ctx.vp === 'mobile' ? ctx.width : Math.floor((avail * (ratio[i] || 1)) / total);
       const c = box(ctx, `Column ${i + 1}`, { gap: 24, w: ctx.vp === 'mobile' ? 'fill' : w });
@@ -62,8 +63,17 @@ async function renderBlock(ctx, b) {
       for (const x of blocksForState({ blocks: col }, ctx.state === 'loading' ? 'default' : ctx.state)) nodes.push(await renderBlock(sub, x));
       add(c, nodes);
       add(row, c);
-      // One card per column: stretch it to the row, so neighbours line up at the bottom.
-      if (ctx.vp !== 'mobile' && nodes.length === 1 && nodes[0].type === 'FRAME') { c.layoutSizingVertical = 'FILL'; nodes[0].layoutSizingVertical = 'FILL'; }
+      cols.push({ c, nodes });
+    }
+    // A column holding one card is stretched to the tallest column, so neighbours line up at the bottom;
+    // the tallest column keeps hugging (stretching it would let a shorter column squash it).
+    if (ctx.vp !== 'mobile') {
+      const tallest = Math.max(...cols.map((x) => x.c.height));
+      for (const { c, nodes } of cols) {
+        if (nodes.length !== 1 || nodes[0].type !== 'FRAME' || c.height >= tallest) continue;
+        c.layoutSizingVertical = 'FILL';
+        nodes[0].layoutSizingVertical = 'FILL';
+      }
     }
     return row;
   }

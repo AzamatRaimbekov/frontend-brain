@@ -50,6 +50,12 @@ test('builds every screen, state and viewport with a clean audit', async () => {
   assert.ok(card.findOne((n) => n.name === 'Scale') && card.findOne((n) => n.name === 'Marker'), 'score gauge');
   assert.equal(card.findAll((n) => n.name.startsWith('File / ')).length, 5);
   assert.equal(card.findAll((n) => n.name.startsWith('Check / ')).length, 4);
+  // Row alignment: the shorter single card stretches, the taller one keeps its content height.
+  const wizard = await frame('Новая заявка');
+  const [formCol, sideCol] = wizard.findOne((n) => n.name === 'Split').children;
+  assert.notEqual(formCol.layoutSizingVertical, 'FILL', 'the tall form is never squashed to its neighbour');
+  assert.equal(sideCol.layoutSizingVertical, 'FILL');
+  assert.ok(formCol.height >= sideCol.children[0].height);
   const mob = await frame('Обзор', 'mobile');
   assert.ok(mob.width === 375 && mob.findOne((n) => n.name === 'Stage / Выдано'));
 });

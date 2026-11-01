@@ -1279,13 +1279,14 @@
         if (ctx.state === "loading") add(k, skel(ctx, 80, 10), skel(ctx, "fill", 12), skel(ctx, 60, 10));
         else {
           const [id, who, sum, product] = fakeRows([":id", ":person", ":money", ":product"], 1, 31 + ci * 5 + i + ctx.seed)[0];
-          const top = box(ctx, "Top", { dir: "H", align: "CENTER", justify: "SPACE_BETWEEN", w: "fill" });
+          const inner = colW - 48;
+          const top = box(ctx, "Top", { dir: "H", align: "CENTER", justify: "SPACE_BETWEEN", w: inner });
           const late = i === 0 && ci === 1;
           add(top, await text(ctx, id, { size: "xs", color: "muted-foreground" }), b.badge !== false && await badge(ctx, late ? "SLA" : `${10 + i * 7} \u043C\u0438\u043D`, late ? "destructive" : "secondary"));
-          const who_ = box(ctx, "Client", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
+          const who_ = box(ctx, "Client", { dir: "H", gap: 8, align: "CENTER", w: inner });
           add(who_, await avatar(ctx, who, 24), await text(ctx, who, { size: "sm", weight: "medium", w: "fill", truncate: true }));
-          const foot = box(ctx, "Sum", { dir: "H", align: "CENTER", justify: "SPACE_BETWEEN", w: "fill" });
-          add(foot, await text(ctx, product, { size: "xs", color: "muted-foreground" }), await text(ctx, sum, { size: "sm", weight: "semibold" }));
+          const foot = box(ctx, "Sum", { dir: "H", gap: 8, align: "CENTER", w: inner });
+          add(foot, await text(ctx, product, { size: "xs", color: "muted-foreground", w: "fill", truncate: true }), await text(ctx, sum, { size: "sm", weight: "semibold" }));
           add(k, top, who_, foot);
         }
         add(c, k);
@@ -2094,6 +2095,7 @@
       const ratio = (b.ratio || b.columns.map(() => 1).join(":")).split(":").map(Number);
       const total = ratio.reduce((a, c) => a + c, 0);
       const avail = ctx.width - SPLIT_GAP * (b.columns.length - 1);
+      const cols2 = [];
       for (const [i, col] of b.columns.entries()) {
         const w = ctx.vp === "mobile" ? ctx.width : Math.floor(avail * (ratio[i] || 1) / total);
         const c = box(ctx, `Column ${i + 1}`, { gap: 24, w: ctx.vp === "mobile" ? "fill" : w });
@@ -2102,7 +2104,12 @@
         for (const x of blocksForState({ blocks: col }, ctx.state === "loading" ? "default" : ctx.state)) nodes.push(await renderBlock(sub, x));
         add(c, nodes);
         add(row, c);
-        if (ctx.vp !== "mobile" && nodes.length === 1 && nodes[0].type === "FRAME") {
+        cols2.push({ c, nodes });
+      }
+      if (ctx.vp !== "mobile") {
+        const tallest = Math.max(...cols2.map((x) => x.c.height));
+        for (const { c, nodes } of cols2) {
+          if (nodes.length !== 1 || nodes[0].type !== "FRAME" || c.height >= tallest) continue;
           c.layoutSizingVertical = "FILL";
           nodes[0].layoutSizingVertical = "FILL";
         }
@@ -5552,7 +5559,6 @@
             type: "table",
             link: "client-card",
             selectable: true,
-            rows: 8,
             columns: [
               "\u0414\u043E\u0433\u043E\u0432\u043E\u0440:id",
               "\u041A\u043B\u0438\u0435\u043D\u0442:person",
@@ -5561,11 +5567,71 @@
               "\u0414\u043D\u0435\u0439:number",
               "\u0421\u0442\u0430\u0442\u0443\u0441:status"
             ],
-            statuses: [
-              "\u041E\u0431\u0435\u0449\u0430\u043B \u043E\u043F\u043B\u0430\u0442\u0438\u0442\u044C",
-              "\u041D\u0435 \u0434\u043E\u0437\u0432\u043E\u043D\u0438\u043B\u0438\u0441\u044C",
-              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430",
-              "\u041D\u043E\u0432\u044B\u0439"
+            data: [
+              [
+                "CR-88412",
+                "\u0422\u0438\u043C\u0443\u0440 \u0411\u0435\u043A\u043C\u0443\u0440\u0430\u0442\u043E\u0432",
+                "+996 700 412 118",
+                "46 200 \u0441",
+                "12",
+                "\u041E\u0431\u0435\u0449\u0430\u043B \u043E\u043F\u043B\u0430\u0442\u0438\u0442\u044C"
+              ],
+              [
+                "CR-87990",
+                "\u041C\u044D\u044D\u0440\u0438\u043C \u041A\u0430\u0434\u044B\u0440\u043E\u0432\u0430",
+                "+996 555 301 774",
+                "18 900 \u0441",
+                "5",
+                "\u041D\u043E\u0432\u044B\u0439"
+              ],
+              [
+                "CR-87512",
+                "\u0420\u0443\u0441\u043B\u0430\u043D \u0418\u0441\u0430\u043A\u043E\u0432",
+                "+996 777 240 905",
+                "124 600 \u0441",
+                "38",
+                "\u041D\u0435 \u0434\u043E\u0437\u0432\u043E\u043D\u0438\u043B\u0438\u0441\u044C"
+              ],
+              [
+                "CR-87104",
+                "\u0414\u0438\u043D\u0430\u0440\u0430 \u0410\u043B\u0438\u0435\u0432\u0430",
+                "+996 702 118 336",
+                "31 050 \u0441",
+                "21",
+                "\u041E\u0431\u0435\u0449\u0430\u043B \u043E\u043F\u043B\u0430\u0442\u0438\u0442\u044C"
+              ],
+              [
+                "CR-86833",
+                "\u042D\u043C\u0438\u043B\u044C \u041E\u0441\u043C\u043E\u043D\u043E\u0432",
+                "+996 550 907 412",
+                "212 000 \u0441",
+                "64",
+                "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430"
+              ],
+              [
+                "CR-86271",
+                "\u041A\u0430\u043C\u0438\u043B\u0430 \u0421\u0430\u0434\u044B\u043A\u043E\u0432\u0430",
+                "+996 701 455 090",
+                "9 800 \u0441",
+                "3",
+                "\u041D\u043E\u0432\u044B\u0439"
+              ],
+              [
+                "CR-85960",
+                "\u041D\u0443\u0440\u043B\u0430\u043D \u0416\u0443\u043C\u0430\u0431\u0435\u043A\u043E\u0432",
+                "+996 773 612 248",
+                "386 400 \u0441",
+                "97",
+                "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430"
+              ],
+              [
+                "CR-85544",
+                "\u0410\u0441\u0435\u043B\u044C \u041C\u0430\u043C\u044B\u0442\u043E\u0432\u0430",
+                "+996 556 228 017",
+                "57 300 \u0441",
+                "27",
+                "\u041D\u0435 \u0434\u043E\u0437\u0432\u043E\u043D\u0438\u043B\u0438\u0441\u044C"
+              ]
             ]
           },
           {
