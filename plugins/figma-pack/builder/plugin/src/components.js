@@ -70,7 +70,7 @@ const FLOAT_FIELDS = ['paddingLeft', 'paddingRight', 'paddingTop', 'paddingBotto
 
 async function applyFrame(r, node, s, a = {}) {
   const L = layoutFor(s);
-  if (a.width) { // fixed width along the main axis (row) or the cross axis (column)
+  if (a.width && s.size === undefined) { // fixed width along the main axis (row) or the cross axis (column); size (square) wins
     L.width = a.width;
     if (L.layoutMode === 'HORIZONTAL') L.primaryAxisSizingMode = 'FIXED'; else L.counterAxisSizingMode = 'FIXED';
   }
