@@ -3353,7 +3353,11 @@
   function allContracts(bundled) {
     const out = /* @__PURE__ */ new Map();
     for (const c of bundled) out.set(c.name, { contract: c, source: c.example ? "example" : "bundled" });
-    for (const [name, c] of Object.entries(stored())) out.set(name, { contract: c, source: out.has(name) ? "edited" : "file" });
+    for (const [name, c] of Object.entries(stored())) {
+      const own = out.get(name);
+      if (own && !c.edited) out.set(name, { contract: __spreadProps(__spreadValues({}, own.contract), { figma: __spreadValues(__spreadValues({}, own.contract.figma || {}), c.figma || {}) }), source: own.source });
+      else out.set(name, { contract: c, source: own ? "edited" : "file" });
+    }
     return out;
   }
   function get(bundled, name) {
@@ -3384,7 +3388,7 @@
   async function render(c, m) {
     const res = await renderContract(c, { font: m.font, prune: m.prune, create: m.create });
     if (res.errors) return res;
-    putContract(strip(res.contract));
+    putContract(__spreadValues(__spreadValues({}, strip(res.contract)), c.edited ? { edited: true } : {}));
     const node = await figma.getNodeByIdAsync(res.report.setId);
     if (node && m.focus !== false) {
       await figma.setCurrentPageAsync(await componentsPage(pageOf(c)));
@@ -3403,13 +3407,13 @@
         for (const c of list2) {
           const e = validateContract(c);
           if (e.length) errors[(c == null ? void 0 : c.name) || "?"] = e;
-          else putContract(strip(c));
+          else putContract(__spreadProps(__spreadValues({}, strip(c)), { edited: true }));
         }
         return { errors, contracts: await summary(bundled) };
       },
       async "contract-render"(m) {
         let c = get(bundled, m.name);
-        if (m.states) c = __spreadProps(__spreadValues({}, c), { states: m.states });
+        if (m.states) c = __spreadProps(__spreadValues({}, c), { states: m.states, edited: true });
         const res = await render(c, m);
         return __spreadProps(__spreadValues({}, res), { contracts: await summary(bundled) });
       },
@@ -3442,7 +3446,7 @@
         return { name: c.name, contract: c, rows: bindingRows(c), vars: await listVariables() };
       },
       async "contract-bind"(m) {
-        const c = setBinding(get(bundled, m.name), m.path, m.key, m.value);
+        const c = __spreadProps(__spreadValues({}, setBinding(get(bundled, m.name), m.path, m.key, m.value)), { edited: true });
         const errors = validateContract(c);
         if (errors.length) return { errors };
         putContract(strip(c));

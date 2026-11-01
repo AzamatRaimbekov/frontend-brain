@@ -105,7 +105,13 @@ export function applyGenerated(store, brand, hex) {
 }
 
 // A contract as the file has it: the shared copy (edited here or in DS Builder) or the bundled one.
-const fileContract = (name) => sharedContract(name) || CONTRACTS.find((c) => c.name === name) || null;
+const fileContract = (name) => {
+  const saved = sharedContract(name);
+  const own = CONTRACTS.find((c) => c.name === name) || null;
+  // a copy saved by a build (figma ids only) does not freeze an older version of the bundled contract
+  if (saved && own && !saved.edited) return { ...own, figma: { ...(own.figma || {}), ...(saved.figma || {}) } };
+  return saved || own;
+};
 
 const mineOf = (store, name) => store.bindings.values().filter((b) => b.contract === name);
 
@@ -134,7 +140,7 @@ export function setBinding(store, { contract, rowId, path, key, value, kind }) {
   store.bindings.set(bindingKey(contract, rowId), edit);
   // Shared with DS Builder: its «Компоненты» tab builds the same contract from the same document data.
   const base = fileContract(contract);
-  if (base) putSharedContract(applyBindings(base, [edit]));
+  if (base) putSharedContract({ ...applyBindings(base, [edit]), edited: true });
   return [];
 }
 

@@ -45,7 +45,13 @@ export function putContract(c) {
 export function allContracts(bundled) {
   const out = new Map();
   for (const c of bundled) out.set(c.name, { contract: c, source: c.example ? 'example' : 'bundled' });
-  for (const [name, c] of Object.entries(stored())) out.set(name, { contract: c, source: out.has(name) ? 'edited' : 'file' });
+  for (const [name, c] of Object.entries(stored())) {
+    const own = out.get(name);
+    // A copy saved by a plain build (only figma ids) must not freeze an old version of a bundled contract:
+    // the bundled one wins unless the copy was really edited (binding, import).
+    if (own && !c.edited) out.set(name, { contract: { ...own.contract, figma: { ...(own.contract.figma || {}), ...(c.figma || {}) } }, source: own.source });
+    else out.set(name, { contract: c, source: own ? 'edited' : 'file' });
+  }
   return out;
 }
 
@@ -72,7 +78,7 @@ async function summary(bundled) {
 async function render(c, m) {
   const res = await renderContract(c, { font: m.font, prune: m.prune, create: m.create });
   if (res.errors) return res;
-  putContract(strip(res.contract));
+  putContract({ ...strip(res.contract), ...(c.edited ? { edited: true } : {}) });
   const node = await figma.getNodeByIdAsync(res.report.setId);
   if (node && m.focus !== false) {
     await figma.setCurrentPageAsync(await componentsPage(pageOf(c)));
@@ -91,13 +97,13 @@ export function contractHandlers(bundled) {
       for (const c of list) {
         const e = validateContract(c);
         if (e.length) errors[c?.name || '?'] = e;
-        else putContract(strip(c));
+        else putContract({ ...strip(c), edited: true });
       }
       return { errors, contracts: await summary(bundled) };
     },
     async 'contract-render'(m) {
       let c = get(bundled, m.name);
-      if (m.states) c = { ...c, states: m.states };
+      if (m.states) c = { ...c, states: m.states, edited: true }; // chosen states are an edit of the contract
       const res = await render(c, m);
       return { ...res, contracts: await summary(bundled) };
     },
@@ -126,7 +132,7 @@ export function contractHandlers(bundled) {
       return { name: c.name, contract: c, rows: bindingRows(c), vars: await listVariables() };
     },
     async 'contract-bind'(m) {
-      const c = setBinding(get(bundled, m.name), m.path, m.key, m.value);
+      const c = { ...setBinding(get(bundled, m.name), m.path, m.key, m.value), edited: true };
       const errors = validateContract(c);
       if (errors.length) return { errors };
       putContract(strip(c));

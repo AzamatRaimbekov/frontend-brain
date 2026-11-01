@@ -8,12 +8,17 @@ test('a contract saved by DS Builder is in the shared store and wins over an old
   const { putContract, allContracts } = await import('../plugin/src/contracts.js');
   const bundled = [{ name: 'button', title: 'Button' }];
   figma.root.setPluginData('contract:button', JSON.stringify({ name: 'button', title: 'old private copy' }));
-  putContract({ name: 'button', title: 'Button edited' });
+  putContract({ name: 'button', title: 'Button edited', edited: true });
   assert.equal(JSON.parse(figma.root.getSharedPluginData('mbank', 'contract:button')).title, 'Button edited');
   assert.equal(figma.root.getPluginData('contract:button'), '', 'the private copy is cleared');
   const hit = allContracts(bundled).get('button');
   assert.equal(hit.contract.title, 'Button edited');
   assert.equal(hit.source, 'edited');
+  // a copy saved by a plain build (no edit) does not freeze an older bundled version
+  putContract({ name: 'button', title: 'old build', figma: { nodeId: '9:9' } });
+  const fresh = allContracts(bundled).get('button');
+  assert.equal(fresh.contract.title, 'Button');
+  assert.equal(fresh.contract.figma.nodeId, '9:9', 'the file keeps where the set is');
   // a contract the widget created appears in DS Builder
   figma.root.setSharedPluginData('mbank', 'contract:tag', JSON.stringify({ name: 'tag', title: 'Tag' }));
   assert.equal(allContracts(bundled).get('tag').source, 'file');

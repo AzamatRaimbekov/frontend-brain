@@ -5995,7 +5995,12 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     for (const [k, v] of Object.entries(edits)) store.edits.set(k, v);
     return Object.keys(edits).length;
   }
-  var fileContract = (name) => sharedContract(name) || contracts_default.find((c) => c.name === name) || null;
+  var fileContract = (name) => {
+    const saved = sharedContract(name);
+    const own = contracts_default.find((c) => c.name === name) || null;
+    if (saved && own && !saved.edited) return __spreadProps(__spreadValues({}, own), { figma: __spreadValues(__spreadValues({}, own.figma || {}), saved.figma || {}) });
+    return saved || own;
+  };
   var mineOf = (store, name) => store.bindings.values().filter((b) => b.contract === name);
   function contractOf(store, name) {
     const base = fileContract(name);
@@ -6016,7 +6021,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     const edit = { contract, path, key, value: val };
     store.bindings.set(bindingKey(contract, rowId), edit);
     const base = fileContract(contract);
-    if (base) putSharedContract(applyBindings(base, [edit]));
+    if (base) putSharedContract(__spreadProps(__spreadValues({}, applyBindings(base, [edit])), { edited: true }));
     return [];
   }
   function resetBindings(store, contract) {
