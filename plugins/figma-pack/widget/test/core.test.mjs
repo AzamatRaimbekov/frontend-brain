@@ -190,7 +190,8 @@ function checkRegistryItem(item) {
 test('contract bindings: table rows, edited contracts stay valid', () => {
   const button = CONTRACTS.find((c) => c.name === 'button');
   const rows = bindingTable(button);
-  assert.ok(rows.length > 5 && rows.every((r) => r.kind === 'color' || r.kind === 'radius'));
+  assert.ok(rows.length > 5 && rows.every((r) => ['color', 'radius', 'space'].includes(r.kind)));
+  assert.ok(rows.some((x) => x.prop === 'px' && typeof x.value === 'number'), 'padding rows are bindable too');
   const r = rows.find((x) => x.prop === 'bg');
   const edited = editedContracts(CONTRACTS, [{ contract: 'button', path: r.path, key: r.key, value: 'brand' }]);
   assert.equal(edited.length, 1);

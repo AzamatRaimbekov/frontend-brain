@@ -48,10 +48,10 @@ export function applyBindings(contract, edits = []) {
   return edits.reduce((c, e) => setBinding(c, e.path, e.key, e.value), contract);
 }
 
-/** Binding table of one contract for the UI (colour and radius rows). */
+/** Binding table of one contract for the UI: colour (fill, stroke, text), radius and spacing rows. */
 export function bindingTable(contract) {
   return bindingRows(contract)
-    .filter((r) => r.kind === 'color' || r.kind === 'radius')
+    .filter((r) => r.kind === 'color' || r.kind === 'radius' || r.kind === 'space')
     .map((r) => ({ id: r.id, source: r.source, part: r.part, prop: r.prop, state: r.state, kind: r.kind, value: r.value, path: r.path, key: r.key }));
 }
 

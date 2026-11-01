@@ -112,10 +112,6 @@ function modeIdsFor(c, key, report, dryRun) {
 const rgba = (hex) => { const { r, g, b, a } = hexToRgb(hex); return { r, g, b, a }; };
 
 /**
- * Executes planWrites().writes. Every created variable, raw hex and replaced alias is in the report;
- * nothing is written silently. opts.dryRun: same report, no writes.
- */
-/**
  * The tokens live in Foundation. A file that only connects Foundation as a library must not get local copies of
  * 2.theme / 1.brand: they would shadow the library and drift. Returns the reason to refuse, or null.
  */
@@ -130,6 +126,10 @@ export async function libraryGuard(ix) {
   return `Файл подключает токены из библиотеки «${from}». Применять нужно в самом файле Foundation или в его ветке, иначе здесь появятся локальные копии коллекций ${OURS.join(' и ')}. Проверка (пробный прогон) доступна.`;
 }
 
+/**
+ * Executes planWrites().writes. Every created variable, raw hex and replaced alias is in the report;
+ * nothing is written silently. opts.dryRun: same report, no writes.
+ */
 export async function applyWrites(writes, opts = {}) {
   if (figma.editorType && figma.editorType !== 'figma') throw new Error('Применить можно только в файле Figma Design (не FigJam)');
   const dryRun = !!opts.dryRun;
@@ -139,18 +139,22 @@ export async function applyWrites(writes, opts = {}) {
     if (reason) throw new Error(reason);
   }
   const prims = await primitiveIndex(ix);
-  const report = { dryRun, collectionsCreated: [], modesAdded: [], created: [], updated: [], aliased: [], raw: [], unchanged: 0, errors: [] };
+  // changed: '<collection>/<name>' of every variable this run creates or changes (the propagation report reads it).
+  const report = { dryRun, collectionsCreated: [], modesAdded: [], created: [], updated: [], aliased: [], raw: [], unchanged: 0, errors: [], changed: [] };
   for (const w of writes) {
+    const key = `${w.collection}/${w.name}`;
+    const touched = () => { if (!report.changed.includes(key)) report.changed.push(key); };
     const c = ensureCollection(ix, w.collection, report, dryRun);
     let v = ix.named[w.collection].get(w.name);
     if (v && v.resolvedType !== w.type) { report.errors.push(`${w.collection}/${w.name}: тип ${v.resolvedType}, а нужен ${w.type}`); continue; }
     const fresh = !v;
     if (fresh) {
-      report.created.push(`${w.collection}/${w.name}`);
+      report.created.push(key);
+      touched();
       if (!dryRun) {
         v = figma.variables.createVariable(w.name, c, w.type);
         v.scopes = w.scopes && w.scopes.length ? w.scopes : [];
-        if (w.css && w.collection === THEME && !/^brand\//.test(w.name)) v.setVariableCodeSyntax('WEB', `var(--${w.css})`);
+        if (w.css && (w.collection === THEME || /^custom\//.test(w.name)) && !/^brand\//.test(w.name)) v.setVariableCodeSyntax('WEB', `var(--${w.css})`);
         ix.named[w.collection].set(w.name, v);
         // Modes the plan does not name (other brands) start from the same value, not Figma's default.
         const first = Object.values(w.values)[0];
@@ -166,12 +170,14 @@ export async function applyWrites(writes, opts = {}) {
           if (!target && !dryRun) { report.errors.push(`${label}: нет переменной ${wanted.aliasOf.collection}/${wanted.aliasOf.name} для ссылки`); continue; }
           if (isAlias(current) && target && current.id === target.id) { report.unchanged++; continue; }
           report.aliased.push(`${label} → ${wanted.aliasOf.name}`);
+          touched();
           if (!dryRun) v.setValueForMode(modeId, figma.variables.createVariableAlias(target));
           continue;
         }
         const now = current === undefined ? undefined : plainValue(await resolve(current, modeKey));
         if (!fresh && current !== undefined && sameValue(now, w.type === 'COLOR' ? normHex(wanted) : wanted)) { report.unchanged++; continue; }
         const before = isAlias(current) ? 'ссылка' : now;
+        touched();
         if (w.type === 'COLOR') {
           const prim = prims.get(normHex(wanted));
           if (prim) {

@@ -3,43 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createFigma, installWidget } from '../../builder/test/figma-mock.mjs';
-
-const CODE = readFileSync(new URL('../dist/code.js', import.meta.url), 'utf8');
-const UI = readFileSync(new URL('../dist/ui.html', import.meta.url), 'utf8');
-const MANIFEST = JSON.parse(readFileSync(new URL('../manifest.json', import.meta.url), 'utf8'));
-
-function boot(seed) {
-  const m = createFigma();
-  const w = installWidget(m.figma);
-  if (seed) seed(m.figma);
-  globalThis.figma = m.figma;
-  globalThis.__html__ = UI;
-  new Function(CODE)(); // the IIFE registers the widget
-  return { ...m, w };
-}
-
-// Opens the iframe through the property menu and returns a sender for its messages.
-async function openWindow(w, action = 'edit') {
-  w.render();
-  const pending = w.menu.handler({ propertyName: action });
-  assert.ok(figma.uiShown, 'figma.showUI called');
-  const send = async (type, data = {}) => {
-    w.sent.length = 0;
-    await figma.ui.onmessage({ type, ...data });
-    const done = w.sent.find((x) => x.type === `${type}:done` || x.type === 'error');
-    if (done && done.type === 'error') throw new Error(done.message);
-    return { done, state: w.sent.find((x) => x.type === 'state')?.state };
-  };
-  return { send, pending };
-}
-
-const byName = (m, collection, name) => {
-  const col = [...m.cols.values()].find((c) => c.name === collection);
-  const v = [...m.vars.values()].find((x) => x.variableCollectionId === col.id && x.name === name);
-  return { col, v, mode: (n) => col.modes.find((x) => x.name === n).modeId };
-};
-const hex = (c) => `#${[c.r, c.g, c.b].map((x) => Math.round(x * 255).toString(16).padStart(2, '0')).join('')}`;
+import { boot, openWindow, byName, hex, UI, MANIFEST } from './helpers.mjs';
 
 test('manifest is a Figma widget for Figma and FigJam', () => {
   assert.equal(MANIFEST.containsWidget, true);

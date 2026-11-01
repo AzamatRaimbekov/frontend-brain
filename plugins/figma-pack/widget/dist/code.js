@@ -54,9 +54,9 @@
     const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
     const A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
     const B = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
-    const C = Math.sqrt(A * A + B * B);
-    const H = C < 1e-4 ? 0 : (Math.atan2(B, A) * 180 / Math.PI + 360) % 360;
-    return { l: L, c: C, h: H };
+    const C2 = Math.sqrt(A * A + B * B);
+    const H = C2 < 1e-4 ? 0 : (Math.atan2(B, A) * 180 / Math.PI + 360) % 360;
+    return { l: L, c: C2, h: H };
   }
   function oklchToLinear({ l, c, h }) {
     const a = c * Math.cos(h * Math.PI / 180);
@@ -788,6 +788,16 @@
       colors: { light, dark }
     };
   }
+  var TYPE_SCALE = {
+    xs: [12, 16],
+    sm: [14, 20],
+    base: [16, 24],
+    lg: [18, 28],
+    xl: [20, 28],
+    "2xl": [24, 32],
+    "3xl": [30, 36],
+    "4xl": [36, 40]
+  };
 
   // core/sync.js
   var STATUS = {
@@ -847,7 +857,7 @@
         continue;
       }
       const base = { css: r.css, rowKey: r.key, scopes: scopesOf(r) };
-      if (r.kind === "radius") {
+      if (r.kind === "radius" && !r.extra) {
         writes.push(__spreadProps(__spreadValues({}, base), { collection: BRAND, name: r.figma, type: "FLOAT", values: { "*": Number(r.light) } }));
         continue;
       }
@@ -886,6 +896,32 @@
       skipped.push(...plan.skipped);
     });
     return { writes, skipped };
+  }
+  var SOURCE = { apply: "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0432 Figma", component: "\u041E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u0432 \u0444\u0430\u0439\u043B\u0435", build: "\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442" };
+  function propagationLines(p) {
+    if (!p) return null;
+    const at = String(p.at || "").slice(0, 16).replace("T", " ");
+    const vars = p.variableCount !== void 0 ? p.variableCount : (p.variables || []).length;
+    const summary = [
+      ...p.kind === "apply" ? [`\u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445 ${vars}`] : [],
+      `\u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u043E\u0432 ${p.components.length}`,
+      ...p.setsUpdated ? [`\u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u043E \u043D\u0430\u0431\u043E\u0440\u043E\u0432 ${p.setsUpdated}`] : [],
+      `\u044D\u043A\u0437\u0435\u043C\u043F\u043B\u044F\u0440\u043E\u0432 \u0432 \u0444\u0430\u0439\u043B\u0435 ${p.instances}`
+    ].join(" \xB7 ");
+    const components = p.components.slice(0, 8).map((x) => {
+      const where = x.inFile ? "" : x.library ? " (\u0438\u0437 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438)" : " (\u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u0430 \u043D\u0435\u0442 \u0432 \u0444\u0430\u0439\u043B\u0435)";
+      const same = x.kept !== void 0 ? ` \xB7 \u0432\u0430\u0440\u0438\u0430\u043D\u0442\u043E\u0432 ${x.variants}, \u0442\u0435 \u0436\u0435 \u0443\u0437\u043B\u044B ${x.kept}` : "";
+      return `${x.title}: ${x.instances} \u044D\u043A\u0437.${where}${same}`;
+    });
+    if (p.components.length > 8) components.push(`\u2026\u0438 \u0435\u0449\u0451 ${p.components.length - 8}`);
+    const names = p.variables || [];
+    return {
+      title: `${p.dryRun ? "\u0427\u0442\u043E \u043F\u043E\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F" : "\u0413\u0434\u0435 \u043F\u043E\u043C\u0435\u043D\u044F\u043B\u043E\u0441\u044C"} \u2014 ${SOURCE[p.kind] || p.kind}${at ? `, ${at}` : ""}`,
+      summary,
+      components,
+      variables: names.length ? `\u041F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0435: ${names.slice(0, 6).join(", ")}${vars > 6 ? ` \u0438 \u0435\u0449\u0451 ${vars - 6}` : ""}` : null,
+      note: p.kind === "apply" ? p.components.length ? "\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u044B \u043F\u0440\u0438\u0432\u044F\u0437\u0430\u043D\u044B \u043A \u044D\u0442\u0438\u043C \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u043C: \u043E\u043D\u0438 \u0438 \u0432\u0441\u0435 \u0438\u0445 \u044D\u043A\u0437\u0435\u043C\u043F\u043B\u044F\u0440\u044B \u0443\u0436\u0435 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 \u043D\u043E\u0432\u044B\u0435 \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F." : "\u041D\u0438 \u043E\u0434\u0438\u043D \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u0430 \u043D\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442 \u044D\u0442\u0438 \u0442\u043E\u043A\u0435\u043D\u044B." : "\u0413\u043B\u0430\u0432\u043D\u044B\u0439 \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u043E\u0431\u043D\u043E\u0432\u043B\u0451\u043D \u043D\u0430 \u043C\u0435\u0441\u0442\u0435: \u0432\u0441\u0435 \u0435\u0433\u043E \u044D\u043A\u0437\u0435\u043C\u043F\u043B\u044F\u0440\u044B \u0432 \u0444\u0430\u0439\u043B\u0435 \u0443\u0436\u0435 \u043F\u043E\u043A\u0430\u0437\u044B\u0432\u0430\u044E\u0442 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F."
+    };
   }
 
   // src/board.jsx
@@ -946,6 +982,12 @@
       /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: g.id === group ? c.accentText : c.text }, `${g.label} \xB7 ${counts[g.id] || 0}`)
     )));
   }
+  function Propagation({ c, p }) {
+    const l = propagationLines(p);
+    if (!l) return null;
+    const line = (key, text, bold) => /* @__PURE__ */ figma.widget.h(Text, { key, fontSize: 12, fontWeight: bold ? 700 : 400, fill: c.successFg, width: "fill-parent" }, text);
+    return /* @__PURE__ */ figma.widget.h(AutoLayout, { direction: "vertical", spacing: 4, width: "fill-parent", padding: { vertical: 10, horizontal: 12 }, cornerRadius: 10, fill: c.successBg }, line("title", l.title, true), line("summary", l.summary), l.components.map((x, i) => line(`c${i}`, `\u2022 ${x}`)), l.variables ? line("vars", l.variables) : null, line("note", l.note));
+  }
   function Board(p) {
     const { c } = p;
     const counts = {};
@@ -955,7 +997,7 @@
     for (const i of p.issues) if (!i.ok) issueOf[i.fg] = `${issueOf[i.fg] ? `${issueOf[i.fg]}; ` : ""}${i.mode}: ${i.ratio} \u043D\u0430 --${i.bg} (\u043D\u0443\u0436\u043D\u043E ${i.min})`;
     const t = p.totals;
     const fileLine = p.scan ? `\u0424\u0430\u0439\u043B \u043F\u0440\u043E\u0432\u0435\u0440\u0435\u043D ${p.scan.scannedAt.slice(0, 16).replace("T", " ")}: \u2713 ${t.bound} \xB7 \u2260 ${t.differs} \xB7 \u043D\u0435\u0442 ${t.missing}${t.library ? ` \xB7 \u0432 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0435 ${t.library}` : ""}` : "\u0424\u0430\u0439\u043B \u0435\u0449\u0451 \u043D\u0435 \u043F\u0440\u043E\u0432\u0435\u0440\u044F\u043B\u0438: \u0441\u0432\u043E\u0439\u0441\u0442\u0432\u0430 \u0432\u0438\u0434\u0436\u0435\u0442\u0430 \u2192 \xAB\u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0444\u0430\u0439\u043B\xBB";
-    return /* @__PURE__ */ figma.widget.h(AutoLayout, { direction: "vertical", width: W, padding: 24, spacing: 16, fill: p.c.page, cornerRadius: 20, stroke: c.border }, /* @__PURE__ */ figma.widget.h(Header, { c, brand: p.brand, brands: p.brands, onBrand: p.handlers.brand, source: p.source }), /* @__PURE__ */ figma.widget.h(AutoLayout, { width: "fill-parent", spacing: 8 }, /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0442\u043E\u043A\u0435\u043D\u043E\u0432", value: p.counters.tokens, tone: "neutral" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0430", value: p.counters.extras, tone: "info" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E", value: p.counters.edited, tone: "brand" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u043F\u0440\u043E\u0431\u043B\u0435\u043C \u043A\u043E\u043D\u0442\u0440\u0430\u0441\u0442\u0430 AA", value: p.counters.contrast, tone: p.counters.contrast ? "error" : "success" })), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.muted, width: "fill-parent" }, fileLine), p.report ? /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.text, width: "fill-parent" }, p.report) : null, /* @__PURE__ */ figma.widget.h(Tabs, { c, groups: p.groups, group: p.group, counts, onGroup: p.handlers.group }), /* @__PURE__ */ figma.widget.h(AutoLayout, { direction: "vertical", width: "fill-parent", fill: c.card, cornerRadius: 12, stroke: c.border, padding: { vertical: 6 } }, /* @__PURE__ */ figma.widget.h(AutoLayout, { width: "fill-parent", spacing: 12, padding: { vertical: 6, horizontal: 12 } }, /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.swatch / 2 }, "light"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.swatch / 2 }, "dark"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.css }, "CSS-\u0442\u043E\u043A\u0435\u043D"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.figma }, "\u041F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u0430\u044F Figma"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.status }, "\u0421\u0442\u0430\u0442\u0443\u0441")), visible.length ? visible.map((r) => /* @__PURE__ */ figma.widget.h(Row, { key: r.key, c, row: r, status: p.status[r.key], issue: issueOf[r.css], onOpen: p.handlers.open })) : /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.muted, width: "fill-parent", horizontalAlignText: "center" }, "\u041F\u0443\u0441\u0442\u043E. \u0422\u043E\u043A\u0435\u043D \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0434\u043E\u0431\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \xAB\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C\xBB \u2192 \xAB\u041D\u043E\u0432\u044B\u0439 \u0442\u043E\u043A\u0435\u043D\xBB.")), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fill: c.muted, width: "fill-parent" }, "\u0421\u0432\u043E\u0439\u0441\u0442\u0432\u0430 \u0432\u0438\u0434\u0436\u0435\u0442\u0430: \u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \xB7 \u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0444\u0430\u0439\u043B \xB7 \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0432 Figma \xB7 \u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u0441 \u043A\u043E\u0434\u043E\u043C. \u041A\u043B\u0438\u043A \u043F\u043E \u0441\u0442\u0440\u043E\u043A\u0435 \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442 \u0442\u043E\u043A\u0435\u043D."));
+    return /* @__PURE__ */ figma.widget.h(AutoLayout, { direction: "vertical", width: W, padding: 24, spacing: 16, fill: p.c.page, cornerRadius: 20, stroke: c.border }, /* @__PURE__ */ figma.widget.h(Header, { c, brand: p.brand, brands: p.brands, onBrand: p.handlers.brand, source: p.source }), /* @__PURE__ */ figma.widget.h(AutoLayout, { width: "fill-parent", spacing: 8 }, /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0442\u043E\u043A\u0435\u043D\u043E\u0432", value: p.counters.tokens, tone: "neutral" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u043F\u0440\u043E\u0435\u043A\u0442\u0430", value: p.counters.extras, tone: "info" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u0438\u0437\u043C\u0435\u043D\u0435\u043D\u043E", value: p.counters.edited, tone: "brand" }), /* @__PURE__ */ figma.widget.h(Counter, { c, label: "\u043F\u0440\u043E\u0431\u043B\u0435\u043C \u043A\u043E\u043D\u0442\u0440\u0430\u0441\u0442\u0430 AA", value: p.counters.contrast, tone: p.counters.contrast ? "error" : "success" })), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.muted, width: "fill-parent" }, fileLine), p.report ? /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.text, width: "fill-parent" }, p.report) : null, /* @__PURE__ */ figma.widget.h(Propagation, { c, p: p.propagation }), /* @__PURE__ */ figma.widget.h(Tabs, { c, groups: p.groups, group: p.group, counts, onGroup: p.handlers.group }), /* @__PURE__ */ figma.widget.h(AutoLayout, { direction: "vertical", width: "fill-parent", fill: c.card, cornerRadius: 12, stroke: c.border, padding: { vertical: 6 } }, /* @__PURE__ */ figma.widget.h(AutoLayout, { width: "fill-parent", spacing: 12, padding: { vertical: 6, horizontal: 12 } }, /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.swatch / 2 }, "light"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.swatch / 2 }, "dark"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.css }, "CSS-\u0442\u043E\u043A\u0435\u043D"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.figma }, "\u041F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u0430\u044F Figma"), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fontWeight: 600, fill: c.muted, width: COL.status }, "\u0421\u0442\u0430\u0442\u0443\u0441")), visible.length ? visible.map((r) => /* @__PURE__ */ figma.widget.h(Row, { key: r.key, c, row: r, status: p.status[r.key], issue: issueOf[r.css], onOpen: p.handlers.open })) : /* @__PURE__ */ figma.widget.h(Text, { fontSize: 12, fill: c.muted, width: "fill-parent", horizontalAlignText: "center" }, "\u041F\u0443\u0441\u0442\u043E. \u0422\u043E\u043A\u0435\u043D \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0434\u043E\u0431\u0430\u0432\u043B\u044F\u0435\u0442\u0441\u044F \u0432 \xAB\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C\xBB \u2192 \xAB\u041D\u043E\u0432\u044B\u0439 \u0442\u043E\u043A\u0435\u043D\xBB.")), /* @__PURE__ */ figma.widget.h(Text, { fontSize: 11, fill: c.muted, width: "fill-parent" }, "\u0421\u0432\u043E\u0439\u0441\u0442\u0432\u0430 \u0432\u0438\u0434\u0436\u0435\u0442\u0430: \u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \xB7 \u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0444\u0430\u0439\u043B \xB7 \u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0432 Figma \xB7 \u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u044B \xB7 \u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u0441 \u043A\u043E\u0434\u043E\u043C. \u041A\u043B\u0438\u043A \u043F\u043E \u0441\u0442\u0440\u043E\u043A\u0435 \u043E\u0442\u043A\u0440\u044B\u0432\u0430\u0435\u0442 \u0442\u043E\u043A\u0435\u043D."));
   }
 
   // ../skills/mbank-figma-patterns/references/tokens.json
@@ -4340,8 +4382,8 @@
     const byCss = rowsByCss(model.rows);
     for (const r of model.rows.filter((x) => x.extra)) {
       const val = (mode) => r.kind === "color" ? normHex(resolveValue(r[mode], mode, byCss)) : str(r[mode]);
-      const alias = /^var\(--([\w-]+)\)$/.exec(String(r.light));
-      const target = alias && byCss.get(alias[1]);
+      const alias2 = /^var\(--([\w-]+)\)$/.exec(String(r.light));
+      const target = alias2 && byCss.get(alias2[1]);
       const v = themeVar(r.figma, val("light"));
       Object.assign(v, { light: val("light"), dark: val("dark"), aliasLight: target ? target.figma : null });
     }
@@ -4485,6 +4527,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   var SCHEMA = "mbank/component@1";
   var STATES = ["default", "hover", "active", "focus", "disabled"];
   var statesAllowed = (c) => [.../* @__PURE__ */ new Set([...STATES, ...c && c.states || []])];
+  var STEP = 4;
   var KINDS2 = {
     bg: "color",
     fg: "color",
@@ -4519,6 +4562,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   }
   var ANATOMY_KINDS = ["text", "frame", "icon", "instance"];
   var SIDES = ["top", "right", "bottom", "left"];
+  var parentOf = (c, part) => part === "root" ? null : c.anatomy && c.anatomy[part] && c.anatomy[part].parent || "root";
   function checkAnatomy(errors, c) {
     if (c.anatomy === void 0) return;
     if (!isObj(c.anatomy)) {
@@ -4553,6 +4597,10 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   function splitKey(key) {
     const i = key.indexOf(":");
     return i < 0 ? { prop: key, state: "default" } : { prop: key.slice(0, i), state: key.slice(i + 1) };
+  }
+  function splitToken(value) {
+    const [token, op] = String(value).split("/");
+    return { token, opacity: op === void 0 ? 1 : Number(op) / 100 };
   }
   var isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
   function checkStyles(errors, where, styles, c) {
@@ -4617,6 +4665,84 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     });
     return errors;
   }
+  function combos(c) {
+    let out = [{}];
+    for (const [p, d] of Object.entries(c.props || {})) out = out.flatMap((o) => d.values.map((v) => __spreadProps(__spreadValues({}, o), { [p]: v })));
+    return out;
+  }
+  var statesOf = (c) => c.states && c.states.length ? c.states : ["default"];
+  function variantName(props, state, withState = true) {
+    const pairs = Object.entries(props).map(([k, v]) => `${k}=${v}`);
+    if (withState) pairs.push(`state=${state}`);
+    return pairs.join(", ") || "default";
+  }
+  function variantList(c) {
+    const states = statesOf(c);
+    return combos(c).flatMap((props) => states.map((state) => ({ props, state, name: variantName(props, state, states.length > 1) })));
+  }
+  function layers(c, props) {
+    var _a, _b;
+    const out = [{ source: "base", styles: c.base || {} }];
+    for (const [p, v] of Object.entries(props)) out.push({ source: `${p}=${v}`, styles: ((_b = (_a = c.variants) == null ? void 0 : _a[p]) == null ? void 0 : _b[v]) || {} });
+    (c.compound || []).forEach((cv, i) => {
+      const _a2 = cv, { when } = _a2, styles = __objRest(_a2, ["when"]);
+      if (Object.entries(when || {}).every(([k, v]) => props[k] === v)) out.push({ source: `compound:${i}`, styles });
+    });
+    return out;
+  }
+  function resolveStyle(c, props, state = "default") {
+    const out = {};
+    for (const part of c.parts) {
+      const plain = {};
+      const stated = {};
+      for (const { styles } of layers(c, props)) {
+        for (const [key, value] of Object.entries(styles[part] || {})) {
+          const k = splitKey(key);
+          if (k.state === "default") plain[k.prop] = value;
+          else if (k.state === state) stated[k.prop] = value;
+        }
+      }
+      const s = __spreadValues(__spreadValues({}, plain), stated);
+      if (state !== "focus") delete s["focus-ring"];
+      out[part] = s;
+    }
+    if (state === "disabled" && !JSON.stringify(c).includes(":disabled")) out.root.opacity = 50;
+    return out;
+  }
+  function inherited(style, part, prop, fallback) {
+    var _a, _b, _c, _d;
+    return (_d = (_c = (_a = style[part]) == null ? void 0 : _a[prop]) != null ? _c : (_b = style.root) == null ? void 0 : _b[prop]) != null ? _d : fallback;
+  }
+  var ALIGN = { start: "MIN", center: "CENTER", end: "MAX", between: "CENTER" };
+  function layoutFor(s = {}) {
+    var _a, _b;
+    const px = (v) => typeof v === "number" ? v * STEP : 0;
+    const row = (s.layout || "row") !== "column";
+    const out = {
+      layoutMode: row ? "HORIZONTAL" : "VERTICAL",
+      primaryAxisAlignItems: s.align === "between" ? "SPACE_BETWEEN" : row && s.align === "center" ? "CENTER" : "MIN",
+      counterAxisAlignItems: ALIGN[s.align] || (row ? "CENTER" : "MIN"),
+      itemSpacing: px(s.gap),
+      paddingLeft: px(s.px),
+      paddingRight: px(s.px),
+      paddingTop: px((_a = s.pt) != null ? _a : s.py),
+      paddingBottom: px((_b = s.pb) != null ? _b : s.py),
+      primaryAxisSizingMode: "AUTO",
+      counterAxisSizingMode: "AUTO"
+    };
+    if (s.size !== void 0) {
+      out.width = px(s.size);
+      out.height = px(s.size);
+      out.primaryAxisSizingMode = "FIXED";
+      out.counterAxisSizingMode = "FIXED";
+    } else if (s.height !== void 0) {
+      out.height = px(s.height);
+      if (row) out.counterAxisSizingMode = "FIXED";
+      else out.primaryAxisSizingMode = "FIXED";
+    }
+    if (s["min-height"] !== void 0) out.minHeight = px(s["min-height"]);
+    return out;
+  }
   function bindingRows(c) {
     const rows = [];
     const push = (source, path, styles) => {
@@ -4647,6 +4773,28 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     if (value === null || value === void 0 || value === "") delete o[key];
     else o[key] = value;
     return next;
+  }
+  function tokensUsed(c) {
+    const out = { color: /* @__PURE__ */ new Set(), radius: /* @__PURE__ */ new Set(), space: /* @__PURE__ */ new Set(), text: /* @__PURE__ */ new Set() };
+    for (const r of bindingRows(c)) {
+      if (r.kind === "color") out.color.add(splitToken(r.value).token);
+      else if (out[r.kind]) out[r.kind].add(r.value);
+    }
+    return out;
+  }
+  var normName = (name) => String(name).split(",").map((s) => s.trim().replace(/\s*=\s*/, "=")).filter(Boolean).sort().join(", ");
+  function diffVariants(existing, wanted) {
+    const byName = new Map(existing.map((e) => [normName(e.name), e]));
+    const keep = [];
+    const create = [];
+    for (const w of wanted) {
+      const hit = byName.get(normName(w.name));
+      if (hit) {
+        keep.push(__spreadProps(__spreadValues({}, w), { id: hit.id }));
+        byName.delete(normName(w.name));
+      } else create.push(w);
+    }
+    return { keep, create, stale: [...byName.values()] };
   }
 
   // core/io.js
@@ -4690,7 +4838,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     return edits.reduce((c, e) => setBinding(c, e.path, e.key, e.value), contract);
   }
   function bindingTable(contract) {
-    return bindingRows(contract).filter((r) => r.kind === "color" || r.kind === "radius").map((r) => ({ id: r.id, source: r.source, part: r.part, prop: r.prop, state: r.state, kind: r.kind, value: r.value, path: r.path, key: r.key }));
+    return bindingRows(contract).filter((r) => r.kind === "color" || r.kind === "radius" || r.kind === "space").map((r) => ({ id: r.id, source: r.source, part: r.part, prop: r.prop, state: r.state, kind: r.kind, value: r.value, path: r.path, key: r.key }));
   }
   function editedContracts(bundled, bindingEdits, isShared = () => false) {
     const byContract = {};
@@ -4772,10 +4920,10 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     }
     return out;
   }
-  function ensureCollection(ix, name, report, dryRun) {
+  function ensureCollection(ix, name, report2, dryRun) {
     if (ix.col[name]) return ix.col[name];
-    if (report.collectionsCreated.includes(name)) return null;
-    report.collectionsCreated.push(name);
+    if (report2.collectionsCreated.includes(name)) return null;
+    report2.collectionsCreated.push(name);
     if (dryRun) return null;
     const c = figma.variables.createVariableCollection(name);
     const modes = MODES_OF[name];
@@ -4784,26 +4932,26 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       try {
         c.addMode(m);
       } catch (e) {
-        report.errors.push(`${name}: \u0440\u0435\u0436\u0438\u043C \xAB${m}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
+        report2.errors.push(`${name}: \u0440\u0435\u0436\u0438\u043C \xAB${m}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
       }
     }
     ix.col[name] = c;
     return c;
   }
-  function modeIdsFor(c, key, report, dryRun) {
+  function modeIdsFor(c, key, report2, dryRun) {
     if (!c) return [key];
     if (key === "*") return c.modes.map((m) => m.modeId);
     const hit = c.modes.find((m) => modeName(m.name) === modeName(key));
     if (hit) return [hit.modeId];
     if (dryRun) {
-      if (!report.modesAdded.includes(`${c.name}/${key}`)) report.modesAdded.push(`${c.name}/${key}`);
+      if (!report2.modesAdded.includes(`${c.name}/${key}`)) report2.modesAdded.push(`${c.name}/${key}`);
       return [];
     }
-    report.modesAdded.push(`${c.name}/${key}`);
+    report2.modesAdded.push(`${c.name}/${key}`);
     try {
       return [c.addMode(key)];
     } catch (e) {
-      report.errors.push(`${c.name}: \u0440\u0435\u0436\u0438\u043C \xAB${key}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
+      report2.errors.push(`${c.name}: \u0440\u0435\u0436\u0438\u043C \xAB${key}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
       return [];
     }
   }
@@ -4834,65 +4982,72 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       if (reason) throw new Error(reason);
     }
     const prims = await primitiveIndex(ix);
-    const report = { dryRun, collectionsCreated: [], modesAdded: [], created: [], updated: [], aliased: [], raw: [], unchanged: 0, errors: [] };
+    const report2 = { dryRun, collectionsCreated: [], modesAdded: [], created: [], updated: [], aliased: [], raw: [], unchanged: 0, errors: [], changed: [] };
     for (const w of writes) {
-      const c = ensureCollection(ix, w.collection, report, dryRun);
+      const key = `${w.collection}/${w.name}`;
+      const touched = () => {
+        if (!report2.changed.includes(key)) report2.changed.push(key);
+      };
+      const c = ensureCollection(ix, w.collection, report2, dryRun);
       let v = ix.named[w.collection].get(w.name);
       if (v && v.resolvedType !== w.type) {
-        report.errors.push(`${w.collection}/${w.name}: \u0442\u0438\u043F ${v.resolvedType}, \u0430 \u043D\u0443\u0436\u0435\u043D ${w.type}`);
+        report2.errors.push(`${w.collection}/${w.name}: \u0442\u0438\u043F ${v.resolvedType}, \u0430 \u043D\u0443\u0436\u0435\u043D ${w.type}`);
         continue;
       }
       const fresh = !v;
       if (fresh) {
-        report.created.push(`${w.collection}/${w.name}`);
+        report2.created.push(key);
+        touched();
         if (!dryRun) {
           v = figma.variables.createVariable(w.name, c, w.type);
           v.scopes = w.scopes && w.scopes.length ? w.scopes : [];
-          if (w.css && w.collection === THEME && !/^brand\//.test(w.name)) v.setVariableCodeSyntax("WEB", `var(--${w.css})`);
+          if (w.css && (w.collection === THEME || /^custom\//.test(w.name)) && !/^brand\//.test(w.name)) v.setVariableCodeSyntax("WEB", `var(--${w.css})`);
           ix.named[w.collection].set(w.name, v);
           const first = Object.values(w.values)[0];
           if (!(first && first.aliasOf)) for (const m of c.modes) v.setValueForMode(m.modeId, w.type === "COLOR" ? rgba(first) : Number(first));
         }
       }
       for (const [modeKey, wanted] of Object.entries(w.values)) {
-        for (const modeId of modeIdsFor(c, modeKey, report, dryRun)) {
+        for (const modeId of modeIdsFor(c, modeKey, report2, dryRun)) {
           const label = `${w.collection}/${w.name} (${modeKey === "*" ? "\u0432\u0441\u0435 \u0440\u0435\u0436\u0438\u043C\u044B" : modeKey})`;
           const current = v && !fresh ? v.valuesByMode[modeId] : void 0;
           if (wanted && wanted.aliasOf) {
             const target = ix.named[wanted.aliasOf.collection] && ix.named[wanted.aliasOf.collection].get(wanted.aliasOf.name);
             if (!target && !dryRun) {
-              report.errors.push(`${label}: \u043D\u0435\u0442 \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0439 ${wanted.aliasOf.collection}/${wanted.aliasOf.name} \u0434\u043B\u044F \u0441\u0441\u044B\u043B\u043A\u0438`);
+              report2.errors.push(`${label}: \u043D\u0435\u0442 \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0439 ${wanted.aliasOf.collection}/${wanted.aliasOf.name} \u0434\u043B\u044F \u0441\u0441\u044B\u043B\u043A\u0438`);
               continue;
             }
             if (isAlias(current) && target && current.id === target.id) {
-              report.unchanged++;
+              report2.unchanged++;
               continue;
             }
-            report.aliased.push(`${label} \u2192 ${wanted.aliasOf.name}`);
+            report2.aliased.push(`${label} \u2192 ${wanted.aliasOf.name}`);
+            touched();
             if (!dryRun) v.setValueForMode(modeId, figma.variables.createVariableAlias(target));
             continue;
           }
           const now = current === void 0 ? void 0 : plainValue(await resolve(current, modeKey));
           if (!fresh && current !== void 0 && sameValue(now, w.type === "COLOR" ? normHex(wanted) : wanted)) {
-            report.unchanged++;
+            report2.unchanged++;
             continue;
           }
           const before = isAlias(current) ? "\u0441\u0441\u044B\u043B\u043A\u0430" : now;
+          touched();
           if (w.type === "COLOR") {
             const prim = prims.get(normHex(wanted));
             if (prim) {
-              report.aliased.push(`${label} \u2192 ${prim.name}`);
+              report2.aliased.push(`${label} \u2192 ${prim.name}`);
               if (!dryRun) v.setValueForMode(modeId, figma.variables.createVariableAlias(prim));
             } else {
-              report.raw.push(`${label}: ${normHex(wanted)}${before !== void 0 ? ` (\u0431\u044B\u043B\u043E ${before})` : ""}`);
+              report2.raw.push(`${label}: ${normHex(wanted)}${before !== void 0 ? ` (\u0431\u044B\u043B\u043E ${before})` : ""}`);
               if (!dryRun) v.setValueForMode(modeId, rgba(wanted));
             }
           } else if (!dryRun) v.setValueForMode(modeId, Number(wanted));
-          if (!fresh && current !== void 0) report.updated.push(`${label}: ${before} \u2192 ${wanted}`);
+          if (!fresh && current !== void 0) report2.updated.push(`${label}: ${before} \u2192 ${wanted}`);
         }
       }
     }
-    return report;
+    return report2;
   }
   function reportLine(r) {
     if (!r) return "";
@@ -4905,6 +5060,18 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   // ../builder/plugin/src/shared-contracts.js
   var NAMESPACE = "mbank";
   var PREFIX = "contract:";
+  function sharedContracts() {
+    const out = {};
+    for (const key of figma.root.getSharedPluginDataKeys(NAMESPACE).filter((k) => k.startsWith(PREFIX))) {
+      const raw = figma.root.getSharedPluginData(NAMESPACE, key);
+      if (!raw) continue;
+      try {
+        out[key.slice(PREFIX.length)] = JSON.parse(raw);
+      } catch (e) {
+      }
+    }
+    return out;
+  }
   function sharedContract(name) {
     const raw = figma.root.getSharedPluginData(NAMESPACE, PREFIX + name);
     if (!raw) return null;
@@ -4919,6 +5086,783 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   }
   function dropSharedContract(name) {
     figma.root.setSharedPluginData(NAMESPACE, PREFIX + name, "");
+  }
+
+  // ../builder/plugin/src/draw.js
+  var WEIGHTS2 = { regular: "Regular", medium: "Medium", semibold: "Semi Bold", bold: "Bold" };
+  function createCtx({ vars, radius, font, kit, width, state, spec }) {
+    return { vars, radius, font, kit, width, state, spec, styles: {}, kitStyles: null, stats: { instances: 0, fallbacks: 0, fallbackFonts: false } };
+  }
+  async function loadFonts(family) {
+    const loaded = [];
+    for (const style of Object.values(WEIGHTS2)) {
+      try {
+        await figma.loadFontAsync({ family, style });
+        loaded.push(style);
+      } catch (e) {
+      }
+    }
+    if (loaded.includes("Regular")) return family;
+    for (const style of Object.values(WEIGHTS2)) await figma.loadFontAsync({ family: "Inter", style });
+    return "Inter";
+  }
+  function paint2(ctx, token, opacity = 1) {
+    const v = ctx.vars[token];
+    const base = { type: "SOLID", color: { r: 0.5, g: 0.5, b: 0.5 }, opacity };
+    return v ? figma.variables.setBoundVariableForPaint(base, "color", v) : base;
+  }
+  async function textStyle(ctx, sz, weight) {
+    const key = `${sz}/${weight}`;
+    if (ctx.styles[key]) return ctx.styles[key];
+    if (!ctx.kitStyles) ctx.kitStyles = new Map((await figma.getLocalTextStylesAsync()).map((s) => [s.name, s]));
+    const kit = ctx.kitStyles.get(`text-${sz}/leading-normal/${weight === "regular" ? "normal" : weight}`);
+    if (kit) {
+      try {
+        await figma.loadFontAsync(kit.fontName);
+        return ctx.styles[key] = kit;
+      } catch (e) {
+      }
+    }
+    const name = `ds/${sz}/${weight}`;
+    const st = ctx.kitStyles.get(name) || figma.createTextStyle();
+    if (!ctx.kitStyles.has(name)) {
+      st.name = name;
+      ctx.kitStyles.set(name, st);
+    }
+    const [px, lh] = TYPE_SCALE[sz] || TYPE_SCALE.sm;
+    st.fontName = { family: ctx.font, style: WEIGHTS2[weight] || "Regular" };
+    st.fontSize = px;
+    st.lineHeight = { unit: "PIXELS", value: lh };
+    st.letterSpacing = { unit: "PERCENT", value: ["2xl", "3xl", "4xl"].includes(sz) ? -2 : 0 };
+    ctx.stats.fallbackFonts = true;
+    return ctx.styles[key] = st;
+  }
+
+  // ../builder/plugin/src/icons.js
+  var P = {
+    home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    inbox: '<path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6z"/>',
+    users: '<circle cx="9" cy="8" r="4"/><path d="M2 21v-1a6 6 0 0 1 12 0v1"/><path d="M16 4a4 4 0 0 1 0 8"/><path d="M18 15a5 5 0 0 1 4 5v1"/>',
+    chart: '<path d="M3 3v18h18"/><path d="M8 16v-4"/><path d="M13 16V8"/><path d="M18 16v-7"/>',
+    settings: '<path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h2"/><path d="M10 12h10"/><circle cx="8" cy="12" r="2"/><path d="M4 18h10"/><path d="M18 18h2"/><circle cx="16" cy="18" r="2"/>',
+    file: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/>',
+    card: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>',
+    bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+    wallet: '<path d="M19 7V5a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V6"/><path d="M17 14h.01"/>',
+    transfer: '<path d="M4 8h16l-4-4"/><path d="M20 16H4l4 4"/>',
+    history: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    more: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
+    menu: '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>',
+    back: '<path d="m15 18-6-6 6-6"/>',
+    check: '<path d="m5 12 5 5L20 7"/>',
+    shield: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>',
+    folder: '<path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/>',
+    layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>'
+  };
+  var ICONS = Object.keys(P);
+  function icon(ctx, name, color = "muted-foreground", px = 16) {
+    const body = P[name] || P.folder;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+    const node = figma.createNodeFromSvg(svg);
+    node.name = `Icon / ${name}`;
+    node.fills = [];
+    const tint2 = (n) => {
+      if ("strokes" in n && n.strokes.length) n.strokes = [paint2(ctx, color)];
+      if ("fills" in n && n.type !== "FRAME") n.fills = [];
+      if ("children" in n) n.children.forEach(tint2);
+    };
+    tint2(node);
+    node.rescale(px / 24);
+    return node;
+  }
+
+  // ../builder/plugin/src/brand.js
+  var C = { tailwind: "Tailwind", style: "Style", mode: "Mode", brand: "Brand" };
+  var THEMES = ["light", "dark"];
+  var alias = (v) => figma.variables.createVariableAlias(v);
+  var isAlias2 = (x) => x && typeof x === "object" && x.type === "VARIABLE_ALIAS";
+  var rgba2 = (hex) => {
+    const { r, g, b, a } = hexToRgb(hex);
+    return { r, g, b, a };
+  };
+  async function loadIndex() {
+    const cols = await figma.variables.getLocalVariableCollectionsAsync();
+    const vars = await figma.variables.getLocalVariablesAsync();
+    const byId = new Map(vars.map((v) => [v.id, v]));
+    const col = {};
+    for (const c of cols) col[c.name] = c;
+    const named = {};
+    for (const c of cols) named[c.name] = /* @__PURE__ */ new Map();
+    for (const v of vars) {
+      const c = cols.find((x) => x.id === v.variableCollectionId);
+      if (c) named[c.name].set(v.name, v);
+    }
+    const palette = {};
+    for (const [name, v] of named[C.tailwind] || []) {
+      if (v.resolvedType !== "COLOR" || !name.startsWith("colors/")) continue;
+      const val = v.valuesByMode[col[C.tailwind].defaultModeId];
+      if (!isAlias2(val)) palette[name.slice(7)] = rgbToHex(val);
+    }
+    return { col, named, byId, palette };
+  }
+  var themeMode = (c, theme) => (c.modes.find((m) => (theme === "dark" ? /dark/i : /light/i).test(m.name)) || c.modes[theme === "dark" ? 1 : 0]).modeId;
+  async function ensureBrandVar(ix, name, type = "COLOR") {
+    let v = ix.named[C.brand].get(name);
+    if (!v) {
+      v = figma.variables.createVariable(name, ix.col[C.brand], type);
+      v.scopes = [];
+      ix.named[C.brand].set(name, v);
+      ix.byId.set(v.id, v);
+    }
+    return v;
+  }
+  var setAllModes = (ix, v, value) => {
+    for (const m of ix.col[C.brand].modes) v.setValueForMode(m.modeId, value);
+  };
+  async function ensureModeColor(name, like) {
+    const ix = await loadIndex();
+    if (!ix.col[C.brand] || !ix.col[C.mode]) return null;
+    const mode = ix.col[C.mode];
+    const mv = figma.variables.createVariable(name, mode, "COLOR");
+    const base = like && ix.named[C.mode].get(like);
+    for (const theme of THEMES) {
+      const bv = await ensureBrandVar(ix, `color/${theme}/${name}`);
+      const src = base && ix.named[C.brand].get(`color/${theme}/${like}`);
+      setAllModes(ix, bv, src ? alias(src) : rgba2("#ff00ff"));
+      mv.setValueForMode(themeMode(mode, theme), alias(bv));
+    }
+    mv.setPluginData("ds", "contract-placeholder");
+    mv.scopes = scopesFor(name);
+    mv.setVariableCodeSyntax("WEB", `var(${cssVar(name)})`);
+    return mv;
+  }
+
+  // ../builder/plugin/src/tokens-resolve.js
+  async function tokenIndex() {
+    const ix = await loadIndex();
+    const cols = await figma.variables.getLocalVariableCollectionsAsync();
+    const colName = new Map(cols.map((c) => [c.id, c.name]));
+    const all = [...ix.byId.values()];
+    const byName = /* @__PURE__ */ new Map();
+    for (const v of all) {
+      const list = byName.get(v.name) || [];
+      list.push(v);
+      byName.set(v.name, list);
+    }
+    return { ix, all, byName, colName, cache: /* @__PURE__ */ new Map(), created: [], missing: [], imported: [] };
+  }
+  async function libraryVar(t, name) {
+    const key = name && TOKEN_MAP.keys && TOKEN_MAP.keys[name];
+    if (!key || !figma.variables.importVariableByKeyAsync) return null;
+    try {
+      const v = await figma.variables.importVariableByKeyAsync(key);
+      if (v && !t.imported.includes(name)) t.imported.push(name);
+      return v || null;
+    } catch (e) {
+      return null;
+    }
+  }
+  function colorName(token, depth = 0) {
+    const m = TOKEN_MAP.colors[token];
+    if (m && m.alias && depth < 4) return colorName(m.alias, depth + 1);
+    return m && m.figma;
+  }
+  function pick(t, name, type, collection) {
+    const list = (t.byName.get(name) || []).filter((v) => v.resolvedType === type);
+    if (!list.length) return null;
+    return collection && list.find((v) => (t.colName.get(v.variableCollectionId) || "").startsWith(collection)) || list[0];
+  }
+  function findColor(t, token, depth = 0) {
+    var _a;
+    const mode = (_a = t.ix.named[C.mode]) == null ? void 0 : _a.get(token);
+    if (mode && mode.resolvedType === "COLOR") return mode;
+    const m = TOKEN_MAP.colors[token];
+    if (m && m.alias && depth < 4) return findColor(t, m.alias, depth + 1);
+    if (m && m.figma) {
+      const v = pick(t, m.figma, "COLOR", m.collection);
+      if (v) return v;
+    }
+    return pick(t, token, "COLOR") || pick(t, `color/${token}`, "COLOR");
+  }
+  function findRadius(t, key) {
+    var _a;
+    const style = (_a = t.ix.named[C.style]) == null ? void 0 : _a.get(`radius/${key}`);
+    if (style) return style;
+    return TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], "FLOAT") || pick(t, `radius/${key}`, "FLOAT") || pick(t, `rounded/${key}`, "FLOAT");
+  }
+  function findSpace(t, step2) {
+    const s = String(step2).replace(".", "-");
+    const mbank = TOKEN_MAP.spacing && TOKEN_MAP.spacing[String(step2 * STEP)];
+    return pick(t, `spacing/${step2}`, "FLOAT") || pick(t, `spacing/${s}`, "FLOAT") || pick(t, `spacing/${step2 * STEP}`, "FLOAT") || mbank && pick(t, mbank, "FLOAT");
+  }
+  var libraryName = (kind, value) => kind === "radius" ? TOKEN_MAP.radius[value] : TOKEN_MAP.spacing && TOKEN_MAP.spacing[String(value * STEP)];
+  var report = (t, kind, token) => {
+    if (!t.missing.some((m) => m.kind === kind && m.token === token)) t.missing.push({ kind, token });
+  };
+  async function colorVar(t, token, { create = true } = {}) {
+    var _a;
+    if (t.cache.has(`c:${token}`)) return t.cache.get(`c:${token}`);
+    let v = findColor(t, token) || await libraryVar(t, colorName(token));
+    if (!v && create) {
+      const like = token.replace(/-(hover|active|disabled|muted)$/, "");
+      v = await ensureModeColor(token, like !== token ? like : null);
+      if (v) {
+        t.created.push({ token, like: like !== token && ((_a = t.ix.named[C.mode]) == null ? void 0 : _a.has(like)) ? like : null });
+        t.ix.named[C.mode].set(token, v);
+        t.byName.set(token, [v]);
+      }
+    }
+    if (!v) report(t, "color", token);
+    t.cache.set(`c:${token}`, v || null);
+    return v || null;
+  }
+  async function floatVar(t, kind, value) {
+    const key = `${kind}:${value}`;
+    if (t.cache.has(key)) return t.cache.get(key);
+    const v = (kind === "radius" ? findRadius(t, value) : findSpace(t, value)) || await libraryVar(t, libraryName(kind, value));
+    if (!v && !(kind === "radius" && (value === "full" || value === "none"))) report(t, kind, String(value));
+    t.cache.set(key, v || null);
+    return v || null;
+  }
+
+  // ../builder/plugin/src/components.js
+  var PAGE = "Components";
+  var KEY = "mbank-contract";
+  var GAP = 24;
+  var RADIUS_PX = { none: 0, "2xs": 2, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, "2xl": 20, "3xl": 24, "4xl": 32, full: 9999 };
+  var MAGENTA = { r: 1, g: 0, b: 1 };
+  var WEIGHT_SUFFIX = { medium: "-md", semibold: "-strong", bold: "-strong" };
+  async function componentsPage(name = PAGE) {
+    await figma.loadAllPagesAsync();
+    const page = figma.root.children.find((p2) => p2.name === name);
+    if (page) return page;
+    const p = figma.createPage();
+    p.name = name;
+    return p;
+  }
+  var pageOf = (c) => c && c.figma && c.figma.page || PAGE;
+  var isSingle = (c) => !Object.keys(c.props || {}).length && statesOf(c).length === 1;
+  var findType = (page, c, type) => page.findOne((n) => n.type === type && n.getPluginData(KEY) === c.name) || page.findOne((n) => n.type === type && n.name === (c.title || c.name) && (type === "COMPONENT_SET" || n.parent === page));
+  function findSet(page, c) {
+    const set = findType(page, c, "COMPONENT_SET");
+    return set || (isSingle(c) ? findType(page, c, "COMPONENT") : null);
+  }
+  async function paintFor(r, value) {
+    const { token, opacity } = splitToken(value);
+    const v = await colorVar(r.t, token, { create: r.create });
+    const base = { type: "SOLID", color: MAGENTA, opacity };
+    if (!v) {
+      r.unbound++;
+      return base;
+    }
+    r.bound++;
+    return figma.variables.setBoundVariableForPaint(base, "color", v);
+  }
+  async function ringFor(r, value) {
+    const { token, opacity } = splitToken(value);
+    const v = await colorVar(r.t, token, { create: r.create });
+    const effect = { type: "DROP_SHADOW", color: __spreadProps(__spreadValues({}, MAGENTA), { a: opacity }), offset: { x: 0, y: 0 }, radius: 0, spread: 3, visible: true, blendMode: "NORMAL", showShadowBehindNode: false };
+    if (!v) {
+      r.unbound++;
+      return effect;
+    }
+    r.bound++;
+    return figma.variables.setBoundVariableForEffect(effect, "color", v);
+  }
+  async function bindFloat(r, node, fields, kind, value) {
+    const v = await floatVar(r.t, kind, value);
+    if (!v) {
+      r.unbound++;
+      return;
+    }
+    for (const f of fields) node.setBoundVariable(f, v);
+    r.bound++;
+  }
+  var FLOAT_FIELDS = ["paddingLeft", "paddingRight", "paddingTop", "paddingBottom", "itemSpacing", "width", "height", "minHeight", "topLeftRadius", "topRightRadius", "bottomLeftRadius", "bottomRightRadius"];
+  async function applyFrame(r, node, s, a = {}) {
+    var _a, _b;
+    const L = layoutFor(s);
+    if (a.width) {
+      L.width = a.width;
+      if (L.layoutMode === "HORIZONTAL") L.primaryAxisSizingMode = "FIXED";
+      else L.counterAxisSizingMode = "FIXED";
+    }
+    for (const f of FLOAT_FIELDS) if (node.boundVariables && node.boundVariables[f]) node.setBoundVariable(f, null);
+    for (const k of ["layoutMode", "primaryAxisAlignItems", "counterAxisAlignItems", "itemSpacing", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom"]) node[k] = L[k];
+    node.primaryAxisSizingMode = L.primaryAxisSizingMode;
+    node.counterAxisSizingMode = L.counterAxisSizingMode;
+    if (L.width !== void 0 || L.height !== void 0) node.resize(L.width || node.width, L.height || node.height);
+    if (L.minHeight !== void 0) node.minHeight = L.minHeight;
+    if (s.px !== void 0) await bindFloat(r, node, ["paddingLeft", "paddingRight"], "space", s.px);
+    if (s.py !== void 0) await bindFloat(r, node, ["paddingTop", "paddingBottom"], "space", s.py);
+    if (s.pt !== void 0) await bindFloat(r, node, ["paddingTop"], "space", s.pt);
+    if (s.pb !== void 0) await bindFloat(r, node, ["paddingBottom"], "space", s.pb);
+    if (s.gap !== void 0) await bindFloat(r, node, ["itemSpacing"], "space", s.gap);
+    if (s.size !== void 0) await bindFloat(r, node, ["width", "height"], "space", s.size);
+    else if (s.height !== void 0) await bindFloat(r, node, ["height"], "space", s.height);
+    if (s["min-height"] !== void 0) await bindFloat(r, node, ["minHeight"], "space", s["min-height"]);
+    node.fills = s.bg ? [await paintFor(r, s.bg)] : [];
+    if (s.border) {
+      node.strokes = [await paintFor(r, s.border)];
+      const w = (_a = s["border-width"]) != null ? _a : 1;
+      node.strokeWeight = w;
+      node.strokeAlign = "INSIDE";
+      if (a.sides) for (const side of ["Top", "Right", "Bottom", "Left"]) node[`stroke${side}Weight`] = a.sides.includes(side.toLowerCase()) ? w : 0;
+    } else node.strokes = [];
+    if (s.radius !== void 0) {
+      const v = await floatVar(r.t, "radius", s.radius);
+      if (v) {
+        for (const f of ["topLeftRadius", "topRightRadius", "bottomLeftRadius", "bottomRightRadius"]) node.setBoundVariable(f, v);
+        r.bound++;
+      } else node.cornerRadius = (_b = RADIUS_PX[s.radius]) != null ? _b : 8;
+    } else node.cornerRadius = 0;
+    node.opacity = s.opacity !== void 0 ? s.opacity / 100 : 1;
+    node.effects = s["focus-ring"] ? [await ringFor(r, s["focus-ring"])] : [];
+  }
+  async function pickTextStyle(r, size, weight) {
+    const key = `${size}/${weight}`;
+    if (r.textStyles.has(key)) return r.textStyles.get(key);
+    const local = new Map((await figma.getLocalTextStylesAsync()).map((s) => [s.name, s]));
+    const mapped = TOKEN_MAP.text[size];
+    let st = null;
+    for (const name of mapped ? [`${mapped}${WEIGHT_SUFFIX[weight] || ""}`, mapped] : []) {
+      const hit = local.get(name) || await libraryStyle(name);
+      if (!hit) continue;
+      try {
+        await figma.loadFontAsync(hit.fontName);
+        st = hit;
+        break;
+      } catch (e) {
+      }
+    }
+    if (!st) {
+      const sz = TYPE_SCALE[size] ? size : { "2xs": "xs", caption: "xs", md: "sm", "5xl": "4xl", "6xl": "4xl", "7xl": "4xl" }[size] || "sm";
+      st = await textStyle(r.ctx, sz, weight);
+    }
+    r.textStyles.set(key, st);
+    return st;
+  }
+  async function libraryStyle(name) {
+    const key = TOKEN_MAP.styleKeys && TOKEN_MAP.styleKeys[name];
+    if (!key || !figma.importStyleByKeyAsync) return null;
+    try {
+      return await figma.importStyleByKeyAsync(key);
+    } catch (e) {
+      return null;
+    }
+  }
+  var defaultText = (part, c) => ({ placeholder: "Placeholder", description: "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", value: "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435", hint: "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430" })[part] || c.title || c.name;
+  async function applyText(r, node, style, part, c, a = {}) {
+    const size = inherited(style, part, "text", "sm");
+    const weight = inherited(style, part, "weight", "regular");
+    const st = await pickTextStyle(r, size, weight);
+    try {
+      await figma.loadFontAsync(node.fontName);
+    } catch (e) {
+    }
+    node.fontName = st.fontName;
+    if (!node.characters) node.characters = a.sample || defaultText(part, c);
+    await node.setTextStyleIdAsync(st.id);
+    node.fills = [await paintFor(r, inherited(style, part, "fg", "foreground"))];
+    r.bound++;
+  }
+  async function applyIcon(r, comp, style, part) {
+    var _a, _b;
+    const token = splitToken(inherited(style, part, "fg", "foreground")).token;
+    r.ctx.vars[token] = await colorVar(r.t, token, { create: r.create });
+    const node = icon(r.ctx, "check", token, ((_b = (_a = style[part]) == null ? void 0 : _a.size) != null ? _b : 4) * STEP);
+    node.name = part;
+    if (r.ctx.vars[token]) r.bound++;
+    else r.unbound++;
+    return node;
+  }
+  async function instanceOf(r, a) {
+    const { name, key } = a.component;
+    let main = null;
+    if (key && figma.importComponentByKeyAsync) {
+      try {
+        main = await figma.importComponentByKeyAsync(key);
+      } catch (e) {
+      }
+    }
+    if (!main) {
+      const local = figma.root.findOne((n) => (n.type === "COMPONENT_SET" || n.type === "COMPONENT") && n.name === name);
+      main = local && local.type === "COMPONENT_SET" ? local.defaultVariant : local;
+    }
+    if (!main) {
+      if (!r.missingComponents.includes(name)) r.missingComponents.push(name);
+      return null;
+    }
+    const inst = main.createInstance();
+    const label = a.sample && inst.findOne && inst.findOne((n) => n.type === "TEXT");
+    if (label) {
+      try {
+        await figma.loadFontAsync(label.fontName);
+        label.characters = a.sample;
+      } catch (e) {
+      }
+    }
+    r.instances++;
+    return inst;
+  }
+  async function renderPart(r, holder, style, part, c) {
+    const kind = partKind(part, c);
+    const a = c.anatomy && c.anatomy[part] || {};
+    const layer = a.layer || part;
+    let node = holder.children.find((n) => n.name === layer);
+    const fits = node && (kind === "text" ? node.type === "TEXT" : kind === "instance" ? node.type === "INSTANCE" : kind === "frame" && node.type === "FRAME");
+    if (node && !fits) {
+      node.remove();
+      node = null;
+    }
+    if (kind === "icon") node = await applyIcon(r, holder, style, part);
+    else if (kind === "instance") node = node || await instanceOf(r, a) || figma.createFrame();
+    else if (kind === "text") {
+      node = node || figma.createText();
+      await applyText(r, node, style, part, c, a);
+    } else {
+      node = node || figma.createFrame();
+      await applyFrame(r, node, style[part] || {}, a);
+    }
+    node.name = layer;
+    holder.appendChild(node);
+    const column = holder.layoutMode === "VERTICAL";
+    const fill = c.anatomy ? !!a.fill : column && kind !== "icon";
+    if (fill) node.layoutSizingHorizontal = "FILL";
+    else if (kind === "text" && a.width) {
+      node.textAutoResize = "HEIGHT";
+      node.resize(a.width, node.height);
+    }
+    return node;
+  }
+  async function renderVariant(r, comp, c, props, state) {
+    const style = resolveStyle(c, props, state);
+    const rootA = c.anatomy && c.anatomy.root || {};
+    await applyFrame(r, comp, style.root, rootA);
+    if (comp.layoutMode === "VERTICAL" && comp.counterAxisSizingMode === "AUTO") {
+      comp.resize(320, comp.height);
+      comp.counterAxisSizingMode = "FIXED";
+    }
+    const holders = /* @__PURE__ */ new Map([["root", comp]]);
+    const keep = /* @__PURE__ */ new Set();
+    for (const part of c.parts.filter((p) => p !== "root")) {
+      const node = await renderPart(r, holders.get(parentOf(c, part)), style, part, c);
+      holders.set(part, node);
+      keep.add(node);
+    }
+    for (const h of holders.values()) if (h.type !== "INSTANCE" && h.children) {
+      for (const n of [...h.children]) if (!keep.has(n)) n.remove();
+    }
+  }
+  function layoutGrid(set, c, comps) {
+    const states = statesOf(c);
+    const w = Math.max(...comps.map((x) => x.node.width));
+    const h = Math.max(...comps.map((x) => x.node.height));
+    comps.forEach((x, i) => {
+      x.node.x = GAP + i % states.length * (w + GAP);
+      x.node.y = GAP + Math.floor(i / states.length) * (h + GAP);
+    });
+    const rows = Math.ceil(comps.length / states.length);
+    set.resizeWithoutConstraints(GAP + states.length * (w + GAP), GAP + rows * (h + GAP));
+  }
+  var reportOf = (r, t, extra) => __spreadProps(__spreadValues({}, extra), {
+    bound: r.bound,
+    unbound: r.unbound,
+    missing: t.missing,
+    createdTokens: t.created,
+    fallbackFonts: r.ctx.stats.fallbackFonts,
+    imported: t.imported,
+    instances: r.instances,
+    missingComponents: r.missingComponents
+  });
+  function finish(node, c) {
+    node.name = c.title || c.name;
+    node.description = `mbank/component@1 \xB7 ${c.name}`;
+    node.setPluginData(KEY, c.name);
+    const contract = __spreadProps(__spreadValues({}, c), { figma: __spreadValues(__spreadProps(__spreadValues({}, c.figma || {}), { name: node.name, nodeId: node.id }), node.key ? { key: node.key } : {}) });
+    node.setPluginData("contract-json", JSON.stringify(contract));
+    return contract;
+  }
+  async function renderSingle(r, t, page, found, c) {
+    const node = found || figma.createComponent();
+    if (!found) {
+      page.appendChild(node);
+      node.x = GAP;
+      node.y = GAP + Math.max(0, ...page.children.filter((n) => n !== node).map((n) => n.y + n.height));
+    }
+    await renderVariant(r, node, c, {}, "default");
+    const contract = finish(node, c);
+    return { contract, report: reportOf(r, t, { setId: node.id, page: page.name, variants: 1, created: found ? 0 : 1, updated: found ? 1 : 0, stale: [], pruned: false }) };
+  }
+  async function renderContract(c, opts = {}) {
+    var _a;
+    const errors = validateContract(c);
+    if (errors.length) return { errors };
+    const page = await componentsPage(pageOf(c));
+    const t = await tokenIndex();
+    const font = await loadFonts(opts.font || "Inter");
+    const r = { t, ctx: createCtx({ vars: {}, radius: {}, font }), textStyles: /* @__PURE__ */ new Map(), bound: 0, unbound: 0, instances: 0, missingComponents: [], create: opts.create !== false };
+    const wanted = variantList(c);
+    let set = findSet(page, c);
+    if (isSingle(c) && (!set || set.type === "COMPONENT")) return renderSingle(r, t, page, set, c);
+    const existing = set ? set.children.filter((n) => n.type === "COMPONENT").map((n) => ({ id: n.id, name: n.name })) : [];
+    const diff = diffVariants(existing, wanted);
+    const comps = [];
+    for (const w of wanted) {
+      const hit = diff.keep.find((k) => k.name === w.name);
+      const node = hit ? set.children.find((n) => n.id === hit.id) : figma.createComponent();
+      node.name = w.name;
+      await renderVariant(r, node, c, w.props, w.state);
+      comps.push({ node, w });
+    }
+    const fresh = comps.filter((x) => !diff.keep.some((k) => k.name === x.w.name)).map((x) => x.node);
+    if (!set) {
+      set = figma.combineAsVariants(fresh, page);
+    } else for (const n of fresh) set.appendChild(n);
+    for (const s of diff.stale) if (opts.prune) (_a = set.children.find((n) => n.id === s.id)) == null ? void 0 : _a.remove();
+    layoutGrid(set, c, comps);
+    const contract = finish(set, c);
+    return {
+      contract,
+      report: reportOf(r, t, {
+        setId: set.id,
+        page: page.name,
+        variants: wanted.length,
+        created: diff.create.length,
+        updated: diff.keep.length,
+        stale: diff.stale.map((s) => s.name),
+        pruned: !!opts.prune
+      })
+    };
+  }
+
+  // src/components-io.js
+  var INSERTED = "mbank-insert";
+  var RADII = ["topLeftRadius", "topRightRadius", "bottomLeftRadius", "bottomRightRadius"];
+  async function mainOf(inst) {
+    try {
+      return inst.getMainComponentAsync ? await inst.getMainComponentAsync() : inst.mainComponent || null;
+    } catch (e) {
+      return null;
+    }
+  }
+  var ownerOf = (main) => main && main.parent && main.parent.type === "COMPONENT_SET" ? main.parent : main;
+  function pageNode(node) {
+    let p = node;
+    while (p && p.type !== "PAGE") p = p.parent;
+    return p || null;
+  }
+  var pageName = (node) => pageNode(node) ? pageNode(node).name : "?";
+  function inside(node, id) {
+    for (let p = node.parent; p; p = p.parent) if (p.id === id) return true;
+    return false;
+  }
+  async function findLocal(c) {
+    await figma.loadAllPagesAsync();
+    const pages = figma.root.children;
+    const home = pages.find((p) => p.name === pageOf(c));
+    const order = home ? [home, ...pages.filter((p) => p !== home)] : pages;
+    for (const p of order) {
+      const hit = findSet(p, c);
+      if (hit) return hit;
+    }
+    return null;
+  }
+  async function instanceUsage(targets) {
+    const out = {};
+    for (const t of targets) out[t.name] = { instances: 0, pages: {} };
+    if (!targets.length) return out;
+    await figma.loadAllPagesAsync();
+    for (const inst of figma.root.findAllWithCriteria({ types: ["INSTANCE"] })) {
+      const main = await mainOf(inst);
+      const owner = ownerOf(main);
+      if (!owner) continue;
+      const t = targets.find((x) => x.id && owner.id === x.id || x.key && owner.remote && (owner.key === x.key || main.key === x.key));
+      if (!t || t.id && inside(inst, t.id)) continue;
+      const u = out[t.name];
+      u.instances++;
+      u.pages[pageName(inst)] = (u.pages[pageName(inst)] || 0) + 1;
+    }
+    return out;
+  }
+  var libraryKey = (c) => c.figma && c.figma.key || null;
+  async function componentStatus(c) {
+    const node = await findLocal(c);
+    const key = libraryKey(c);
+    const target = node ? { name: c.name, id: node.id } : key ? { name: c.name, key } : null;
+    const use = target ? (await instanceUsage([target]))[c.name] : { instances: 0, pages: {} };
+    return {
+      name: c.name,
+      title: c.title || c.name,
+      state: node ? "local" : use.instances ? "library" : "none",
+      setId: node ? node.id : null,
+      variants: node ? node.type === "COMPONENT_SET" ? node.children.length : 1 : 0,
+      instances: use.instances,
+      pages: use.pages
+    };
+  }
+  async function extraVariables(extras) {
+    const out = /* @__PURE__ */ new Map();
+    if (!extras.length) return out;
+    const theme = (await figma.variables.getLocalVariableCollectionsAsync()).find((x) => x.name.trim() === THEME);
+    if (!theme) return out;
+    const vars = (await figma.variables.getLocalVariablesAsync()).filter((v) => v.variableCollectionId === theme.id);
+    for (const x of extras) {
+      const v = vars.find((y) => y.name === x.figma);
+      if (v) out.set(x.css, v);
+    }
+    return out;
+  }
+  var boundPaint = (v, opacity) => figma.variables.setBoundVariableForPaint({ type: "SOLID", color: { r: 0, g: 0, b: 0 }, opacity }, "color", v);
+  function partNode(nodes, c, part) {
+    const holder = nodes.get(parentOf(c, part));
+    const layer = c.anatomy && c.anatomy[part] && c.anatomy[part].layer || part;
+    return holder && holder.type !== "INSTANCE" && holder.children ? holder.children.find((n) => n.name === layer) || null : null;
+  }
+  function bindExtras(node, c, vars) {
+    let bound = 0;
+    const colour = (value) => {
+      if (!value) return null;
+      const { token, opacity } = splitToken(value);
+      const v = vars.get(token);
+      return v && v.resolvedType === "COLOR" ? boundPaint(v, opacity) : null;
+    };
+    const list = variantList(c);
+    const comps = node.type === "COMPONENT_SET" ? node.children.filter((n) => n.type === "COMPONENT") : [node];
+    for (const comp of comps) {
+      const w = isSingle(c) ? list[0] : list.find((x) => x.name === comp.name);
+      if (!w) continue;
+      const style = resolveStyle(c, w.props, w.state);
+      const nodes = /* @__PURE__ */ new Map([["root", comp]]);
+      for (const part of c.parts) {
+        const el = part === "root" ? comp : partNode(nodes, c, part);
+        if (!el) continue;
+        nodes.set(part, el);
+        const kind = partKind(part, c);
+        if (kind === "instance") continue;
+        if (kind === "text" || kind === "icon") {
+          const paint3 = colour(inherited(style, part, "fg", "foreground"));
+          if (!paint3) continue;
+          if (kind === "text") el.fills = [paint3];
+          else for (const vec of el.findAll((n) => n.type === "VECTOR")) {
+            if (vec.strokes.length) vec.strokes = [paint3];
+            if (vec.fills.length) vec.fills = [paint3];
+          }
+          bound++;
+          continue;
+        }
+        const s = style[part] || {};
+        const bg = colour(s.bg);
+        if (bg) {
+          el.fills = [bg];
+          bound++;
+        }
+        const border = colour(s.border);
+        if (border) {
+          el.strokes = [border];
+          bound++;
+        }
+        const ring = s["focus-ring"] && vars.get(splitToken(s["focus-ring"]).token);
+        if (ring && el.effects && el.effects.length) {
+          el.effects = [figma.variables.setBoundVariableForEffect(__spreadValues({}, el.effects[0]), "color", ring)];
+          bound++;
+        }
+        const radius = s.radius !== void 0 && vars.get(String(s.radius));
+        if (radius && radius.resolvedType === "FLOAT") {
+          for (const f of RADII) el.setBoundVariable(f, radius);
+          bound++;
+        }
+      }
+    }
+    return bound;
+  }
+  async function updateComponent(c, extras = [], { build = false } = {}) {
+    const before = await findLocal(c);
+    if (!before) {
+      const st = await componentStatus(c);
+      if (st.state === "library") throw new Error(`\xAB${st.title}\xBB \u0432 \u044D\u0442\u043E\u043C \u0444\u0430\u0439\u043B\u0435 \u0438\u0437 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438 (${st.instances} \u044D\u043A\u0437.): \u043C\u0435\u043D\u044F\u0439\u0442\u0435 \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u0432 \u0444\u0430\u0439\u043B\u0435 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438 \u0438 \u043F\u0443\u0431\u043B\u0438\u043A\u0443\u0439\u0442\u0435, \u0437\u0434\u0435\u0441\u044C \u2014 Accept updates`);
+      if (!build) return { needsBuild: true, name: c.name, title: c.title || c.name };
+    }
+    const ids = before ? before.type === "COMPONENT_SET" ? before.children.map((n) => n.id) : [before.id] : [];
+    const res = await renderContract(c, { create: false, prune: false });
+    if (res.errors) throw new Error(`\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 \u0441 \u043E\u0448\u0438\u0431\u043A\u0430\u043C\u0438: ${res.errors.join("; ")}`);
+    const node = await figma.getNodeByIdAsync(res.report.setId);
+    const used = tokensUsed(c);
+    const mine = extras.filter((x) => used.color.has(x.css) || used.radius.has(x.css));
+    const vars = await extraVariables(mine);
+    const extraBound = vars.size ? bindExtras(node, c, vars) : 0;
+    const nowIds = node.type === "COMPONENT_SET" ? node.children.map((n) => n.id) : [node.id];
+    const use = (await instanceUsage([{ name: c.name, id: node.id }]))[c.name];
+    return {
+      name: c.name,
+      title: c.title || c.name,
+      setId: node.id,
+      page: res.report.page,
+      built: !before,
+      variants: nowIds.length,
+      kept: ids.filter((id) => nowIds.includes(id)).length,
+      created: res.report.created,
+      bound: res.report.bound + extraBound,
+      extraBound,
+      missing: res.report.missing.filter((m) => !vars.has(m.token)).map((m) => `${m.kind}: ${m.token}`),
+      notApplied: mine.filter((x) => !vars.has(x.css)).map((x) => x.css),
+      instances: use.instances,
+      pages: use.pages
+    };
+  }
+  async function insertInstance(c, widgetId) {
+    const local = await findLocal(c);
+    let main = local ? local.type === "COMPONENT_SET" ? local.defaultVariant || local.children[0] : local : null;
+    const key = libraryKey(c);
+    if (!main && key && figma.importComponentByKeyAsync) {
+      try {
+        main = await figma.importComponentByKeyAsync(key);
+      } catch (e) {
+        try {
+          const set = await figma.importComponentSetByKeyAsync(key);
+          main = set.defaultVariant;
+        } catch (e2) {
+        }
+      }
+    }
+    if (!main) throw new Error(`\xAB${c.title || c.name}\xBB \u043D\u0435\u0442 \u0432 \u0444\u0430\u0439\u043B\u0435 \u0438 \u0432 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D\u043D\u044B\u0445 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0430\u0445: \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\xBB`);
+    const inst = main.createInstance();
+    const anchor = widgetId ? await figma.getNodeByIdAsync(widgetId) : null;
+    const parent = anchor && anchor.parent || figma.currentPage;
+    parent.appendChild(inst);
+    const x = anchor ? anchor.x + anchor.width + 48 : 0;
+    const column = parent.children.filter((n) => n !== inst && n.x === x && n.getPluginData && n.getPluginData(INSERTED));
+    inst.x = x;
+    inst.y = column.length ? Math.max(...column.map((n) => n.y + n.height)) + 24 : anchor ? anchor.y : 0;
+    inst.setPluginData(INSERTED, c.name);
+    if (pageNode(inst) === figma.currentPage) {
+      figma.currentPage.selection = [inst];
+      figma.viewport.scrollAndZoomIntoView([inst]);
+    }
+    return { id: inst.id, name: main.name, title: c.title || c.name, source: local ? "local" : "library", x: inst.x, y: inst.y };
+  }
+  async function propagation(contracts, changedCss, variables) {
+    const touches = (c) => {
+      const u = tokensUsed(c);
+      return [...changedCss].some((css) => u.color.has(css) || u.radius.has(css) || u.radius.has(css.replace(/^radius-/, "")));
+    };
+    const found = [];
+    for (const c of contracts.filter(touches)) found.push({ c, node: await findLocal(c), key: libraryKey(c) });
+    const targets = found.filter((x) => x.node || x.key).map((x) => ({ name: x.c.name, id: x.node ? x.node.id : null, key: x.node ? null : x.key }));
+    const use = await instanceUsage(targets);
+    const components = found.map((x) => {
+      const u = use[x.c.name] || { instances: 0, pages: {} };
+      return { name: x.c.name, title: x.c.title || x.c.name, inFile: !!x.node, library: !x.node && u.instances > 0, instances: u.instances, pages: u.pages };
+    });
+    return {
+      kind: "apply",
+      variables,
+      components,
+      setsUpdated: 0,
+      instances: components.reduce((n, x) => n + x.instances, 0)
+    };
   }
 
   // src/actions.js
@@ -4939,14 +5883,17 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   async function apply(store, opts = {}) {
     const state = readState(store);
     const plan = planAllBrands((b) => buildModel(tokens_default, __spreadProps(__spreadValues({}, state), { brand: b })), BRANDS, opts);
-    const report = await applyWrites(plan.writes, opts);
-    report.skipped = plan.skipped;
-    report.at = (/* @__PURE__ */ new Date()).toISOString();
+    const report2 = await applyWrites(plan.writes, opts);
+    report2.skipped = plan.skipped;
+    report2.at = (/* @__PURE__ */ new Date()).toISOString();
+    const css = new Set(plan.writes.filter((w) => report2.changed.includes(`${w.collection}/${w.name}`)).map((w) => w.css));
+    report2.propagation = __spreadProps(__spreadValues({}, await propagation(fileContracts(store), css, report2.changed)), { at: report2.at, dryRun: !!opts.dryRun });
     if (!opts.dryRun) {
-      store.setReport(report);
+      store.setReport(report2);
+      store.setPropagation(__spreadProps(__spreadValues({}, report2.propagation), { variables: report2.changed.slice(0, 20), variableCount: report2.changed.length }));
       await scan(store);
     }
-    return report;
+    return report2;
   }
   var isEmpty = (v) => v == null || String(v).trim() === "";
   function setToken(store, brand, { key, light, dark }) {
@@ -4973,6 +5920,15 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     if (!errors.length) store.extras.set(token.name, normalizeExtra(token));
     return errors;
   }
+  function setExtra(store, token) {
+    const old = store.extras.get(token.name);
+    if (!old) return [`\u041D\u0435\u0442 \u0442\u043E\u043A\u0435\u043D\u0430 \u043F\u0440\u043E\u0435\u043A\u0442\u0430 ${token.name}`];
+    const next = __spreadProps(__spreadValues(__spreadValues({}, old), token), { kind: old.kind });
+    const taken = new Set(modelOf(store).rows.map((r) => r.css).filter((c) => c !== token.name));
+    const errors = validateExtra(next, store.prefix, taken);
+    if (!errors.length) store.extras.set(token.name, normalizeExtra(next));
+    return errors;
+  }
   function generatePreview(hex) {
     const slots = generateBrand(hex);
     return { hex, slots: BRAND_SLOTS.map((s) => ({ slot: s, light: slots.light[s], dark: slots.dark[s] })) };
@@ -4983,22 +5939,60 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     return Object.keys(edits).length;
   }
   var fileContract = (name) => sharedContract(name) || contracts_default.find((c) => c.name === name) || null;
-  function contractView(store, name) {
+  var mineOf = (store, name) => store.bindings.values().filter((b) => b.contract === name);
+  function contractOf(store, name) {
     const base = fileContract(name);
-    if (!base) return null;
-    const mine = store.bindings.values().filter((b) => b.contract === name);
-    const contract = applyBindings(base, mine);
-    return { name, title: contract.title || name, rows: bindingTable(contract), errors: validateContract(contract), edited: mine.length };
+    return base ? applyBindings(base, mineOf(store, name)) : null;
   }
-  function setBinding2(store, { contract, rowId, path, key, value }) {
-    const edit = { contract, path, key, value: isEmpty(value) ? null : value };
+  function fileContracts(store, { valid = true } = {}) {
+    const names = [.../* @__PURE__ */ new Set([...contracts_default.map((c) => c.name), ...Object.keys(sharedContracts())])];
+    return names.map((n) => contractOf(store, n)).filter((c) => c && (!valid || !validateContract(c).length));
+  }
+  function contractView(store, name) {
+    const contract = contractOf(store, name);
+    if (!contract) return null;
+    return { name, title: contract.title || name, rows: bindingTable(contract), errors: validateContract(contract), edited: mineOf(store, name).length };
+  }
+  function setBinding2(store, { contract, rowId, path, key, value, kind }) {
+    const val = isEmpty(value) ? null : kind === "space" ? Number(value) : value;
+    if (kind === "space" && val !== null && !(val >= 0)) return [`\u041E\u0442\u0441\u0442\u0443\u043F \u2014 \u0448\u0430\u0433 \u0441\u0435\u0442\u043A\u0438 4 px \u0447\u0438\u0441\u043B\u043E\u043C (2 = 8 px), \u0430 \u043D\u0435 \xAB${value}\xBB`];
+    const edit = { contract, path, key, value: val };
     store.bindings.set(bindingKey(contract, rowId), edit);
     const base = fileContract(contract);
     if (base) putSharedContract(applyBindings(base, [edit]));
+    return [];
   }
   function resetBindings(store, contract) {
     for (const k of store.bindings.keys()) if (k.startsWith(`${contract}|`)) store.bindings.delete(k);
     dropSharedContract(contract);
+  }
+  var extrasOf = (store) => modelOf(store).rows.filter((r) => r.extra).map((r) => ({ css: r.css, figma: r.figma, kind: r.kind }));
+  async function componentInfo(store, name) {
+    const c = contractOf(store, name);
+    return c ? componentStatus(c) : null;
+  }
+  async function updateInFile(store, name, { build = false } = {}) {
+    if (figma.editorType && figma.editorType !== "figma") throw new Error("\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u044B \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u044E\u0442\u0441\u044F \u0442\u043E\u043B\u044C\u043A\u043E \u0432 \u0444\u0430\u0439\u043B\u0435 Figma Design (\u043D\u0435 FigJam)");
+    const c = contractOf(store, name);
+    if (!c) throw new Error(`\u041D\u0435\u0442 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u0430 \xAB${name}\xBB`);
+    const errors = validateContract(c);
+    if (errors.length) throw new Error(`\u041A\u043E\u043D\u0442\u0440\u0430\u043A\u0442 \u0441 \u043E\u0448\u0438\u0431\u043A\u0430\u043C\u0438: ${errors.join("; ")}`);
+    const res = await updateComponent(c, extrasOf(store), { build });
+    if (res.needsBuild) return res;
+    store.setPropagation({
+      kind: build && res.built ? "build" : "component",
+      at: (/* @__PURE__ */ new Date()).toISOString(),
+      variables: [],
+      setsUpdated: 1,
+      instances: res.instances,
+      components: [{ name: res.name, title: res.title, inFile: true, instances: res.instances, pages: res.pages, variants: res.variants, kept: res.kept }]
+    });
+    return res;
+  }
+  async function insertComponent(store, name) {
+    const c = contractOf(store, name);
+    if (!c) throw new Error(`\u041D\u0435\u0442 \u043A\u043E\u043D\u0442\u0440\u0430\u043A\u0442\u0430 \xAB${name}\xBB`);
+    return insertInstance(c, store.widgetId);
   }
   function importInto(store, text) {
     const res = importTokens(tokens_default, text);
@@ -5055,7 +6049,8 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       issues: issues.filter((i) => !i.ok),
       totals: status.totals,
       scan: store.scan ? { scannedAt: store.scan.scannedAt, count: store.scan.count, collections: store.scan.collections } : null,
-      contracts: contracts_default.map((c) => ({ name: c.name, title: c.title || c.name }))
+      contracts: fileContracts(store, { valid: false }).map((c) => ({ name: c.name, title: c.title || c.name })),
+      propagation: store.propagation || null
     };
   }
 
@@ -5074,6 +6069,10 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       setPrefix: (p) => {
         s.prefix = p;
         store.setPrefix(p);
+      },
+      setPropagation: (p) => {
+        s.propagation = p;
+        store.setPropagation(p);
       }
     });
     const post = (type, data) => figma.ui.postMessage(Object.assign({ type }, data));
@@ -5096,16 +6095,14 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
         s.setPrefix(String(m.prefix || "").trim());
       },
       "add-extra": (m) => ({ errors: addExtra(s, m.token) }),
+      "set-extra": (m) => ({ errors: setExtra(s, m.token) }),
       "remove-extra": (m) => {
         s.extras.delete(m.name);
       },
       "gen-preview": (m) => ({ preview: generatePreview(m.hex) }),
       "gen-apply": (m) => ({ count: applyGenerated(s, s.brand, m.hex) }),
-      contract: (m) => ({ contract: contractView(s, m.name) }),
-      binding: (m) => {
-        setBinding2(s, m);
-        return { contract: contractView(s, m.contract) };
-      },
+      contract: async (m) => ({ contract: contractView(s, m.name), component: await componentInfo(s, m.name) }),
+      binding: (m) => ({ errors: setBinding2(s, m), contract: contractView(s, m.contract) }),
       "binding-reset": (m) => {
         resetBindings(s, m.contract);
         return { contract: contractView(s, m.contract) };
@@ -5113,7 +6110,12 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
       import: (m) => ({ result: importInto(s, m.text) }),
       export: () => exportsOf(s, s.brand),
       scan: async () => ({ scan: await scan(s) }),
-      apply: async (m) => ({ report: await apply(s, { all: !!m.all, dryRun: !!m.dryRun }) })
+      apply: async (m) => ({ report: await apply(s, { all: !!m.all, dryRun: !!m.dryRun }) }),
+      "component-update": async (m) => {
+        const result = await updateInFile(s, m.name, { build: !!m.build });
+        return { result, component: await componentInfo(s, m.name) };
+      },
+      "component-insert": async (m) => ({ inserted: await insertComponent(s, m.name) })
     };
     return new Promise((resolve2) => {
       figma.showUI(__html__, Object.assign({ title: "Mbank Tokens", themeColors: false }, SIZE));
@@ -5139,18 +6141,20 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
 
   // src/code.jsx
   var { widget } = figma;
-  var { useSyncedState, useSyncedMap, usePropertyMenu } = widget;
+  var { useSyncedState, useSyncedMap, usePropertyMenu, useWidgetNodeId } = widget;
   var BRAND_LABEL = { bank: "Bank", kassa: "Kassa", travel: "Travel", artwin: "Artwin", koko: "Koko" };
   function MbankTokens() {
     const [brand, setBrand] = useSyncedState("brand", "bank");
     const [group, setGroup] = useSyncedState("group", "brand");
     const [scanned, setScan] = useSyncedState("scan", null);
-    const [report, setReport] = useSyncedState("report", null);
+    const [report2, setReport] = useSyncedState("report", null);
     const [prefix, setPrefix] = useSyncedState("prefix", "mb");
+    const [propagated, setPropagation] = useSyncedState("propagation", null);
+    const widgetId = useWidgetNodeId();
     const edits = useSyncedMap("edits");
     const extras = useSyncedMap("extras");
     const bindings = useSyncedMap("bindings");
-    const store = { brand, setBrand, scan: scanned, setScan, setReport, prefix, setPrefix, edits, extras, bindings };
+    const store = { brand, setBrand, scan: scanned, setScan, setReport, propagation: propagated, setPropagation, prefix, setPrefix, widgetId, edits, extras, bindings };
     const model = buildModel(tokens_default, readState(store));
     const issues = contrastIssues(model.rows);
     const status = fileStatus(model.rows, scanned);
@@ -5161,15 +6165,17 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
         { itemType: "action", propertyName: "edit", tooltip: "\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C" },
         { itemType: "action", propertyName: "scan", tooltip: "\u041F\u0440\u043E\u0432\u0435\u0440\u0438\u0442\u044C \u0444\u0430\u0439\u043B" },
         { itemType: "action", propertyName: "apply", tooltip: "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0432 Figma" },
+        { itemType: "action", propertyName: "components", tooltip: "\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u044B" },
         { itemType: "action", propertyName: "sync", tooltip: "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u0441 \u043A\u043E\u0434\u043E\u043C" }
       ],
       async ({ propertyName, propertyValue }) => {
         if (propertyName === "brand") setBrand(propertyValue);
         else if (propertyName === "edit") await openUI(store, "tokens");
         else if (propertyName === "sync") await openUI(store, "code");
+        else if (propertyName === "components") await openUI(store, "bind");
         else if (propertyName === "scan") {
-          const snap = await scan(store);
-          figma.notify(`\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D\u043E: ${snap.count} \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445 2.theme / 1.brand \u0432 \u0444\u0430\u0439\u043B\u0435`);
+          const snap2 = await scan(store);
+          figma.notify(`\u041F\u0440\u043E\u0432\u0435\u0440\u0435\u043D\u043E: ${snap2.count} \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445 2.theme / 1.brand \u0432 \u0444\u0430\u0439\u043B\u0435`);
         } else if (propertyName === "apply") {
           await openUI(store, "figma");
         }
@@ -5195,7 +6201,8 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
         issues,
         counters: counters(model, issues),
         scan: scanned,
-        report: reportLine(report),
+        report: reportLine(report2),
+        propagation: propagated,
         source,
         handlers
       }

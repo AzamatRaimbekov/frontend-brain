@@ -1,7 +1,7 @@
 // Canvas board of the widget: brand switcher, counters, group tabs, token rows with swatches and
 // status chips. Presentational only; every colour is an Mbank token (src/theme.js).
 import { paint, TONES } from './theme.js';
-import { STATUS } from '../core/sync.js';
+import { STATUS, propagationLines } from '../core/sync.js';
 import { normHex } from '../core/model.js';
 
 const { AutoLayout, Text, Rectangle } = figma.widget;
@@ -96,7 +96,23 @@ function Tabs({ c, groups, group, counts, onGroup }) {
   );
 }
 
-/** props: { c, brand, brands, groups, group, rows, status, issues, counters, totals, scan, report, handlers } */
+// "Changed once -> changed everywhere": what the last apply or component update reached in the file.
+function Propagation({ c, p }) {
+  const l = propagationLines(p);
+  if (!l) return null;
+  const line = (key, text, bold) => <Text key={key} fontSize={12} fontWeight={bold ? 700 : 400} fill={c.successFg} width="fill-parent">{text}</Text>;
+  return (
+    <AutoLayout direction="vertical" spacing={4} width="fill-parent" padding={{ vertical: 10, horizontal: 12 }} cornerRadius={10} fill={c.successBg}>
+      {line('title', l.title, true)}
+      {line('summary', l.summary)}
+      {l.components.map((x, i) => line(`c${i}`, `• ${x}`))}
+      {l.variables ? line('vars', l.variables) : null}
+      {line('note', l.note)}
+    </AutoLayout>
+  );
+}
+
+/** props: { c, brand, brands, groups, group, rows, status, issues, counters, totals, scan, report, propagation, handlers } */
 export function Board(p) {
   const { c } = p;
   const counts = {};
@@ -119,6 +135,7 @@ export function Board(p) {
       </AutoLayout>
       <Text fontSize={12} fill={c.muted} width="fill-parent">{fileLine}</Text>
       {p.report ? <Text fontSize={12} fill={c.text} width="fill-parent">{p.report}</Text> : null}
+      <Propagation c={c} p={p.propagation} />
       <Tabs c={c} groups={p.groups} group={p.group} counts={counts} onGroup={p.handlers.group} />
       <AutoLayout direction="vertical" width="fill-parent" fill={c.card} cornerRadius={12} stroke={c.border} padding={{ vertical: 6 }}>
         <AutoLayout width="fill-parent" spacing={12} padding={{ vertical: 6, horizontal: 12 }}>
@@ -132,7 +149,7 @@ export function Board(p) {
           <Row key={r.key} c={c} row={r} status={p.status[r.key]} issue={issueOf[r.css]} onOpen={p.handlers.open} />
         )) : <Text fontSize={12} fill={c.muted} width="fill-parent" horizontalAlignText="center">Пусто. Токен проекта добавляется в «Редактировать» → «Новый токен».</Text>}
       </AutoLayout>
-      <Text fontSize={11} fill={c.muted} width="fill-parent">Свойства виджета: Редактировать · Проверить файл · Применить в Figma · Синхронизация с кодом. Клик по строке открывает токен.</Text>
+      <Text fontSize={11} fill={c.muted} width="fill-parent">Свойства виджета: Редактировать · Проверить файл · Применить в Figma · Компоненты · Синхронизация с кодом. Клик по строке открывает токен.</Text>
     </AutoLayout>
   );
 }
