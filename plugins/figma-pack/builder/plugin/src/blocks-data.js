@@ -130,15 +130,16 @@ export async function kanban(ctx, b) {
       const k = link(card(ctx, 'Card', { gap: 8, pad: 12 }), b.link && `row:${b.link}`);
       if (ctx.state === 'loading') add(k, skel(ctx, 80, 10), skel(ctx, 'fill', 12), skel(ctx, 60, 10));
       else {
-        const [id, who, sum, product] = fakeRows([':id', ':person', ':money', ':product'], 1, 31 + ci * 5 + i + ctx.seed)[0];
+        const [id, who, sum, product] = fakeRows([':id', ':person', ':money', ':product'], ci * 3 + i + 1, 31 + ci * 5 + i + ctx.seed).at(-1); // the row index makes the number unique
         const inner = colW - 48; // column and card padding: rows get real widths, so nothing overlaps
         const top = box(ctx, 'Top', { dir: 'H', align: 'CENTER', justify: 'SPACE_BETWEEN', w: inner });
         const late = i === 0 && ci === 1;
         add(top, await text(ctx, id, { size: 'xs', color: 'muted-foreground' }), b.badge !== false && (await badge(ctx, late ? 'SLA' : `${10 + i * 7} мин`, late ? 'destructive' : 'secondary')));
         const who_ = box(ctx, 'Client', { dir: 'H', gap: 8, align: 'CENTER', w: inner });
         add(who_, await avatar(ctx, who, 24), await text(ctx, who, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }));
-        const foot = box(ctx, 'Sum', { dir: 'H', gap: 8, align: 'CENTER', w: inner });
-        add(foot, await text(ctx, product, { size: 'xs', color: 'muted-foreground', w: 'fill', truncate: true }), await text(ctx, sum, { size: 'sm', weight: 'semibold' }));
+        // A pipeline column is narrow: product and amount on their own lines, never squeezed into one.
+        const foot = box(ctx, 'Sum', { gap: 2, w: inner });
+        add(foot, await text(ctx, sum, { size: 'sm', weight: 'semibold' }), await text(ctx, product, { size: 'xs', color: 'muted-foreground' }));
         add(k, top, who_, foot);
       }
       add(c, k);
