@@ -78,7 +78,8 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     appendChild(c) { if (c.parent) c.parent.children = c.parent.children.filter((x) => x !== c); c.parent = this; this.children.push(c); this._grow(c); }
     insertChild(i, c) { if (c.parent) c.parent.children = c.parent.children.filter((x) => x !== c); c.parent = this; this.children.splice(i, 0, c); this._grow(c); }
     _grow(c) { if (this.layoutMode === 'VERTICAL') this.height = (this.height || 0) + c.height; }
-    resize(w, h) { if (!(w > 0 && h > 0)) throw new Error(`bad size ${w}x${h} on ${this.name}`); this.width = w; this.height = h; }
+    // like Figma: resizing an auto-layout frame fixes both axes
+    resize(w, h) { if (!(w > 0 && h > 0)) throw new Error(`bad size ${w}x${h} on ${this.name}`); this.width = w; this.height = h; if (this.layoutMode && this.layoutMode !== 'NONE') { this.primaryAxisSizingMode = 'FIXED'; this.counterAxisSizingMode = 'FIXED'; } }
     resizeWithoutConstraints(w, h) { this.resize(w, h); }
     rescale(s) { this.width *= s; this.height *= s; }
     remove() { if (this.parent) this.parent.children = this.parent.children.filter((x) => x !== this); nodes.delete(this.id); this.removed = true; }

@@ -78,7 +78,11 @@ async function applyFrame(r, node, s, a = {}) {
   for (const k of ['layoutMode', 'primaryAxisAlignItems', 'counterAxisAlignItems', 'itemSpacing', 'paddingLeft', 'paddingRight', 'paddingTop', 'paddingBottom']) node[k] = L[k];
   node.primaryAxisSizingMode = L.primaryAxisSizingMode;
   node.counterAxisSizingMode = L.counterAxisSizingMode;
-  if (L.width !== undefined || L.height !== undefined) node.resize(L.width || node.width, L.height || node.height);
+  if (L.width !== undefined || L.height !== undefined) {
+    node.resize(L.width || node.width, L.height || node.height);
+    node.primaryAxisSizingMode = L.primaryAxisSizingMode; // resize() fixed both axes
+    node.counterAxisSizingMode = L.counterAxisSizingMode;
+  }
   if (L.minHeight !== undefined) node.minHeight = L.minHeight;
   if (s.px !== undefined) await bindFloat(r, node, ['paddingLeft', 'paddingRight'], 'space', s.px);
   if (s.py !== undefined) await bindFloat(r, node, ['paddingTop', 'paddingBottom'], 'space', s.py);

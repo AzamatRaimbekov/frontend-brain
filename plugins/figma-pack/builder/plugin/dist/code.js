@@ -557,18 +557,12 @@
     if (o.stroke) stroke(f, ctx, o.stroke === true ? "border" : o.stroke);
     if (o.radius) round(f, ctx, o.radius);
     f.clipsContent = !!o.clip;
-    f.primaryAxisSizingMode = "AUTO";
-    f.counterAxisSizingMode = "AUTO";
-    if (typeof o.w === "number") f.resize(o.w, Math.max(1, typeof o.h === "number" ? o.h : 1));
-    if (typeof o.w === "number") {
-      if (f.layoutMode === "HORIZONTAL") f.primaryAxisSizingMode = "FIXED";
-      else f.counterAxisSizingMode = "FIXED";
-    }
-    if (typeof o.h === "number") {
-      if (typeof o.w !== "number") f.resize(f.width, o.h);
-      if (f.layoutMode === "VERTICAL") f.primaryAxisSizingMode = "FIXED";
-      else f.counterAxisSizingMode = "FIXED";
-    }
+    const fixW = typeof o.w === "number";
+    const fixH = typeof o.h === "number";
+    if (fixW || fixH) f.resize(fixW ? o.w : f.width, fixH ? o.h : Math.max(1, f.height));
+    const row = f.layoutMode === "HORIZONTAL";
+    f.primaryAxisSizingMode = (row ? fixW : fixH) ? "FIXED" : "AUTO";
+    f.counterAxisSizingMode = (row ? fixH : fixW) ? "FIXED" : "AUTO";
     SIZING.set(f, { w: o.w, h: o.h });
     return f;
   }
@@ -2905,7 +2899,11 @@
     for (const k of ["layoutMode", "primaryAxisAlignItems", "counterAxisAlignItems", "itemSpacing", "paddingLeft", "paddingRight", "paddingTop", "paddingBottom"]) node[k] = L[k];
     node.primaryAxisSizingMode = L.primaryAxisSizingMode;
     node.counterAxisSizingMode = L.counterAxisSizingMode;
-    if (L.width !== void 0 || L.height !== void 0) node.resize(L.width || node.width, L.height || node.height);
+    if (L.width !== void 0 || L.height !== void 0) {
+      node.resize(L.width || node.width, L.height || node.height);
+      node.primaryAxisSizingMode = L.primaryAxisSizingMode;
+      node.counterAxisSizingMode = L.counterAxisSizingMode;
+    }
     if (L.minHeight !== void 0) node.minHeight = L.minHeight;
     if (s.px !== void 0) await bindFloat(r, node, ["paddingLeft", "paddingRight"], "space", s.px);
     if (s.py !== void 0) await bindFloat(r, node, ["paddingTop", "paddingBottom"], "space", s.py);

@@ -63,11 +63,13 @@ export function box(ctx, name, o = {}) {
   if (o.stroke) stroke(f, ctx, o.stroke === true ? 'border' : o.stroke);
   if (o.radius) round(f, ctx, o.radius);
   f.clipsContent = !!o.clip;
-  f.primaryAxisSizingMode = 'AUTO';
-  f.counterAxisSizingMode = 'AUTO';
-  if (typeof o.w === 'number') f.resize(o.w, Math.max(1, typeof o.h === 'number' ? o.h : 1));
-  if (typeof o.w === 'number') { if (f.layoutMode === 'HORIZONTAL') f.primaryAxisSizingMode = 'FIXED'; else f.counterAxisSizingMode = 'FIXED'; }
-  if (typeof o.h === 'number') { if (typeof o.w !== 'number') f.resize(f.width, o.h); if (f.layoutMode === 'VERTICAL') f.primaryAxisSizingMode = 'FIXED'; else f.counterAxisSizingMode = 'FIXED'; }
+  const fixW = typeof o.w === 'number';
+  const fixH = typeof o.h === 'number';
+  if (fixW || fixH) f.resize(fixW ? o.w : f.width, fixH ? o.h : Math.max(1, f.height));
+  // resize() makes both axes FIXED in Figma: give hug back to the axis the caller did not size
+  const row = f.layoutMode === 'HORIZONTAL';
+  f.primaryAxisSizingMode = (row ? fixW : fixH) ? 'FIXED' : 'AUTO';
+  f.counterAxisSizingMode = (row ? fixH : fixW) ? 'FIXED' : 'AUTO';
   SIZING.set(f, { w: o.w, h: o.h });
   return f;
 }

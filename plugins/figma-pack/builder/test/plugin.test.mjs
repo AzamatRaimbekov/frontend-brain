@@ -98,3 +98,16 @@ test('builds the example spec: all blocks, states and viewports, audit clean', a
   assert.equal(pages.children.filter((n) => n.name === 'Кредитный конвейер / Заявки').length, 1, 'rebuild replaces the section');
   assert.equal(again.frames.length, 8);
 });
+
+test('stat cards hug their content in height (Figma resize() fixes both axes)', async () => {
+  const { createFigma } = await import('./figma-mock.mjs');
+  globalThis.figma = createFigma({ missingFonts: [] }).figma;
+  const { createCtx, loadFonts } = await import('../plugin/src/draw.js');
+  const { stats } = await import('../plugin/src/blocks-data.js');
+  const font = await loadFonts('Inter');
+  const ctx = { ...createCtx({ vars: {}, radius: {}, font, kit: {} }), vp: 'desktop', state: 'default', width: 1100 };
+  const row = await stats(ctx, { type: 'stats', items: [{ label: 'Новых заявок', value: '86' }, { label: 'Одобрено', value: '64%' }] });
+  const card = row.children[0];
+  assert.equal(card.primaryAxisSizingMode, 'AUTO', 'height hugs the label, value and delta');
+  assert.equal(card.counterAxisSizingMode, 'FIXED', 'width is the column width');
+});
