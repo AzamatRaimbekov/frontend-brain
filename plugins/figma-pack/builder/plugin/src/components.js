@@ -189,6 +189,7 @@ async function renderPart(r, holder, style, part, c) {
   const column = holder.layoutMode === 'VERTICAL';
   const fill = c.anatomy ? !!a.fill : column && kind !== 'icon';
   if (fill) node.layoutSizingHorizontal = 'FILL';
+  if (fill && kind === 'text') node.textAutoResize = 'HEIGHT'; // long copy wraps inside the part
   // a filling frame in a fixed-size row (avatar fallback) fills it both ways, so the circle is the frame
   // and a fixed-width frame in a fixed-height row (progress indicator) takes the row's height
   if (kind === 'frame' && !column && holder.counterAxisSizingMode === 'FIXED' && ((fill && holder.primaryAxisSizingMode === 'FIXED') || a.width)) node.layoutSizingVertical = 'FILL';
@@ -210,7 +211,8 @@ async function renderVariant(r, comp, c, props, state) {
     holders.set(part, node);
     keep.add(node);
   }
-  for (const h of holders.values()) if (h.type !== 'INSTANCE' && h.children) for (const n of [...h.children]) if (!keep.has(n)) n.remove();
+  // drop leftovers inside part frames — not inside icons (their vectors are the icon) or instances
+  for (const [part, h] of holders) if (h.type !== 'INSTANCE' && h.children && partKind(part, c) !== 'icon') for (const n of [...h.children]) if (!keep.has(n)) n.remove();
   // an empty hug frame keeps Figma's default 100 px: collapse it unless the contract sizes it
   for (const [part, h] of holders) {
     const s = style[part] || {};

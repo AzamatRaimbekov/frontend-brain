@@ -271,3 +271,16 @@ test('avatar: the fallback circle fills the avatar and holds the initials', asyn
   assert.equal(fb.layoutSizingVertical, 'FILL');
   assert.equal(fb.findOne((n) => n.name === 'text').characters, 'АТ');
 });
+
+test('icons keep their vectors inside components (the clean-up does not empty them)', async () => {
+  await fresh();
+  const checkbox = JSON.parse(readFileSync(new URL('../contracts/checkbox.json', import.meta.url), 'utf8'));
+  const { renderContract } = await import('../plugin/src/components.js');
+  const res = await renderContract(checkbox);
+  const set = await figma.getNodeByIdAsync(res.report.setId);
+  const checked = set.children.find((v) => v.name === 'state=checked');
+  const icon = checked.findOne((n) => n.name === 'icon');
+  assert.equal(icon.visible, true);
+  assert.ok(icon.children.length > 0, 'the check mark has vectors');
+  assert.equal(set.children.find((v) => v.name === 'state=default').findOne((n) => n.name === 'icon').visible, false);
+});

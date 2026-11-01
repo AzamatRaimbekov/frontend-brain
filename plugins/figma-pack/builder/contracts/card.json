@@ -36,7 +36,8 @@
     "body": {
       "parent": "content",
       "kind": "text",
-      "sample": "Здесь содержимое карточки: текст, список или таблица."
+      "sample": "Здесь содержимое карточки: текст, список или таблица.",
+      "fill": true
     },
     "action": {
       "parent": "footer",
@@ -74,13 +75,14 @@
       "fg": "muted-foreground"
     },
     "content": {
-      "px": 5
+      "px": 5,
+      "layout": "column"
     },
     "footer": {
       "gap": 2,
       "px": 5,
       "layout": "row",
-      "align": "center"
+      "align": "start"
     },
     "body": {
       "text": "sm",
