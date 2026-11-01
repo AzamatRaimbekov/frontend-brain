@@ -2,7 +2,7 @@
 // lib (messages, status tones, form schema), ui (one component per block + the screen view), index.ts.
 import { DATA_TEXTS, dataSchema, emitDataBlock, emptyExpr } from './blocks-data.mjs';
 import { emitForm, emitFormLib, emitLogin, emitMutations, FORM_TEXTS } from './blocks-form.mjs';
-import { emitUiBlock, headerHasBody, UI_TEXTS } from './blocks-ui.mjs';
+import { clean, emitUiBlock, headerHasBody, UI_TEXTS } from './blocks-ui.mjs';
 import { Imports, lit, q } from './util.mjs';
 
 export function screenCtx(s, model, kit) {
@@ -20,7 +20,7 @@ function messages(s, ctx) {
   const m = {
     title: s.title, documentTitle: `${s.title} — ${ctx.project}`, loading: `Загружаем: ${s.title}`,
     errorTitle: 'Не удалось загрузить данные', errorDescription: 'Проверьте соединение и попробуйте ещё раз.', retry: 'Повторить',
-    emptyTitle: e.title || 'Пока ничего нет', emptyDescription: e.text, emptyAction: e.action && String(e.action).replace(/^\+\s*/, ''),
+    emptyTitle: e.title || 'Пока ничего нет', emptyDescription: e.text, emptyAction: e.action && clean(e.action),
     noAccessTitle: 'Нет доступа', noAccessDescription: 'У вашей роли нет прав на этот раздел. Обратитесь к администратору.',
     blocks,
   };

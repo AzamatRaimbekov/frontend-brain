@@ -2,7 +2,9 @@
 import { Imports } from './util.mjs';
 
 const ALERT_TONE = { warning: 'warning', destructive: 'error', error: 'error', success: 'success', info: 'info', default: 'clear' };
-const clean = (label) => String(label).replace(/^\+\s*/, '');
+// Spec actions may carry a prototype link ("+ Новый клиент → client-new" or { label, to }): code keeps the label.
+export const actionText = (a) => String(a && typeof a === 'object' ? a.label : a).replace(/\s*(→|->)\s*[\w-]+\s*$/, '');
+export const clean = (label) => actionText(label).replace(/^\+\s*/, '');
 
 export const UI_TEXTS = {
   header: (b, s) => ({
@@ -36,7 +38,7 @@ const DESTRUCTIVE = /отклон|отказ|удал|заблок|аннули�
 export function splitHeaderActions(actions = [], summary = false) {
   const all = actions.map((a) => {
     const label = clean(a);
-    const tone = /^\+/.test(String(a)) ? 'primary' : DESTRUCTIVE.test(label) ? 'destructive' : summary ? 'soft' : 'secondary';
+    const tone = /^\+/.test(actionText(a)) ? 'primary' : DESTRUCTIVE.test(label) ? 'destructive' : summary ? 'soft' : 'secondary';
     return { label, tone };
   });
   return { page: summary ? all : all.filter((a) => a.tone !== 'secondary'), top: summary ? [] : all.filter((a) => a.tone === 'secondary') };

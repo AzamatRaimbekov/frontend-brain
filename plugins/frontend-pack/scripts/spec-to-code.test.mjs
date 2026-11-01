@@ -178,3 +178,11 @@ test('CLI: invalid spec exits 1 with paths; not a CRM project exits 1', () => {
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('prototype links in spec actions stay out of the generated button labels', async () => {
+  const { splitHeaderActions, clean } = await import('./spec-to-code/blocks-ui.mjs');
+  const acts = splitHeaderActions(['+ Новый клиент → client-new', { label: 'Экспорт', to: 'reports' }, 'Отклонить -> apps']);
+  assert.deepEqual([...acts.page, ...acts.top].map((a) => [a.label, a.tone]).sort(),
+    [['Новый клиент', 'primary'], ['Отклонить', 'destructive'], ['Экспорт', 'secondary']].sort());
+  assert.equal(clean('Создать заявку → app-new'), 'Создать заявку');
+});
