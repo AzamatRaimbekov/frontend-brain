@@ -28,7 +28,8 @@ const body = (req) => new Promise((ok) => { let s = ''; req.on('data', (c) => { 
 
 let proxy = false; // the port is taken by another bridge (e.g. a second Claude session): talk to it over HTTP
 
-export const connected = () => Date.now() - lastPoll < 35000;
+// busy = the plugin is running a long command (it does not poll meanwhile)
+export const connected = () => Date.now() - lastPoll < 35000 || pending.size > 0;
 
 async function viaHttp(path, payload) {
   const res = await fetch(`http://127.0.0.1:${PORT}${path}`, payload ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) } : undefined);
