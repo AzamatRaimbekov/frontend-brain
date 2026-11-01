@@ -8,7 +8,9 @@
     "title",
     "description",
     "content",
-    "footer"
+    "body",
+    "footer",
+    "action"
   ],
   "anatomy": {
     "root": {
@@ -30,6 +32,19 @@
     },
     "footer": {
       "fill": true
+    },
+    "body": {
+      "parent": "content",
+      "kind": "text",
+      "sample": "Здесь содержимое карточки: текст, список или таблица."
+    },
+    "action": {
+      "parent": "footer",
+      "kind": "instance",
+      "component": {
+        "name": "Button"
+      },
+      "sample": "Подробнее"
     }
   },
   "props": {},
@@ -66,6 +81,10 @@
       "px": 5,
       "layout": "row",
       "align": "center"
+    },
+    "body": {
+      "text": "sm",
+      "fg": "muted-foreground"
     }
   },
   "variants": {},

@@ -30,7 +30,7 @@
       "bg:hover": "accent",
       "fg:disabled": "disabled-foreground",
       "bg:selected": "secondary",
-      "fg:selected": "secondary-foreground",
+      "fg:selected": "inverse-foreground",
       "align": "center",
       "focus-ring": "ring/30"
     },

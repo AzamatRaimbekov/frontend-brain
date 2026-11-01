@@ -211,6 +211,11 @@ async function renderVariant(r, comp, c, props, state) {
     keep.add(node);
   }
   for (const h of holders.values()) if (h.type !== 'INSTANCE' && h.children) for (const n of [...h.children]) if (!keep.has(n)) n.remove();
+  // an empty hug frame keeps Figma's default 100 px: collapse it unless the contract sizes it
+  for (const [part, h] of holders) {
+    const s = style[part] || {};
+    if (part !== 'root' && h.type === 'FRAME' && !h.children.length && s.height === undefined && s.size === undefined && s['min-height'] === undefined) h.resize(h.width, 0.01);
+  }
 }
 
 // Variants in a grid: states as columns; a set without states uses its last property as columns

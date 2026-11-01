@@ -57,7 +57,7 @@
           "border": "border",
           "border:selected": "secondary",
           "bg:selected": "secondary",
-          "fg:selected": "secondary-foreground"
+          "fg:selected": "inverse-foreground"
         }
       },
       "line": {
