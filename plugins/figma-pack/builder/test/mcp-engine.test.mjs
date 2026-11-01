@@ -16,11 +16,13 @@ test('screen variables fall back to Mbank Foundation names, aliases and project 
   const primary = mk('accent/primary/default');
   const bg = mk('background/surface/light');
   const promo = mk('custom/crm/highlight');
+  const blue = mk('supportive/filled/6');
   const { screenVars, findColor, tokenIndex } = await import('../plugin/src/tokens-resolve.js');
-  const { vars } = await screenVars({ vars: { primary: null, sidebar: null, 'chart-2': null, unknown: null }, radius: { full: 999 } });
+  const { vars } = await screenVars({ vars: { primary: null, sidebar: null, 'chart-2': null, 'chart-4': null, unknown: null }, radius: { full: 999 } });
   assert.equal(vars.primary.id, primary.id);
   assert.equal(vars.sidebar.id, bg.id, 'sidebar has no Mbank name: the nearest role (background)');
-  assert.equal(vars['chart-2'].id, primary.id);
+  assert.equal(vars['chart-2'].id, blue.id, 'charts take the supportive palette');
+  assert.equal(vars['chart-4'], null, 'neither supportive/filled/7 nor secondary in this file');
   assert.equal(vars.unknown, null);
   assert.equal(findColor(await tokenIndex(), 'crm-highlight').id, promo.id, 'project token crm-highlight -> custom/crm/highlight');
 });

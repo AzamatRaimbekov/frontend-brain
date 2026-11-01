@@ -135,7 +135,9 @@ const SCREEN_ALIAS = {
   sidebar: 'background', 'sidebar-foreground': 'foreground', 'sidebar-primary': 'primary', 'sidebar-primary-foreground': 'primary-foreground',
   'sidebar-accent': 'accent', 'sidebar-accent-foreground': 'foreground', 'sidebar-border': 'border', 'sidebar-ring': 'ring',
   warning: 'status-warning', 'warning-foreground': 'foreground', info: 'status-info', 'info-foreground': 'foreground',
-  'chart-1': 'success', 'chart-2': 'primary', 'chart-3': 'status-accent', 'chart-4': 'secondary', 'chart-5': 'muted-foreground',
+  // Charts take Mbank's supportive palette (five distinct hues); a file without it keeps the role colours.
+  'chart-1': ['supportive-3', 'success'], 'chart-2': ['supportive-6', 'primary'], 'chart-3': ['supportive-2', 'status-accent'],
+  'chart-4': ['supportive-7', 'secondary'], 'chart-5': ['supportive-4', 'muted-foreground'],
 };
 
 /**
@@ -145,7 +147,8 @@ const SCREEN_ALIAS = {
 export async function screenVars(base) {
   const t = await tokenIndex();
   const vars = { ...base.vars };
-  for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || (SCREEN_ALIAS[k] && findColor(t, SCREEN_ALIAS[k])) || null;
+  const alias = (k) => [].concat(SCREEN_ALIAS[k] || []).reduce((v, a) => v || findColor(t, a), null);
+  for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || alias(k) || null;
   const radius = { ...base.radius };
   for (const k of Object.keys(radius)) if (!radius[k]) radius[k] = findRadius(t, k) || null;
   return { vars, radius };

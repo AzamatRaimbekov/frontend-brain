@@ -16,7 +16,7 @@ async function cardTitle(ctx, title, sub) {
 const cols = (ctx, desktop) => (ctx.vp === 'mobile' ? Math.min(desktop, 1) : ctx.vp === 'tablet' ? Math.min(desktop, 2) : desktop);
 
 export async function stats(ctx, b) {
-  const row = box(ctx, 'Stats', { dir: 'H', gap: 16, w: 'fill', wrap: true });
+  const row = box(ctx, 'Stats', { dir: 'H', gap: 16, w: ctx.width, wrap: true });
   const per = ctx.vp === 'mobile' ? 2 : cols(ctx, b.items.length > 4 ? 4 : b.items.length);
   const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
   for (const it of b.items) {
@@ -30,14 +30,14 @@ export async function stats(ctx, b) {
       const delta = d
         ? add(box(ctx, 'Delta', { dir: 'H', gap: 4, align: 'CENTER' }),
           await text(ctx, d.value, { size: 'xs', weight: 'medium', color: tone[d.tone] }),
-          d.label && (await text(ctx, d.label, { size: 'xs', color: 'muted-foreground' })))
+          d.label && ctx.vp !== 'mobile' && (await text(ctx, d.label, { size: 'xs', color: 'muted-foreground' })))
         : null;
       const top = box(ctx, 'Top', { dir: 'H', gap: 8, align: 'CENTER', w: 'fill' });
       add(top, await text(ctx, it.label, { size: 'sm', weight: 'medium', color: 'muted-foreground', w: 'fill' }));
       if (it.icon && ctx.vp !== 'mobile') {
         const tile = box(ctx, 'Icon', { dir: 'H', w: 32, h: 32, radius: 'md', align: 'CENTER', justify: 'CENTER' });
-        fill(tile, ctx, 'primary', 0.1);
-        add(top, add(tile, icon(ctx, it.icon, 'primary', 16)));
+        fill(tile, ctx, 'muted');
+        add(top, add(tile, icon(ctx, it.icon, 'foreground', 16)));
       }
       add(c, top,
         await text(ctx, value, { size: ctx.vp === 'mobile' ? 'xl' : '2xl', weight: 'bold' }),
@@ -130,10 +130,15 @@ export async function kanban(ctx, b) {
       const k = link(card(ctx, 'Card', { gap: 8, pad: 12 }), b.link && `row:${b.link}`);
       if (ctx.state === 'loading') add(k, skel(ctx, 80, 10), skel(ctx, 'fill', 12), skel(ctx, 60, 10));
       else {
-        const [id, who, sum] = fakeRows(['id', 'person', 'money'], 1, 31 + ci * 5 + i + ctx.seed)[0];
+        const [id, who, sum, product] = fakeRows([':id', ':person', ':money', ':product'], 1, 31 + ci * 5 + i + ctx.seed)[0];
         const top = box(ctx, 'Top', { dir: 'H', align: 'CENTER', justify: 'SPACE_BETWEEN', w: 'fill' });
-        add(top, await text(ctx, id, { size: 'xs', color: 'muted-foreground' }), b.badge !== false && (await badge(ctx, i === 0 && ci === 1 ? 'SLA' : `${10 + i * 7} мин`, i === 0 && ci === 1 ? 'destructive' : 'secondary')));
-        add(k, top, await text(ctx, who, { size: 'sm', weight: 'medium' }), await text(ctx, sum, { size: 'sm', color: 'muted-foreground' }));
+        const late = i === 0 && ci === 1;
+        add(top, await text(ctx, id, { size: 'xs', color: 'muted-foreground' }), b.badge !== false && (await badge(ctx, late ? 'SLA' : `${10 + i * 7} мин`, late ? 'destructive' : 'secondary')));
+        const who_ = box(ctx, 'Client', { dir: 'H', gap: 8, align: 'CENTER', w: 'fill' });
+        add(who_, await avatar(ctx, who, 24), await text(ctx, who, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }));
+        const foot = box(ctx, 'Sum', { dir: 'H', align: 'CENTER', justify: 'SPACE_BETWEEN', w: 'fill' });
+        add(foot, await text(ctx, product, { size: 'xs', color: 'muted-foreground' }), await text(ctx, sum, { size: 'sm', weight: 'semibold' }));
+        add(k, top, who_, foot);
       }
       add(c, k);
     }
@@ -181,7 +186,7 @@ export async function chart(ctx, b) {
 export async function list(ctx, b) {
   const c = card(ctx, b.title || 'List', { gap: 0, pad: 0 });
   if (b.title) add(c, add(box(ctx, 'Head', { pad: [20, 24, 8, 24], w: 'fill' }), await cardTitle(ctx, b.title, b.subtitle)));
-  const items = b.items || fakeRows(['person', 'text', 'status'], b.rows || 5, 21 + ctx.seed, b.statuses);
+  const items = b.items || fakeRows([':person', ':text', ':status'], b.rows || 5, 21 + ctx.seed, b.statuses);
   for (const it of items) {
     const [who, what, st] = Array.isArray(it) ? it : [it.title, it.subtitle, it.status];
     const row = link(box(ctx, 'Item', { dir: 'H', gap: 12, pad: [12, 24], align: 'CENTER', w: 'fill' }), b.link && `row:${b.link}`);
@@ -210,7 +215,7 @@ export async function timeline(ctx, b) {
 }
 
 export async function cards(ctx, b) {
-  const grid = box(ctx, 'Cards', { dir: 'H', gap: 16, w: 'fill', wrap: true });
+  const grid = box(ctx, 'Cards', { dir: 'H', gap: 16, w: ctx.width, wrap: true });
   const per = cols(ctx, b.columns || 3);
   const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
   for (const it of b.items) {
@@ -226,7 +231,7 @@ export async function details(ctx, b) {
   const c = card(ctx, b.title || 'Details');
   if (b.title) add(c, await cardTitle(ctx, b.title, b.subtitle));
   const per = cols(ctx, b.columns || 2);
-  const grid = box(ctx, 'Fields', { dir: 'H', gap: 16, w: 'fill', wrap: true });
+  const grid = box(ctx, 'Fields', { dir: 'H', gap: 16, w: ctx.width - 48, wrap: true });
   const w = Math.floor((ctx.width - 48 - 16 * (per - 1)) / per);
   for (const it of b.items) {
     const [label, value] = Array.isArray(it) ? it : typeof it === 'string' ? it.split(':') : [it.label, it.value];

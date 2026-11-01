@@ -522,7 +522,7 @@
   function paint(ctx, token, opacity = 1) {
     const v = ctx.vars[token];
     const base = { type: "SOLID", color: { r: 0.5, g: 0.5, b: 0.5 }, opacity };
-    return v ? figma.variables.setBoundVariableForPaint(base, "color", v) : base;
+    return v ? __spreadProps(__spreadValues({}, figma.variables.setBoundVariableForPaint(base, "color", v)), { opacity }) : base;
   }
   function fill(node, ctx, token, opacity) {
     node.fills = token ? [paint(ctx, token, opacity)] : [];
@@ -776,9 +776,10 @@
   async function input(ctx, placeholder, o = {}) {
     const inst = await instance(ctx, "input", { state: o.error ? "invalid" : "default", size: "md" }, placeholder);
     if (inst) {
-      if (o.w && typeof o.w === "number") inst.resize(o.w, inst.height);
+      if (typeof o.w === "number") inst.resize(o.w, inst.height);
+      else sizing(inst, o.w || "fill");
+      return inst;
     }
-    if (inst) return inst;
     ctx.stats.fallbacks++;
     const f = box(ctx, "Input", { dir: "H", gap: 8, pad: [8, 12], fill: "background", stroke: o.error ? "destructive" : "input", radius: "md", align: "CENTER", w: o.w || "fill", h: 36 });
     return add(f, await text(ctx, placeholder, { size: "sm", color: "muted-foreground", truncate: true }));
@@ -806,6 +807,9 @@
   }
   function statusVariant(label2) {
     const s = String(label2).toLowerCase();
+    if (/низк\S* риск|проверен|пройден|подключ|работает/.test(s)) return "success";
+    if (/высок\S* риск|сбой/.test(s)) return "destructive";
+    if (/средн\S* риск|медленно|ожида/.test(s)) return "warning";
     if (/одобр|выдан|оплач|успеш|актив|готов|approved|done|paid|active/.test(s)) return "success";
     if (/отказ|отклон|ошиб|просроч|блок|rejected|failed|overdue|blocked/.test(s)) return "destructive";
     if (/провер|ожида|скоринг|review|pending|wait/.test(s)) return "warning";
@@ -1160,7 +1164,7 @@
   }
   var cols = (ctx, desktop) => ctx.vp === "mobile" ? Math.min(desktop, 1) : ctx.vp === "tablet" ? Math.min(desktop, 2) : desktop;
   async function stats(ctx, b) {
-    const row = box(ctx, "Stats", { dir: "H", gap: 16, w: "fill", wrap: true });
+    const row = box(ctx, "Stats", { dir: "H", gap: 16, w: ctx.width, wrap: true });
     const per = ctx.vp === "mobile" ? 2 : cols(ctx, b.items.length > 4 ? 4 : b.items.length);
     const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
     for (const it of b.items) {
@@ -1173,14 +1177,14 @@
         const delta = d ? add(
           box(ctx, "Delta", { dir: "H", gap: 4, align: "CENTER" }),
           await text(ctx, d.value, { size: "xs", weight: "medium", color: tone[d.tone] }),
-          d.label && await text(ctx, d.label, { size: "xs", color: "muted-foreground" })
+          d.label && ctx.vp !== "mobile" && await text(ctx, d.label, { size: "xs", color: "muted-foreground" })
         ) : null;
         const top = box(ctx, "Top", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
         add(top, await text(ctx, it.label, { size: "sm", weight: "medium", color: "muted-foreground", w: "fill" }));
         if (it.icon && ctx.vp !== "mobile") {
           const tile = box(ctx, "Icon", { dir: "H", w: 32, h: 32, radius: "md", align: "CENTER", justify: "CENTER" });
-          fill(tile, ctx, "primary", 0.1);
-          add(top, add(tile, icon(ctx, it.icon, "primary", 16)));
+          fill(tile, ctx, "muted");
+          add(top, add(tile, icon(ctx, it.icon, "foreground", 16)));
         }
         add(
           c,
@@ -1274,10 +1278,15 @@
         const k = link(card(ctx, "Card", { gap: 8, pad: 12 }), b.link && `row:${b.link}`);
         if (ctx.state === "loading") add(k, skel(ctx, 80, 10), skel(ctx, "fill", 12), skel(ctx, 60, 10));
         else {
-          const [id, who, sum] = fakeRows(["id", "person", "money"], 1, 31 + ci * 5 + i + ctx.seed)[0];
+          const [id, who, sum, product] = fakeRows([":id", ":person", ":money", ":product"], 1, 31 + ci * 5 + i + ctx.seed)[0];
           const top = box(ctx, "Top", { dir: "H", align: "CENTER", justify: "SPACE_BETWEEN", w: "fill" });
-          add(top, await text(ctx, id, { size: "xs", color: "muted-foreground" }), b.badge !== false && await badge(ctx, i === 0 && ci === 1 ? "SLA" : `${10 + i * 7} \u043C\u0438\u043D`, i === 0 && ci === 1 ? "destructive" : "secondary"));
-          add(k, top, await text(ctx, who, { size: "sm", weight: "medium" }), await text(ctx, sum, { size: "sm", color: "muted-foreground" }));
+          const late = i === 0 && ci === 1;
+          add(top, await text(ctx, id, { size: "xs", color: "muted-foreground" }), b.badge !== false && await badge(ctx, late ? "SLA" : `${10 + i * 7} \u043C\u0438\u043D`, late ? "destructive" : "secondary"));
+          const who_ = box(ctx, "Client", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
+          add(who_, await avatar(ctx, who, 24), await text(ctx, who, { size: "sm", weight: "medium", w: "fill", truncate: true }));
+          const foot = box(ctx, "Sum", { dir: "H", align: "CENTER", justify: "SPACE_BETWEEN", w: "fill" });
+          add(foot, await text(ctx, product, { size: "xs", color: "muted-foreground" }), await text(ctx, sum, { size: "sm", weight: "semibold" }));
+          add(k, top, who_, foot);
         }
         add(c, k);
       }
@@ -1322,7 +1331,7 @@
   async function list(ctx, b) {
     const c = card(ctx, b.title || "List", { gap: 0, pad: 0 });
     if (b.title) add(c, add(box(ctx, "Head", { pad: [20, 24, 8, 24], w: "fill" }), await cardTitle(ctx, b.title, b.subtitle)));
-    const items = b.items || fakeRows(["person", "text", "status"], b.rows || 5, 21 + ctx.seed, b.statuses);
+    const items = b.items || fakeRows([":person", ":text", ":status"], b.rows || 5, 21 + ctx.seed, b.statuses);
     for (const it of items) {
       const [who, what, st] = Array.isArray(it) ? it : [it.title, it.subtitle, it.status];
       const row = link(box(ctx, "Item", { dir: "H", gap: 12, pad: [12, 24], align: "CENTER", w: "fill" }), b.link && `row:${b.link}`);
@@ -1353,7 +1362,7 @@
     return c;
   }
   async function cards(ctx, b) {
-    const grid = box(ctx, "Cards", { dir: "H", gap: 16, w: "fill", wrap: true });
+    const grid = box(ctx, "Cards", { dir: "H", gap: 16, w: ctx.width, wrap: true });
     const per = cols(ctx, b.columns || 3);
     const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
     for (const it of b.items) {
@@ -1368,7 +1377,7 @@
     const c = card(ctx, b.title || "Details");
     if (b.title) add(c, await cardTitle(ctx, b.title, b.subtitle));
     const per = cols(ctx, b.columns || 2);
-    const grid = box(ctx, "Fields", { dir: "H", gap: 16, w: "fill", wrap: true });
+    const grid = box(ctx, "Fields", { dir: "H", gap: 16, w: ctx.width - 48, wrap: true });
     const w = Math.floor((ctx.width - 48 - 16 * (per - 1)) / per);
     for (const it of b.items) {
       const [label2, value] = Array.isArray(it) ? it : typeof it === "string" ? it.split(":") : [it.label, it.value];
@@ -1512,7 +1521,7 @@
   // plugin/src/blocks-ui.js
   var actionButton = async (ctx, a, variant, sz) => link(await button(ctx, actionLabel(a), variant, sz), `action:${actionLabel(a)}`);
   async function header(ctx, b) {
-    var _a, _b;
+    var _a, _b, _c;
     const mobile = ctx.vp === "mobile";
     const h = box(ctx, "Page header", { dir: mobile ? "V" : "H", gap: 16, align: mobile ? "MIN" : "CENTER", justify: "SPACE_BETWEEN", w: "fill" });
     const left = box(ctx, "Title", { gap: 6, w: mobile ? "fill" : "hug" });
@@ -1521,9 +1530,10 @@
     add(titleRow, await text(ctx, b.title, { size: mobile ? "xl" : "2xl", weight: "bold" }), b.badge && await badge(ctx, b.badge, "secondary"));
     add(left, titleRow, b.subtitle && await text(ctx, b.subtitle, { size: "sm", color: "muted-foreground" }));
     add(h, left);
-    if (((_a = b.actions) == null ? void 0 : _a.length) || b.period) {
-      const acts = box(ctx, "Actions", { dir: "H", gap: 8, align: "CENTER", wrap: mobile });
-      if (b.period) add(acts, await tabs(ctx, { items: mobile ? b.period.slice(0, 3) : b.period, active: (_b = b.periodActive) != null ? _b : 0 }));
+    if (mobile && b.period) add(h, await tabs(ctx, { items: b.period.slice(0, 3), active: (_a = b.periodActive) != null ? _a : 0 }));
+    if (((_b = b.actions) == null ? void 0 : _b.length) || b.period && !mobile) {
+      const acts = box(ctx, "Actions", { dir: "H", gap: 8, align: "CENTER", wrap: mobile, w: mobile ? ctx.width : "hug" });
+      if (b.period && !mobile) add(acts, await tabs(ctx, { items: b.period, active: (_c = b.periodActive) != null ? _c : 0 }));
       for (const a of b.actions || []) add(acts, await actionButton(ctx, a, isPrimaryAction(a) ? "default" : "outline"));
       add(h, acts);
     }
@@ -1533,13 +1543,15 @@
     var _a, _b;
     const mobile = ctx.vp === "mobile";
     const t = box(ctx, "Toolbar", { dir: mobile ? "V" : "H", gap: 8, align: mobile ? "MIN" : "CENTER", w: "fill" });
-    add(t, await input(ctx, b.search || "\u041F\u043E\u0438\u0441\u043A\u2026", { w: mobile ? "fill" : 320 }));
+    const search = await input(ctx, b.search || "\u041F\u043E\u0438\u0441\u043A\u2026", { w: mobile ? "fill" : 320 });
+    add(t, search);
+    if (mobile && "layoutSizingHorizontal" in search) search.layoutSizingHorizontal = "FILL";
     const filters = box(ctx, "Filters", { dir: "H", gap: 8, wrap: true, w: mobile ? "fill" : "hug" });
     for (const f of b.filters || []) add(filters, await button(ctx, `${f}  \u25BE`, "outline", "sm"));
     if (((_a = b.filters) == null ? void 0 : _a.length) && !mobile) add(filters, await button(ctx, "\u0421\u0431\u0440\u043E\u0441\u0438\u0442\u044C", "ghost", "sm"));
     add(t, filters);
     if (((_b = b.actions) == null ? void 0 : _b.length) && !mobile) {
-      add(t, box(ctx, "Spacer", { w: "fill" }));
+      add(t, box(ctx, "Spacer", { w: "fill", h: 1 }));
       for (const a of b.actions) add(t, await actionButton(ctx, a, isPrimaryAction(a) ? "default" : "outline", "sm"));
     }
     return t;
@@ -1557,7 +1569,8 @@
     var _a;
     const t = box(ctx, "Tabs", { dir: "H", gap: 4, pad: 4, fill: "muted", radius: "lg" });
     const active = (_a = b.active) != null ? _a : 0;
-    for (const [i, label2] of b.items.entries()) {
+    const items = ctx.vp === "mobile" ? b.items.slice(0, 3) : b.items;
+    for (const [i, label2] of items.entries()) {
       const tab = box(ctx, `Tab / ${label2}`, { dir: "H", pad: [6, 12], radius: "md", fill: i === active ? "background" : null, align: "CENTER" });
       add(t, add(tab, await text(ctx, label2, { size: "sm", weight: "medium", color: i === active ? "foreground" : "muted-foreground" })));
     }
@@ -1584,7 +1597,7 @@
     const inner = (b.width && ctx.vp === "desktop" ? b.width : ctx.width) - 48;
     if (b.title) add(c, add(box(ctx, "Head", { gap: 4, w: "fill" }), await text(ctx, b.title, { size: "lg", weight: "semibold" }), b.subtitle && await text(ctx, b.subtitle, { size: "sm", color: "muted-foreground" })));
     const per = ctx.vp === "mobile" ? 1 : b.columns || 2;
-    const grid = box(ctx, "Fields", { dir: "H", gap: 16, w: "fill", wrap: true });
+    const grid = box(ctx, "Fields", { dir: "H", gap: 16, w: inner, wrap: true });
     const w = Math.floor((inner - 16 * (per - 1)) / per);
     for (const [i, f] of b.fields.entries()) add(grid, await field(ctx, f, w, ctx.state === "error" && i === 0));
     add(c, grid);
@@ -1673,7 +1686,7 @@
     const t = box(ctx, "Titles", { gap: 2, w: "fill" });
     add(t, await text(ctx, b.title, { size: "base", weight: "semibold", w: "fill" }), b.subtitle && await text(ctx, b.subtitle, { size: "sm", color: "muted-foreground", w: "fill" }));
     add(h, t);
-    if (b.more) add(h, link(await text(ctx, actionLabel(b.more), { size: "sm", weight: "medium", color: "primary" }), `action:${actionLabel(b.more)}`));
+    if (b.more) add(h, link(await text(ctx, `${actionLabel(b.more)} \u2192`, { size: "sm", weight: "medium", color: "foreground" }), `action:${actionLabel(b.more)}`));
     return h;
   }
   function bar(ctx, width, share, token, h = 8) {
@@ -1695,11 +1708,9 @@
       const label2 = box(ctx, "Label", { gap: 2, w: ctx.vp === "mobile" ? "fill" : 140 });
       add(label2, await text(ctx, it.label, { size: "sm", weight: "medium", w: "fill" }), it.hint && await text(ctx, it.hint, { size: "xs", color: "muted-foreground", w: "fill" }));
       const share = (Number(String(it.value).replace(/\D/g, "")) || 0) / max;
-      const w = Math.max(48, Math.round(barW * share));
-      const fillBar = box(ctx, "Bar", { dir: "H", pad: [0, 12], align: "CENTER", fill: CHART[i % CHART.length], radius: "md", w, h: 32 });
-      add(fillBar, await text(ctx, String(it.value), { size: "sm", weight: "semibold", color: "primary-foreground" }));
-      const lane = box(ctx, "Lane", { dir: "H", w: ctx.vp === "mobile" ? "fill" : barW });
-      add(lane, fillBar);
+      const w = Math.max(8, Math.round((barW - 64) * share));
+      const lane = box(ctx, "Lane", { dir: "H", gap: 10, align: "CENTER", w: ctx.vp === "mobile" ? "fill" : barW });
+      add(lane, rect(ctx, "Bar", w, 28, "chart-1", "md"), await text(ctx, String(it.value), { size: "sm", weight: "semibold" }));
       add(row, label2, lane);
       if (ctx.vp !== "mobile") add(row, add(box(ctx, "Rate", { dir: "H", justify: "MAX", w: 56 }), it.rate ? await text(ctx, it.rate, { size: "sm", weight: "medium", color: "muted-foreground" }) : null));
       add(c, row);
@@ -1734,8 +1745,8 @@
     if (loading(ctx)) return add(c, skel(ctx, 120, 40, "md"), skel(ctx, inner, 10, "full"), skel(ctx, 200, 12), skel(ctx, 160, 12));
     const max = b.max || 850;
     const top = box(ctx, "Value", { dir: "H", gap: 12, align: "MAX", w: "fill" });
-    add(top, await text(ctx, String(b.value), { size: "4xl", weight: "bold" }), await text(ctx, `\u0438\u0437 ${max}`, { size: "sm", color: "muted-foreground" }), box(ctx, "Spacer", { w: "fill" }), b.grade && await badge(ctx, b.grade, statusVariant(b.grade)));
-    const zones = ["destructive", "warning", "chart-3", "chart-2", "success"];
+    add(top, await text(ctx, String(b.value), { size: "4xl", weight: "bold" }), await text(ctx, `\u0438\u0437 ${max}`, { size: "sm", color: "muted-foreground" }), box(ctx, "Spacer", { w: "fill", h: 1 }), b.grade && await badge(ctx, b.grade, statusVariant(b.grade)));
+    const zones = ["destructive", "warning", "chart-3", "chart-1", "success"];
     const gap = 4;
     const zw = Math.floor((inner - gap * 4) / 5);
     const scale = box(ctx, "Scale", { dir: "H", gap, w: "fill" });
@@ -1766,7 +1777,7 @@
     const per = ctx.vp === "mobile" ? 2 : b.columns || 2;
     const inner = ctx.width - 48;
     const w = Math.floor((inner - 12 * (per - 1)) / per);
-    const grid = box(ctx, "Terms", { dir: "H", gap: 12, wrap: true, w: "fill" });
+    const grid = box(ctx, "Terms", { dir: "H", gap: 12, wrap: true, w: inner });
     for (const it of b.items) {
       const [label2, value] = pairOf(it);
       const cell2 = box(ctx, `Term / ${label2}`, { gap: 4, pad: [12, 14], fill: "muted", fillOpacity: 0.5, radius: "lg", w });
@@ -1775,7 +1786,7 @@
     }
     add(c, grid);
     if (b.note) add(c, await text(ctx, b.note, { size: "sm", color: "muted-foreground", w: "fill" }));
-    const acts = box(ctx, "Decision actions", { dir: "H", gap: 8, wrap: true, w: "fill" });
+    const acts = box(ctx, "Decision actions", { dir: "H", gap: 8, wrap: true, w: ctx.width - 48 });
     const list2 = b.actions || ["\u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C", "\u041D\u0430 \u0434\u043E\u0440\u0430\u0431\u043E\u0442\u043A\u0443", "\u041E\u0442\u043A\u0430\u0437\u0430\u0442\u044C"];
     for (const a of list2) {
       const variant = /отказ|отклон|reject/i.test(a) ? "destructive" : isPrimaryAction(a) || a === list2[0] ? "default" : "outline";
@@ -1808,8 +1819,8 @@
       const row = box(ctx, `Check / ${ch.label}`, { dir: "H", gap: 12, pad: [12, 0], align: "CENTER", w: "fill" });
       if (i) add(c, rect(ctx, "Divider", ctx.width - 48, 1, "border"));
       const dot = box(ctx, "Status", { dir: "H", w: 28, h: 28, radius: "full", align: "CENTER", justify: "CENTER" });
-      fill(dot, ctx, tone === "muted-foreground" ? "muted" : tone, tone === "muted-foreground" ? 1 : 0.12);
-      add(dot, icon(ctx, ic, tone, 14));
+      fill(dot, ctx, "muted");
+      add(dot, icon(ctx, ic, tone, 16));
       const t = box(ctx, "Text", { gap: 2, w: "fill" });
       if (loading(ctx)) add(t, skel(ctx, 180, 12), skel(ctx, 100, 10));
       else add(t, await text(ctx, ch.label, { size: "sm", weight: "medium", w: "fill" }), ch.hint && await text(ctx, ch.hint, { size: "xs", color: "muted-foreground", w: "fill" }));
@@ -1853,7 +1864,7 @@
     add(who, await avatar(ctx, b.name, 56), t);
     add(top, who);
     if ((_b = b.actions) == null ? void 0 : _b.length) {
-      if (!mobile) add(top, box(ctx, "Spacer", { w: "fill" }));
+      if (!mobile) add(top, box(ctx, "Spacer", { w: "fill", h: 1 }));
       const acts = box(ctx, "Actions", { dir: "H", gap: 8, wrap: true });
       for (const a of b.actions) add(acts, link(await button(ctx, actionLabel(a), isPrimaryAction(a) ? "default" : "outline"), `action:${actionLabel(a)}`));
       add(top, acts);
@@ -1863,7 +1874,7 @@
       const per = mobile ? 2 : Math.min(b.items.length, 5);
       const inner = ctx.width - 48;
       const w = Math.floor((inner - 16 * (per - 1)) / per);
-      const facts = box(ctx, "Facts", { dir: "H", gap: 16, wrap: true, pad: [16, 0, 0, 0], w: "fill" });
+      const facts = box(ctx, "Facts", { dir: "H", gap: 16, wrap: true, pad: [16, 0, 0, 0], w: inner });
       for (const it of b.items) {
         const [label2, value] = pairOf(it);
         const f = box(ctx, `Fact / ${label2}`, { gap: 4, w });
@@ -2087,8 +2098,14 @@
         const w = ctx.vp === "mobile" ? ctx.width : Math.floor(avail * (ratio[i] || 1) / total);
         const c = box(ctx, `Column ${i + 1}`, { gap: 24, w: ctx.vp === "mobile" ? "fill" : w });
         const sub = __spreadProps(__spreadValues({}, ctx), { width: w });
-        for (const x of blocksForState({ blocks: col }, ctx.state === "loading" ? "default" : ctx.state)) add(c, await renderBlock(sub, x));
+        const nodes = [];
+        for (const x of blocksForState({ blocks: col }, ctx.state === "loading" ? "default" : ctx.state)) nodes.push(await renderBlock(sub, x));
+        add(c, nodes);
         add(row, c);
+        if (ctx.vp !== "mobile" && nodes.length === 1 && nodes[0].type === "FRAME") {
+          c.layoutSizingVertical = "FILL";
+          nodes[0].layoutSizingVertical = "FILL";
+        }
       }
       return row;
     }
@@ -2106,6 +2123,10 @@
       const node = await renderBlock(ctx, b);
       add(content, node);
       if (node.type === "FRAME" && node.layoutSizingHorizontal !== "FIXED" && b.type !== "tabs" && b.type !== "stepper") size(node, "fill");
+    }
+    if (screen.shell === "sidebar" && vp !== "mobile" && frame.height < 900) {
+      frame.counterAxisSizingMode = "FIXED";
+      frame.resize(width, 900);
     }
     if (push && frame.height < 812) {
       frame.primaryAxisSizingMode = "FIXED";
@@ -3109,16 +3130,18 @@
     "warning-foreground": "foreground",
     info: "status-info",
     "info-foreground": "foreground",
-    "chart-1": "success",
-    "chart-2": "primary",
-    "chart-3": "status-accent",
-    "chart-4": "secondary",
-    "chart-5": "muted-foreground"
+    // Charts take Mbank's supportive palette (five distinct hues); a file without it keeps the role colours.
+    "chart-1": ["supportive-3", "success"],
+    "chart-2": ["supportive-6", "primary"],
+    "chart-3": ["supportive-2", "status-accent"],
+    "chart-4": ["supportive-7", "secondary"],
+    "chart-5": ["supportive-4", "muted-foreground"]
   };
   async function screenVars(base) {
     const t = await tokenIndex();
     const vars = __spreadValues({}, base.vars);
-    for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || SCREEN_ALIAS[k] && findColor(t, SCREEN_ALIAS[k]) || null;
+    const alias2 = (k) => [].concat(SCREEN_ALIAS[k] || []).reduce((v, a) => v || findColor(t, a), null);
+    for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || alias2(k) || null;
     const radius = __spreadValues({}, base.radius);
     for (const k of Object.keys(radius)) if (!radius[k]) radius[k] = findRadius(t, k) || null;
     return { vars, radius };
@@ -4738,7 +4761,7 @@
                   ],
                   actions: [
                     "\u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C \u2192 app-card",
-                    "\u0412\u0441\u0442\u0440\u0435\u0447\u043D\u043E\u0435 \u043F\u0440\u0435\u0434\u043B\u043E\u0436\u0435\u043D\u0438\u0435",
+                    "\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u0443\u0441\u043B\u043E\u0432\u0438\u044F",
                     "\u041E\u0442\u043A\u0430\u0437\u0430\u0442\u044C"
                   ]
                 },
@@ -4982,7 +5005,6 @@
                   type: "table",
                   title: "\u041A\u0440\u0435\u0434\u0438\u0442\u044B \u043A\u043B\u0438\u0435\u043D\u0442\u0430",
                   link: "loan-card",
-                  rows: 3,
                   columns: [
                     "\u0414\u043E\u0433\u043E\u0432\u043E\u0440:id",
                     "\u041F\u0440\u043E\u0434\u0443\u043A\u0442:product",
@@ -4990,10 +5012,28 @@
                     "\u041F\u043B\u0430\u0442\u0451\u0436:money",
                     "\u0421\u0442\u0430\u0442\u0443\u0441:status"
                   ],
-                  statuses: [
-                    "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
-                    "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
-                    "\u041F\u043E\u0433\u0430\u0448\u0435\u043D"
+                  data: [
+                    [
+                      "CR-90412",
+                      "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439",
+                      "212 400 \u0441",
+                      "15 210 \u0441",
+                      "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+                    ],
+                    [
+                      "CR-89977",
+                      "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u0430\u044F \u043A\u0430\u0440\u0442\u0430",
+                      "100 000 \u0441",
+                      "3 190 \u0441",
+                      "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+                    ],
+                    [
+                      "CR-88120",
+                      "\u0410\u0432\u0442\u043E\u043A\u0440\u0435\u0434\u0438\u0442",
+                      "0 \u0441",
+                      "\u2014",
+                      "\u041F\u043E\u0433\u0430\u0448\u0435\u043D"
+                    ]
                   ]
                 },
                 {
@@ -5243,7 +5283,6 @@
             type: "table",
             title: "\u041A\u0440\u0435\u0434\u0438\u0442\u044B",
             link: "loan-card",
-            rows: 6,
             columns: [
               "\u0414\u043E\u0433\u043E\u0432\u043E\u0440:id",
               "\u041A\u043B\u0438\u0435\u043D\u0442:person",
@@ -5252,11 +5291,55 @@
               "\u0421\u0442\u0430\u0432\u043A\u0430:percent",
               "\u0421\u0442\u0430\u0442\u0443\u0441:status"
             ],
-            statuses: [
-              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
-              "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439",
-              "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430",
-              "\u041F\u043E\u0433\u0430\u0448\u0435\u043D"
+            data: [
+              [
+                "CR-90412",
+                "\u0411\u0430\u043A\u044B\u0442 \u0410\u0441\u0430\u043D\u043E\u0432",
+                "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439",
+                "212 400 \u0441",
+                "19,5%",
+                "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              ],
+              [
+                "CR-90388",
+                "\u0410\u0441\u0435\u043B\u044C \u0421\u0430\u0434\u044B\u043A\u043E\u0432\u0430",
+                "\u0418\u043F\u043E\u0442\u0435\u043A\u0430",
+                "4 860 000 \u0441",
+                "12,0%",
+                "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              ],
+              [
+                "CR-90351",
+                "\u0422\u0438\u043C\u0443\u0440 \u0411\u0435\u043A\u043C\u0443\u0440\u0430\u0442\u043E\u0432",
+                "\u0410\u0432\u0442\u043E\u043A\u0440\u0435\u0434\u0438\u0442",
+                "1 240 000 \u0441",
+                "16,5%",
+                "\u041F\u0440\u043E\u0441\u0440\u043E\u0447\u043A\u0430"
+              ],
+              [
+                "CR-90297",
+                "\u0416\u044B\u043B\u0434\u044B\u0437 \u041E\u0441\u043C\u043E\u043D\u043E\u0432\u0430",
+                "\u041A\u0440\u0435\u0434\u0438\u0442\u043D\u0430\u044F \u043A\u0430\u0440\u0442\u0430",
+                "86 300 \u0441",
+                "24,0%",
+                "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              ],
+              [
+                "CR-90244",
+                "\u041E\u0441\u041E\u041E \xAB\u041D\u0443\u0440 \u0410\u0433\u0440\u043E\xBB",
+                "\u0411\u0438\u0437\u043D\u0435\u0441-\u043A\u0440\u0435\u0434\u0438\u0442",
+                "7 400 000 \u0441",
+                "17,0%",
+                "\u0410\u043A\u0442\u0438\u0432\u043D\u044B\u0439"
+              ],
+              [
+                "CR-90183",
+                "\u042D\u043C\u0438\u043B\u044C \u0416\u0443\u043C\u0430\u0431\u0435\u043A\u043E\u0432",
+                "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439",
+                "0 \u0441",
+                "21,5%",
+                "\u041F\u043E\u0433\u0430\u0448\u0435\u043D"
+              ]
             ]
           }
         ]

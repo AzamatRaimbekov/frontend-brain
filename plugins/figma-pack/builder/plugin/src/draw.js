@@ -24,7 +24,8 @@ export async function loadFonts(family) {
 export function paint(ctx, token, opacity = 1) {
   const v = ctx.vars[token];
   const base = { type: 'SOLID', color: { r: 0.5, g: 0.5, b: 0.5 }, opacity };
-  return v ? figma.variables.setBoundVariableForPaint(base, 'color', v) : base;
+  // setBoundVariableForPaint drops opacity in Figma: tints (status dots, icon tiles) came out solid.
+  return v ? { ...figma.variables.setBoundVariableForPaint(base, 'color', v), opacity } : base;
 }
 
 export function fill(node, ctx, token, opacity) {

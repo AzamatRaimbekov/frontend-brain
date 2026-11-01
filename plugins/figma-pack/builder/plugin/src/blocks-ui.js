@@ -16,9 +16,10 @@ export async function header(ctx, b) {
   add(titleRow, await text(ctx, b.title, { size: mobile ? 'xl' : '2xl', weight: 'bold' }), b.badge && (await badge(ctx, b.badge, 'secondary')));
   add(left, titleRow, b.subtitle && (await text(ctx, b.subtitle, { size: 'sm', color: 'muted-foreground' })));
   add(h, left);
-  if (b.actions?.length || b.period) {
-    const acts = box(ctx, 'Actions', { dir: 'H', gap: 8, align: 'CENTER', wrap: mobile });
-    if (b.period) add(acts, await tabs(ctx, { items: mobile ? b.period.slice(0, 3) : b.period, active: b.periodActive ?? 0 }));
+  if (mobile && b.period) add(h, await tabs(ctx, { items: b.period.slice(0, 3), active: b.periodActive ?? 0 }));
+  if (b.actions?.length || (b.period && !mobile)) {
+    const acts = box(ctx, 'Actions', { dir: 'H', gap: 8, align: 'CENTER', wrap: mobile, w: mobile ? ctx.width : 'hug' });
+    if (b.period && !mobile) add(acts, await tabs(ctx, { items: b.period, active: b.periodActive ?? 0 }));
     for (const a of b.actions || []) add(acts, await actionButton(ctx, a, isPrimary(a) ? 'default' : 'outline'));
     add(h, acts);
   }
@@ -28,13 +29,15 @@ export async function header(ctx, b) {
 export async function toolbar(ctx, b) {
   const mobile = ctx.vp === 'mobile';
   const t = box(ctx, 'Toolbar', { dir: mobile ? 'V' : 'H', gap: 8, align: mobile ? 'MIN' : 'CENTER', w: 'fill' });
-  add(t, await input(ctx, b.search || 'Поиск…', { w: mobile ? 'fill' : 320 }));
+  const search = await input(ctx, b.search || 'Поиск…', { w: mobile ? 'fill' : 320 });
+  add(t, search);
+  if (mobile && 'layoutSizingHorizontal' in search) search.layoutSizingHorizontal = 'FILL';
   const filters = box(ctx, 'Filters', { dir: 'H', gap: 8, wrap: true, w: mobile ? 'fill' : 'hug' });
   for (const f of b.filters || []) add(filters, await button(ctx, `${f}  ▾`, 'outline', 'sm'));
   if (b.filters?.length && !mobile) add(filters, await button(ctx, 'Сбросить', 'ghost', 'sm'));
   add(t, filters);
   if (b.actions?.length && !mobile) {
-    add(t, box(ctx, 'Spacer', { w: 'fill' }));
+    add(t, box(ctx, 'Spacer', { w: 'fill', h: 1 }));
     for (const a of b.actions) add(t, await actionButton(ctx, a, isPrimary(a) ? 'default' : 'outline', 'sm'));
   }
   return t;
@@ -53,7 +56,8 @@ export async function pagination(ctx, b) {
 export async function tabs(ctx, b) {
   const t = box(ctx, 'Tabs', { dir: 'H', gap: 4, pad: 4, fill: 'muted', radius: 'lg' });
   const active = b.active ?? 0;
-  for (const [i, label] of b.items.entries()) {
+  const items = ctx.vp === 'mobile' ? b.items.slice(0, 3) : b.items; // the rest scrolls off on a phone
+  for (const [i, label] of items.entries()) {
     const tab = box(ctx, `Tab / ${label}`, { dir: 'H', pad: [6, 12], radius: 'md', fill: i === active ? 'background' : null, align: 'CENTER' });
     add(t, add(tab, await text(ctx, label, { size: 'sm', weight: 'medium', color: i === active ? 'foreground' : 'muted-foreground' })));
   }
@@ -82,7 +86,7 @@ export async function form(ctx, b) {
   const inner = (b.width && ctx.vp === 'desktop' ? b.width : ctx.width) - 48;
   if (b.title) add(c, add(box(ctx, 'Head', { gap: 4, w: 'fill' }), await text(ctx, b.title, { size: 'lg', weight: 'semibold' }), b.subtitle && (await text(ctx, b.subtitle, { size: 'sm', color: 'muted-foreground' }))));
   const per = ctx.vp === 'mobile' ? 1 : b.columns || 2;
-  const grid = box(ctx, 'Fields', { dir: 'H', gap: 16, w: 'fill', wrap: true });
+  const grid = box(ctx, 'Fields', { dir: 'H', gap: 16, w: inner, wrap: true });
   const w = Math.floor((inner - 16 * (per - 1)) / per);
   for (const [i, f] of b.fields.entries()) add(grid, await field(ctx, f, w, ctx.state === 'error' && i === 0));
   add(c, grid);

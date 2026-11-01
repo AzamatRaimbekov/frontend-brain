@@ -17,7 +17,7 @@ export async function cardHead(ctx, b) {
   const t = box(ctx, 'Titles', { gap: 2, w: 'fill' });
   add(t, await text(ctx, b.title, { size: 'base', weight: 'semibold', w: 'fill' }), b.subtitle && (await text(ctx, b.subtitle, { size: 'sm', color: 'muted-foreground', w: 'fill' })));
   add(h, t);
-  if (b.more) add(h, link(await text(ctx, clean(b.more), { size: 'sm', weight: 'medium', color: 'primary' }), `action:${clean(b.more)}`));
+  if (b.more) add(h, link(await text(ctx, `${clean(b.more)} →`, { size: 'sm', weight: 'medium', color: 'foreground' }), `action:${clean(b.more)}`));
   return h;
 }
 
@@ -40,11 +40,9 @@ export async function funnel(ctx, b) {
     const label = box(ctx, 'Label', { gap: 2, w: ctx.vp === 'mobile' ? 'fill' : 140 });
     add(label, await text(ctx, it.label, { size: 'sm', weight: 'medium', w: 'fill' }), it.hint && (await text(ctx, it.hint, { size: 'xs', color: 'muted-foreground', w: 'fill' })));
     const share = (Number(String(it.value).replace(/\D/g, '')) || 0) / max;
-    const w = Math.max(48, Math.round(barW * share));
-    const fillBar = box(ctx, 'Bar', { dir: 'H', pad: [0, 12], align: 'CENTER', fill: CHART[i % CHART.length], radius: 'md', w, h: 32 });
-    add(fillBar, await text(ctx, String(it.value), { size: 'sm', weight: 'semibold', color: 'primary-foreground' }));
-    const lane = box(ctx, 'Lane', { dir: 'H', w: ctx.vp === 'mobile' ? 'fill' : barW });
-    add(lane, fillBar);
+    const w = Math.max(8, Math.round((barW - 64) * share));
+    const lane = box(ctx, 'Lane', { dir: 'H', gap: 10, align: 'CENTER', w: ctx.vp === 'mobile' ? 'fill' : barW });
+    add(lane, rect(ctx, 'Bar', w, 28, 'chart-1', 'md'), await text(ctx, String(it.value), { size: 'sm', weight: 'semibold' }));
     add(row, label, lane);
     if (ctx.vp !== 'mobile') add(row, add(box(ctx, 'Rate', { dir: 'H', justify: 'MAX', w: 56 }), it.rate ? await text(ctx, it.rate, { size: 'sm', weight: 'medium', color: 'muted-foreground' }) : null));
     add(c, row);
@@ -78,9 +76,9 @@ export async function score(ctx, b) {
   if (loading(ctx)) return add(c, skel(ctx, 120, 40, 'md'), skel(ctx, inner, 10, 'full'), skel(ctx, 200, 12), skel(ctx, 160, 12));
   const max = b.max || 850;
   const top = box(ctx, 'Value', { dir: 'H', gap: 12, align: 'MAX', w: 'fill' });
-  add(top, await text(ctx, String(b.value), { size: '4xl', weight: 'bold' }), await text(ctx, `из ${max}`, { size: 'sm', color: 'muted-foreground' }), box(ctx, 'Spacer', { w: 'fill' }), b.grade && (await badge(ctx, b.grade, statusVariant(b.grade))));
+  add(top, await text(ctx, String(b.value), { size: '4xl', weight: 'bold' }), await text(ctx, `из ${max}`, { size: 'sm', color: 'muted-foreground' }), box(ctx, 'Spacer', { w: 'fill', h: 1 }), b.grade && (await badge(ctx, b.grade, statusVariant(b.grade))));
   // Zones from high risk to low risk; the marker sits over the value.
-  const zones = ['destructive', 'warning', 'chart-3', 'chart-2', 'success'];
+  const zones = ['destructive', 'warning', 'chart-3', 'chart-1', 'success'];
   const gap = 4;
   const zw = Math.floor((inner - gap * 4) / 5);
   const scale = box(ctx, 'Scale', { dir: 'H', gap, w: 'fill' });
@@ -113,7 +111,7 @@ export async function decision(ctx, b) {
   const per = ctx.vp === 'mobile' ? 2 : b.columns || 2;
   const inner = ctx.width - 48;
   const w = Math.floor((inner - 12 * (per - 1)) / per);
-  const grid = box(ctx, 'Terms', { dir: 'H', gap: 12, wrap: true, w: 'fill' });
+  const grid = box(ctx, 'Terms', { dir: 'H', gap: 12, wrap: true, w: inner });
   for (const it of b.items) {
     const [label, value] = pairOf(it);
     const cell = box(ctx, `Term / ${label}`, { gap: 4, pad: [12, 14], fill: 'muted', fillOpacity: 0.5, radius: 'lg', w });
@@ -122,7 +120,7 @@ export async function decision(ctx, b) {
   }
   add(c, grid);
   if (b.note) add(c, await text(ctx, b.note, { size: 'sm', color: 'muted-foreground', w: 'fill' }));
-  const acts = box(ctx, 'Decision actions', { dir: 'H', gap: 8, wrap: true, w: 'fill' });
+  const acts = box(ctx, 'Decision actions', { dir: 'H', gap: 8, wrap: true, w: ctx.width - 48 });
   const list = b.actions || ['Одобрить', 'На доработку', 'Отказать'];
   for (const a of list) {
     const variant = /отказ|отклон|reject/i.test(a) ? 'destructive' : isPrimary(a) || a === list[0] ? 'default' : 'outline';
@@ -160,8 +158,8 @@ export async function checks(ctx, b) {
     const row = box(ctx, `Check / ${ch.label}`, { dir: 'H', gap: 12, pad: [12, 0], align: 'CENTER', w: 'fill' });
     if (i) add(c, rect(ctx, 'Divider', ctx.width - 48, 1, 'border'));
     const dot = box(ctx, 'Status', { dir: 'H', w: 28, h: 28, radius: 'full', align: 'CENTER', justify: 'CENTER' });
-    fill(dot, ctx, tone === 'muted-foreground' ? 'muted' : tone, tone === 'muted-foreground' ? 1 : 0.12);
-    add(dot, icon(ctx, ic, tone, 14));
+    fill(dot, ctx, 'muted'); // a tint of a bound colour renders solid in Figma: grey plate, coloured glyph
+    add(dot, icon(ctx, ic, tone, 16));
     const t = box(ctx, 'Text', { gap: 2, w: 'fill' });
     if (loading(ctx)) add(t, skel(ctx, 180, 12), skel(ctx, 100, 10));
     else add(t, await text(ctx, ch.label, { size: 'sm', weight: 'medium', w: 'fill' }), ch.hint && (await text(ctx, ch.hint, { size: 'xs', color: 'muted-foreground', w: 'fill' })));
@@ -205,7 +203,7 @@ export async function profile(ctx, b) {
   add(who, await avatar(ctx, b.name, 56), t);
   add(top, who);
   if (b.actions?.length) {
-    if (!mobile) add(top, box(ctx, 'Spacer', { w: 'fill' }));
+    if (!mobile) add(top, box(ctx, 'Spacer', { w: 'fill', h: 1 }));
     const acts = box(ctx, 'Actions', { dir: 'H', gap: 8, wrap: true });
     for (const a of b.actions) add(acts, link(await button(ctx, clean(a), isPrimary(a) ? 'default' : 'outline'), `action:${clean(a)}`));
     add(top, acts);
@@ -215,7 +213,7 @@ export async function profile(ctx, b) {
     const per = mobile ? 2 : Math.min(b.items.length, 5);
     const inner = ctx.width - 48;
     const w = Math.floor((inner - 16 * (per - 1)) / per);
-    const facts = box(ctx, 'Facts', { dir: 'H', gap: 16, wrap: true, pad: [16, 0, 0, 0], w: 'fill' });
+    const facts = box(ctx, 'Facts', { dir: 'H', gap: 16, wrap: true, pad: [16, 0, 0, 0], w: inner });
     for (const it of b.items) {
       const [label, value] = pairOf(it);
       const f = box(ctx, `Fact / ${label}`, { gap: 4, w });

@@ -1,6 +1,6 @@
 // Finds the kit's components by role and places instances; falls back to our
 // own token-bound drawing when the file has no matching component.
-import { box, text, add, fill, stroke, round } from './draw.js';
+import { box, text, add, fill, stroke, round, sizing } from './draw.js';
 
 export const ROLES = {
   button: ['button'], badge: ['badge'], input: ['input', 'text-field', 'textfield'],
@@ -121,8 +121,12 @@ export async function badge(ctx, label, variant = 'secondary') {
 
 export async function input(ctx, placeholder, o = {}) {
   const inst = await instance(ctx, 'input', { state: o.error ? 'invalid' : 'default', size: 'md' }, placeholder);
-  if (inst) { if (o.w && typeof o.w === 'number') inst.resize(o.w, inst.height); }
-  if (inst) return inst;
+  if (inst) {
+    // A kit instance keeps its own width unless told otherwise: fields fill their column by default.
+    if (typeof o.w === 'number') inst.resize(o.w, inst.height);
+    else sizing(inst, o.w || 'fill');
+    return inst;
+  }
   ctx.stats.fallbacks++;
   const f = box(ctx, 'Input', { dir: 'H', gap: 8, pad: [8, 12], fill: 'background', stroke: o.error ? 'destructive' : 'input', radius: 'md', align: 'CENTER', w: o.w || 'fill', h: 36 });
   return add(f, await text(ctx, placeholder, { size: 'sm', color: 'muted-foreground', truncate: true }));
@@ -154,6 +158,9 @@ export async function checkbox(ctx, checked = false) {
 // Status label -> badge variant, so tables read at a glance.
 export function statusVariant(label) {
   const s = String(label).toLowerCase();
+  if (/низк\S* риск|проверен|пройден|подключ|работает/.test(s)) return 'success';
+  if (/высок\S* риск|сбой/.test(s)) return 'destructive';
+  if (/средн\S* риск|медленно|ожида/.test(s)) return 'warning';
   if (/одобр|выдан|оплач|успеш|актив|готов|approved|done|paid|active/.test(s)) return 'success';
   if (/отказ|отклон|ошиб|просроч|блок|rejected|failed|overdue|blocked/.test(s)) return 'destructive';
   if (/провер|ожида|скоринг|review|pending|wait/.test(s)) return 'warning';

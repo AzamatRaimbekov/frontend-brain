@@ -58,8 +58,12 @@ async function renderBlock(ctx, b) {
       const w = ctx.vp === 'mobile' ? ctx.width : Math.floor((avail * (ratio[i] || 1)) / total);
       const c = box(ctx, `Column ${i + 1}`, { gap: 24, w: ctx.vp === 'mobile' ? 'fill' : w });
       const sub = { ...ctx, width: w };
-      for (const x of blocksForState({ blocks: col }, ctx.state === 'loading' ? 'default' : ctx.state)) add(c, await renderBlock(sub, x));
+      const nodes = [];
+      for (const x of blocksForState({ blocks: col }, ctx.state === 'loading' ? 'default' : ctx.state)) nodes.push(await renderBlock(sub, x));
+      add(c, nodes);
       add(row, c);
+      // One card per column: stretch it to the row, so neighbours line up at the bottom.
+      if (ctx.vp !== 'mobile' && nodes.length === 1 && nodes[0].type === 'FRAME') { c.layoutSizingVertical = 'FILL'; nodes[0].layoutSizingVertical = 'FILL'; }
     }
     return row;
   }
@@ -78,6 +82,11 @@ export async function buildFrame(base, spec, screen, state, vp, seed) {
     const node = await renderBlock(ctx, b);
     add(content, node);
     if (node.type === 'FRAME' && node.layoutSizingHorizontal !== 'FIXED' && b.type !== 'tabs' && b.type !== 'stepper') size(node, 'fill');
+  }
+  // Short desktop screens still fill a laptop viewport, so the sidebar's user block is not cut off.
+  if (screen.shell === 'sidebar' && vp !== 'mobile' && frame.height < 900) {
+    frame.counterAxisSizingMode = 'FIXED';
+    frame.resize(width, 900);
   }
   if (push && frame.height < 812) {
     frame.primaryAxisSizingMode = 'FIXED';
