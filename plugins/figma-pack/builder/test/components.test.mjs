@@ -215,3 +215,16 @@ test('render-all: every component on one «Components» page in a grid; again up
   await h['contract-render-all']({});
   assert.deepEqual(page.children.filter((n) => /COMPONENT/.test(n.type)).map((n) => n.id).sort(), ids, 'same nodes: instances stay linked');
 });
+
+test('a library import that never settles (no access) times out instead of freezing the build', async () => {
+  const { importByKey, resetLibraryImports } = await import('../plugin/src/library-import.js');
+  resetLibraryImports();
+  const t0 = Date.now();
+  assert.equal(await importByKey(() => new Promise(() => {})), null);
+  assert.ok(Date.now() - t0 < 6000);
+  const t1 = Date.now();
+  assert.equal(await importByKey(() => Promise.resolve('x')), null, 'library marked unreachable for the rest of the run');
+  assert.ok(Date.now() - t1 < 50);
+  resetLibraryImports();
+  assert.equal(await importByKey(() => Promise.resolve('x')), 'x');
+});

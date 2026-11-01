@@ -8,6 +8,7 @@ import { validateContract, bindingRows, setBinding, variantList, SCHEMA } from '
 import { newContract, TEMPLATES } from '../../core/contract-templates.js';
 import { renderContract, componentsPage, findSet, pageOf, PAGE } from './components.js';
 import { listVariables } from './tokens-resolve.js';
+import { resetLibraryImports } from './library-import.js';
 import { sharedContracts, putSharedContract, dropSharedContract } from './shared-contracts.js';
 
 const PREFIX = 'contract:';
@@ -99,6 +100,7 @@ export function contractHandlers(bundled) {
     },
     // New project: every component on one page (PAGE), laid out in a grid; again = update in place.
     async 'contract-render-all'(m) {
+      resetLibraryImports();
       const done = [];
       const failed = [];
       for (const { contract } of allContracts(bundled).values()) {

@@ -3,6 +3,7 @@
 // their ids, so every instance in the file follows), build creates it on its page, insert drops an
 // instance next to the widget, usage counts the instances a change reaches. Event handlers only.
 import { renderContract, findSet, pageOf, isSingle } from '../../builder/plugin/src/components.js';
+import { importByKey } from '../../builder/plugin/src/library-import.js';
 import { variantList, resolveStyle, inherited, splitToken, parentOf, partKind, tokensUsed } from '../../builder/core/contract.js';
 import { THEME } from '../core/model.js';
 
@@ -178,9 +179,8 @@ export async function insertInstance(c, widgetId) {
   let main = local ? (local.type === 'COMPONENT_SET' ? local.defaultVariant || local.children[0] : local) : null;
   const key = libraryKey(c);
   if (!main && key && figma.importComponentByKeyAsync) {
-    try { main = await figma.importComponentByKeyAsync(key); } catch (e) {
-      try { const set = await figma.importComponentSetByKeyAsync(key); main = set.defaultVariant; } catch (e2) { /* library not enabled */ }
-    }
+    main = await importByKey(() => figma.importComponentByKeyAsync(key));
+    if (!main) { const set = await importByKey(() => figma.importComponentSetByKeyAsync(key)); main = set ? set.defaultVariant : null; }
   }
   if (!main) throw new Error(`«${c.title || c.name}» нет в файле и в подключённых библиотеках: сначала «Собрать компонент»`);
   const inst = main.createInstance();

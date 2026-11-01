@@ -5192,6 +5192,27 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     return node;
   }
 
+  // ../builder/plugin/src/library-import.js
+  var TIMEOUT = 4e3;
+  var unreachable = false;
+  async function importByKey(load) {
+    if (unreachable) return null;
+    let timer;
+    const timeout = new Promise((resolve2) => {
+      timer = setTimeout(() => resolve2("timeout"), TIMEOUT);
+    });
+    try {
+      const res = await Promise.race([Promise.resolve().then(load).catch(() => null), timeout]);
+      if (res === "timeout") {
+        unreachable = true;
+        return null;
+      }
+      return res || null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   // ../builder/plugin/src/brand.js
   var C = { tailwind: "Tailwind", style: "Style", mode: "Mode", brand: "Brand" };
   var THEMES = ["light", "dark"];
@@ -5270,13 +5291,9 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   async function libraryVar(t, name) {
     const key = name && TOKEN_MAP.keys && TOKEN_MAP.keys[name];
     if (!key || !figma.variables.importVariableByKeyAsync) return null;
-    try {
-      const v = await figma.variables.importVariableByKeyAsync(key);
-      if (v && !t.imported.includes(name)) t.imported.push(name);
-      return v || null;
-    } catch (e) {
-      return null;
-    }
+    const v = await importByKey(() => figma.variables.importVariableByKeyAsync(key));
+    if (v && !t.imported.includes(name)) t.imported.push(name);
+    return v;
   }
   function colorName(token, depth = 0) {
     const m = TOKEN_MAP.colors[token];
@@ -5465,11 +5482,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   async function libraryStyle(name) {
     const key = TOKEN_MAP.styleKeys && TOKEN_MAP.styleKeys[name];
     if (!key || !figma.importStyleByKeyAsync) return null;
-    try {
-      return await figma.importStyleByKeyAsync(key);
-    } catch (e) {
-      return null;
-    }
+    return importByKey(() => figma.importStyleByKeyAsync(key));
   }
   var defaultText = (part, c) => ({ placeholder: "Placeholder", description: "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", value: "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435", hint: "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430" })[part] || c.title || c.name;
   async function applyText(r, node, style, part, c, a = {}) {
@@ -5499,12 +5512,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   async function instanceOf(r, a) {
     const { name, key } = a.component;
     let main = null;
-    if (key && figma.importComponentByKeyAsync) {
-      try {
-        main = await figma.importComponentByKeyAsync(key);
-      } catch (e) {
-      }
-    }
+    if (key && figma.importComponentByKeyAsync) main = await importByKey(() => figma.importComponentByKeyAsync(key));
     if (!main) {
       const local = figma.root.findOne((n) => (n.type === "COMPONENT_SET" || n.type === "COMPONENT") && n.name === name);
       main = local && local.type === "COMPONENT_SET" ? local.defaultVariant : local;
@@ -5835,14 +5843,10 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
     let main = local ? local.type === "COMPONENT_SET" ? local.defaultVariant || local.children[0] : local : null;
     const key = libraryKey(c);
     if (!main && key && figma.importComponentByKeyAsync) {
-      try {
-        main = await figma.importComponentByKeyAsync(key);
-      } catch (e) {
-        try {
-          const set = await figma.importComponentSetByKeyAsync(key);
-          main = set.defaultVariant;
-        } catch (e2) {
-        }
+      main = await importByKey(() => figma.importComponentByKeyAsync(key));
+      if (!main) {
+        const set = await importByKey(() => figma.importComponentSetByKeyAsync(key));
+        main = set ? set.defaultVariant : null;
       }
     }
     if (!main) throw new Error(`\xAB${c.title || c.name}\xBB \u043D\u0435\u0442 \u0432 \u0444\u0430\u0439\u043B\u0435 \u0438 \u0432 \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0451\u043D\u043D\u044B\u0445 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0430\u0445: \u0441\u043D\u0430\u0447\u0430\u043B\u0430 \xAB\u0421\u043E\u0431\u0440\u0430\u0442\u044C \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\xBB`);

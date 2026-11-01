@@ -8,6 +8,7 @@ import { loadIndex, ensureModeColor, C } from './brand.js';
 import { TOKEN_MAP } from '../../core/token-map.js';
 import { STEP } from '../../core/contract.js';
 import { cssVar } from '../../core/naming.js';
+import { importByKey } from './library-import.js';
 
 export async function tokenIndex() {
   const ix = await loadIndex();
@@ -27,13 +28,9 @@ export async function tokenIndex() {
 async function libraryVar(t, name) {
   const key = name && TOKEN_MAP.keys && TOKEN_MAP.keys[name];
   if (!key || !figma.variables.importVariableByKeyAsync) return null;
-  try {
-    const v = await figma.variables.importVariableByKeyAsync(key);
-    if (v && !t.imported.includes(name)) t.imported.push(name);
-    return v || null;
-  } catch (e) {
-    return null; // library not enabled in this file
-  }
+  const v = await importByKey(() => figma.variables.importVariableByKeyAsync(key)); // null: library off or no access
+  if (v && !t.imported.includes(name)) t.imported.push(name);
+  return v;
 }
 
 function colorName(token, depth = 0) {

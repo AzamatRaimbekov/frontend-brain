@@ -2667,6 +2667,30 @@
     }
   };
 
+  // plugin/src/library-import.js
+  var TIMEOUT = 4e3;
+  var unreachable = false;
+  function resetLibraryImports() {
+    unreachable = false;
+  }
+  async function importByKey(load) {
+    if (unreachable) return null;
+    let timer;
+    const timeout = new Promise((resolve2) => {
+      timer = setTimeout(() => resolve2("timeout"), TIMEOUT);
+    });
+    try {
+      const res = await Promise.race([Promise.resolve().then(load).catch(() => null), timeout]);
+      if (res === "timeout") {
+        unreachable = true;
+        return null;
+      }
+      return res || null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   // plugin/src/tokens-resolve.js
   async function tokenIndex() {
     const ix = await loadIndex();
@@ -2684,13 +2708,9 @@
   async function libraryVar(t, name) {
     const key = name && TOKEN_MAP.keys && TOKEN_MAP.keys[name];
     if (!key || !figma.variables.importVariableByKeyAsync) return null;
-    try {
-      const v = await figma.variables.importVariableByKeyAsync(key);
-      if (v && !t.imported.includes(name)) t.imported.push(name);
-      return v || null;
-    } catch (e) {
-      return null;
-    }
+    const v = await importByKey(() => figma.variables.importVariableByKeyAsync(key));
+    if (v && !t.imported.includes(name)) t.imported.push(name);
+    return v;
   }
   function colorName(token, depth = 0) {
     const m = TOKEN_MAP.colors[token];
@@ -2925,11 +2945,7 @@
   async function libraryStyle(name) {
     const key = TOKEN_MAP.styleKeys && TOKEN_MAP.styleKeys[name];
     if (!key || !figma.importStyleByKeyAsync) return null;
-    try {
-      return await figma.importStyleByKeyAsync(key);
-    } catch (e) {
-      return null;
-    }
+    return importByKey(() => figma.importStyleByKeyAsync(key));
   }
   var defaultText = (part, c) => ({ placeholder: "Placeholder", description: "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", value: "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435", hint: "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430" })[part] || c.title || c.name;
   async function applyText(r, node, style, part, c, a = {}) {
@@ -2959,12 +2975,7 @@
   async function instanceOf(r, a) {
     const { name, key } = a.component;
     let main = null;
-    if (key && figma.importComponentByKeyAsync) {
-      try {
-        main = await figma.importComponentByKeyAsync(key);
-      } catch (e) {
-      }
-    }
+    if (key && figma.importComponentByKeyAsync) main = await importByKey(() => figma.importComponentByKeyAsync(key));
     if (!main) {
       const local = figma.root.findOne((n) => (n.type === "COMPONENT_SET" || n.type === "COMPONENT") && n.name === name);
       main = local && local.type === "COMPONENT_SET" ? local.defaultVariant : local;
@@ -3232,6 +3243,7 @@
       },
       // New project: every component on one page (PAGE), laid out in a grid; again = update in place.
       async "contract-render-all"(m) {
+        resetLibraryImports();
         const done = [];
         const failed = [];
         for (const { contract } of allContracts(bundled).values()) {

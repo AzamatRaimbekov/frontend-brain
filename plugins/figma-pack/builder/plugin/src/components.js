@@ -8,6 +8,7 @@ import { TOKEN_MAP } from '../../core/token-map.js';
 import { TYPE_SCALE } from '../../core/tokens.js';
 import { createCtx, loadFonts, textStyle } from './draw.js';
 import { icon } from './icons.js';
+import { importByKey } from './library-import.js';
 import { tokenIndex, colorVar, floatVar } from './tokens-resolve.js';
 
 export const PAGE = 'Components';
@@ -128,7 +129,7 @@ async function pickTextStyle(r, size, weight) {
 async function libraryStyle(name) {
   const key = TOKEN_MAP.styleKeys && TOKEN_MAP.styleKeys[name];
   if (!key || !figma.importStyleByKeyAsync) return null;
-  try { return await figma.importStyleByKeyAsync(key); } catch (e) { return null; }
+  return importByKey(() => figma.importStyleByKeyAsync(key));
 }
 
 const defaultText = (part, c) => ({ placeholder: 'Placeholder', description: 'Описание', value: 'Значение', hint: 'Подсказка' })[part] || c.title || c.name;
@@ -158,7 +159,7 @@ async function applyIcon(r, comp, style, part) {
 async function instanceOf(r, a) {
   const { name, key } = a.component;
   let main = null;
-  if (key && figma.importComponentByKeyAsync) { try { main = await figma.importComponentByKeyAsync(key); } catch (e) { /* library off */ } }
+  if (key && figma.importComponentByKeyAsync) main = await importByKey(() => figma.importComponentByKeyAsync(key));
   if (!main) {
     const local = figma.root.findOne((n) => (n.type === 'COMPONENT_SET' || n.type === 'COMPONENT') && n.name === name);
     main = local && local.type === 'COMPONENT_SET' ? local.defaultVariant : local;
