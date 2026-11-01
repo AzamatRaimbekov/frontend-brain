@@ -45,8 +45,9 @@ export async function run(type, args = {}, timeoutMs = 600000) {
     const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Нет ответа от Figma за ${timeoutMs / 1000} с`)); }, timeoutMs);
     pending.set(id, { resolve, reject, timer });
     const cmd = { id, type, args };
-    const w = waiters.shift();
-    if (w) w(cmd); else queue.push(cmd);
+    let w = waiters.shift();
+    while (w && !w(cmd)) w = waiters.shift();
+    if (!w && !queue.includes(cmd)) queue.push(cmd);
   });
 }
 
@@ -71,9 +72,18 @@ export function startHttp() {
       const next = queue.shift();
       if (next) { json(res, 200, next); return; }
       let done = false;
-      const w = (cmd) => { if (!done) { done = true; json(res, 200, cmd); } };
+      const drop = () => { const i = waiters.indexOf(w); if (i >= 0) waiters.splice(i, 1); };
+      // A command for a poll whose plugin is gone (relaunched, file closed) goes back to the queue, not into a dead socket.
+      const w = (cmd) => {
+        if (done) return false;
+        done = true;
+        if (res.destroyed || res.writableEnded) { queue.unshift(cmd); return false; }
+        json(res, 200, cmd);
+        return true;
+      };
       waiters.push(w);
-      setTimeout(() => { if (!done) { done = true; waiters.splice(waiters.indexOf(w), 1); json(res, 200, { type: 'idle' }); } }, 25000);
+      res.on('close', () => { if (!done) { done = true; drop(); } });
+      setTimeout(() => { if (!done) { done = true; drop(); json(res, 200, { type: 'idle' }); } }, 25000);
       return;
     }
     if (url.pathname === '/result' && req.method === 'POST') {

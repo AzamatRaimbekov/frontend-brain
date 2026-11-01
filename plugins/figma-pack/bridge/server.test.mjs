@@ -31,3 +31,24 @@ test('command round trip and PNG export through the HTTP bridge', async () => {
     srv.kill();
   }
 });
+
+test('a poll dropped by a relaunched plugin does not swallow the next command', async () => {
+  const srv = spawn(process.execPath, [new URL('./server.mjs', import.meta.url).pathname, '--http'], { env: { ...process.env, FIGMA_BRIDGE_PORT: String(PORT + 1) } });
+  const b = `http://127.0.0.1:${PORT + 1}`;
+  try {
+    await wait(300);
+    const gone = new AbortController();
+    fetch(`${b}/poll?file=Old`, { signal: gone.signal }).catch(() => {});
+    await wait(100);
+    gone.abort(); // the old plugin window closed while its long poll was open
+    await wait(100);
+    const run = fetch(`${b}/run`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type: 'inspect', args: { n: 1 } }) }).then((r) => r.json());
+    await wait(100);
+    const cmd = await (await fetch(`${b}/poll?file=New`)).json(); // the relaunched plugin
+    assert.equal(cmd.type, 'inspect');
+    await fetch(`${b}/result`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: cmd.id, ok: true, result: 'done' }) });
+    assert.deepEqual(await run, { ok: true, result: 'done' });
+  } finally {
+    srv.kill();
+  }
+});
