@@ -1,0 +1,100 @@
+{
+  "$schema": "ds-builder/spec@1",
+  "project": "Шаблон: список / таблица",
+  "platform": "web",
+  "viewports": [
+    "desktop",
+    "mobile"
+  ],
+  "template": {
+    "archetype": "list",
+    "label": "список / таблица",
+    "source": "seed: figma-learn fixtures + credit-crm example, replace after the first real crawl",
+    "derivedFrom": {
+      "screens": 1,
+      "frames": 2,
+      "files": [
+        "CRM Кредиты"
+      ],
+      "signature": "header>tabs>toolbar>table>pagination",
+      "sameStructure": 1,
+      "example": "credit-crm"
+    },
+    "updated": "2026-11-01"
+  },
+  "nav": [
+    {
+      "id": "n1",
+      "label": "Обзор"
+    },
+    {
+      "id": "n2",
+      "label": "Заявки"
+    },
+    {
+      "id": "n3",
+      "label": "Клиенты"
+    },
+    {
+      "id": "n4",
+      "label": "Отчёты"
+    }
+  ],
+  "screens": [
+    {
+      "id": "list",
+      "title": "Список заявок",
+      "page": "список / таблица",
+      "nav": "n2",
+      "states": [
+        "default",
+        "empty"
+      ],
+      "empty": {
+        "title": "Заявок пока нет",
+        "text": "Новые заявки появятся здесь автоматически",
+        "action": "+ Создать заявку"
+      },
+      "blocks": [
+        {
+          "type": "header",
+          "title": "Заявки",
+          "actions": [
+            "Экспорт",
+            "+ Новая заявка"
+          ]
+        },
+        {
+          "type": "tabs",
+          "items": [
+            "Все",
+            "Мои",
+            "На проверке"
+          ]
+        },
+        {
+          "type": "toolbar",
+          "search": "Поиск по ФИО или номеру",
+          "filters": [
+            "Статус",
+            "Продукт"
+          ]
+        },
+        {
+          "type": "table",
+          "columns": [
+            "Номер:id",
+            "Клиент:person",
+            "Продукт:product",
+            "Сумма:money",
+            "Статус:status",
+            "Дата:date"
+          ]
+        },
+        {
+          "type": "pagination"
+        }
+      ]
+    }
+  ]
+}

@@ -16,6 +16,7 @@ Every Figma request starts here. Decide the route, check the preconditions once 
 | "наведи порядок в файле", "почисти мусор", "проверь макет", "структура страниц" | `figma-structure` (audit first, tidy only after confirmation) |
 | "сверстай по макету", "сделай код по фигме", "implement this design" | ask the platform if unclear, then `figma-to-react` (web), `figma-to-react-native`, or `figma-to-flutter` |
 | "синхронизируй токены", tokens drift between code and Figma | `figma-design-system` section "Sync", then `references/design-system-sync.md` |
+| "изучи все наши макеты", "готовы ли макеты к разработке", monthly learning from the team's files | `figma-learn` (REST API, token in env) |
 
 Platform is clear when the repo has `next.config.*`/`vite.config.*` + `react-dom` (web), `app.json`/`expo` or `react-native` in `package.json` (React Native), or `pubspec.yaml` (Flutter). Otherwise ask one question: "Под какую платформу: веб (React), React Native или Flutter?".
 

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "about": "Test subset in the design-engine components-map format; statuses differ from catalog.json on purpose for sideMenu",
+  "components": [
+    { "figma": "sideMenu", "kit": "crm", "key": "f4eb0421b47f6a98550fb1e5a9427fdcbaad5335", "status": "mapped" },
+    { "figma": "topHeader", "kit": "crm", "key": "8514e4cd79d37507aef1d987b894992d25dc3054", "status": "mapped" },
+    { "figma": "button/default", "kit": "web", "key": "713c90401df3b5d7ddf00e3af4d7ea5870c4c120", "status": "partial" },
+    { "figma": "FloatButton", "kit": "web", "key": "96fa4021714f90b4166f85319df56d308b274670", "status": "missing" },
+    { "figma": "input/default", "kit": "web", "key": "9b99d128100afd0ac499d5fc2cfdedf0ae6aa44b", "status": "mapped" },
+    { "figma": "TableSection 2.0", "kit": "crm", "key": "f4eabde91e54b41e81dc0b4c79586e95c7f586be", "status": "partial" }
+  ]
+}

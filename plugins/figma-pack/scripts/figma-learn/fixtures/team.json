@@ -1,0 +1,37 @@
+{
+ "id": "1234567890",
+ "projects": [
+  {
+   "id": "501",
+   "name": "CRM"
+  },
+  {
+   "id": "502",
+   "name": "Mobile"
+  }
+ ],
+ "files": {
+  "501": [
+   {
+    "key": "FileCrmCredit01",
+    "name": "CRM Кредиты",
+    "thumbnail_url": "",
+    "last_modified": "2026-10-20T10:00:00Z"
+   },
+   {
+    "key": "FileCrmClients02",
+    "name": "CRM Клиенты",
+    "thumbnail_url": "",
+    "last_modified": "2026-10-25T09:30:00Z"
+   }
+  ],
+  "502": [
+   {
+    "key": "FileMobileAuth03",
+    "name": "Мобильный банк — Вход",
+    "thumbnail_url": "",
+    "last_modified": "2026-09-01T08:00:00Z"
+   }
+  ]
+ }
+}

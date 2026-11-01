@@ -1,0 +1,84 @@
+{
+  "$schema": "ds-builder/spec@1",
+  "project": "Шаблон: форма",
+  "platform": "web",
+  "viewports": [
+    "desktop"
+  ],
+  "template": {
+    "archetype": "form",
+    "label": "форма",
+    "source": "seed: figma-learn fixtures + credit-crm example, replace after the first real crawl",
+    "derivedFrom": {
+      "screens": 1,
+      "frames": 1,
+      "files": [
+        "CRM Клиенты"
+      ],
+      "signature": "header>form",
+      "sameStructure": 1,
+      "example": "credit-crm"
+    },
+    "updated": "2026-11-01"
+  },
+  "nav": [
+    {
+      "id": "n1",
+      "label": "Обзор"
+    },
+    {
+      "id": "n2",
+      "label": "Заявки"
+    },
+    {
+      "id": "n3",
+      "label": "Клиенты"
+    },
+    {
+      "id": "n4",
+      "label": "Отчёты"
+    }
+  ],
+  "screens": [
+    {
+      "id": "form",
+      "title": "Новый клиент",
+      "page": "форма",
+      "nav": "n3",
+      "states": [
+        "default"
+      ],
+      "blocks": [
+        {
+          "type": "header",
+          "title": "Новый клиент"
+        },
+        {
+          "type": "form",
+          "title": "Данные клиента",
+          "fields": [
+            {
+              "label": "ФИО",
+              "type": "text",
+              "required": true
+            },
+            {
+              "label": "Телефон",
+              "type": "phone",
+              "required": true
+            },
+            {
+              "label": "Город",
+              "type": "select"
+            },
+            {
+              "label": "Ежемесячный доход",
+              "type": "money"
+            }
+          ],
+          "submit": "Создать клиента"
+        }
+      ]
+    }
+  ]
+}

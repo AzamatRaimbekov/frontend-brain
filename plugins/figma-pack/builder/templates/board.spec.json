@@ -1,0 +1,72 @@
+{
+  "$schema": "ds-builder/spec@1",
+  "project": "Шаблон: доска (канбан)",
+  "platform": "web",
+  "viewports": [
+    "desktop"
+  ],
+  "template": {
+    "archetype": "board",
+    "label": "доска (канбан)",
+    "source": "seed: figma-learn fixtures + credit-crm example, replace after the first real crawl",
+    "derivedFrom": {
+      "screens": 0,
+      "frames": 0,
+      "files": [],
+      "example": "credit-crm"
+    },
+    "updated": "2026-11-01"
+  },
+  "nav": [
+    {
+      "id": "n1",
+      "label": "Обзор"
+    },
+    {
+      "id": "n2",
+      "label": "Заявки"
+    },
+    {
+      "id": "n3",
+      "label": "Клиенты"
+    },
+    {
+      "id": "n4",
+      "label": "Отчёты"
+    },
+    {
+      "id": "n5",
+      "label": "Настройки"
+    }
+  ],
+  "screens": [
+    {
+      "id": "board",
+      "title": "Конвейер",
+      "page": "доска (канбан)",
+      "nav": "n2",
+      "states": [
+        "default"
+      ],
+      "blocks": [
+        {
+          "type": "header",
+          "title": "Конвейер заявок",
+          "actions": [
+            "+ Новая заявка"
+          ]
+        },
+        {
+          "type": "kanban",
+          "columns": [
+            "Новые",
+            "Скоринг",
+            "Проверка СБ",
+            "Андеррайтинг",
+            "Решение"
+          ]
+        }
+      ]
+    }
+  ]
+}

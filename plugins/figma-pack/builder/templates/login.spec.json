@@ -1,0 +1,43 @@
+{
+  "$schema": "ds-builder/spec@1",
+  "project": "Шаблон: вход",
+  "platform": "web",
+  "viewports": [
+    "desktop",
+    "mobile"
+  ],
+  "template": {
+    "archetype": "login",
+    "label": "вход",
+    "source": "seed: figma-learn fixtures + credit-crm example, replace after the first real crawl",
+    "derivedFrom": {
+      "screens": 1,
+      "frames": 3,
+      "files": [
+        "Мобильный банк — Вход"
+      ],
+      "signature": "login",
+      "sameStructure": 1,
+      "example": "credit-crm"
+    },
+    "updated": "2026-11-01"
+  },
+  "screens": [
+    {
+      "id": "login",
+      "title": "Логин",
+      "page": "вход",
+      "shell": "plain",
+      "states": [
+        "default",
+        "error"
+      ],
+      "blocks": [
+        {
+          "type": "login",
+          "title": "Вход в Mbank"
+        }
+      ]
+    }
+  ]
+}

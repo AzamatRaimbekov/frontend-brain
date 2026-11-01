@@ -1,0 +1,101 @@
+{
+  "$schema": "ds-builder/spec@1",
+  "project": "Шаблон: карточка записи",
+  "platform": "web",
+  "viewports": [
+    "desktop"
+  ],
+  "template": {
+    "archetype": "record",
+    "label": "карточка записи",
+    "source": "seed: figma-learn fixtures + credit-crm example, replace after the first real crawl",
+    "derivedFrom": {
+      "screens": 1,
+      "frames": 1,
+      "files": [
+        "CRM Кредиты"
+      ],
+      "signature": "header>stepper>split(details|alert+timeline)",
+      "sameStructure": 1,
+      "example": "credit-crm"
+    },
+    "updated": "2026-11-01"
+  },
+  "nav": [
+    {
+      "id": "n1",
+      "label": "Обзор"
+    },
+    {
+      "id": "n2",
+      "label": "Заявки"
+    },
+    {
+      "id": "n3",
+      "label": "Клиенты"
+    },
+    {
+      "id": "n4",
+      "label": "Отчёты"
+    }
+  ],
+  "screens": [
+    {
+      "id": "record",
+      "title": "Карточка заявки",
+      "page": "карточка записи",
+      "nav": "n2",
+      "states": [
+        "default"
+      ],
+      "blocks": [
+        {
+          "type": "header",
+          "title": "Заявка CL-240118",
+          "actions": [
+            "Отклонить",
+            "+ Одобрить кредит"
+          ]
+        },
+        {
+          "type": "stepper",
+          "steps": [
+            "Подана",
+            "Скоринг",
+            "Проверка СБ",
+            "Решение"
+          ],
+          "current": 1
+        },
+        {
+          "type": "split",
+          "ratio": "2:1",
+          "columns": [
+            [
+              {
+                "type": "details",
+                "title": "Заёмщик",
+                "items": [
+                  "ФИО:person",
+                  "Телефон:phone",
+                  "Сумма:money"
+                ]
+              }
+            ],
+            [
+              {
+                "type": "alert",
+                "text": "Средний риск: высокий долг к доходу",
+                "variant": "warning"
+              },
+              {
+                "type": "timeline",
+                "title": "История"
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

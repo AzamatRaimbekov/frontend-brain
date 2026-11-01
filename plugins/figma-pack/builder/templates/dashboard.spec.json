@@ -1,0 +1,86 @@
+{
+  "$schema": "ds-builder/spec@1",
+  "project": "Шаблон: дашборд",
+  "platform": "web",
+  "viewports": [
+    "desktop"
+  ],
+  "template": {
+    "archetype": "dashboard",
+    "label": "дашборд",
+    "source": "seed: figma-learn fixtures + credit-crm example, replace after the first real crawl",
+    "derivedFrom": {
+      "screens": 1,
+      "frames": 1,
+      "files": [
+        "CRM Клиенты"
+      ],
+      "signature": "header>stats>chart",
+      "sameStructure": 1,
+      "example": "credit-crm"
+    },
+    "updated": "2026-11-01"
+  },
+  "nav": [
+    {
+      "id": "n1",
+      "label": "Обзор"
+    },
+    {
+      "id": "n2",
+      "label": "Заявки"
+    },
+    {
+      "id": "n3",
+      "label": "Клиенты"
+    },
+    {
+      "id": "n4",
+      "label": "Отчёты"
+    }
+  ],
+  "screens": [
+    {
+      "id": "dashboard",
+      "title": "Обзор",
+      "page": "дашборд",
+      "nav": "n1",
+      "states": [
+        "default"
+      ],
+      "blocks": [
+        {
+          "type": "header",
+          "title": "Обзор",
+          "actions": [
+            "Экспорт"
+          ]
+        },
+        {
+          "type": "stats",
+          "items": [
+            {
+              "label": "Новых клиентов",
+              "value": "86",
+              "delta": "+14% к вчера"
+            },
+            {
+              "label": "Активных",
+              "value": "1 204",
+              "delta": "+2% к неделе"
+            },
+            {
+              "label": "Отток",
+              "value": "1,8%",
+              "delta": "−0,2 п.п."
+            }
+          ]
+        },
+        {
+          "type": "chart",
+          "title": "Клиенты по дням"
+        }
+      ]
+    }
+  ]
+}

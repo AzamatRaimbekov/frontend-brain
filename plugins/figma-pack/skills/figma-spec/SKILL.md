@@ -9,6 +9,8 @@ The plugin draws; you decide **what** is on each screen. Never write Plugin API 
 
 Format and block catalog: `references/spec-format.md`. Validator: `node <plugin-root>/builder/cli/ds.mjs spec check <file>` ([builder](../../builder/README.md)).
 
+**Start from a template.** `<plugin-root>/builder/templates/<archetype>.spec.json` (`list`, `record`, `form`, `dashboard`, `login`, `board`, …) holds the block structure our designers actually use for that kind of screen, refreshed from the team's Figma files by `figma-learn` (`template.derivedFrom` says from how many screens). Copy the screen, rename it, adjust columns and copy to the ТЗ; keep the block order unless the ТЗ needs another.
+
 ## Steps
 
 1. **Read the ТЗ once** and list: roles, entities, user goals, required screens. If the ТЗ is silent on platform or widths, take web desktop + mobile; ask only what changes the screens (see `figma-brief`).
