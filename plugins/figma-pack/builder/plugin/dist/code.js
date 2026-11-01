@@ -3064,7 +3064,7 @@
     }
     for (const [part, h] of holders) {
       const s = style[part] || {};
-      if (part !== "root" && h.type === "FRAME" && !h.children.length && s.height === void 0 && s.size === void 0 && s["min-height"] === void 0) h.resize(h.width, 0.01);
+      if (part !== "root" && h.type === "FRAME" && !h.children.length && h.layoutSizingVertical !== "FILL" && s.height === void 0 && s.size === void 0 && s["min-height"] === void 0) h.resize(h.width, 0.01);
     }
   }
   function layoutGrid(set, c, comps) {

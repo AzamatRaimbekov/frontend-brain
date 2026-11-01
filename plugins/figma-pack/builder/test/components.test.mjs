@@ -284,3 +284,15 @@ test('icons keep their vectors inside components (the clean-up does not empty th
   assert.ok(icon.children.length > 0, 'the check mark has vectors');
   assert.equal(set.children.find((v) => v.name === 'state=default').findOne((n) => n.name === 'icon').visible, false);
 });
+
+test('progress: the indicator fills the track height and keeps its width', async () => {
+  await fresh();
+  const progress = JSON.parse(readFileSync(new URL('../contracts/progress.json', import.meta.url), 'utf8'));
+  const { renderContract } = await import('../plugin/src/components.js');
+  const res = await renderContract(progress);
+  const set = await figma.getNodeByIdAsync(res.report.setId);
+  const v = set.children[0];
+  const ind = v.findOne((n) => n.name === 'indicator');
+  assert.equal(ind.layoutSizingVertical, 'FILL');
+  assert.equal(ind.width, 144);
+});
