@@ -24,7 +24,7 @@ export const PACKAGES = [
   'radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge', 'tw-animate-css',
 ];
 // The kit as a package: one repository, updated by changing the tag. Private: npm needs git access to it.
-export const KIT_PACKAGE = 'github:AzamatRaimbekov/mbank-ui#v0.2.1';
+export const KIT_PACKAGE = 'github:AzamatRaimbekov/mbank-ui#v0.2.2';
 // Kit packages that the copy mode installs itself; the package mode gets them as dependencies of KIT_PACKAGE.
 const COPY_ONLY = ['radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge'];
 export const DEV_PACKAGES = [
