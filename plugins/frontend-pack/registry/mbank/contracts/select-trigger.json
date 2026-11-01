@@ -9,8 +9,17 @@
   },
   "parts": [
     "root",
-    "placeholder"
+    "placeholder",
+    "icon"
   ],
+  "anatomy": {
+    "root": {
+      "width": 240
+    },
+    "icon": {
+      "icon": "chevron"
+    }
+  },
   "props": {
     "size": {
       "values": [
@@ -42,6 +51,10 @@
       "focus-ring": "ring/30"
     },
     "placeholder": {
+      "fg": "muted-foreground"
+    },
+    "icon": {
+      "size": 4,
       "fg": "muted-foreground"
     }
   },

@@ -3,19 +3,32 @@
   "name": "switch",
   "title": "Switch",
   "parts": [
-    "root"
+    "root",
+    "thumb"
   ],
+  "anatomy": {
+    "root": {
+      "width": 44
+    }
+  },
   "props": {},
   "base": {
     "root": {
       "height": 6,
       "radius": "full",
-      "border-width": 2,
       "opacity:disabled": 50,
       "bg:checked": "brand",
       "bg:unchecked": "surface-3",
-      "align": "center",
-      "focus-ring": "ring/30"
+      "align": "start",
+      "focus-ring": "ring/30",
+      "bg": "surface-3",
+      "px": 0.5,
+      "align:checked": "end"
+    },
+    "thumb": {
+      "size": 5,
+      "radius": "full",
+      "bg": "background"
     }
   },
   "variants": {},

@@ -8,8 +8,17 @@
     "nodeId": "1309:22504"
   },
   "parts": [
-    "root"
+    "root",
+    "text"
   ],
+  "anatomy": {
+    "root": {
+      "width": 160
+    },
+    "text": {
+      "sample": "Значение"
+    }
+  },
   "props": {},
   "base": {
     "root": {

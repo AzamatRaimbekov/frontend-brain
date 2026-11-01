@@ -113,7 +113,10 @@ export function contractHandlers(bundled) {
       const done = [];
       const failed = [];
       const missing = new Set();
-      for (const { contract } of allContracts(bundled).values()) {
+      // sets that embed other kit components (anatomy kind "instance", e.g. Tabs list) go last
+      const usesKit = (c) => Object.values(c.anatomy || {}).some((a) => a && a.kind === 'instance');
+      const list = [...allContracts(bundled).values()].sort((a, b) => usesKit(a.contract) - usesKit(b.contract));
+      for (const { contract } of list) {
         if (validateContract(contract).length) { failed.push(contract.name); continue; }
         const c = { ...contract, figma: { ...(contract.figma || {}), page: PAGE } };
         const res = await render(c, { ...m, focus: false });

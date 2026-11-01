@@ -28,7 +28,7 @@ export function partKind(part, c) {
   return TEXT_PART.test(part) ? 'text' : ICON_PART.test(part) ? 'icon' : 'frame';
 }
 
-// anatomy (optional, Figma structure only, no tokens): { <part>: { parent, kind, layer, sample, width, fill, sides, component } }.
+// anatomy (optional, Figma structure only, no tokens): { <part>: { parent, kind, layer, sample, width, fill, sides, component, icon } }.
 // layer = Figma layer name (default: the part name); keep the designers' names so Swap instance keeps text overrides.
 export const ANATOMY_KINDS = ['text', 'frame', 'icon', 'instance'];
 const SIDES = ['top', 'right', 'bottom', 'left'];
@@ -53,6 +53,7 @@ function checkAnatomy(errors, c) {
     if (a.fill !== undefined && typeof a.fill !== 'boolean') errors.push(`${where}.fill: true | false`);
     if (a.sides !== undefined && !(Array.isArray(a.sides) && a.sides.every((s) => SIDES.includes(s)))) errors.push(`${where}.sides: ${SIDES.join(', ')}`);
     if (a.sample !== undefined && typeof a.sample !== 'string') errors.push(`${where}.sample: строка`);
+    if (a.icon !== undefined && typeof a.icon !== 'string') errors.push(`${where}.icon: имя иконки`);
     if (a.layer !== undefined && !(typeof a.layer === 'string' && a.layer.trim())) errors.push(`${where}.layer: имя слоя — непустая строка`);
     if (a.kind === 'instance' && !(isObj(a.component) && typeof a.component.name === 'string')) errors.push(`${where}.component: { name, key }`);
   }
@@ -214,7 +215,7 @@ export function layoutFor(s = {}) {
   const row = (s.layout || 'row') !== 'column';
   const out = {
     layoutMode: row ? 'HORIZONTAL' : 'VERTICAL',
-    primaryAxisAlignItems: s.align === 'between' ? 'SPACE_BETWEEN' : row && s.align === 'center' ? 'CENTER' : 'MIN',
+    primaryAxisAlignItems: s.align === 'between' ? 'SPACE_BETWEEN' : row && s.align === 'center' ? 'CENTER' : row && s.align === 'end' ? 'MAX' : 'MIN',
     counterAxisAlignItems: ALIGN[s.align] || (row ? 'CENTER' : 'MIN'),
     itemSpacing: px(s.gap),
     paddingLeft: px(s.px), paddingRight: px(s.px), paddingTop: px(s.pt ?? s.py), paddingBottom: px(s.pb ?? s.py),

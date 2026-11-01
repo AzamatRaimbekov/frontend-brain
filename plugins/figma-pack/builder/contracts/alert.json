@@ -10,8 +10,29 @@
   "parts": [
     "root",
     "icon",
-    "title"
+    "body",
+    "title",
+    "description"
   ],
+  "anatomy": {
+    "root": {
+      "width": 360
+    },
+    "icon": {
+      "icon": "info"
+    },
+    "body": {
+      "fill": true
+    },
+    "title": {
+      "parent": "body",
+      "sample": "Заголовок уведомления"
+    },
+    "description": {
+      "parent": "body",
+      "sample": "Короткий текст: что случилось и что делать дальше."
+    }
+  },
   "props": {
     "tone": {
       "values": [
@@ -31,13 +52,21 @@
       "px": 4,
       "py": 3,
       "text": "sm",
-      "align": "start"
+      "align": "start",
+      "gap": 3
     },
     "icon": {
       "size": 5
     },
     "title": {
       "weight": "bold"
+    },
+    "body": {
+      "layout": "column",
+      "gap": 1
+    },
+    "description": {
+      "weight": "regular"
     }
   },
   "variants": {

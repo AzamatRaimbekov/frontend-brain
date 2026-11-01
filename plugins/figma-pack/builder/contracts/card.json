@@ -10,6 +10,28 @@
     "content",
     "footer"
   ],
+  "anatomy": {
+    "root": {
+      "width": 320
+    },
+    "header": {
+      "fill": true
+    },
+    "title": {
+      "parent": "header",
+      "sample": "Заголовок карточки"
+    },
+    "description": {
+      "parent": "header",
+      "sample": "Короткое описание содержимого"
+    },
+    "content": {
+      "fill": true
+    },
+    "footer": {
+      "fill": true
+    }
+  },
   "props": {},
   "base": {
     "root": {
@@ -25,7 +47,8 @@
     "header": {
       "gap": 1,
       "px": 5,
-      "align": "start"
+      "align": "start",
+      "layout": "column"
     },
     "title": {
       "text": "base",

@@ -8,8 +8,34 @@
     "nodeId": "2371:564"
   },
   "parts": [
-    "root"
+    "root",
+    "tab-1",
+    "tab-2",
+    "tab-3"
   ],
+  "anatomy": {
+    "tab-1": {
+      "kind": "instance",
+      "component": {
+        "name": "Tabs trigger"
+      },
+      "sample": "Все"
+    },
+    "tab-2": {
+      "kind": "instance",
+      "component": {
+        "name": "Tabs trigger"
+      },
+      "sample": "Мои"
+    },
+    "tab-3": {
+      "kind": "instance",
+      "component": {
+        "name": "Tabs trigger"
+      },
+      "sample": "Архив"
+    }
+  },
   "props": {
     "variant": {
       "values": [
@@ -22,7 +48,9 @@
   },
   "base": {
     "root": {
-      "align": "center"
+      "align": "center",
+      "px": 1,
+      "py": 1
     }
   },
   "variants": {

@@ -5,14 +5,49 @@
   "parts": [
     "root"
   ],
-  "props": {},
+  "anatomy": {
+    "root": {
+      "width": 240
+    }
+  },
+  "props": {
+    "shape": {
+      "values": [
+        "line",
+        "circle",
+        "block"
+      ],
+      "default": "line"
+    }
+  },
   "base": {
     "root": {
       "radius": "md",
       "bg": "surface-2"
     }
   },
-  "variants": {},
+  "variants": {
+    "shape": {
+      "line": {
+        "root": {
+          "height": 4,
+          "radius": "sm"
+        }
+      },
+      "circle": {
+        "root": {
+          "size": 10,
+          "radius": "full"
+        }
+      },
+      "block": {
+        "root": {
+          "height": 24,
+          "radius": "lg"
+        }
+      }
+    }
+  },
   "states": [
     "default"
   ],

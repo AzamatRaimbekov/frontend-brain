@@ -11,6 +11,14 @@
     "root",
     "indicator"
   ],
+  "anatomy": {
+    "root": {
+      "width": 240
+    },
+    "indicator": {
+      "width": 144
+    }
+  },
   "props": {
     "size": {
       "values": [
@@ -64,10 +72,16 @@
       "rounded": {
         "root": {
           "radius": "full"
+        },
+        "indicator": {
+          "radius": "full"
         }
       },
       "square": {
         "root": {
+          "radius": "none"
+        },
+        "indicator": {
           "radius": "none"
         }
       }

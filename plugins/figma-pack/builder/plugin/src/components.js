@@ -147,10 +147,10 @@ async function applyText(r, node, style, part, c, a = {}) {
   r.bound++; // text style
 }
 
-async function applyIcon(r, comp, style, part) {
+async function applyIcon(r, comp, style, part, a = {}) {
   const token = splitToken(inherited(style, part, 'fg', 'foreground')).token;
   r.ctx.vars[token] = await colorVar(r.t, token, { create: r.create });
-  const node = icon(r.ctx, 'check', token, (style[part]?.size ?? 4) * STEP);
+  const node = icon(r.ctx, a.icon || 'check', token, (style[part]?.size ?? 4) * STEP);
   node.name = part;
   if (r.ctx.vars[token]) r.bound++; else r.unbound++;
   return node;
@@ -180,7 +180,7 @@ async function renderPart(r, holder, style, part, c) {
   let node = holder.children.find((n) => n.name === layer);
   const fits = node && (kind === 'text' ? node.type === 'TEXT' : kind === 'instance' ? node.type === 'INSTANCE' : kind === 'frame' && node.type === 'FRAME');
   if (node && !fits) { node.remove(); node = null; }
-  if (kind === 'icon') node = await applyIcon(r, holder, style, part);
+  if (kind === 'icon') node = await applyIcon(r, holder, style, part, a);
   else if (kind === 'instance') node = node || (await instanceOf(r, a)) || figma.createFrame();
   else if (kind === 'text') { node = node || figma.createText(); await applyText(r, node, style, part, c, a); }
   else { node = node || figma.createFrame(); await applyFrame(r, node, style[part] || {}, a); }
@@ -190,7 +190,8 @@ async function renderPart(r, holder, style, part, c) {
   const fill = c.anatomy ? !!a.fill : column && kind !== 'icon';
   if (fill) node.layoutSizingHorizontal = 'FILL';
   // a filling frame in a fixed-size row (avatar fallback) fills it both ways, so the circle is the frame
-  if (fill && kind === 'frame' && !column && holder.primaryAxisSizingMode === 'FIXED' && holder.counterAxisSizingMode === 'FIXED') node.layoutSizingVertical = 'FILL';
+  // and a fixed-width frame in a fixed-height row (progress indicator) takes the row's height
+  if (kind === 'frame' && !column && holder.counterAxisSizingMode === 'FIXED' && ((fill && holder.primaryAxisSizingMode === 'FIXED') || a.width)) node.layoutSizingVertical = 'FILL';
   else if (kind === 'text' && a.width) { node.textAutoResize = 'HEIGHT'; node.resize(a.width, node.height); }
   return node;
 }
@@ -212,16 +213,20 @@ async function renderVariant(r, comp, c, props, state) {
   for (const h of holders.values()) if (h.type !== 'INSTANCE' && h.children) for (const n of [...h.children]) if (!keep.has(n)) n.remove();
 }
 
+// Variants in a grid: states as columns; a set without states uses its last property as columns
+// (Badge: size; Progress: tone), so nothing ends up as one long column.
 function layoutGrid(set, c, comps) {
   const states = statesOf(c);
+  const props = Object.keys(c.props || {});
+  const cols = states.length > 1 ? states.length : props.length ? (c.props[props[props.length - 1]].values || []).length || 1 : 1;
   const w = Math.max(...comps.map((x) => x.node.width));
   const h = Math.max(...comps.map((x) => x.node.height));
   comps.forEach((x, i) => {
-    x.node.x = GAP + (i % states.length) * (w + GAP);
-    x.node.y = GAP + Math.floor(i / states.length) * (h + GAP);
+    x.node.x = GAP + (i % cols) * (w + GAP);
+    x.node.y = GAP + Math.floor(i / cols) * (h + GAP);
   });
-  const rows = Math.ceil(comps.length / states.length);
-  set.resizeWithoutConstraints(GAP + states.length * (w + GAP), GAP + rows * (h + GAP));
+  const rows = Math.ceil(comps.length / cols);
+  set.resizeWithoutConstraints(GAP + cols * (w + GAP), GAP + rows * (h + GAP));
 }
 
 const reportOf = (r, t, extra) => ({
