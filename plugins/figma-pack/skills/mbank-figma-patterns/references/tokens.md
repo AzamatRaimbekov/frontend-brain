@@ -4,6 +4,27 @@ Source of truth for values and keys. Machine copy: `tokens.json`. Import any var
 
 Updating from Figma: designer changes the library → agent on a Full seat runs [`read-tokens.js`](read-tokens.js) via `use_figma` in each library file → `node plugins/frontend-pack/scripts/tokens-build.mjs --from raw-foundation.json --from raw-web.json` rewrites `tokens.json` and the generated `frontend-pack/registry/mbank/tokens.css` (mapping: `tokens.map.json` next to it) → PR. Update the tables below from the change list it prints.
 
+## Platforms: web, mobile and any new one
+
+Colours are shared; spacing, radius, fonts, text and effect styles differ per platform (same name, other value: `radius/m` is 12 on web and 16 on mobile). Each platform has its own file:
+
+| File | What | Edit |
+|---|---|---|
+| `tokens/core.json` | theme colours (2.theme), brands (1.brand), fonts known to MCP | yes |
+| `tokens/platforms/<id>.json` | one platform: `title`, `figmaLibrary`, `font`, `viewports` (`{"mobile": 375}`), `sections` (its Figma collections), `scales` (which section is spacing / radius), `textStyles`, `effectStyles` | yes |
+| `tokens.json` | all platforms merged back, plus `platforms` meta; every old reader keeps working | generated |
+| `tokens/dist/<id>.json` | one ready file per platform: colours + spacing and radius scales by px + styles; copied to `frontend-pack/registry/mbank/platforms/` | generated |
+| `builder/core/platforms.js` | platform ids and viewport widths for the screen spec (`platform`, `viewports`) | generated |
+
+Commands (`plugins/figma-pack/scripts/tokens-platforms.mjs`):
+
+- `list`: platforms with viewports, library and font.
+- `add <id> [--title T] [--from web] [--viewport ipad:1024] [--font F] [--library L]`: a new platform (tablet, desktop, tv…). `--from` copies another platform's scales and styles under new section names, to replace with the real ones.
+- `build [--check]`: platform files → `tokens.json`, `dist/`, `platforms.js`. Then `node plugins/design-engine/scripts/sync-contracts.mjs`.
+- `split`: after `tokens-build.mjs --from` or the widget rewrote `tokens.json`, puts the change back into the platform files (fails if anything would be lost).
+
+Viewport names are unique across platforms; a viewport narrower than 600 px gets the mobile shell in the builder.
+
 ## 1. Spacing
 
 Mobile KIT uses `paddings/default/*` (collection `foundation`, scope GAP). Web/CRM use `spacing/*` (Web components, aliases of `rem/default/*`).

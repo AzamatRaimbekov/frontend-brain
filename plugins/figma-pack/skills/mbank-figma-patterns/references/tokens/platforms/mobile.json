@@ -1,0 +1,391 @@
+{
+ "$schema": "mbank/platform@1",
+ "id": "mobile",
+ "title": "Mobile",
+ "order": 2,
+ "figmaLibrary": "Mobile KIT",
+ "viewports": {
+  "mobile": 375
+ },
+ "scales": {
+  "spacing": {
+   "section": "mobileFoundation",
+   "prefix": "paddings/default/"
+  },
+  "radius": {
+   "section": "mobileFoundation",
+   "prefix": "radius/"
+  }
+ },
+ "font": "Nunito (mobile collection modes: Nunito | Inter -> Inter Mbank)",
+ "sections": {
+  "mobileFoundation": {
+   "columns": [
+    "value"
+   ],
+   "vars": [
+    {
+     "name": "paddings/default/none",
+     "key": "fb109a5072b402ff23bef536000e8e6b2c5ef8d5",
+     "values": [
+      "0"
+     ]
+    },
+    {
+     "name": "paddings/default/xs",
+     "key": "4e84b77b36220c2f282456e7cf0495104d5084dd",
+     "values": [
+      "2"
+     ]
+    },
+    {
+     "name": "paddings/default/xs 2",
+     "key": "d4c8e9d721b5696cee908a4366ad497721653773",
+     "values": [
+      "4"
+     ]
+    },
+    {
+     "name": "paddings/default/s",
+     "key": "6e80bc94476fe9fb8e18a2ecd1184d9cc31865df",
+     "values": [
+      "8"
+     ]
+    },
+    {
+     "name": "paddings/default/s - 2",
+     "key": "c44220317b3fa1713b480e666de7cd5fc2540446",
+     "values": [
+      "12"
+     ]
+    },
+    {
+     "name": "paddings/default/m",
+     "key": "f5a1fba27841d60b694005eb8da23f146b5c3269",
+     "values": [
+      "14"
+     ]
+    },
+    {
+     "name": "paddings/default/m - 2",
+     "key": "81a966b963f940ab223bdc6d0742e7222a85a39f",
+     "values": [
+      "16"
+     ]
+    },
+    {
+     "name": "paddings/default/l",
+     "key": "22db93c32da263a7da496ff79f405638628a6c17",
+     "values": [
+      "20"
+     ]
+    },
+    {
+     "name": "paddings/default/xl",
+     "key": "3415f336c1457466e9e4026def9f3f53ad1477c2",
+     "values": [
+      "24"
+     ]
+    },
+    {
+     "name": "paddings/default/xxl",
+     "key": "77387b36180f1321d8fb6a702a1294c1c7a9d0f2",
+     "values": [
+      "28"
+     ]
+    },
+    {
+     "name": "paddings/default/xxxl",
+     "key": "e26c9bc27be00b5e5452fd6ff1e9100bb129f547",
+     "values": [
+      "32"
+     ]
+    },
+    {
+     "name": "paddings/inverse/-xs",
+     "key": "c1af1dc8facfa9468f27e7574a36075595fe6039",
+     "values": [
+      "-4"
+     ]
+    },
+    {
+     "name": "paddings/inverse/-s",
+     "key": "d940fd2511bfd70ba2873fe910ac597112c5bb86",
+     "values": [
+      "-8"
+     ]
+    },
+    {
+     "name": "paddings/inverse/-m",
+     "key": "257dd4c377e271b531edef870ddb3761dfdbf582",
+     "values": [
+      "-16"
+     ]
+    },
+    {
+     "name": "radius/none (mobile)",
+     "key": "307348f93f8587eb6f3eca52b4778f9a092d35bb",
+     "values": [
+      "0"
+     ]
+    },
+    {
+     "name": "radius/xxs (mobile)",
+     "key": "eea831d02251e6334c9383c2a8dbaf8ac1c467b5",
+     "values": [
+      "4"
+     ]
+    },
+    {
+     "name": "radius/xs (mobile)",
+     "key": "d3785f1a672886dab4f07230c66d7cb14677b87d",
+     "values": [
+      "8"
+     ]
+    },
+    {
+     "name": "radius/s (mobile)",
+     "key": "5ad164a0bfd5cf02aad0e9578356a2ae6e3f4005",
+     "values": [
+      "12"
+     ]
+    },
+    {
+     "name": "radius/m (mobile)",
+     "key": "e0a9d7d5ad30e3eb9ed959084e24d924674ef691",
+     "values": [
+      "16"
+     ]
+    },
+    {
+     "name": "radius/l (mobile)",
+     "key": "9bf7a0dce8faa91850c3902d2b1b6a1aa67a2546",
+     "values": [
+      "20"
+     ]
+    },
+    {
+     "name": "radius/xl (mobile)",
+     "key": "6b44870a2403aaf41999d1892a919dae2cf1c0f7",
+     "values": [
+      "24"
+     ]
+    },
+    {
+     "name": "radius/xxl (mobile)",
+     "key": "71e2e936964d07b19be084f25da408f1d7ba670b",
+     "values": [
+      "1000"
+     ]
+    }
+   ]
+  }
+ },
+ "textStyles": [
+  {
+   "name": "display/large",
+   "key": "935eecfccf8f19e0b0b07db993694abd68d7d6fa",
+   "family": "Nunito",
+   "style": "Black",
+   "size": 56,
+   "lineHeight": 68
+  },
+  {
+   "name": "display/medium",
+   "key": "77389d3ebaea2c5a0e51c9888d13085cc2a06625",
+   "family": "Nunito",
+   "style": "ExtraBold",
+   "size": 44,
+   "lineHeight": 56
+  },
+  {
+   "name": "display/small",
+   "key": "fbc14f8cc8d7ec20ed34ef6c9035d7c32a6d71c8",
+   "family": "Nunito",
+   "style": "ExtraBold",
+   "size": 36,
+   "lineHeight": 48
+  },
+  {
+   "name": "headline/large",
+   "key": "42bd51967686fee5ca4ccc96538ce60fa5058d69",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 32,
+   "lineHeight": 40
+  },
+  {
+   "name": "headline/medium",
+   "key": "dabf12c1016d1f2ad529f2b44c76a7cfc2f129f1",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 28,
+   "lineHeight": 36
+  },
+  {
+   "name": "headline/small",
+   "key": "cf5b068f4264ad7d2cab1343d5c8e995964607b8",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 24,
+   "lineHeight": 32
+  },
+  {
+   "name": "title/large 2",
+   "key": "cda42c331c76712c19b4f260be17b2b28e62460a",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 22,
+   "lineHeight": 28
+  },
+  {
+   "name": "title/large 1",
+   "key": "e25d51b8915eb2d26b659620aef2f06e3199dddc",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 18,
+   "lineHeight": 24
+  },
+  {
+   "name": "title/medium",
+   "key": "5e00391d94336064ae90578d9b2d488f6ae30edd",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "title/small",
+   "key": "8ad541a9910d966f41fd18c4b134828a01224a61",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 14,
+   "lineHeight": 20
+  },
+  {
+   "name": "body/large",
+   "key": "0b0bc64ef8b5dc133fd1194d126f262df2a930ae",
+   "family": "Nunito",
+   "style": "Medium",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "body/medium",
+   "key": "6f67996c8bfa4eddc6c219cb559800ba1d1bb590",
+   "family": "Nunito",
+   "style": "Medium",
+   "size": 14,
+   "lineHeight": 20
+  },
+  {
+   "name": "body/small",
+   "key": "43a4ed0fc2a0718be0f2e2c509ddcb620c93e3e9",
+   "family": "Nunito",
+   "style": "Medium",
+   "size": 12,
+   "lineHeight": 16
+  },
+  {
+   "name": "label/large-prominent",
+   "key": "e4778cf7733078e9b75f0532853aa9a55ed05ac5",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "label/large",
+   "key": "b5146d924829d4afbc81cdf4802c39a15b59c203",
+   "family": "Nunito",
+   "style": "Medium",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "label/medium-prominent",
+   "key": "37add98b49257c926e19f1e45381f502e2be451b",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 14,
+   "lineHeight": 20
+  },
+  {
+   "name": "label/medium",
+   "key": "22b70c3f6ff11d198c6043879ea2977f3e07bdf2",
+   "family": "Nunito",
+   "style": "SemiBold",
+   "size": 14,
+   "lineHeight": 20
+  },
+  {
+   "name": "label/small m - prominent",
+   "key": "83d85bcafe0b51a3656ddc48731726188143c838",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 13,
+   "lineHeight": 16
+  },
+  {
+   "name": "label/small m",
+   "key": "c6f52356a7c782670153ff55cdfbf3456849fd3e",
+   "family": "Nunito",
+   "style": "Medium",
+   "size": 13,
+   "lineHeight": 16
+  },
+  {
+   "name": "label/small s - prominent",
+   "key": "81d7ea4c0dfcebb6fe7a9dfd9793bdafbb8e52e1",
+   "family": "Nunito",
+   "style": "Bold",
+   "size": 12,
+   "lineHeight": 14
+  },
+  {
+   "name": "label/small s",
+   "key": "d5105b04b8c92621288b5c6a8d59e5356979c571",
+   "family": "Nunito",
+   "style": "Medium",
+   "size": 12,
+   "lineHeight": 14
+  }
+ ],
+ "effectStyles": [
+  {
+   "name": "blocks/elevateBlocks",
+   "key": "af66c8cb44215b21732f55a594ff6ea5fb61b200",
+   "effects": "DROP_SHADOW 0,4 r20"
+  },
+  {
+   "name": "shadow/Default",
+   "key": "cf3f2c1cec4b9973388dc957f2e14b4b5f4bc21a",
+   "effects": "DROP_SHADOW 0,4 r24"
+  },
+  {
+   "name": "shadow/Default-hover",
+   "key": "2e66027ce4ce5d9243511b148dfa32362623d3ce",
+   "effects": "DROP_SHADOW 0,12 r36"
+  },
+  {
+   "name": "shadow/dropdown",
+   "key": "52cf274a237c77f957b26bdfb8f8d9743c267d70",
+   "effects": "DROP_SHADOW 0,3 r6 + 0,11 r11 + 0,25 r15"
+  },
+  {
+   "name": "shadow/notification",
+   "key": "53bfc4ffe3cf10e1aba5abcca629f8c3845b6fe5",
+   "effects": "DROP_SHADOW 0,8 r16"
+  },
+  {
+   "name": "shadow/modal",
+   "key": "b19fb1c69429a6e20e310a26b4def93ba35906fe",
+   "effects": "DROP_SHADOW 0,18 r30"
+  },
+  {
+   "name": "shadow/tooltip",
+   "key": "4564637f5cbcb2c09bbbfdda19dab7782e391b7a",
+   "effects": "DROP_SHADOW 0,4 r6 + 0,12 r12 + 0,24 r16 + 0,0 r2"
+  }
+ ]
+}

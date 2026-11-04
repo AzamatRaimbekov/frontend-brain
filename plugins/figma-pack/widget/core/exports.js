@@ -172,9 +172,9 @@ export const OWNER_TOKENS = 'plugins/figma-pack/skills/mbank-figma-patterns/refe
 export function syncCommands({ contracts = [] } = {}) {
   const out = [
     { title: 'tokens.json → репозиторий (владелец контракта), затем копия во frontend-pack и tokens.css',
-      cmd: `cp ~/Downloads/tokens.json ${OWNER_TOKENS}\nnode plugins/design-engine/scripts/sync-contracts.mjs` },
+      cmd: `cp ~/Downloads/tokens.json ${OWNER_TOKENS}\nnode plugins/figma-pack/scripts/tokens-platforms.mjs split\nnode plugins/design-engine/scripts/sync-contracts.mjs` },
     { title: 'Или сырой дамп, как после read-tokens.js',
-      cmd: `node plugins/frontend-pack/scripts/tokens-build.mjs --from ~/Downloads/mbank-tokens-raw.json --tokens ${OWNER_TOKENS}\nnode plugins/design-engine/scripts/sync-contracts.mjs` },
+      cmd: `node plugins/frontend-pack/scripts/tokens-build.mjs --from ~/Downloads/mbank-tokens-raw.json --tokens ${OWNER_TOKENS}\nnode plugins/figma-pack/scripts/tokens-platforms.mjs split\nnode plugins/design-engine/scripts/sync-contracts.mjs` },
     { title: 'Проверка: копии и tokens.css совпадают с владельцем', cmd: 'npm test' },
   ];
   if (contracts.length) {

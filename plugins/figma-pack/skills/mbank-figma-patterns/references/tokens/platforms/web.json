@@ -1,0 +1,852 @@
+{
+ "$schema": "mbank/platform@1",
+ "id": "web",
+ "title": "Web",
+ "order": 1,
+ "figmaLibrary": "Web components",
+ "viewports": {
+  "desktop": 1440,
+  "tablet": 768
+ },
+ "scales": {
+  "spacing": {
+   "section": "webSpacing",
+   "prefix": "spacing/"
+  },
+  "radius": {
+   "section": "brandRadius",
+   "prefix": "radius/"
+  }
+ },
+ "font": "Inter Mbank",
+ "sections": {
+  "brandRadius": {
+   "columns": [
+    "value"
+   ],
+   "vars": [
+    {
+     "name": "radius/full",
+     "key": "880334001c5c1a616d6700df798cd84e29cf0070",
+     "values": [
+      "1000"
+     ]
+    },
+    {
+     "name": "radius/xl-4",
+     "key": "0552e3addd4a74430e7c53b6718479b9aa6d60e6",
+     "values": [
+      "40"
+     ]
+    },
+    {
+     "name": "radius/xl-3",
+     "key": "b60fc0f5852bc96ca2f6c0cf1711f36f033d788d",
+     "values": [
+      "32"
+     ]
+    },
+    {
+     "name": "radius/xl-2",
+     "key": "5c0fd5fb1f56125215d6330cdee12086f32a53f7",
+     "values": [
+      "24"
+     ]
+    },
+    {
+     "name": "radius/xl",
+     "key": "46ff3d87efcea0e8e529e8dbaa14ee9c81faafb2",
+     "values": [
+      "20"
+     ]
+    },
+    {
+     "name": "radius/l",
+     "key": "215a81ed22f0545e5c4e4bacdaba3f52506fc65e",
+     "values": [
+      "16"
+     ]
+    },
+    {
+     "name": "radius/m",
+     "key": "cff2d86748887ff2a64d9de8911be6e9c7c48f3e",
+     "values": [
+      "12"
+     ]
+    },
+    {
+     "name": "radius/s",
+     "key": "9d4b1d6c55e145f473e312025829306854a3a023",
+     "values": [
+      "8"
+     ]
+    },
+    {
+     "name": "radius/xs",
+     "key": "e5e218dc0552b718be2cdcf3992ae8475ee3f492",
+     "values": [
+      "4"
+     ]
+    },
+    {
+     "name": "radius/xss",
+     "key": "243485996c0d982afbccdfdfc18c58ead796485b",
+     "values": [
+      "2"
+     ]
+    },
+    {
+     "name": "radius/none",
+     "key": "8d2416e70df7331ba3e0496575be0c02514377fb",
+     "values": [
+      "0"
+     ]
+    }
+   ]
+  },
+  "borderRadius": {
+   "columns": [
+    "value"
+   ],
+   "vars": [
+    {
+     "name": "border-radius/full",
+     "key": "0c623a2bff941b61f99500d938b32b30d62e8189",
+     "values": [
+      "1000"
+     ]
+    },
+    {
+     "name": "border-radius/xl-4",
+     "key": "e492b8f7b74f3167adddea50ca768c31f4163cdf",
+     "values": [
+      "40"
+     ]
+    },
+    {
+     "name": "border-radius/xl-3",
+     "key": "9b9d79b1ef31201c04903b45671fe485d6f75c7c",
+     "values": [
+      "32"
+     ]
+    },
+    {
+     "name": "border-radius/xl-2",
+     "key": "b43b8564d904c26c3147d3e61d89a2cfcf8d1e7f",
+     "values": [
+      "24"
+     ]
+    },
+    {
+     "name": "border-radius/xl",
+     "key": "163a64c42405550c6b3bc85182e6aff4bcab58e0",
+     "values": [
+      "20"
+     ]
+    },
+    {
+     "name": "border-radius/l",
+     "key": "d57f472525c8756360b9023d49bb093edb04a41a",
+     "values": [
+      "16"
+     ]
+    },
+    {
+     "name": "border-radius/m",
+     "key": "ff615bebaee8bcbf4953d65b2d7b5a162c6aa45c",
+     "values": [
+      "12"
+     ]
+    },
+    {
+     "name": "border-radius/s",
+     "key": "2f35262ae3ae0f15d4c8a18bc61b5006391e7436",
+     "values": [
+      "8"
+     ]
+    },
+    {
+     "name": "border-radius/xs",
+     "key": "78c30ccab1bb9e8bbae51ce0132119ec0de8304b",
+     "values": [
+      "4"
+     ]
+    },
+    {
+     "name": "border-radius/xss",
+     "key": "e42ccaf32d0f9f89f906f3f7d447324a43e690e7",
+     "values": [
+      "2"
+     ]
+    },
+    {
+     "name": "inner-radius-segment/l",
+     "key": "0999b6732b02aae49c153a574de11fb5ddd9f68e",
+     "values": [
+      "18"
+     ]
+    },
+    {
+     "name": "inner-radius-segment/s",
+     "key": "752efd0b6cb81b8c8f67acaeef512a5357abb9bb",
+     "values": [
+      "15"
+     ]
+    },
+    {
+     "name": "inner-radius-segment/m",
+     "key": "3050b4e31cc04f9761d7d880334679181c6ca8f6",
+     "values": [
+      "10"
+     ]
+    }
+   ]
+  },
+  "rem": {
+   "columns": [
+    "value"
+   ],
+   "vars": [
+    {
+     "name": "rem/default/0",
+     "key": "1bbae6b23893ee52749c03d355a9b62c63eb7a41",
+     "values": [
+      "0"
+     ]
+    },
+    {
+     "name": "rem/default/2",
+     "key": "c59a9be0c4c9a1fbfd706f6f7eeb551252d527e7",
+     "values": [
+      "2"
+     ]
+    },
+    {
+     "name": "rem/default/4",
+     "key": "ad8f3b7f62f28241835a75389d8d6ded150a6f8a",
+     "values": [
+      "4"
+     ]
+    },
+    {
+     "name": "rem/default/6",
+     "key": "f3f6f21e57c99a41891d54dfa3d0a469fd45adbb",
+     "values": [
+      "6"
+     ]
+    },
+    {
+     "name": "rem/default/8",
+     "key": "5b26e724955a5e40c9be2ca63f157d4734e3c85e",
+     "values": [
+      "8"
+     ]
+    },
+    {
+     "name": "rem/default/10",
+     "key": "2a9083fe3044d93424acc3688d4e3b033d93cd09",
+     "values": [
+      "10"
+     ]
+    },
+    {
+     "name": "rem/default/12",
+     "key": "7ebbef3d4a05f7623eca40a6b176cda22d8749a6",
+     "values": [
+      "12"
+     ]
+    },
+    {
+     "name": "rem/default/14",
+     "key": "a3708337250568bee43e0c049bf7fdfbf27bdeff",
+     "values": [
+      "14"
+     ]
+    },
+    {
+     "name": "rem/default/16",
+     "key": "6546edd17b72e154b5c3468b773e8a40036b3df7",
+     "values": [
+      "16"
+     ]
+    },
+    {
+     "name": "rem/default/20",
+     "key": "7ab74e1119917b06823e2155333141fe68a795be",
+     "values": [
+      "20"
+     ]
+    },
+    {
+     "name": "rem/default/24",
+     "key": "848ab6eaa317b35e5da6820a7571a4e8548433c8",
+     "values": [
+      "24"
+     ]
+    },
+    {
+     "name": "rem/default/28",
+     "key": "bf5b3b43fcccd79ba5bf60065422d26013d96d43",
+     "values": [
+      "28"
+     ]
+    },
+    {
+     "name": "rem/default/32",
+     "key": "0b651763bbb43ad2e2387ef38e05a775545e84ab",
+     "values": [
+      "32"
+     ]
+    },
+    {
+     "name": "rem/default/36",
+     "key": "a91ce087a65c458cdbb817cc14d396b43f5dbbca",
+     "values": [
+      "36"
+     ]
+    },
+    {
+     "name": "rem/default/40",
+     "key": "fd32316b18edfdc75c0167cd5285ed5e6d9bef94",
+     "values": [
+      "40"
+     ]
+    },
+    {
+     "name": "rem/default/48",
+     "key": "0eb02f7d1b88b866ab15772afd6779c88f0e8e13",
+     "values": [
+      "48"
+     ]
+    },
+    {
+     "name": "rem/default/56",
+     "key": "f1101d370313d1acfa7e95e5c3d190fdb46eddc4",
+     "values": [
+      "56"
+     ]
+    },
+    {
+     "name": "rem/default/64",
+     "key": "e7181ea608339bc60f7f29094767658c3b777a22",
+     "values": [
+      "64"
+     ]
+    },
+    {
+     "name": "rem/default/72",
+     "key": "6b3b47272e28f3381e149f220644bd19aa11c5ed",
+     "values": [
+      "72"
+     ]
+    },
+    {
+     "name": "rem/default/80",
+     "key": "0e5252ebf4ab528029d2f1d177cb0a3f119fb146",
+     "values": [
+      "80"
+     ]
+    }
+   ]
+  },
+  "webSpacing": {
+   "columns": [
+    "value"
+   ],
+   "vars": [
+    {
+     "name": "spacing/none",
+     "key": "469eae815f2cdfa1596c9cdb6701618e0030a899",
+     "values": [
+      "0"
+     ]
+    },
+    {
+     "name": "spacing/xs",
+     "key": "49fe1d2a4517444f7f637ea69fad54c17decba64",
+     "values": [
+      "4"
+     ]
+    },
+    {
+     "name": "spacing/s-3",
+     "key": "25548a2aee9592223ee300340cc03b54847db6b8",
+     "values": [
+      "8"
+     ]
+    },
+    {
+     "name": "spacing/s-2",
+     "key": "bd33cdc1be90ca2ac5f3d0beb7e6cd3dcbe826e9",
+     "values": [
+      "10"
+     ]
+    },
+    {
+     "name": "spacing/s-1",
+     "key": "b7f3190a4d32d94e37e2349ac0035f2b7a28ddf7",
+     "values": [
+      "12"
+     ]
+    },
+    {
+     "name": "spacing/m-2-base",
+     "key": "06f234ad59d196f83831e10bcb2ba0dda48564a8",
+     "values": [
+      "16"
+     ]
+    },
+    {
+     "name": "spacing/m-1",
+     "key": "945c102a9deead688072a884e69d5b10932b013e",
+     "values": [
+      "20"
+     ]
+    },
+    {
+     "name": "spacing/l-2",
+     "key": "c25e02637c18d4b74c20014d98a2ee237c50749a",
+     "values": [
+      "24"
+     ]
+    },
+    {
+     "name": "spacing/l-1",
+     "key": "139bc110af5978890090115e3686b93fa86dbef0",
+     "values": [
+      "28"
+     ]
+    },
+    {
+     "name": "spacing/xl-2",
+     "key": "d80486a8ad621a92eefd5fa6500a3ce339f6dd76",
+     "values": [
+      "32"
+     ]
+    },
+    {
+     "name": "spacing/xl-1",
+     "key": "afc59ca2bae3e2c7b18935a7f518fe9a12aa6fcd",
+     "values": [
+      "36"
+     ]
+    },
+    {
+     "name": "spacing/xxl-2",
+     "key": "5112dc6b296ab4e9d858030023ca5db8790524d2",
+     "values": [
+      "40"
+     ]
+    },
+    {
+     "name": "spacing/xxl-1",
+     "key": "f68a450bfa5d2d835a3493982430608b136b0692",
+     "values": [
+      "48"
+     ]
+    }
+   ]
+  }
+ },
+ "textStyles": [
+  {
+   "name": "font/Display/l",
+   "key": "e316e5b34dae81e60cc2ab97a1ab8cdef4563a98",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 72,
+   "lineHeight": 88
+  },
+  {
+   "name": "font/Display/l-md",
+   "key": "5ab7b80c54c4507d649b6306dd3e61b8f1721230",
+   "family": "Inter Mbank",
+   "style": "SemiBold",
+   "size": 72,
+   "lineHeight": 88
+  },
+  {
+   "name": "font/Display/l-strong",
+   "key": "9b0ca8f78c395d4698e06d129e87dee3e6ead2b5",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 72,
+   "lineHeight": 88
+  },
+  {
+   "name": "font/Display/m",
+   "key": "3e023dd0da2e1e176c3187b68196a6586d802b8a",
+   "family": "Inter Mbank",
+   "style": "Medium",
+   "size": 56,
+   "lineHeight": 68
+  },
+  {
+   "name": "font/Display/m-md",
+   "key": "6fd5a97d91cc9a9de866ac0f36f7ad642b2d2b05",
+   "family": "Inter Mbank",
+   "style": "SemiBold",
+   "size": 56,
+   "lineHeight": 68
+  },
+  {
+   "name": "font/Display/m-strong",
+   "key": "a95b07a2b43f24aa401f1ef8c1b32b489149392f",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 56,
+   "lineHeight": 68
+  },
+  {
+   "name": "font/Display/s",
+   "key": "6b7f650ff27b4c6c9d69163260725f86cfd4fca2",
+   "family": "Inter Mbank",
+   "style": "Medium",
+   "size": 48,
+   "lineHeight": 56
+  },
+  {
+   "name": "font/Display/s-md",
+   "key": "e06696cc2138f91849ecab3b1db9f94381d41b82",
+   "family": "Inter Mbank",
+   "style": "SemiBold",
+   "size": 48,
+   "lineHeight": 56
+  },
+  {
+   "name": "font/Display/s-strong",
+   "key": "c249d0bd029a93d6d6923dbf531dde2d3e4e11fe",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 48,
+   "lineHeight": 56
+  },
+  {
+   "name": "font/Heading/h1",
+   "key": "e08e01dab2c6eb1e477b5e7bc9fd8bb7de4fd8a3",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 44,
+   "lineHeight": 52
+  },
+  {
+   "name": "font/Heading/h2",
+   "key": "69b9a4ac3a851a758d18a02b4a29af33ecb256ad",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 44,
+   "lineHeight": 52
+  },
+  {
+   "name": "font/Heading/h3",
+   "key": "23dc9ab4ba71b905aa555d4aa563e364598fa40c",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 32,
+   "lineHeight": 40
+  },
+  {
+   "name": "font/Heading/h4",
+   "key": "3c1db2e1820e70adce82a63dc504382b52ee759a",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 24,
+   "lineHeight": 32
+  },
+  {
+   "name": "font/Heading/h5",
+   "key": "d42185ecec5526dbd0305063826a760364c56df0",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 20,
+   "lineHeight": 28
+  },
+  {
+   "name": "font/Heading/h6",
+   "key": "6fb93a2cc4474df73cd2ae1bbd7d6d9b041e835f",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "font/Body/xl",
+   "key": "aa8b7fbaa97839c3510a2fe501e42b210d3a872e",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 18,
+   "lineHeight": 26
+  },
+  {
+   "name": "font/Body/xl-md",
+   "key": "07863401d95c6f432ee9a03758fa0fc226d159ab",
+   "family": "Inter Mbank",
+   "style": "Medium",
+   "size": 18,
+   "lineHeight": 26
+  },
+  {
+   "name": "font/Body/xl-strong",
+   "key": "9be63943b5c7f6b88df6340c47e73a3d6d2728fe",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 18,
+   "lineHeight": 26
+  },
+  {
+   "name": "font/Body/l",
+   "key": "98dc7c792e61f09be4d5f519634aada8b52cfcd3",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "font/Body/l-md",
+   "key": "a7b3a781c611400a807bdee354a39c3736df09bd",
+   "family": "Inter Mbank",
+   "style": "Medium",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "font/Body/l-strong",
+   "key": "cac77d0fc4391374fa731efc663cc720e5049da4",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 16,
+   "lineHeight": 24
+  },
+  {
+   "name": "font/Body/m",
+   "key": "4d1b7e47cbc9fc3531246736359f2c9325535de6",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 15,
+   "lineHeight": 22
+  },
+  {
+   "name": "font/Body/m-md",
+   "key": "a52537e7e015a8c7a857ad4c3c1527c811d582d1",
+   "family": "Inter Mbank",
+   "style": "Medium",
+   "size": 15,
+   "lineHeight": 22
+  },
+  {
+   "name": "font/Body/m-strong",
+   "key": "473c82346b61cca42405ac66ec8888a5ceaa5112",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 15,
+   "lineHeight": 22
+  },
+  {
+   "name": "font/Body/s",
+   "key": "476f8d56a3c3bcaa804a33fd3658f73dbbb06fa3",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 14,
+   "lineHeight": 20
+  },
+  {
+   "name": "font/Body/s-md",
+   "key": "6ebb3dab78e706c0f2ee21bd5fd79999aecc4862",
+   "family": "Inter Mbank",
+   "style": "Medium",
+   "size": 14,
+   "lineHeight": 20
+  },
+  {
+   "name": "font/Body/s-strong",
+   "key": "8f1f4e2617b460a9982399f453c4d9baa952dc45",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 14,
+   "lineHeight": 20
+  },
+  {
+   "name": "font/Body/xs",
+   "key": "8850f7044628d2c0d22dd32323557ea8baa5e178",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 13,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/Body/xs-md",
+   "key": "aa171a29710200f383227c5de81e8ac07bd72ed0",
+   "family": "Inter Mbank",
+   "style": "Medium",
+   "size": 13,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/Body/xs-strong",
+   "key": "fe0bc48b745d27ee08208ae8f35afda3e8206bd5",
+   "family": "Inter Mbank",
+   "style": "Bold",
+   "size": 13,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/Label/l",
+   "key": "7a128f79cc1cd1422c65b1e8787741357c438ea9",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 14,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/Label/m",
+   "key": "5ce2601a5d83c46550be0cc8999693e275c7c5f5",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 12,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/Label/s",
+   "key": "8fc90fb03d6fad3a47f660345698efd4b84e9c0d",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 11,
+   "lineHeight": 14
+  },
+  {
+   "name": "font/description/l",
+   "key": "7d16943d07753ab98f3f8c03a62e2e09a07274df",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 13,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/description/l-strong",
+   "key": "f36e178caa81d1327daca41ec2433253fdf4181e",
+   "family": "Inter Mbank",
+   "style": "SemiBold",
+   "size": 13,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/description/m",
+   "key": "f0df2a3cba519550cdc24d7c51281fa594092871",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 12,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/description/m-strong",
+   "key": "cf52afe4f832a6b223ccd031fbbf36ec42aa44fd",
+   "family": "Inter Mbank",
+   "style": "SemiBold",
+   "size": 12,
+   "lineHeight": 16
+  },
+  {
+   "name": "font/description/s",
+   "key": "9d9978915ce26a75add453d62bdc2b2838c015a4",
+   "family": "Inter Mbank",
+   "style": "Regular",
+   "size": 11,
+   "lineHeight": 14
+  },
+  {
+   "name": "font/description/s-strong",
+   "key": "b5a2d7494f74f33a5f8cdff6262e4aeffa9020f3",
+   "family": "Inter Mbank",
+   "style": "SemiBold",
+   "size": 11,
+   "lineHeight": 14
+  }
+ ],
+ "effectStyles": [
+  {
+   "name": "shadow/none",
+   "key": "8acf8b7a42bf5700ba96fedbb871bf5819f783e4",
+   "effects": "none"
+  },
+  {
+   "name": "shadow/Default",
+   "key": "4022ed1f609ecc4e8d56143d3dc583270da14404",
+   "effects": "DROP_SHADOW 0,4 r24"
+  },
+  {
+   "name": "shadow/Default-hover",
+   "key": "3ba21a75473937d8cea9b629aaa9b32420f87e18",
+   "effects": "DROP_SHADOW 0,12 r36"
+  },
+  {
+   "name": "shadow/dropdown",
+   "key": "fee84674c72640e71ad87cb7242bfcf66a529d1c",
+   "effects": "DROP_SHADOW 0,3 r6 + 0,11 r11 + 0,15 r35"
+  },
+  {
+   "name": "shadow/notification",
+   "key": "0849c663f3bd667083617a09592b8eb9ed1d8c36",
+   "effects": "DROP_SHADOW 0,8 r16"
+  },
+  {
+   "name": "shadow/modal",
+   "key": "f584a1bc29d2235b8d036666788a22be86abb4e2",
+   "effects": "DROP_SHADOW 0,18 r30"
+  },
+  {
+   "name": "shadow/tooltip",
+   "key": "7b6ebd53cddd6da1b80df822729b4cebaa48371c",
+   "effects": "DROP_SHADOW 0,4 r6 + 0,12 r12 + 0,24 r16 + 0,0 r2"
+  },
+  {
+   "name": "shadow/bottom/controls",
+   "key": "fd6ac19b432ce73bce36e50f41f509a627ce9d44",
+   "effects": "DROP_SHADOW 0,2 r2 + 0,0 r1"
+  },
+  {
+   "name": "shadow/bottom/s",
+   "key": "d444bf9240ed99ea2f21d5c33ec2a73140e68430",
+   "effects": "DROP_SHADOW 0,2 r4 + 0,0 r8"
+  },
+  {
+   "name": "shadow/bottom/m",
+   "key": "c867ef24d0e44cc0cebb1741884cf3e2cada237b",
+   "effects": "DROP_SHADOW 0,4 r8 + 0,0 r16"
+  },
+  {
+   "name": "shadow/bottom/l",
+   "key": "801a169f55b5f3a890cba9c9860ad4a3cdab5e3e",
+   "effects": "DROP_SHADOW 0,12 r20 + 0,0 r20"
+  },
+  {
+   "name": "shadow/bottom/xl",
+   "key": "62bddc7abd7015237fd174f6c0e7700d63b3ff77",
+   "effects": "DROP_SHADOW 0,32 r32 + 0,0 r32"
+  },
+  {
+   "name": "shadow/top/controls",
+   "key": "0bbbacb7185609e64d65b0b4b7cb329595a56a0d",
+   "effects": "DROP_SHADOW 0,-2 r2 + 0,0 r1"
+  },
+  {
+   "name": "shadow/top/s",
+   "key": "4a873714e2dee817fadf03d129e5fe32617f87ac",
+   "effects": "DROP_SHADOW 0,-2 r4 + 0,0 r8"
+  },
+  {
+   "name": "shadow/top/m",
+   "key": "668b437ab010a6dfbd2d3f7c25c6759aa8c3d0a4",
+   "effects": "DROP_SHADOW 0,-4 r8 + 0,0 r16"
+  },
+  {
+   "name": "shadow/top/l",
+   "key": "6274b8e4cc57b6491cb734f26a448590dfb16d61",
+   "effects": "DROP_SHADOW 0,-12 r20 + 0,0 r20"
+  },
+  {
+   "name": "shadow/top/xl",
+   "key": "e94d19faf070d3aaffd4bf9239eb1814df5a9b24",
+   "effects": "DROP_SHADOW 0,-32 r32 + 0,0 r32"
+  }
+ ]
+}

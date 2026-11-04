@@ -1,7 +1,9 @@
 // Screen spec: the compact JSON an AI writes from a ТЗ; the plugin builds it.
 import { FIELD_TYPES, parseColumn } from './fake.mjs';
+import { PLATFORMS, VIEWPORTS } from './platforms.mjs';
 
-export const VIEWPORTS = { desktop: 1440, tablet: 768, mobile: 375 };
+// Platforms and viewport widths come from the token platform files (tokens-platforms.mjs build).
+export { PLATFORMS, VIEWPORTS };
 export const STATES = ['default', 'loading', 'empty', 'error', 'no-access'];
 
 // type -> required fields. Everything else is optional with sensible defaults.
@@ -71,7 +73,7 @@ export function validateSpec(spec) {
   const errors = [];
   if (!spec || typeof spec !== 'object') return ['spec: not an object'];
   if (!spec.project) errors.push('project: required');
-  if (!['web', 'mobile'].includes(spec.platform || 'web')) errors.push('platform: web | mobile');
+  if (!PLATFORMS[spec.platform || 'web']) errors.push(`platform: ${Object.keys(PLATFORMS).join(' | ')}`);
   for (const v of spec.viewports || []) if (!VIEWPORTS[v]) errors.push(`viewports: unknown "${v}"`);
   if (!Array.isArray(spec.screens) || !spec.screens.length) errors.push('screens: at least one screen');
   const navIds = new Set((spec.nav || []).map((n) => n.id));
@@ -107,20 +109,23 @@ export function statDelta(item) {
 // Fills defaults so builders never branch on missing fields.
 export function normalizeSpec(spec) {
   const platform = spec.platform || 'web';
+  // The platform's first viewport is the default; a narrow one (phone) gets the mobile shell.
+  const viewport = PLATFORMS[platform]?.viewports[0] || 'desktop';
+  const phone = VIEWPORTS[viewport] < 600;
   // One Figma page per product section: the nav item's label unless the screen names its page.
   const section = (s) => (spec.nav || []).find((n) => n.id === s.nav)?.label;
   return {
     ...spec,
     platform,
-    viewports: spec.viewports?.length ? spec.viewports : [platform === 'mobile' ? 'mobile' : 'desktop'],
+    viewports: spec.viewports?.length ? spec.viewports : [viewport],
     nav: spec.nav || [],
     user: spec.user || { name: 'Айгуль Токтогулова', role: 'Менеджер' },
     screens: spec.screens.map((s) => ({
-      shell: s.shell || (platform === 'mobile' ? 'mobile' : spec.nav?.length ? 'sidebar' : 'plain'),
+      shell: s.shell || (phone ? 'mobile' : spec.nav?.length ? 'sidebar' : 'plain'),
       page: s.page || section(s) || s.title,
       states: s.states?.length ? s.states : ['default'],
       ...s,
-      viewports: s.viewports?.length ? s.viewports : spec.viewports?.length ? spec.viewports : [platform === 'mobile' ? 'mobile' : 'desktop'],
+      viewports: s.viewports?.length ? s.viewports : spec.viewports?.length ? spec.viewports : [viewport],
     })),
   };
 }
