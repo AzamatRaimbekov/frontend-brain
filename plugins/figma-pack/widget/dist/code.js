@@ -5125,7 +5125,7 @@ node plugins/frontend-pack/scripts/contract-to-code.mjs`
   function paint2(ctx, token, opacity = 1) {
     const v = ctx.vars[token];
     const base = { type: "SOLID", color: { r: 0.5, g: 0.5, b: 0.5 }, opacity };
-    return v ? figma.variables.setBoundVariableForPaint(base, "color", v) : base;
+    return v ? __spreadProps(__spreadValues({}, figma.variables.setBoundVariableForPaint(base, "color", v)), { opacity }) : base;
   }
   async function textStyle(ctx, sz, weight) {
     const key = `${sz}/${weight}`;

@@ -54,7 +54,14 @@ function renderTokens() {
     }).join('')}
     </tbody></table>`;
   $('#group').onchange = (e) => { ui.group = e.target.value; renderTokens(); };
-  $('#query').oninput = (e) => { ui.query = e.target.value; renderTokens(); $('#query').focus(); };
+  // The re-render replaces the input: keep focus and the caret, or typing lands at the start.
+  $('#query').oninput = (e) => {
+    const at = e.target.selectionStart;
+    ui.query = e.target.value;
+    renderTokens();
+    $('#query').focus();
+    $('#query').setSelectionRange(at, at);
+  };
   $('#reset-all').onclick = () => send('reset-all');
   for (const el of document.querySelectorAll('#tab-tokens input.hex')) {
     el.onchange = () => {
