@@ -1,6 +1,6 @@
 # Архитектура: три плагина, один движок
 
-Решение 2026-10-31. В репозитории три плагина Claude Code. Каждый ставится отдельно; движок ставит оба других сам через `dependencies`.
+Решение 2026-10-31. В репозитории три плагина Claude Code. Как ими пользоваться от ТЗ до кода — [design-automation.md](design-automation.md). Каждый ставится отдельно; движок ставит оба других сам через `dependencies`.
 
 ```
 figma-pack      дизайн   Figma MCP, каталог Mbank, токены из Figma, билдер экранов (спека → Figma)
@@ -28,6 +28,8 @@ design-engine   движок   связка дизайна и кода: конв
 |---|---|---|
 | Токены Mbank `tokens.json` | figma-pack `skills/mbank-figma-patterns/references/tokens.json` | frontend-pack `registry/mbank/tokens.json` (вход `tokens-build.mjs`) |
 | Формат спеки экранов `spec@1` | figma-pack `builder/core/spec.js` + `skills/figma-spec/references/spec-format.md` | frontend-pack `references/spec-format.md` (вход `spec-to-code.mjs`) |
+| Платформы токенов (web, mobile, …) | figma-pack `skills/mbank-figma-patterns/references/tokens/dist/*.json` (из `tokens/platforms/*.json`, `scripts/tokens-platforms.mjs`) | frontend-pack `registry/mbank/platforms/` — вся папка |
+| Список платформ и ширин экранов | figma-pack `builder/core/platforms.js` (генерируется `tokens-platforms.mjs build`) | frontend-pack `scripts/spec-to-code/platforms.mjs` |
 | Контракты компонентов `mbank/component@1` | figma-pack `builder/contracts/*.json` (формат `builder/docs/component-contract.md`) | frontend-pack `registry/mbank/contracts/` — вся папка (вход `contract-to-code.mjs`) |
 | Карта компонентов Figma ↔ код | design-engine `references/components-map.json` | — (обе стороны читает только движок) |
 

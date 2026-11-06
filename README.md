@@ -127,6 +127,8 @@ $frontend Проверь фронтенд в этой ветке перед merg
 
 Второй плагин **figma-pack**: каталог дизайн-системы Mbank, рисование экранов в Figma только из компонентов системы (агент `figma-designer`, нужно Full-место), чтение макета в спеку (агент `figma-reader`, хватает Dev-места), код для React, React Native и Flutter. Установка: `claude plugin install figma-pack@frontend-brain`.
 
+Как связаны спека, Figma, токены и код, частые команды и что проверено — [docs/design-automation.md](docs/design-automation.md). Границы плагинов — [docs/architecture.md](docs/architecture.md).
+
 Белый и чёрный список библиотек — один файл: `plugins/frontend-pack/rules/libraries.json`.
 
 Хуки:
@@ -148,6 +150,8 @@ $frontend Проверь фронтенд в этой ветке перед merg
 .claude-plugin/marketplace.json   маркетплейс frontend-brain (Claude Code)
 .agents/plugins/marketplace.json  маркетплейс для Codex
 plugins/figma-pack/               плагин Figma: дизайн-система Mbank, макеты, design-to-code
+  builder/, widget/, bridge/       DS Builder (спека → экраны), виджет Mbank Tokens, мост для Claude
+plugins/design-engine/            движок: связка Figma и кода, sync-contracts, build-front, MCP mbank-ds
 plugins/frontend-pack/            плагин фронтенда
   skills/<скилл>/SKILL.md         правила и маршрутизация
   rules/libraries.json            белый и чёрный список библиотек
@@ -157,6 +161,8 @@ plugins/frontend-pack/            плагин фронтенда
   hooks/, scripts/                хуки UX-бриф и 150 строк, knowledge.mjs (поиск, индекс, проверка)
 .github/                          CODEOWNERS, шаблон PR; CI-файл лежит в docs/ci/test.yml — перенести в .github/workflows/ после выдачи gh права workflow
 apps/ds-configurator/             конфигуратор дизайн-системы (форк shadcn /create): бренд + опции + свои токены → registry:base JSON, tokens.css, скрипт use_figma; cd apps/ds-configurator && npm i && npm run dev
+docs/design-automation.md         карта системы: спека → Figma → токены → код
+docs/architecture.md              границы трёх плагинов и контракты
 docs/reports/                     отчёты (A/B-тест UX-брифа)
 scripts/test.mjs                  проверки репозитория: npm test
 scripts/release.mjs               релиз: одна версия во всех манифестах
