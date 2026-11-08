@@ -3297,13 +3297,14 @@
     }
     add(c, grid);
     if (b.note) add(c, await text(ctx, b.note, { size: "sm", color: "muted-foreground", w: "fill" }));
-    const acts = box(ctx, "Decision actions", { dir: "H", gap: 8, wrap: true, w: ctx.width - 48 });
     const list2 = b.actions || ["\u041E\u0434\u043E\u0431\u0440\u0438\u0442\u044C", "\u041D\u0430 \u0434\u043E\u0440\u0430\u0431\u043E\u0442\u043A\u0443", "\u041E\u0442\u043A\u0430\u0437\u0430\u0442\u044C"];
+    if (!list2.length) return c;
+    const acts = box(ctx, "Decision actions", { dir: "H", gap: 8, wrap: true, w: ctx.width - 48 });
     for (const a of list2) {
       const variant = /отказ|отклон|reject/i.test(a) ? "destructive" : isPrimaryAction(a) || a === list2[0] ? "default" : "outline";
       add(acts, link(await button(ctx, actionLabel(a), variant), `action:${actionLabel(a)}`));
     }
-    return list2.length ? add(c, acts) : c;
+    return add(c, acts);
   }
   async function files(ctx, b) {
     const c = card(ctx, b.title || "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B", { gap: 4 });

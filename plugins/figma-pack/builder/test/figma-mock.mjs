@@ -250,7 +250,7 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
       if (missingFonts.includes(f.family)) throw new Error(`font ${f.family} not available`);
       loaded.add(`${f.family}|${f.style}`);
     },
-    createFrame() { const f = new Node('FRAME'); f.layoutMode = 'NONE'; return f; },
+    createFrame() { const f = new Node('FRAME'); f.layoutMode = 'NONE'; figma.currentPage.appendChild(f); return f; }, // like Figma: lands on the current page
     createText() { return new Text(); },
     createRectangle() { return new Node('RECTANGLE'); },
     createComponent() { const c = new Component(); figma.currentPage.appendChild(c); return c; },

@@ -116,3 +116,13 @@ test('place(): variant, «Label» property, texts by layer, hidden parts; a font
   assert.equal(await place(ctx, 'no-such-contract', {}), null);
   assert.equal(ctx.stats.roles.button.instances, 1);
 });
+
+test('a build leaves nothing loose on section pages (no orphan frames outside the screen sections)', async () => {
+  const m = await fresh();
+  const ensured = await m.ensureContracts(spec, BUNDLED);
+  await m.build(ensured.sets);
+  for (const p of m.figma.root.children.filter((x) => !['Components', 'Прототип'].includes(x.name))) {
+    const loose = p.children.filter((n) => n.type === 'FRAME' || n.type === 'COMPONENT');
+    assert.deepEqual(loose.map((n) => n.name), [], `page ${p.name}`);
+  }
+});

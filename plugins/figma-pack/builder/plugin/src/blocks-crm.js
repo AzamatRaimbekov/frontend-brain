@@ -132,13 +132,14 @@ export async function decision(ctx, b) {
   }
   add(c, grid);
   if (b.note) add(c, await text(ctx, b.note, { size: 'sm', color: 'muted-foreground', w: 'fill' }));
-  const acts = box(ctx, 'Decision actions', { dir: 'H', gap: 8, wrap: true, w: ctx.width - 48 });
   const list = b.actions || ['Одобрить', 'На доработку', 'Отказать'];
+  if (!list.length) return c; // an empty actions frame would be left loose on the page
+  const acts = box(ctx, 'Decision actions', { dir: 'H', gap: 8, wrap: true, w: ctx.width - 48 });
   for (const a of list) {
     const variant = /отказ|отклон|reject/i.test(a) ? 'destructive' : isPrimary(a) || a === list[0] ? 'default' : 'outline';
     add(acts, link(await button(ctx, clean(a), variant), `action:${clean(a)}`));
   }
-  return list.length ? add(c, acts) : c;
+  return add(c, acts);
 }
 
 /** Documents: items [{ name, meta, status }]. */
