@@ -1824,6 +1824,7 @@
     for (const w of wanted) {
       const hit = diff.keep.find((k) => k.name === w.name);
       const node = hit ? set.children.find((n) => n.id === hit.id) : figma.createComponent();
+      if (!hit) page.appendChild(node);
       node.name = w.name;
       await renderVariant(r, node, c, w.props, w.state);
       comps.push({ node, w });

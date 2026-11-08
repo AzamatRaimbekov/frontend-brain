@@ -256,6 +256,9 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     createComponent() { const c = new Component(); figma.currentPage.appendChild(c); return c; },
     combineAsVariants(nodes, parent) {
       if (!nodes.length || nodes.some((n) => n.type !== 'COMPONENT')) throw new Error('combineAsVariants needs components');
+      const pageOfNode = (n) => { while (n && n.type !== 'PAGE') n = n.parent; return n; };
+      const target = pageOfNode(parent);
+      if (nodes.some((n) => pageOfNode(n) !== target)) throw new Error('in combineAsVariants: Grouped nodes must be in the same page as the parent');
       const set = new ComponentSet();
       for (const n of nodes) set.appendChild(n);
       set.componentPropertyDefinitions; // throws on bad variant names, like Figma

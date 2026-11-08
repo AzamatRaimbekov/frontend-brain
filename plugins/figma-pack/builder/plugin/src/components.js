@@ -318,6 +318,7 @@ export async function renderContract(c, opts = {}) {
   for (const w of wanted) {
     const hit = diff.keep.find((k) => k.name === w.name);
     const node = hit ? set.children.find((n) => n.id === hit.id) : figma.createComponent();
+    if (!hit) page.appendChild(node); // createComponent lands on the current page; combineAsVariants needs the set's page
     node.name = w.name;
     await renderVariant(r, node, c, w.props, w.state);
     comps.push({ node, w });
