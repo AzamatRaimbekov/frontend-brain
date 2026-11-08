@@ -5,12 +5,13 @@ import { loadFonts } from './draw.js';
 import { tokenIndex, colorVar } from './tokens-resolve.js';
 
 export const GROUPS = [
-  { title: 'Основа', names: ['button', 'badge', 'avatar', 'card'] },
-  { title: 'Формы', names: ['input', 'textarea', 'select-trigger', 'checkbox', 'switch'] },
-  { title: 'Навигация', names: ['tabs-list', 'tabs-trigger', 'pagination'] },
-  { title: 'Обратная связь', names: ['alert', 'progress', 'skeleton'] },
-  { title: 'Данные', names: ['table-cell'] },
-  { title: 'CRM', names: ['crm-kpi-card', 'crm-application-card', 'crm-key-value-row', 'crm-timeline-item', 'crm-transfer-row'] },
+  { title: 'Основа', names: ['button', 'badge', 'avatar', 'card', 'separator'] },
+  { title: 'Формы', names: ['input', 'textarea', 'search-input', 'select-trigger', 'date-picker-trigger', 'checkbox', 'radio', 'switch', 'filter-chip'] },
+  { title: 'Навигация', names: ['nav-item', 'tabbar-item', 'breadcrumb-item', 'tabs-list', 'tabs-trigger', 'pagination', 'stepper-step'] },
+  { title: 'Данные', names: ['table-head', 'table-cell'] },
+  { title: 'Обратная связь', names: ['alert', 'toast', 'progress', 'spinner', 'skeleton', 'empty-state'] },
+  { title: 'Оверлеи', names: ['dialog', 'tooltip', 'dropdown-menu-item'] },
+  { title: 'CRM', names: ['crm-kpi-card', 'crm-application-card', 'crm-key-value-row', 'crm-timeline-item', 'crm-transfer-row', 'crm-list-item'] },
 ];
 const DOC = 'mbank-doc';
 const GAP = 48;

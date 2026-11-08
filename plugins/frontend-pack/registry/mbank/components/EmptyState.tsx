@@ -20,7 +20,9 @@ export function EmptyState({ title, description, action, icon, className }: Empt
     <div
       data-slot="empty-state"
       className={cn(
+        // @contract empty-state start
         "flex flex-col items-center gap-3 rounded-lg border border-dashed border-border-secondary px-6 py-16 text-center",
+        // @contract empty-state end
         className,
       )}
     >

@@ -1,0 +1,63 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "radio",
+  "title": "Radio",
+  "figma": {
+    "name": "Switchers - Check",
+    "key": "be053b3924b63e289a38bfd661b7180deb83236e",
+    "nodeId": "2280:9729"
+  },
+  "parts": [
+    "root",
+    "dot"
+  ],
+  "anatomy": {
+    "dot": {
+      "kind": "frame",
+      "layer": "Dot"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "size": 5,
+      "radius": "full",
+      "border-width": 1,
+      "border": "input",
+      "bg": "background",
+      "align": "center",
+      "border:hover": "input-hover",
+      "border:disabled": "input-disabled",
+      "bg:disabled": "muted",
+      "border:checked": "brand",
+      "bg:checked": "brand",
+      "focus-ring": "ring/30"
+    },
+    "dot": {
+      "size": 2,
+      "radius": "full",
+      "bg": "brand-foreground",
+      "hidden": true,
+      "hidden:checked": false
+    }
+  },
+  "variants": {},
+  "states": [
+    "default",
+    "hover",
+    "focus",
+    "disabled",
+    "checked"
+  ],
+  "code": {
+    "file": "radio.tsx",
+    "template": "button-like",
+    "modifiers": {
+      "checked": "data-[state=checked]"
+    },
+    "extra": "peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50",
+    "figmaOnly": [
+      "dot"
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "separator",
+  "title": "Separator",
+  "figma": {
+    "name": "Separator"
+  },
+  "parts": [
+    "root"
+  ],
+  "props": {
+    "orientation": {
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal"
+    }
+  },
+  "base": {
+    "root": {
+      "bg": "border"
+    }
+  },
+  "variants": {
+    "orientation": {
+      "horizontal": {
+        "root": {
+          "layout": "row",
+          "height": 0.25,
+          "px": 30
+        }
+      },
+      "vertical": {
+        "root": {
+          "layout": "row",
+          "height": 6,
+          "px": 0.125
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "separator.tsx",
+    "template": "card-like",
+    "extra": "shrink-0",
+    "extras": {
+      "orientation=horizontal": "h-px w-full",
+      "orientation=vertical": "h-full w-px"
+    },
+    "overrides": {
+      "root": {
+        "layout": null,
+        "height": null,
+        "px": null
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "search-input",
+  "title": "Search input",
+  "figma": {
+    "name": "input/search",
+    "key": "bdc52ccb245ef127e0ce609859f7b0347207a94b",
+    "nodeId": "4001:1384"
+  },
+  "parts": [
+    "root",
+    "icon",
+    "placeholder"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 272
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "search"
+    },
+    "placeholder": {
+      "kind": "text",
+      "layer": "Placeholder",
+      "sample": "Поиск",
+      "fill": true
+    }
+  },
+  "props": {
+    "size": {
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  },
+  "base": {
+    "root": {
+      "gap": 2,
+      "radius": "md",
+      "border-width": 1,
+      "border": "input",
+      "bg": "background",
+      "px": 3,
+      "text": "sm",
+      "fg": "foreground",
+      "border:hover": "input-hover",
+      "border:focus": "ring",
+      "border:disabled": "input-disabled",
+      "bg:disabled": "muted",
+      "fg:disabled": "disabled-foreground",
+      "layout": "row",
+      "align": "center",
+      "focus-ring": "ring/30"
+    },
+    "placeholder": {
+      "fg": "muted-foreground"
+    },
+    "icon": {
+      "size": 5,
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "size": {
+      "sm": {
+        "root": {
+          "height": 9,
+          "radius": "sm"
+        }
+      },
+      "md": {
+        "root": {
+          "height": 11
+        }
+      },
+      "lg": {
+        "root": {
+          "height": 14,
+          "px": 4,
+          "text": "base"
+        }
+      }
+    }
+  },
+  "states": [
+    "default",
+    "hover",
+    "focus",
+    "disabled"
+  ],
+  "code": {
+    "file": "search-input.tsx",
+    "template": "card-like",
+    "modifiers": {
+      "focus": "focus-within",
+      "disabled": "has-disabled"
+    },
+    "parts": {
+      "icon": "[&_svg]"
+    },
+    "extra": "w-full transition-colors has-disabled:pointer-events-none [&_svg]:shrink-0",
+    "figmaOnly": [
+      "placeholder"
+    ]
+  }
+}

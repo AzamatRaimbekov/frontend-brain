@@ -1,0 +1,115 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "toast",
+  "title": "Toast",
+  "figma": {
+    "name": "toast",
+    "key": "17ef4420d2a9d9159bfc9f5668936bd87fdb216a",
+    "nodeId": "4316:3805"
+  },
+  "parts": [
+    "root",
+    "icon",
+    "title",
+    "description"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 400
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "info"
+    },
+    "title": {
+      "kind": "text",
+      "layer": "Title",
+      "sample": "Заявка отправлена",
+      "fill": true
+    },
+    "description": {
+      "kind": "text",
+      "layer": "Description",
+      "sample": "Статус обновится через минуту",
+      "fill": true
+    }
+  },
+  "props": {
+    "type": {
+      "values": [
+        "default",
+        "success",
+        "error"
+      ],
+      "default": "default"
+    }
+  },
+  "base": {
+    "root": {
+      "layout": "column",
+      "align": "start",
+      "gap": 1,
+      "px": 4,
+      "py": 4,
+      "radius": "md",
+      "border-width": 1,
+      "border": "border",
+      "bg": "card",
+      "fg": "foreground",
+      "text": "sm",
+      "shadow": "notification"
+    },
+    "icon": {
+      "size": 5,
+      "fg": "soft-foreground"
+    },
+    "title": {
+      "text": "base",
+      "weight": "bold"
+    },
+    "description": {
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "type": {
+      "default": {},
+      "success": {
+        "icon": {
+          "fg": "success-text"
+        },
+        "title": {
+          "fg": "success-text"
+        }
+      },
+      "error": {
+        "icon": {
+          "fg": "destructive-text"
+        },
+        "title": {
+          "fg": "destructive-text"
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "sonner.tsx",
+    "shape": "classes",
+    "template": "card-like",
+    "extra": "group/toast w-full [&_[data-icon]]:mt-0.5 [&_[data-icon]]:size-5 [&_[data-icon]]:shrink-0",
+    "figmaOnly": [
+      "icon",
+      "title",
+      "description"
+    ],
+    "overrides": {
+      "root": {
+        "layout": "row",
+        "gap": 3
+      }
+    }
+  }
+}

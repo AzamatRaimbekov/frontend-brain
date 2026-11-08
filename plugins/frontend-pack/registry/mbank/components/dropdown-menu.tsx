@@ -53,8 +53,10 @@ function DropdownMenuItem({
       data-slot="dropdown-menu-item"
       data-variant={variant}
       className={cn(
-        itemBase,
-        "data-[variant=destructive]:text-destructive-text data-[variant=destructive]:focus:bg-destructive-soft",
+        // @contract dropdown-menu-item start
+        "items-center gap-2 px-2 h-8 rounded-xs text-sm text-foreground data-[highlighted]:bg-accent data-[disabled]:text-disabled-foreground [&_svg]:size-4 [&_svg]:text-muted-foreground relative flex cursor-default outline-none select-none data-[disabled]:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "data-[variant=destructive]:text-destructive-text data-[variant=destructive]:data-[highlighted]:bg-destructive-soft data-[variant=destructive]:[&_svg]:text-destructive-text",
+        // @contract dropdown-menu-item end
         className,
       )}
       {...props}

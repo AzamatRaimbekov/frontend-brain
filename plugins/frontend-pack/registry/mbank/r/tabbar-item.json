@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabbar-item",
+  "type": "registry:ui",
+  "title": "tabbar-item",
+  "description": "Tabbar item (from contract tabbar-item.json): Figma Tabbar item",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/tabbar-item.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { cva } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\n/*\n * Tabbar item (Figma `Tabbar item`). Generated from the contract\n * registry/mbank/contracts/tabbar-item.json by contract-to-code --new (template button-like).\n * Change the look in the contract and run contract-to-code --write; the block between the markers is generated.\n * Accessibility: see the component comment below.\n */\n// @contract tabbar-item start\nconst tabbarItemVariants = cva(\n  \"flex flex-col items-center gap-1 px-2 py-2 text-2xs font-medium text-muted-foreground aria-[current=page]:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:size-6 min-w-0 flex-1 justify-center transition-colors outline-none [&_svg]:shrink-0\",\n)\n// @contract tabbar-item end\n\ntype TabbarItemProps = React.ComponentProps<\"a\"> & {\n  active?: boolean\n  icon?: React.ReactNode\n}\n\n/** Mobile bottom bar item: icon over a short label; the selected look follows aria-current=\"page\". */\nfunction TabbarItem({ className, active = false, icon, children, ...props }: TabbarItemProps) {\n  return (\n    <a\n      data-slot=\"tabbar-item\"\n      aria-current={active ? \"page\" : undefined}\n      className={cn(tabbarItemVariants(), className)}\n      {...props}\n    >\n      {icon}\n      <span data-slot=\"tabbar-item-label\" className=\"max-w-full truncate\">\n        {children}\n      </span>\n    </a>\n  )\n}\n\nexport { TabbarItem, tabbarItemVariants }\n"
+    }
+  ]
+}

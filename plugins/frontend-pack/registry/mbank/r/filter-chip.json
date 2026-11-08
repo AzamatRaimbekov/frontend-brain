@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "filter-chip",
+  "type": "registry:ui",
+  "title": "filter-chip",
+  "description": "Filter chip (from contract filter-chip.json): Figma Item / chipsButton",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/icons"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/filter-chip.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { cva } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { ChevronDownIcon } from \"./icons\"\n\n/*\n * Filter chip (Figma `Item / chipsButton`). Generated from the contract\n * registry/mbank/contracts/filter-chip.json by contract-to-code --new (template button-like).\n * Change the look in the contract and run contract-to-code --write; the block between the markers is generated.\n * Accessibility: see the component comment below.\n */\n// @contract filter-chip start\nconst filterChipVariants = cva(\n  \"items-center gap-1 px-3 h-9 rounded-sm border border-outline bg-background text-sm font-medium text-foreground hover:border-border-secondary aria-pressed:bg-secondary aria-pressed:border-secondary aria-pressed:text-inverse-foreground [&_svg]:size-5 inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:shrink-0\",\n)\n// @contract filter-chip end\n\ntype FilterChipProps = React.ComponentProps<\"button\"> & {\n  /** A filter value is chosen: aria-pressed (dark look). */\n  selected?: boolean\n  /** Chevron for a chip that opens a list of values (default true). */\n  chevron?: boolean\n}\n\n/** Toolbar filter chip: label + chevron; opens a Popover/DropdownMenu with the values. */\nfunction FilterChip({ className, selected = false, chevron = true, children, ...props }: FilterChipProps) {\n  return (\n    <button\n      type=\"button\"\n      data-slot=\"filter-chip\"\n      aria-pressed={selected}\n      className={cn(filterChipVariants(), className)}\n      {...props}\n    >\n      {children}\n      {chevron && <ChevronDownIcon aria-hidden=\"true\" />}\n    </button>\n  )\n}\n\nexport { FilterChip, filterChipVariants }\n"
+    }
+  ]
+}

@@ -8,8 +8,11 @@ import { cn } from "@/shared/lib/utils"
  * `.dark` class on <html> without next-themes. Mount one <Toaster /> in the app root, call toast().
  */
 const toastClassNames = {
-  toast:
-    "group/toast flex w-full items-start gap-3 rounded-md border border-border bg-card p-4 text-sm text-card-foreground shadow-modal [&_[data-icon]]:mt-0.5 [&_[data-icon]]:size-5 [&_[data-icon]]:shrink-0",
+  toast: cn(
+    // @contract toast start
+    "group/toast flex w-full items-start gap-3 rounded-md border border-border bg-card text-sm text-foreground shadow-notification [&_[data-icon]]:mt-0.5 [&_[data-icon]]:size-5 [&_[data-icon]]:shrink-0 px-4 py-4",
+    // @contract toast end
+  ),
   content: "flex flex-1 flex-col gap-1",
   title: "font-medium",
   description: "text-muted-foreground",

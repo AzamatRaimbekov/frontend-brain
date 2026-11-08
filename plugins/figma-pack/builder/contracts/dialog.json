@@ -1,0 +1,141 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "dialog",
+  "title": "Dialog",
+  "figma": {
+    "name": "dialogInfo",
+    "key": "12ed29cbe7be8badd626f5b83ad2a37ab905ebd8",
+    "nodeId": "2405:4807"
+  },
+  "parts": [
+    "root",
+    "header",
+    "title",
+    "description",
+    "content",
+    "footer",
+    "cancel",
+    "confirm"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 480
+    },
+    "header": {
+      "kind": "frame",
+      "layer": "Header",
+      "fill": true
+    },
+    "title": {
+      "kind": "text",
+      "layer": "Title",
+      "sample": "Отклонить заявку?",
+      "parent": "header",
+      "fill": true
+    },
+    "description": {
+      "kind": "text",
+      "layer": "Description",
+      "sample": "Клиент получит уведомление с причиной отказа",
+      "parent": "header",
+      "fill": true
+    },
+    "content": {
+      "kind": "frame",
+      "layer": "Content",
+      "fill": true
+    },
+    "footer": {
+      "kind": "frame",
+      "layer": "Footer",
+      "fill": true
+    },
+    "cancel": {
+      "kind": "instance",
+      "layer": "Cancel",
+      "parent": "footer",
+      "sample": "Отмена",
+      "component": {
+        "name": "Button"
+      }
+    },
+    "confirm": {
+      "kind": "instance",
+      "layer": "Confirm",
+      "parent": "footer",
+      "sample": "Подтвердить",
+      "component": {
+        "name": "Button"
+      }
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "column",
+      "gap": 4,
+      "px": 6,
+      "py": 6,
+      "radius": "lg",
+      "bg": "card",
+      "fg": "foreground",
+      "shadow": "modal"
+    },
+    "header": {
+      "layout": "column",
+      "gap": 2
+    },
+    "title": {
+      "text": "xl",
+      "weight": "bold"
+    },
+    "description": {
+      "text": "sm",
+      "fg": "muted-foreground"
+    },
+    "content": {
+      "layout": "column",
+      "gap": 2,
+      "min-height": 16
+    },
+    "footer": {
+      "layout": "row",
+      "align": "end",
+      "gap": 2
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "dialog.tsx",
+    "shape": "classes",
+    "template": "card-like",
+    "blocks": [
+      "header",
+      "title",
+      "description",
+      "footer"
+    ],
+    "extra": "fixed top-1/2 left-1/2 z-(--z-modal) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none",
+    "extras": {
+      "header": "pr-8",
+      "footer": "flex flex-col-reverse sm:flex-row sm:justify-end"
+    },
+    "figmaOnly": [
+      "content",
+      "cancel",
+      "confirm"
+    ],
+    "overrides": {
+      "root": {
+        "layout": null
+      },
+      "footer": {
+        "layout": null,
+        "align": null
+      }
+    }
+  }
+}

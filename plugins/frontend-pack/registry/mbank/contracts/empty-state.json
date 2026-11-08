@@ -1,0 +1,84 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "empty-state",
+  "title": "Empty state",
+  "figma": {
+    "name": "Empty state"
+  },
+  "parts": [
+    "root",
+    "icon",
+    "title",
+    "description",
+    "action"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 400
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "inbox"
+    },
+    "title": {
+      "kind": "text",
+      "layer": "Title",
+      "sample": "Заявок пока нет"
+    },
+    "description": {
+      "kind": "text",
+      "layer": "Description",
+      "sample": "Новые заявки появятся здесь"
+    },
+    "action": {
+      "kind": "instance",
+      "layer": "Action",
+      "sample": "Создать заявку",
+      "component": {
+        "name": "Button"
+      }
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "column",
+      "align": "center",
+      "gap": 3,
+      "px": 6,
+      "py": 16,
+      "radius": "lg",
+      "border-width": 1,
+      "border": "border-secondary"
+    },
+    "icon": {
+      "size": 7,
+      "fg": "muted-foreground"
+    },
+    "title": {
+      "text": "base",
+      "weight": "bold",
+      "fg": "foreground"
+    },
+    "description": {
+      "text": "sm",
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "EmptyState.tsx",
+    "shape": "classes",
+    "template": "card-like",
+    "extra": "border-dashed text-center",
+    "figmaOnly": [
+      "icon",
+      "title",
+      "description",
+      "action"
+    ]
+  }
+}

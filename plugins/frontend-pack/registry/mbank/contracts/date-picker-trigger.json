@@ -1,0 +1,114 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "date-picker-trigger",
+  "title": "Date picker trigger",
+  "figma": {
+    "name": "input/calendar-single",
+    "key": "9015ffe0c43d059151c3c414323b4e24e9140985",
+    "nodeId": "2250:4032"
+  },
+  "parts": [
+    "root",
+    "placeholder",
+    "icon"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 240
+    },
+    "placeholder": {
+      "kind": "text",
+      "layer": "Placeholder",
+      "sample": "Выберите дату",
+      "fill": true
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "calendar"
+    }
+  },
+  "props": {
+    "size": {
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  },
+  "base": {
+    "root": {
+      "gap": 2,
+      "radius": "md",
+      "border-width": 1,
+      "border": "input",
+      "bg": "background",
+      "px": 3,
+      "text": "sm",
+      "fg": "foreground",
+      "border:hover": "input-hover",
+      "border:focus": "ring",
+      "border:disabled": "input-disabled",
+      "bg:disabled": "muted",
+      "fg:disabled": "disabled-foreground",
+      "layout": "row",
+      "align": "between",
+      "focus-ring": "ring/30",
+      "border:invalid": "border-destructive"
+    },
+    "placeholder": {
+      "fg": "muted-foreground"
+    },
+    "icon": {
+      "size": 5,
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "size": {
+      "sm": {
+        "root": {
+          "height": 9
+        }
+      },
+      "md": {
+        "root": {
+          "height": 11
+        }
+      },
+      "lg": {
+        "root": {
+          "height": 14,
+          "px": 4,
+          "text": "base"
+        }
+      }
+    }
+  },
+  "states": [
+    "default",
+    "hover",
+    "focus",
+    "disabled",
+    "invalid"
+  ],
+  "code": {
+    "file": "date-picker.tsx",
+    "shape": "classes",
+    "template": "button-like",
+    "parts": {
+      "placeholder": "data-[placeholder]"
+    },
+    "maps": {
+      "size": {
+        "const": "pickerSizes",
+        "part": "root"
+      }
+    },
+    "extra": "w-full text-left whitespace-nowrap transition-colors outline-none disabled:pointer-events-none",
+    "figmaOnly": [
+      "icon"
+    ]
+  }
+}

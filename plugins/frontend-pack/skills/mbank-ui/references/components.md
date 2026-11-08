@@ -34,7 +34,15 @@ Source files: [`registry/mbank/components`](../../../registry/mbank/components).
 | `Toaster` (sonner.tsx) + `toast` | - | one `<Toaster />` in the app root (`position` top-right); `toast()`, `toast.success / error / warning / info / promise`. Unstyled sonner on kit tokens, follows `.dark` | - |
 | `ChartContainer` (chart.tsx + chart-tooltip.tsx) | ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, `useChart` | `config: ChartConfig` (`{ key: { label, color?, icon? } }`); series use `fill` / `stroke` = `var(--color-<key>)`; no colour -> `supportive-1..10` in order. Tooltip: `indicator` dot / line, `hideLabel`, `nameKey`, `labelFormatter`, `valueFormatter` (ru numbers) | - |
 | `EmptyState` (EmptyState.tsx, in `shared/components`) | - | `title`, `description?`, `action?`, `icon?` (same API as `react-ux`) | - |
-| `Spinner` (spinner.tsx) | - | colour from `currentColor` | - |
+| `Spinner` (spinner.tsx) | - | `size`: sm 16, md 20, lg 24 (bigger via `className`); colour from `currentColor` | sm |
+| `Separator` (separator.tsx) | - | `orientation`: horizontal, vertical; `decorative` (default true, else `role="separator"`) | horizontal |
+| `RadioGroup` (radio.tsx) | RadioGroupItem | Radix; brand fill when checked, `disabled` | - |
+| `SearchInput` (search-input.tsx) | - | native `type="search"` input with the search icon; `size`: sm 36, md 44, lg 56 | md |
+| `FilterChip` (filter-chip.tsx) | - | `selected` (`aria-pressed`, dark look), `chevron` (default true); opens a Popover / DropdownMenu | - |
+| `NavItem` (nav-item.tsx) | - | link: `active` (`aria-current="page"`), `icon?`, `count?`, `aria-disabled` | - |
+| `TabbarItem` (tabbar-item.tsx) | - | mobile bottom bar link: `active`, `icon?` | - |
+| `BreadcrumbItem` (breadcrumb-item.tsx) | - | `label`, `href?`, `current` (no separator, `aria-current="page"`); put items in `nav > ol` | - |
+| `StepperStep` (stepper-step.tsx) | - | `status`: done, current, upcoming; `number`, `label`, `description?`; put steps in an `ol` | upcoming |
 
 ## Figma component to code
 
@@ -42,11 +50,11 @@ Source files: [`registry/mbank/components`](../../../registry/mbank/components).
 |---|---|---|
 | `button/default` (Web), `bttn / default` (Mobile) | `Button` | Figma variant -> `variant`: primary, brand, secondary, negative -> destructive, positive -> success, flat filled -> soft, flat -> ghost, outline, static. `state=loading` -> `loading`. `neutralState=on` (tone) is not implemented yet |
 | `closebutton` | `Button variant="ghost" size="icon-sm"` + close icon | give it `aria-label` |
-| `input/default`, `input/password`, `input/phone`, `input/search` | `Label` + `Input` | Size L / M / S -> `lg` / `md` / `sm`. `Label Outside=on` -> visible `Label`. `error` -> `aria-invalid` + error text with `aria-describedby` |
+| `input/default`, `input/password`, `input/phone` (`input/search` -> `SearchInput`) | `Label` + `Input` | Size L / M / S -> `lg` / `md` / `sm`. `Label Outside=on` -> visible `Label`. `error` -> `aria-invalid` + error text with `aria-describedby` |
 | `TextArea` | `Label` + `Textarea` | |
 | `input/dropdown`, `Item / dropdown / default` | `Select` | Multi selection -> Combobox with checkboxes (not in the kit yet) |
 | `Item / dropdown / simple`, `Action Sheet Container` | `DropdownMenu` | |
-| `Switchers - Check` Type=Checkbox / Toggle | `Checkbox` / `Switch` | Radiobutton -> shadcn RadioGroup styled the same way (not in the kit yet) |
+| `Switchers - Check` Type=Checkbox / Toggle / Radiobutton | `Checkbox` / `Switch` / `RadioGroupItem` | |
 | `segment`, `Item / segmentButtons` | `TabsList variant="segment"` | Use ToggleGroup when it filters data instead of switching panels |
 | `tab-outline`, `Item / tabOutlineButtons` | `TabsList variant="outline"` | |
 | `Item / tabLine` | `TabsList variant="line"` | `tab-stepper` -> stepper component (not in the kit yet) |
@@ -65,10 +73,14 @@ Source files: [`registry/mbank/components`](../../../registry/mbank/components).
 | `Chart`, `Chart-tooltip` | `ChartContainer` + recharts `LineChart` / `BarChart`, `ChartTooltipContent` | Coulm group / Stacked -> `BarChart` with `stackId` |
 | side panels (details, filters next to a table) | `Sheet` | mobile Bottom sheet on the web -> `side="bottom"` |
 | `spinner` | `Spinner` | |
+| `Item / chipsButton` (type outline) | `FilterChip` | toolbar filters; other chip types are not in the kit |
+| `item-sidemenu-menu-tree-1` | `NavItem` (CRM shell: `SideMenuItem`) | state selected -> `active` |
+| `Breadcrumb` | `BreadcrumbItem` (CRM header: `Breadcrumbs`) | |
+| `item-stepper-basic` | `StepperStep` (CRM: `StageStep`) | finished / active / not active -> done / current / upcoming |
 | Starter KIT `Skeleton` | `Skeleton` | Web components has no skeleton (G11 / G12) |
 | (none, G12) empty states | `EmptyState` | |
 | `toast` | `Toaster` + `toast()` (sonner.tsx) | state -> `toast.success / error / info / warning`; Light / Dark follows `.dark` |
-| `otp`, `slider`, stepper, time picker | shadcn component restyled with kit tokens | Not in the kit yet (backlog: design-engine `components-map.mjs report`) |
+| `otp`, `slider`, time picker | shadcn component restyled with kit tokens | Not in the kit yet (backlog: design-engine `components-map.mjs report`) |
 
 ## Token to Figma variable
 

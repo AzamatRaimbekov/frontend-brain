@@ -1,0 +1,69 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "filter-chip",
+  "title": "Filter chip",
+  "figma": {
+    "name": "Item / chipsButton",
+    "key": "a2f7f17786d9e319cebd76c4fe36b067d6f7654f",
+    "nodeId": "2426:13606"
+  },
+  "parts": [
+    "root",
+    "label",
+    "icon"
+  ],
+  "anatomy": {
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "sample": "Статус"
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "chevron"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "align": "center",
+      "gap": 1,
+      "px": 3,
+      "height": 9,
+      "radius": "sm",
+      "border-width": 1,
+      "border": "outline",
+      "bg": "background",
+      "text": "sm",
+      "weight": "medium",
+      "fg": "foreground",
+      "border:hover": "border-secondary",
+      "bg:selected": "secondary",
+      "border:selected": "secondary",
+      "fg:selected": "inverse-foreground"
+    },
+    "icon": {
+      "size": 5
+    }
+  },
+  "variants": {},
+  "states": [
+    "default",
+    "hover",
+    "selected"
+  ],
+  "code": {
+    "file": "filter-chip.tsx",
+    "template": "button-like",
+    "modifiers": {
+      "selected": "aria-pressed"
+    },
+    "parts": {
+      "icon": "[&_svg]"
+    },
+    "extra": "inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:shrink-0",
+    "figmaOnly": [
+      "label"
+    ]
+  }
+}

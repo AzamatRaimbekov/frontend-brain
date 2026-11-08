@@ -5,14 +5,16 @@ import type { DateRange, Matcher } from "react-day-picker"
 import { cn } from "@/shared/lib/utils"
 import { Calendar, type CalendarProps } from "./calendar"
 import { CalendarIcon } from "./icons"
-import { inputVariants } from "./input"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 
 /*
- * Figma `input/calendar-single` and `input/calendar-multi`: an input-looking trigger (Size L 56 /
- * M 44 / S 32-36 -> lg / md / sm, error -> aria-invalid, disabled) with the calendar icon on the right
- * that opens Calendar in a Popover. Controlled: value + onValueChange. Label Outside=on -> kit Label.
+ * Figma `input/calendar-single` / `input/calendar-multi`: trigger from contract date-picker-trigger (L 56 / M 44 / S 36,
+ * error -> aria-invalid) with the calendar icon; opens Calendar in a Popover. value + onValueChange; Label Outside -> Label.
  */
+// @contract date-picker-trigger.size start
+const pickerSizes = { sm: "h-9", md: "h-11", lg: "h-14 px-4 text-base" } as const
+// @contract date-picker-trigger.size end
+
 const defaultFormat = (date: Date) => new Intl.DateTimeFormat("ru-RU").format(date)
 
 type PickerBaseProps = Omit<React.ComponentProps<"button">, "value" | "defaultValue" | "onChange"> & {
@@ -41,7 +43,12 @@ function PickerShell({ size = "md", placeholder, text, open, onOpenChange, calen
           type="button"
           data-slot="date-picker"
           data-placeholder={text ? undefined : ""}
-          className={cn(inputVariants({ size }), "items-center justify-between gap-2 text-left data-[placeholder]:text-muted-foreground", className)}
+          className={cn(
+            // @contract date-picker-trigger start
+            "gap-2 rounded-md border border-input bg-background px-3 text-sm text-foreground hover:border-input-hover focus-visible:border-ring disabled:border-input-disabled disabled:bg-muted disabled:text-disabled-foreground flex items-center justify-between focus-visible:ring-[3px] focus-visible:ring-ring/30 aria-invalid:border-border-destructive data-[placeholder]:text-muted-foreground w-full text-left whitespace-nowrap transition-colors outline-none disabled:pointer-events-none",
+            // @contract date-picker-trigger end
+            pickerSizes[size], className,
+          )}
           {...props}
         >
           <span className="truncate">{text ?? placeholder}</span>

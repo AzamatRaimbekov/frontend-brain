@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radio",
+  "type": "registry:ui",
+  "title": "radio",
+  "description": "Radio (from contract radio.json): Figma Switchers - Check, Type=Radiobutton; RadioGroup + RadioGroupItem",
+  "dependencies": [
+    "class-variance-authority",
+    "radix-ui"
+  ],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/radio.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { RadioGroup as RadioGroupPrimitive } from \"radix-ui\"\nimport { cva } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\n/*\n * Radio (Figma `Switchers - Check`). Generated from the contract\n * registry/mbank/contracts/radio.json by contract-to-code --new (template button-like).\n * Change the look in the contract and run contract-to-code --write; the block between the markers is generated.\n * Accessibility: see the component comment below.\n */\n// @contract radio start\nconst radioVariants = cva(\n  \"size-5 rounded-full border border-input bg-background items-center hover:border-input-hover disabled:border-input-disabled disabled:bg-muted data-[state=checked]:border-brand data-[state=checked]:bg-brand focus-visible:ring-[3px] focus-visible:ring-ring/30 peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50\",\n)\n// @contract radio end\n\nfunction RadioGroup({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {\n  return <RadioGroupPrimitive.Root data-slot=\"radio-group\" className={cn(\"grid gap-3\", className)} {...props} />\n}\n\n/** Figma `Switchers - Check` Type=Radiobutton: one option of a RadioGroup; pair it with <Label htmlFor>. */\nfunction RadioGroupItem({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {\n  return (\n    <RadioGroupPrimitive.Item data-slot=\"radio\" className={cn(radioVariants(), className)} {...props}>\n      <RadioGroupPrimitive.Indicator data-slot=\"radio-dot\" className=\"size-2 rounded-full bg-brand-foreground\" />\n    </RadioGroupPrimitive.Item>\n  )\n}\n\nexport { RadioGroup, RadioGroupItem, radioVariants }\n"
+    }
+  ]
+}
