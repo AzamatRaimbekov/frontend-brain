@@ -65,8 +65,11 @@ async function card(page, c, set, look) {
   const variants = set.type === 'COMPONENT_SET' ? set.children.length : 1;
   doc.insertChild(0, label(look.font, c.title || c.name, 28, 'Bold', [look.text]));
   doc.insertChild(1, label(look.font, [`${variants} ${variants === 1 ? 'вариант' : 'вариантов'}`, propsLine(c)].filter(Boolean).join('   ·   '), 14, 'Regular', [look.muted]));
-  set.fills = [look.surface];
-  set.cornerRadius = 16;
+  // Only a variant set gets the sheet surface: a single component's own fill and radius ARE the component.
+  if (set.type === 'COMPONENT_SET') {
+    set.fills = [look.surface];
+    set.cornerRadius = 16;
+  }
   if (set.parent !== doc) doc.appendChild(set); // moving a set keeps its instances linked
   return doc;
 }

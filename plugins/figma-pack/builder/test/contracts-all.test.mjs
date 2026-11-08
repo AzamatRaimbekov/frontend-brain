@@ -95,3 +95,16 @@ test('contract-render-all builds all 38 with zero validation errors; instances r
   assert.ok(h.paddingLeft * 2 > h.height && vert.paddingLeft * 2 < vert.height, 'separator lines run along their orientation');
   assert.equal(vert.layoutMode, 'HORIZONTAL', 'not a column: a column set gets a 320 px fixed width');
 });
+
+test('the kit sheet does not repaint single components: no own background stays empty, own radius stays', async () => {
+  const { figma, handlers } = await kit();
+  await handlers['contract-render-all']({});
+  const page = figma.root.children.find((p) => p.name === 'Components');
+  const single = (name) => page.findOne((n) => n.type === 'COMPONENT' && n.getPluginData('mbank-contract') === name);
+  for (const name of ['crm-key-value-row', 'crm-timeline-item', 'table-cell']) {
+    const n = single(name);
+    assert.ok(n, name);
+    assert.deepEqual(n.fills, [], `${name} has no background in its contract`);
+    assert.notEqual(n.cornerRadius, 16, `${name} keeps its own radius`);
+  }
+});

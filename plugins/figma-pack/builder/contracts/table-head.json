@@ -41,7 +41,6 @@
   },
   "base": {
     "root": {
-      "align": "center",
       "gap": 1,
       "height": 11,
       "px": 3,
