@@ -1,6 +1,7 @@
 // Opens the iframe (dist/ui.html) and routes its messages to the actions. The returned promise
 // stays pending while the window is open, which keeps the widget's code running (Widget API rule).
 import * as A from './actions.js';
+import * as S from './site-actions.js';
 
 const SIZE = { width: 760, height: 720 };
 
@@ -41,6 +42,10 @@ export function openUI(store, tab = 'tokens', focus = null) {
       return { result, component: await A.componentInfo(s, m.name) };
     },
     'component-insert': async (m) => ({ inserted: await A.insertComponent(s, m.name) }),
+    'site-status': async () => ({ site: await S.siteStatus() }),
+    'site-connect': async (m) => ({ site: await S.siteConnect(m) }),
+    'site-pull': async (m) => ({ report: await S.sitePull({ force: !!m.force }), site: await S.siteStatus() }),
+    'site-push': async () => ({ push: await S.sitePush(), site: await S.siteStatus() }),
   };
 
   return new Promise((resolve) => {

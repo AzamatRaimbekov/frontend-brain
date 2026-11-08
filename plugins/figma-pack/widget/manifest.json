@@ -9,5 +9,9 @@
   "editorType": ["figma", "figjam"],
   "documentAccess": "dynamic-page",
   "permissions": ["teamlibrary"],
-  "networkAccess": { "allowedDomains": ["none"] }
+  "networkAccess": {
+    "allowedDomains": ["http://localhost:8797", "https://ds.example.mdigital.kg"],
+    "devAllowedDomains": ["http://localhost:8797"],
+    "reasoning": "Mbank Tokens pulls a project's design tokens from the internal design-system site (apps/ds-configurator) and pushes designers' edits back. Replace ds.example.mdigital.kg with the production domain of the site."
+  }
 }

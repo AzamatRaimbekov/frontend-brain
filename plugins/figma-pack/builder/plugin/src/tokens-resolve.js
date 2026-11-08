@@ -1,5 +1,6 @@
 // Contract token name (Mbank tokens.css name) -> Figma variable in this file.
-// Order: Mode/<token> (shadcn kit with the Brand layer) -> baked Mbank map (Foundation file names)
+// Order: shadcn/<token> (the collection the Mbank Tokens widget pulls from the design-system site:
+// variables named exactly as the CSS tokens, radius scale as radius-<key>) -> Mode/<token> (shadcn kit with the Brand layer) -> baked Mbank map (Foundation file names)
 // -> any variable named <token> or color/<token> -> the Mbank library variable imported by its baked key
 // (a file that uses Foundation / Web components as a library, e.g. CRM UI KIT, has no local copies).
 // Missing colours are created through brand.js (Mode + Brand, placeholder value, reported); missing
@@ -21,8 +22,16 @@ export async function tokenIndex() {
     list.push(v);
     byName.set(v.name, list);
   }
-  return { ix, all, byName, colName, cache: new Map(), created: [], missing: [], imported: [] };
+  // The site's collection: names are the CSS tokens themselves (primary, radius-md, mb-promo).
+  const shadcn = new Map();
+  for (const v of all) if (colName.get(v.variableCollectionId) === SHADCN) shadcn.set(v.name, v);
+  return { ix, all, byName, colName, shadcn, cache: new Map(), created: [], missing: [], imported: [] };
 }
+
+export const SHADCN = 'shadcn';
+
+/** Variable `name` of the shadcn collection with this type, or null (no collection, no variable). */
+const fromShadcn = (t, name, type) => { const v = t.shadcn && t.shadcn.get(name); return v && v.resolvedType === type ? v : null; };
 
 /** Library variable by its Figma name through the baked key (null when unknown or the library is off). */
 async function libraryVar(t, name) {
@@ -49,6 +58,8 @@ function pick(t, name, type, collection) {
 const projectVar = (token) => { const i = String(token).indexOf('-'); return i > 0 ? `custom/${token.slice(0, i)}/${token.slice(i + 1)}` : null; };
 
 export function findColor(t, token, depth = 0) {
+  const site = fromShadcn(t, token, 'COLOR');
+  if (site) return site;
   const mode = t.ix.named[C.mode]?.get(token);
   if (mode && mode.resolvedType === 'COLOR') return mode;
   const m = TOKEN_MAP.colors[token];
@@ -62,6 +73,8 @@ export function findColor(t, token, depth = 0) {
 }
 
 export function findRadius(t, key) {
+  const site = fromShadcn(t, `radius-${key}`, 'FLOAT') || (key === 'default' && fromShadcn(t, 'radius', 'FLOAT'));
+  if (site) return site;
   const style = t.ix.named[C.style]?.get(`radius/${key}`);
   if (style) return style;
   return (TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], 'FLOAT')) || pick(t, `radius/${key}`, 'FLOAT') || pick(t, `rounded/${key}`, 'FLOAT') || pick(t, projectVar(key), 'FLOAT');
@@ -107,6 +120,7 @@ export async function floatVar(t, kind, value) {
 
 /** Variable -> contract token name (what «Привязки» writes back into the contract). */
 export function tokenForVariable(v, collectionName) {
+  if (collectionName === SHADCN) return v.resolvedType === 'FLOAT' && /^radius-/.test(v.name) ? v.name.slice(7) : v.name;
   if (collectionName === C.mode) return v.name.startsWith('custom/') ? cssVar(v.name).slice(2) : v.name;
   for (const [token, m] of Object.entries(TOKEN_MAP.colors)) if (m.figma === v.name && (!m.collection || collectionName.startsWith(m.collection))) return token;
   for (const [key, name] of Object.entries(TOKEN_MAP.radius)) if (name === v.name) return key;
