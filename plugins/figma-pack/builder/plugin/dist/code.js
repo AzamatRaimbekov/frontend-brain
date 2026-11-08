@@ -1379,8 +1379,15 @@
       list2.push(v);
       byName.set(v.name, list2);
     }
-    return { ix, all, byName, colName, cache: /* @__PURE__ */ new Map(), created: [], missing: [], imported: [] };
+    const shadcn = /* @__PURE__ */ new Map();
+    for (const v of all) if (colName.get(v.variableCollectionId) === SHADCN) shadcn.set(v.name, v);
+    return { ix, all, byName, colName, shadcn, cache: /* @__PURE__ */ new Map(), created: [], missing: [], imported: [] };
   }
+  var SHADCN = "shadcn";
+  var fromShadcn = (t, name, type) => {
+    const v = t.shadcn && t.shadcn.get(name);
+    return v && v.resolvedType === type ? v : null;
+  };
   async function libraryVar(t, name) {
     const key = name && TOKEN_MAP.keys && TOKEN_MAP.keys[name];
     if (!key || !figma.variables.importVariableByKeyAsync) return null;
@@ -1404,6 +1411,8 @@
   };
   function findColor(t, token, depth = 0) {
     var _a;
+    const site = fromShadcn(t, token, "COLOR");
+    if (site) return site;
     const mode = (_a = t.ix.named[C.mode]) == null ? void 0 : _a.get(token);
     if (mode && mode.resolvedType === "COLOR") return mode;
     const m = TOKEN_MAP.colors[token];
@@ -1416,6 +1425,8 @@
   }
   function findRadius(t, key) {
     var _a;
+    const site = fromShadcn(t, `radius-${key}`, "FLOAT") || key === "default" && fromShadcn(t, "radius", "FLOAT");
+    if (site) return site;
     const style = (_a = t.ix.named[C.style]) == null ? void 0 : _a.get(`radius/${key}`);
     if (style) return style;
     return TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], "FLOAT") || pick(t, `radius/${key}`, "FLOAT") || pick(t, `rounded/${key}`, "FLOAT") || pick(t, projectVar(key), "FLOAT");
@@ -1455,6 +1466,7 @@
     return v || null;
   }
   function tokenForVariable(v, collectionName) {
+    if (collectionName === SHADCN) return v.resolvedType === "FLOAT" && /^radius-/.test(v.name) ? v.name.slice(7) : v.name;
     if (collectionName === C.mode) return v.name.startsWith("custom/") ? cssVar(v.name).slice(2) : v.name;
     for (const [token, m] of Object.entries(TOKEN_MAP.colors)) if (m.figma === v.name && (!m.collection || collectionName.startsWith(m.collection))) return token;
     for (const [key, name] of Object.entries(TOKEN_MAP.radius)) if (name === v.name) return key;
