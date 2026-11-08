@@ -2,6 +2,7 @@
 import { generateTokens, contrastReport, BRAND_KEYS, COLOR_TOKENS } from '../../../core/tokens.js';
 import { validateSpec, framePlan } from '../../../core/spec.js';
 import { initComponents } from './components-ui.js';
+import { initEasy } from './easy-ui.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -32,8 +33,8 @@ function confirmClick(btn, question, fn) {
   };
 }
 
-document.querySelectorAll('nav button').forEach((b) => b.addEventListener('click', () => {
-  document.querySelectorAll('nav button, section').forEach((x) => x.classList.remove('on'));
+document.querySelectorAll('nav button[data-tab]').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('nav button[data-tab], section').forEach((x) => x.classList.remove('on'));
   b.classList.add('on');
   $(b.dataset.tab).classList.add('on');
 }));
@@ -188,6 +189,22 @@ const on = {
 
 const components = initComponents({ $, esc, send, toast });
 Object.assign(on, components.handlers);
+
+// «Просто» tab owns the replies to the builds it started; the pro tabs get the rest.
+const easy = initEasy({ $, esc, send, getStatus: () => status });
+for (const k of Object.keys(easy.handlers)) {
+  const pro = on[k];
+  on[k] = (m) => (easy.busy ? easy.handlers[k](m) : pro(m));
+}
+const proError = on.error;
+on.error = (m) => (easy.busy ? easy.onError(m) : proError(m));
+// Pro tabs (brand layer, JSON spec, contracts) stay hidden until asked for.
+function setPro(v) {
+  document.body.classList.toggle('pro', v);
+  $('proToggle').textContent = v ? '✕ Скрыть настройки' : '⚙️ Для профи';
+  if (!v && !$('easy').classList.contains('on')) document.querySelector('nav button[data-tab="easy"]').click();
+}
+$('proToggle').onclick = () => setPro(!document.body.classList.contains('pro'));
 
 window.onmessage = (e) => { const m = e.data.pluginMessage; if (m && on[m.type]) on[m.type](m); };
 send('init');

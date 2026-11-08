@@ -36,7 +36,8 @@ async function buildUi() {
   const out = await build(ui);
   const html = await readFile(path('src/ui/ui.html'), 'utf8');
   const js = out.outputFiles[0].text.replace(/<\/script/g, '<\\/script');
-  await writeFile(path('dist/ui.html'), html.replace('</body>', `<script>${js}</script>\n</body>`));
+  // a function replacement: the bundle contains $` / $' which a replacement string would expand
+  await writeFile(path('dist/ui.html'), html.replace('</body>', () => `<script>${js}</script>\n</body>`));
   console.log('ui  -> plugin/dist/ui.html');
 }
 

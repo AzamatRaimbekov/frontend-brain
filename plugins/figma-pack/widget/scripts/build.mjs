@@ -45,7 +45,7 @@ async function buildUi() {
   const out = await build(ui);
   const html = await readFile(path('src/ui/ui.html'), 'utf8');
   const js = out.outputFiles[0].text.replace(/<\/script/g, '<\\/script');
-  await writeFile(path('dist/ui.html'), html.replace('/*CHROME*/', chromeCss(tokens)).replace('</body>', `<script>${js}</script>\n</body>`));
+  await writeFile(path('dist/ui.html'), html.replace('/*CHROME*/', chromeCss(tokens)).replace('</body>', () => `<script>${js}</script>\n</body>`));
   console.log('ui  -> widget/dist/ui.html');
 }
 

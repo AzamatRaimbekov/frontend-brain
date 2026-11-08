@@ -29,18 +29,82 @@
   .tag { font-size: 10px; padding: 1px 5px; border-radius: 4px; background: var(--soft); color: var(--muted); }
   .bar { height: 4px; background: var(--soft); border-radius: 2px; overflow: hidden; } .bar i { display: block; height: 100%; background: var(--accent); width: 0; }
   #toast { position: fixed; left: 8px; right: 8px; bottom: 8px; padding: 8px 10px; border-radius: 6px; background: var(--fg); color: var(--bg); display: none; }
+  /* «Просто» tab */
+  nav .pro { display: none; } body.pro nav .pro { display: inline-block; }
+  nav #proToggle { margin-left: auto; font-size: 11px; }
+  .step { font-size: 14px; font-weight: 600; margin: 4px 0 8px; } .step .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 12px; margin-right: 6px; }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tile { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 8px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--fg); cursor: pointer; font: inherit; position: relative; }
+  .tile .em { font-size: 20px; } .tile .muted { font-size: 10.5px; line-height: 1.3; }
+  .tile.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+  .tile.on::after { content: '✓'; position: absolute; top: 6px; right: 8px; color: var(--accent); font-weight: 700; }
+  .links { display: flex; gap: 12px; margin: 8px 0 0; } .links button { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; font: inherit; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg button { border: 0; background: var(--bg); color: var(--fg); padding: 8px 12px; cursor: pointer; font: inherit; } .seg button.on { background: var(--accent); color: var(--on-accent); }
+  .big { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 10px; border: 0; background: var(--accent); color: var(--on-accent); cursor: pointer; margin-top: 4px; }
+  .big:disabled { opacity: .45; cursor: default; } .big.soft { background: var(--soft); color: var(--fg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip { border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 999px; padding: 5px 10px; cursor: pointer; font: inherit; }
+  .chip.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--bg)); }
+  .chip i { font-style: normal; display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 10px; }
+  .say { padding: 10px; border-radius: 8px; background: var(--soft); margin-top: 8px; font-size: 12.5px; } .say:empty { display: none; }
+  .say.good { background: color-mix(in srgb, var(--ok) 12%, var(--bg)); } .say.bad { background: color-mix(in srgb, var(--danger) 12%, var(--bg)); }
+  input.wide { width: 100%; padding: 8px 10px; font-size: 13px; }
+  .stick { position: sticky; bottom: 0; z-index: 2; box-shadow: 0 -6px 16px rgba(0,0,0,.18); background: var(--bg); }
+  details summary { cursor: pointer; font-weight: 600; font-size: 13px; }
 </style>
 </head>
 <body>
 <nav>
-  <button data-tab="brand" class="on">Бренд</button>
-  <button data-tab="tokens">Токены</button>
-  <button data-tab="screens">Экраны</button>
-  <button data-tab="kit">Кит</button>
-  <button data-tab="components">Компоненты</button>
+  <button data-tab="easy" class="on">✨ Нарисовать</button>
+  <button data-tab="brand" class="pro">Бренд</button>
+  <button data-tab="tokens" class="pro">Токены</button>
+  <button data-tab="screens" class="pro">Экраны (JSON)</button>
+  <button data-tab="kit" class="pro">Кит</button>
+  <button data-tab="components" class="pro">Компоненты</button>
+  <button id="proToggle" title="Настройки для дизайнеров системы">⚙️ Для профи</button>
 </nav>
 
-<section id="brand" class="on">
+<section id="easy" class="on">
+  <div class="card">
+    <div class="step"><span class="n">1</span>Какие экраны нарисовать?</div>
+    <p class="muted">Нажимай на карточки — синие будут нарисованы. Уже выбран набор для старта.</p>
+    <div class="tiles" id="eTiles"></div>
+    <div class="links"><button id="eStarter">Набор для старта</button><button id="eAll">Выбрать все</button><button id="eNone">Убрать все</button></div>
+  </div>
+  <div class="card">
+    <div class="step"><span class="n">2</span>Для чего и какого цвета?</div>
+    <div class="row"><div class="seg" data-key="device"><button data-v="desktop" class="on">💻 Компьютер</button><button data-v="mobile">📱 Телефон</button><button data-v="both">Оба</button></div>
+      <div class="seg" data-key="theme"><button data-v="light" class="on">☀️ Светлая</button><button data-v="dark">🌙 Тёмная</button></div></div>
+    <label class="row"><input type="checkbox" id="eStates"> Ещё нарисовать «загрузку», «пусто» и «ошибку» (экранов станет больше)</label>
+    <div class="row"><input id="eProduct" class="wide" placeholder="Название продукта (можно пропустить)"></div>
+  </div>
+  <div class="card stick">
+    <div class="step"><span class="n">3</span>Жми кнопку</div>
+    <button class="big" id="eGo">🎨 Нарисовать</button>
+    <div class="bar" style="margin-top:8px"><i id="eBar"></i></div>
+    <div id="eOut" class="say"></div>
+  </div>
+  <div class="card">
+    <details>
+      <summary>🧩 Нужного экрана нет? Собери свой из кусочков</summary>
+      <div class="row"><input id="eTitle" class="wide" placeholder="Как называется экран, например «Платежи»"></div>
+      <p class="muted" id="eOrder"></p>
+      <div class="chips" id="ePieces"></div>
+      <div class="links"><button id="ePiecesClear">Начать заново</button></div>
+      <button class="big" id="eMine" style="margin-top:10px">🎨 Нарисовать мой экран</button>
+    </details>
+  </div>
+  <div class="card">
+    <details>
+      <summary>🧱 Показать все кнопки, поля и карточки (компоненты)</summary>
+      <p class="muted">Соберёт все детали дизайн-системы на одну страницу. Если поменять деталь там — она поменяется на всех экранах сама.</p>
+      <button class="big soft" id="eKit">🧱 Собрать все компоненты</button>
+    </details>
+  </div>
+</section>
+
+<section id="brand">
   <div class="card" id="status">Загрузка…</div>
   <div class="card" id="setupCard">
     <h3>Слой Brand</h3>
