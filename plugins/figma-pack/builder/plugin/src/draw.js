@@ -8,7 +8,7 @@ const SIZING = new WeakMap();
 const WEIGHTS = { regular: 'Regular', medium: 'Medium', semibold: 'Semi Bold', bold: 'Bold' };
 
 export function createCtx({ vars, radius, font, kit, width, state, spec }) {
-  return { vars, radius, font, kit, width, state, spec, styles: {}, kitStyles: null, stats: { instances: 0, fallbacks: 0, fallbackFonts: false } };
+  return { vars, radius, font, kit, width, state, spec, styles: {}, kitStyles: null, stats: { instances: 0, fallbacks: 0, fallbackFonts: false, roles: {} } };
 }
 
 export async function loadFonts(family) {

@@ -75,7 +75,7 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     set layoutSizingHorizontal(v) { SIZING_OK(this, v); this._lsh = v; }
     get layoutSizingVertical() { return this._lsv; }
     set layoutSizingVertical(v) { SIZING_OK(this, v); this._lsv = v; }
-    appendChild(c) { if (c.parent) c.parent.children = c.parent.children.filter((x) => x !== c); c.parent = this; this.children.push(c); this._grow(c); }
+    appendChild(c) { if (insideInstance(this)) throw new Error(`cannot append into an instance (${this.name})`); if (c.parent) c.parent.children = c.parent.children.filter((x) => x !== c); c.parent = this; this.children.push(c); this._grow(c); }
     insertChild(i, c) { if (c.parent) c.parent.children = c.parent.children.filter((x) => x !== c); c.parent = this; this.children.splice(i, 0, c); this._grow(c); }
     _grow(c) { if (this.layoutMode === 'VERTICAL') this.height = (this.height || 0) + c.height; }
     // like Figma: resizing an auto-layout frame fixes both axes
@@ -116,15 +116,69 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     async setReactionsAsync(list) { this.reactions = list; }
   }
 
+  // Copies a component's layers into an instance (fresh ids, same names, auto layout and text).
+  const SKIP = new Set(['id', 'type', 'parent', 'children', 'pd', 'spd', '_reactions', 'key', 'description', 'removed', 'mainComponent', 'textProps']);
+  function cloneInto(src, dst) {
+    for (const [k, v] of Object.entries(src)) if (!SKIP.has(k)) dst[k] = Array.isArray(v) ? [...v] : v && typeof v === 'object' && k !== '_font' ? { ...v } : v;
+    for (const c of src.children) {
+      let n;
+      if (c.type === 'INSTANCE' && c.mainComponent) n = new Instance(c.mainComponent, c);
+      else { n = c.type === 'TEXT' ? new Text() : new Node(c.type); cloneInto(c, n); }
+      n.parent = dst;
+      dst.children.push(n);
+    }
+    return dst;
+  }
+  const insideInstance = (n) => { for (let p = n; p; p = p.parent) if (p.type === 'INSTANCE') return true; return false; };
+  const variantName = (props) => Object.entries(props).map(([k, v]) => `${k}=${v}`).join(', ');
+  const parseVariant = (name) => Object.fromEntries(name.split(',').map((p) => p.split('=').map((x) => x.trim())));
+
+  // Instance: a live copy of its main component. setProperties switches variants and sets TEXT properties
+  // (the referenced text needs its font loaded, like Figma); nothing can be appended inside it.
+  class Instance extends Node {
+    constructor(main, from = null) { super('INSTANCE'); this.mainComponent = main; this.textValues = {}; cloneInto(from || main, this); this.textValues = { ...this.textValues }; }
+    async getMainComponentAsync() { return this.mainComponent; }
+    get componentProperties() {
+      const main = this.mainComponent;
+      const set = main.parent && main.parent.type === 'COMPONENT_SET' ? main.parent : null;
+      const out = {};
+      if (set) for (const [k, v] of Object.entries(parseVariant(main.name))) out[k] = { type: 'VARIANT', value: v };
+      for (const [k, d] of Object.entries((set || main).textProps || {})) out[k] = { type: d.type, value: this.textValues[k] ?? d.defaultValue };
+      return out;
+    }
+    setProperties(props) {
+      const defs = this.componentProperties;
+      const variant = {};
+      for (const [k, v] of Object.entries(props)) {
+        if (!defs[k]) throw new Error(`Could not find a component property with name: '${k}'`);
+        if (defs[k].type === 'VARIANT') variant[k] = v;
+      }
+      if (Object.keys(variant).length) {
+        const set = this.mainComponent.parent;
+        const want = variantName({ ...parseVariant(this.mainComponent.name), ...variant });
+        const next = set.children.find((c) => c.name === want);
+        if (!next) throw new Error(`no variant ${want}`);
+        const texts = new Map(this.findAll((n) => n.type === 'TEXT').map((t) => [t.name, t.characters]));
+        this.children.forEach((c) => nodes.delete(c.id));
+        this.children = [];
+        this.mainComponent = next;
+        const { width, height } = this;
+        cloneInto(next, this);
+        Object.assign(this, { width, height });
+        for (const t of this.findAll((n) => n.type === 'TEXT')) if (texts.has(t.name)) t._chars = texts.get(t.name);
+      }
+      for (const [k, v] of Object.entries(props)) {
+        if (defs[k].type !== 'TEXT') continue;
+        for (const t of this.findAll((n) => n.type === 'TEXT' && n.componentPropertyReferences && n.componentPropertyReferences.characters === k)) t.characters = v;
+        this.textValues[k] = v;
+      }
+    }
+  }
+
   // Components: a set's children are COMPONENT variants named 'prop=value, ...'.
   class Component extends Node {
     constructor() { super('COMPONENT'); this.layoutMode = 'NONE'; this.description = ''; this.key = `key-${this.id}`; }
-    createInstance() {
-      const i = new Node('INSTANCE');
-      i.mainComponent = this;
-      i.width = this.width; i.height = this.height;
-      return i;
-    }
+    createInstance() { return new Instance(this); }
   }
   class ComponentSet extends Node {
     constructor() { super('COMPONENT_SET'); this.description = ''; this.key = `key-${this.id}`; this.layoutMode = 'NONE'; }
@@ -176,7 +230,7 @@ export function createFigma({ missingFonts = ['Inter Mbank'], library = null } =
     let out;
     if (kind === 'variables') { out = new Variable(hit.name, libCol, hit.type); out.remote = true; out.key = key; }
     else if (kind === 'styles') { out = { id: `S:${key}`, key, name: hit.name, fontName: hit.fontName || { family: 'Inter', style: 'Regular' }, remote: true }; textStyles.push(out); }
-    else { out = new Component(); out.name = hit.name; out.key = key; out.remote = true; const t = new Text(); t.name = 'Label'; out.appendChild(t); out.createInstance = () => { const i = new Node('INSTANCE'); i.mainComponent = out; i.width = 60; i.height = 20; const l = new Text(); l.name = 'Label'; i.appendChild(l); return i; }; }
+    else { out = new Component(); out.name = hit.name; out.key = key; out.remote = true; const t = new Text(); t.name = 'Label'; out.appendChild(t); out.createInstance = () => { const i = new Node('INSTANCE'); i.mainComponent = out; i.width = 60; i.height = 20; const l = new Text(); l.name = 'Label'; l.parent = i; i.children.push(l); return i; }; }
     imported.set(key, out);
     return out;
   }

@@ -1,7 +1,8 @@
 // Data blocks: they change in loading / empty states.
-import { box, text, add, skel, rect, sizing, link, fill } from './draw.js';
+import { box, text, add, rect, sizing, link, fill } from './draw.js';
 import { icon } from './icons.js';
-import { badge, avatar, checkbox, statusVariant } from './kit.js';
+import { badge, avatar, checkbox, statusVariant, skeleton } from './kit.js';
+import { place, count as tally } from './place.js';
 import { fakeRows, parseColumn, rng } from '../../core/fake.js';
 import { statDelta } from '../../core/spec.js';
 
@@ -15,13 +16,30 @@ async function cardTitle(ctx, title, sub) {
 
 const cols = (ctx, desktop) => (ctx.vp === 'mobile' ? Math.min(desktop, 1) : ctx.vp === 'tablet' ? Math.min(desktop, 2) : desktop);
 
+const DELTA_TONE = { positive: 'success', negative: 'destructive', neutral: 'muted-foreground' };
+
+// CRM / KPI card instance: label, value, «+14%» coloured by meaning and «к вчера» (or the hint).
+async function kpiCard(ctx, it, w) {
+  const d = ctx.state !== 'empty' ? statDelta(it) : null;
+  const note = d ? (ctx.vp !== 'mobile' && d.label) || null : it.hint || null;
+  const texts = { Label: it.label, Value: ctx.state === 'empty' ? '0' : it.value, Delta: d || note ? true : null, 'Delta value': d ? d.value : null, 'Delta label': note };
+  const inst = await place(ctx, 'crm-kpi-card', { texts, colors: d ? { 'Delta value': DELTA_TONE[d.tone] } : {}, w });
+  if (inst) inst.name = `Stat / ${it.label}`;
+  return inst;
+}
+
 export async function stats(ctx, b) {
   const row = box(ctx, 'Stats', { dir: 'H', gap: 16, w: ctx.width, wrap: true });
   const per = ctx.vp === 'mobile' ? 2 : cols(ctx, b.items.length > 4 ? 4 : b.items.length);
   const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
   for (const it of b.items) {
+    if (ctx.state !== 'loading') {
+      const kpi = await kpiCard(ctx, it, w);
+      if (kpi) { add(row, kpi); continue; }
+      tally(ctx, 'crm-kpi-card', false);
+    }
     const c = card(ctx, `Stat / ${it.label}`, { gap: 8, pad: 20, w });
-    if (ctx.state === 'loading') add(c, skel(ctx, 96, 12), skel(ctx, 140, 28, 'md'), skel(ctx, 72, 10));
+    if (ctx.state === 'loading') add(c, await skeleton(ctx, 96, 12), await skeleton(ctx, 140, 28, 'md'), await skeleton(ctx, 72, 10));
     else {
       const value = ctx.state === 'empty' ? '0' : it.value;
       // "+14% к вчера": the value coloured by meaning (it.better up | down), the comparison muted.
@@ -50,9 +68,13 @@ export async function stats(ctx, b) {
 
 async function cell(ctx, type, value, w) {
   const c = box(ctx, 'Cell', { dir: 'H', gap: 8, pad: [12, 12], align: 'CENTER', w, h: 52 });
-  if (ctx.state === 'loading') return add(c, skel(ctx, Math.max(40, Math.min(w - 24, 60 + (w % 70))), 12));
+  if (ctx.state === 'loading') return add(c, await skeleton(ctx, Math.max(40, Math.min(w - 24, 60 + (w % 70))), 12));
   if (type === 'status') return add(c, await badge(ctx, value, statusVariant(value)));
   if (type === 'person') return add(c, await avatar(ctx, value, 28), await text(ctx, value, { size: 'sm', weight: 'medium', truncate: true }));
+  const muted = type === 'actions' || ['id', 'date', 'datetime', 'phone', 'email'].includes(type);
+  const inst = await place(ctx, 'table-cell', { texts: { Text: type === 'actions' ? '•••' : value }, colors: muted ? { Text: 'muted-foreground' } : {}, w, h: 52 });
+  if (inst) { c.remove(); inst.name = 'Cell'; return inst; }
+  tally(ctx, 'table-cell', false);
   if (type === 'actions') return add(c, await text(ctx, '•••', { size: 'sm', color: 'muted-foreground' }));
   const color = ['id', 'date', 'datetime', 'phone', 'email'].includes(type) ? 'muted-foreground' : 'foreground';
   const t = await text(ctx, value, { size: 'sm', color, weight: type === 'money' ? 'medium' : 'regular', truncate: true });
@@ -70,7 +92,7 @@ async function mobileRows(ctx, b, columns, rows) {
     const pi = columns.findIndex((c) => c.type === 'person' || c.type === 'company');
     const si = columns.findIndex((c) => c.type === 'status');
     const mi = columns.findIndex((c) => c.type === 'money');
-    if (ctx.state === 'loading') add(main, skel(ctx, 140, 12), skel(ctx, 90, 10));
+    if (ctx.state === 'loading') add(main, await skeleton(ctx, 140, 12), await skeleton(ctx, 90, 10));
     else add(main, await text(ctx, r[pi >= 0 ? pi : 0], { size: 'sm', weight: 'medium', w: 'fill', truncate: true }),
       await text(ctx, r[0], { size: 'xs', color: 'muted-foreground' }));
     const side = box(ctx, 'Side', { gap: 4, align: 'MAX' });
@@ -98,6 +120,9 @@ export async function table(ctx, b) {
   const hr = box(ctx, 'Header row', { dir: 'H', fill: 'muted', fillOpacity: 0.5, w: 'fill' });
   if (sel) add(hr, add(box(ctx, 'Select', { pad: [0, 14], align: 'CENTER', justify: 'CENTER', h: 40 }), await checkbox(ctx)));
   for (let i = 0; i < columns.length; i++) {
+    const th = await place(ctx, 'table-head', { props: { sort: 'none' }, label: columns[i].label, w: widths[i], h: 40 });
+    if (th) { th.name = `Head / ${columns[i].label}`; add(hr, th); continue; }
+    tally(ctx, 'table-head', false);
     const h = box(ctx, `Head / ${columns[i].label}`, { dir: 'H', pad: [10, 12], align: 'CENTER', w: widths[i], h: 40 });
     if (columns[i].type === 'money') h.primaryAxisAlignItems = 'MAX';
     add(hr, add(h, await text(ctx, columns[i].label, { size: 'xs', weight: 'medium', color: 'muted-foreground' })));
@@ -128,12 +153,18 @@ export async function kanban(ctx, b) {
     const shown = Math.min(n, ctx.state === 'loading' ? 2 : 3);
     for (let i = 0; i < shown; i++) {
       const k = link(card(ctx, 'Card', { gap: 8, pad: 12 }), b.link && `row:${b.link}`);
-      if (ctx.state === 'loading') add(k, skel(ctx, 80, 10), skel(ctx, 'fill', 12), skel(ctx, 60, 10));
+      if (ctx.state === 'loading') add(k, await skeleton(ctx, 80, 10), await skeleton(ctx, 'fill', 12), await skeleton(ctx, 60, 10));
       else {
         const [id, who, sum, product] = fakeRows([':id', ':person', ':money', ':product'], ci * 3 + i + 1, 31 + ci * 5 + i + ctx.seed).at(-1); // the row index makes the number unique
+        const late = i === 0 && ci === 1;
+        const app = await place(ctx, 'crm-application-card', {
+          texts: { ID: id, Time: b.badge !== false ? (late ? 'SLA' : `${10 + i * 7} мин`) : null, Name: who, Amount: sum, Meta: product },
+          colors: late ? { Time: 'destructive' } : {}, nested: { 'Badge-status': { label: name } }, w: 'fill',
+        });
+        if (app) { k.remove(); add(c, link(app, b.link && `row:${b.link}`)); continue; }
+        tally(ctx, 'crm-application-card', false);
         const inner = colW - 48; // column and card padding: rows get real widths, so nothing overlaps
         const top = box(ctx, 'Top', { dir: 'H', align: 'CENTER', justify: 'SPACE_BETWEEN', w: inner });
-        const late = i === 0 && ci === 1;
         add(top, await text(ctx, id, { size: 'xs', color: 'muted-foreground' }), b.badge !== false && (await badge(ctx, late ? 'SLA' : `${10 + i * 7} мин`, late ? 'destructive' : 'secondary')));
         const who_ = box(ctx, 'Client', { dir: 'H', gap: 8, align: 'CENTER', w: inner });
         add(who_, await avatar(ctx, who, 24), await text(ctx, who, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }));
@@ -185,6 +216,9 @@ export async function chart(ctx, b) {
   return add(c, plot);
 }
 
+const STATUS_TONE = { success: 'success', destructive: 'destructive', warning: 'warning', info: 'info', secondary: 'muted-foreground' };
+const initials = (name) => String(name).split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+
 export async function list(ctx, b) {
   const c = card(ctx, b.title || 'List', { gap: 0, pad: 0 });
   if (b.title) add(c, add(box(ctx, 'Head', { pad: [20, 24, 8, 24], w: 'fill' }), await cardTitle(ctx, b.title, b.subtitle)));
@@ -192,7 +226,10 @@ export async function list(ctx, b) {
   for (const it of items) {
     const [who, what, st] = Array.isArray(it) ? it : [it.title, it.subtitle, it.status];
     const row = link(box(ctx, 'Item', { dir: 'H', gap: 12, pad: [12, 24], align: 'CENTER', w: 'fill' }), b.link && `row:${b.link}`);
-    if (ctx.state === 'loading') { add(row, skel(ctx, 32, 32, 'full'), add(box(ctx, 'Lines', { gap: 6, w: 'fill' }), skel(ctx, 140, 12), skel(ctx, 90, 10))); add(c, row); continue; }
+    if (ctx.state === 'loading') { add(row, await skeleton(ctx, 32, 32, 'full'), add(box(ctx, 'Lines', { gap: 6, w: 'fill' }), await skeleton(ctx, 140, 12), await skeleton(ctx, 90, 10))); add(c, row); continue; }
+    const item = await place(ctx, 'crm-list-item', { texts: { Title: who, Subtitle: what || null, Meta: st || null }, colors: st ? { Meta: STATUS_TONE[statusVariant(st)] } : {}, nested: { Avatar: { label: initials(who) } }, w: 'fill' });
+    if (item) { row.remove(); add(c, link(item, b.link && `row:${b.link}`)); continue; }
+    tally(ctx, 'crm-list-item', false);
     const main = box(ctx, 'Text', { gap: 2, w: 'fill' });
     add(main, await text(ctx, who, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }), what && (await text(ctx, what, { size: 'xs', color: 'muted-foreground', w: 'fill' })));
     add(c, add(row, await avatar(ctx, who), main, st && (await badge(ctx, st, statusVariant(st)))));
@@ -206,10 +243,13 @@ export async function timeline(ctx, b) {
   const items = b.items || [['Заявка создана', '21.10.2026, 09:12'], ['Скоринг пройден', '21.10.2026, 09:40'], ['Передана в СБ', '21.10.2026, 10:05']];
   for (const [i, it] of items.entries()) {
     const [title, when] = Array.isArray(it) ? it : [it.title, it.time];
+    const ev = ctx.state !== 'loading' && (await place(ctx, 'crm-timeline-item', { texts: { Title: title, Meta: when }, w: 'fill' }));
+    if (ev) { ev.name = 'Event'; add(c, ev); continue; }
+    if (ctx.state !== 'loading') tally(ctx, 'crm-timeline-item', false);
     const row = box(ctx, 'Event', { dir: 'H', gap: 12, pad: [12, 0, 0, 0], w: 'fill' });
     add(row, rect(ctx, 'Dot', 8, 8, i === items.length - 1 ? 'primary' : 'border', 'full'));
     const t = box(ctx, 'Text', { gap: 2, w: 'fill' });
-    if (ctx.state === 'loading') add(t, skel(ctx, 160, 12), skel(ctx, 100, 10));
+    if (ctx.state === 'loading') add(t, await skeleton(ctx, 160, 12), await skeleton(ctx, 100, 10));
     else add(t, await text(ctx, title, { size: 'sm', weight: 'medium' }), await text(ctx, when, { size: 'xs', color: 'muted-foreground' }));
     add(c, add(row, t));
   }
@@ -222,7 +262,7 @@ export async function cards(ctx, b) {
   const w = Math.floor((ctx.width - 16 * (per - 1)) / per);
   for (const it of b.items) {
     const c = link(card(ctx, `Card / ${it.title}`, { gap: 8, pad: 20, w }), (it.link || b.link) && `row:${it.link || b.link}`);
-    if (ctx.state === 'loading') add(c, skel(ctx, 120, 14), skel(ctx, 'fill', 10), skel(ctx, 160, 10));
+    if (ctx.state === 'loading') add(c, await skeleton(ctx, 120, 14), await skeleton(ctx, 'fill', 10), await skeleton(ctx, 160, 10));
     else add(c, await text(ctx, it.title, { size: 'base', weight: 'semibold' }), it.text && (await text(ctx, it.text, { size: 'sm', color: 'muted-foreground', w: 'fill' })), it.badge && (await badge(ctx, it.badge, statusVariant(it.badge))));
     add(grid, c);
   }
@@ -237,9 +277,12 @@ export async function details(ctx, b) {
   const w = Math.floor((ctx.width - 48 - 16 * (per - 1)) / per);
   for (const it of b.items) {
     const [label, value] = Array.isArray(it) ? it : typeof it === 'string' ? it.split(':') : [it.label, it.value];
-    const f = box(ctx, `Field / ${label}`, { gap: 4, w });
     const v = value && !['money', 'person', 'phone', 'date', 'id', 'product', 'city', 'company'].includes(value) ? value : fakeRows([`x:${value || 'text'}`], 1, label.length + ctx.seed)[0][0];
-    add(f, await text(ctx, label, { size: 'xs', color: 'muted-foreground' }), ctx.state === 'loading' ? skel(ctx, 120, 12) : await text(ctx, v, { size: 'sm', weight: 'medium', w: 'fill' }));
+    const kv = ctx.state !== 'loading' && (await place(ctx, 'crm-key-value-row', { texts: { Label: label, Value: v }, w }));
+    if (kv) { kv.name = `Field / ${label}`; add(grid, kv); continue; }
+    if (ctx.state !== 'loading') tally(ctx, 'crm-key-value-row', false);
+    const f = box(ctx, `Field / ${label}`, { gap: 4, w });
+    add(f, await text(ctx, label, { size: 'xs', color: 'muted-foreground' }), ctx.state === 'loading' ? await skeleton(ctx, 120, 12) : await text(ctx, v, { size: 'sm', weight: 'medium', w: 'fill' }));
     add(grid, f);
   }
   return add(c, grid);

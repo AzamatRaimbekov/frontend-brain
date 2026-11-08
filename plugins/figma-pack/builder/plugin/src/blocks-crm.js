@@ -1,7 +1,8 @@
 // CRM blocks of a credit pipeline: funnel, SLA meters, scoring, decision, documents, checks,
 // comments, client profile, breakdown. Same rules as blocks-data.js: tokens only, loading = skeletons.
-import { box, text, add, skel, rect, link, fill } from './draw.js';
-import { badge, avatar, button, input, statusVariant } from './kit.js';
+import { box, text, add, rect, link, fill } from './draw.js';
+import { badge, avatar, button, input, statusVariant, skeleton } from './kit.js';
+import { place, count as tally } from './place.js';
 import { icon } from './icons.js';
 import { card } from './blocks-data.js';
 import { actionLabel as clean, isPrimaryAction as isPrimary } from '../../core/links.js';
@@ -28,6 +29,17 @@ function bar(ctx, width, share, token, h = 8) {
   return track;
 }
 
+const PROGRESS_TONE = { primary: 'brand', destructive: 'error', warning: 'warning', success: 'success', info: 'brand' };
+
+// Progress instance with its indicator at the share; the hand-drawn track when the set is missing.
+async function meterBar(ctx, width, share, tone) {
+  const p = await place(ctx, 'progress', { props: { tone: PROGRESS_TONE[tone] || 'brand', size: 'md', shape: 'rounded' }, w: width });
+  if (!p) { tally(ctx, 'progress', false); return bar(ctx, width, share, tone); }
+  const ind = p.findOne((n) => n.name.toLowerCase() === 'indicator');
+  if (ind) try { ind.resize(Math.max(1, Math.round(width * Math.min(1, share))), ind.height); } catch (e) { /* the set's own indicator width */ }
+  return p;
+}
+
 /** Pipeline funnel: items [{ label, value, rate }] — bar length by value, conversion on the right. */
 export async function funnel(ctx, b) {
   const c = card(ctx, b.title || 'Funnel');
@@ -36,7 +48,7 @@ export async function funnel(ctx, b) {
   const barW = ctx.width - 48 - (ctx.vp === 'mobile' ? 0 : 220);
   for (const [i, it] of b.items.entries()) {
     const row = box(ctx, `Stage / ${it.label}`, { dir: ctx.vp === 'mobile' ? 'V' : 'H', gap: ctx.vp === 'mobile' ? 6 : 16, align: ctx.vp === 'mobile' ? 'MIN' : 'CENTER', w: 'fill' });
-    if (loading(ctx)) { add(c, add(row, skel(ctx, 120, 12), skel(ctx, Math.round(barW * (1 - i * 0.15)), 28, 'md'))); continue; }
+    if (loading(ctx)) { add(c, add(row, await skeleton(ctx, 120, 12), await skeleton(ctx, Math.round(barW * (1 - i * 0.15)), 28, 'md'))); continue; }
     const label = box(ctx, 'Label', { gap: 2, w: ctx.vp === 'mobile' ? 'fill' : 140 });
     add(label, await text(ctx, it.label, { size: 'sm', weight: 'medium', w: 'fill' }), it.hint && (await text(ctx, it.hint, { size: 'xs', color: 'muted-foreground', w: 'fill' })));
     const share = (Number(String(it.value).replace(/\D/g, '')) || 0) / max;
@@ -57,12 +69,12 @@ export async function meters(ctx, b) {
   const inner = ctx.width - 48;
   for (const it of b.items) {
     const m = box(ctx, `Meter / ${it.label}`, { gap: 8, w: 'fill' });
-    if (loading(ctx)) { add(c, add(m, skel(ctx, 160, 12), skel(ctx, inner, 8, 'full'))); continue; }
+    if (loading(ctx)) { add(c, add(m, await skeleton(ctx, 160, 12), await skeleton(ctx, inner, 8, 'full'))); continue; }
     const top = box(ctx, 'Top', { dir: 'H', gap: 8, align: 'CENTER', w: 'fill' });
     const pct = Number(String(it.percent ?? 0).replace(/[^\d.]/g, '')) || 0;
     const tone = TONE[it.tone] || (pct >= 90 ? 'destructive' : pct >= 75 ? 'warning' : 'primary');
     add(top, await text(ctx, it.label, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }), await text(ctx, it.value ?? `${pct}%`, { size: 'sm', weight: 'semibold', color: tone === 'primary' ? 'foreground' : tone }));
-    add(m, top, bar(ctx, inner, pct / 100, tone), it.hint && (await text(ctx, it.hint, { size: 'xs', color: 'muted-foreground' })));
+    add(m, top, await meterBar(ctx, inner, pct / 100, tone), it.hint && (await text(ctx, it.hint, { size: 'xs', color: 'muted-foreground' })));
     add(c, m);
   }
   return c;
@@ -73,7 +85,7 @@ export async function score(ctx, b) {
   const c = card(ctx, b.title || 'Скоринг', { gap: 20 });
   add(c, await cardHead(ctx, { title: b.title || 'Скоринг', subtitle: b.subtitle, more: b.more }));
   const inner = ctx.width - 48;
-  if (loading(ctx)) return add(c, skel(ctx, 120, 40, 'md'), skel(ctx, inner, 10, 'full'), skel(ctx, 200, 12), skel(ctx, 160, 12));
+  if (loading(ctx)) return add(c, await skeleton(ctx, 120, 40, 'md'), await skeleton(ctx, inner, 10, 'full'), await skeleton(ctx, 200, 12), await skeleton(ctx, 160, 12));
   const max = b.max || 850;
   const top = box(ctx, 'Value', { dir: 'H', gap: 12, align: 'MAX', w: 'fill' });
   add(top, await text(ctx, String(b.value), { size: '4xl', weight: 'bold' }), await text(ctx, `из ${max}`, { size: 'sm', color: 'muted-foreground' }), box(ctx, 'Spacer', { w: 'fill', h: 1 }), b.grade && (await badge(ctx, b.grade, statusVariant(b.grade))));
@@ -115,7 +127,7 @@ export async function decision(ctx, b) {
   for (const it of b.items) {
     const [label, value] = pairOf(it);
     const cell = box(ctx, `Term / ${label}`, { gap: 4, pad: [12, 14], fill: 'muted', fillOpacity: 0.5, radius: 'lg', w });
-    add(cell, await text(ctx, label, { size: 'xs', color: 'muted-foreground' }), loading(ctx) ? skel(ctx, 80, 14) : await text(ctx, value, { size: 'base', weight: 'semibold' }));
+    add(cell, await text(ctx, label, { size: 'xs', color: 'muted-foreground' }), loading(ctx) ? await skeleton(ctx, 80, 14) : await text(ctx, value, { size: 'base', weight: 'semibold' }));
     add(grid, cell);
   }
   add(c, grid);
@@ -139,7 +151,7 @@ export async function files(ctx, b) {
     const tile = box(ctx, 'File icon', { dir: 'H', w: 36, h: 36, radius: 'md', fill: 'muted', align: 'CENTER', justify: 'CENTER' });
     add(tile, icon(ctx, 'file', 'muted-foreground', 18));
     const t = box(ctx, 'Name', { gap: 2, w: 'fill' });
-    if (loading(ctx)) add(t, skel(ctx, 160, 12), skel(ctx, 90, 10));
+    if (loading(ctx)) add(t, await skeleton(ctx, 160, 12), await skeleton(ctx, 90, 10));
     else add(t, await text(ctx, f.name, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }), f.meta && (await text(ctx, f.meta, { size: 'xs', color: 'muted-foreground' })));
     add(c, add(row, tile, t, !loading(ctx) && f.status && (await badge(ctx, f.status, statusVariant(f.status))), icon(ctx, 'more', 'muted-foreground', 16)));
   }
@@ -161,7 +173,7 @@ export async function checks(ctx, b) {
     fill(dot, ctx, 'muted'); // a tint of a bound colour renders solid in Figma: grey plate, coloured glyph
     add(dot, icon(ctx, ic, tone, 16));
     const t = box(ctx, 'Text', { gap: 2, w: 'fill' });
-    if (loading(ctx)) add(t, skel(ctx, 180, 12), skel(ctx, 100, 10));
+    if (loading(ctx)) add(t, await skeleton(ctx, 180, 12), await skeleton(ctx, 100, 10));
     else add(t, await text(ctx, ch.label, { size: 'sm', weight: 'medium', w: 'fill' }), ch.hint && (await text(ctx, ch.hint, { size: 'xs', color: 'muted-foreground', w: 'fill' })));
     add(c, add(row, dot, t, !loading(ctx) && ch.result && (await text(ctx, ch.result, { size: 'sm', weight: 'medium', color: tone === 'muted-foreground' ? 'muted-foreground' : tone }))));
   }
@@ -176,7 +188,7 @@ export async function comments(ctx, b) {
     const m = Array.isArray(it) ? { who: it[0], time: it[1], text: it[2] } : it;
     const row = box(ctx, `Comment / ${m.who}`, { dir: 'H', gap: 12, w: 'fill' });
     const body = box(ctx, 'Body', { gap: 4, w: 'fill' });
-    if (loading(ctx)) { add(c, add(row, skel(ctx, 32, 32, 'full'), add(body, skel(ctx, 140, 12), skel(ctx, 'fill', 10)))); continue; }
+    if (loading(ctx)) { add(c, add(row, await skeleton(ctx, 32, 32, 'full'), add(body, await skeleton(ctx, 140, 12), await skeleton(ctx, 'fill', 10)))); continue; }
     const head = box(ctx, 'Who', { dir: 'H', gap: 8, align: 'CENTER', w: 'fill' });
     add(head, await text(ctx, m.who, { size: 'sm', weight: 'semibold' }), m.time && (await text(ctx, m.time, { size: 'xs', color: 'muted-foreground' })));
     const bubble = box(ctx, 'Bubble', { pad: [10, 12], fill: 'muted', fillOpacity: 0.6, radius: 'lg', w: 'fill' });
@@ -217,7 +229,7 @@ export async function profile(ctx, b) {
     for (const it of b.items) {
       const [label, value] = pairOf(it);
       const f = box(ctx, `Fact / ${label}`, { gap: 4, w });
-      add(f, await text(ctx, label, { size: 'xs', color: 'muted-foreground' }), loading(ctx) ? skel(ctx, 90, 14) : await text(ctx, value, { size: 'sm', weight: 'semibold', w: 'fill' }));
+      add(f, await text(ctx, label, { size: 'xs', color: 'muted-foreground' }), loading(ctx) ? await skeleton(ctx, 90, 14) : await text(ctx, value, { size: 'sm', weight: 'semibold', w: 'fill' }));
       add(facts, f);
     }
     add(c, rect(ctx, 'Divider', inner, 1, 'border'), facts);
@@ -230,7 +242,7 @@ export async function breakdown(ctx, b) {
   const c = card(ctx, b.title || 'Структура');
   add(c, await cardHead(ctx, b));
   const inner = ctx.width - 48;
-  if (loading(ctx)) return add(c, skel(ctx, inner, 12, 'full'), skel(ctx, 180, 12), skel(ctx, 160, 12), skel(ctx, 140, 12));
+  if (loading(ctx)) return add(c, await skeleton(ctx, inner, 12, 'full'), await skeleton(ctx, 180, 12), await skeleton(ctx, 160, 12), await skeleton(ctx, 140, 12));
   const shares = b.items.map((it) => Number(String(it.share).replace(/[^\d.]/g, '')) || 0);
   const total = shares.reduce((a, x) => a + x, 0) || 1;
   const stack = box(ctx, 'Stack', { dir: 'H', gap: 2, w: 'fill', radius: 'full', clip: true });

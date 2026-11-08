@@ -1,12 +1,17 @@
 // App frames around the content: sidebar app, plain page, mobile app.
 import { box, text, add, fill, link } from './draw.js';
 import { input, avatar, badge } from './kit.js';
+import { place, count } from './place.js';
 import { icon, guessIcon } from './icons.js';
 
 export const SIDEBAR = { desktop: 256, tablet: 72 };
 export const PAD = { desktop: 32, tablet: 24, mobile: 16 };
 
 async function navItem(ctx, item, active, compact) {
+  const texts = { Count: !compact && item.badge ? String(item.badge) : null, ...(compact ? { Label: null } : {}) };
+  const inst = await place(ctx, 'nav-item', { props: { state: active ? 'selected' : 'default' }, label: item.label, texts, w: compact ? 'hug' : 'fill' });
+  if (inst) { inst.name = `Nav / ${item.label}`; return link(inst, `nav:${item.id}`); }
+  count(ctx, 'nav-item', false);
   const it = box(ctx, `Nav / ${item.label}`, { dir: 'H', gap: 10, pad: compact ? [10, 10] : [8, 12], radius: 'md', align: 'CENTER', fill: active ? 'sidebar-accent' : null, w: compact ? 'hug' : 'fill', justify: compact ? 'CENTER' : 'MIN' });
   add(it, icon(ctx, item.icon || guessIcon(item.label), active ? 'sidebar-accent-foreground' : 'sidebar-foreground', 16));
   if (!compact) add(it, await text(ctx, item.label, { size: 'sm', weight: active ? 'medium' : 'regular', color: active ? 'sidebar-accent-foreground' : 'sidebar-foreground', w: 'fill' }));
@@ -44,7 +49,7 @@ async function sidebar(ctx, spec, screen, vp) {
 async function topbar(ctx, spec, screen, vp) {
   const t = box(ctx, 'Topbar', { dir: 'H', gap: 12, pad: [12, PAD[vp]], align: 'CENTER', fill: 'background', stroke: 'border', w: 'fill', h: 60 });
   if (vp === 'mobile') add(t, icon(ctx, 'menu', 'foreground', 20), await text(ctx, screen.title, { size: 'base', weight: 'semibold', w: 'fill', truncate: true }));
-  else add(t, await input(ctx, spec.searchPlaceholder || 'Поиск…', { w: 320 }), box(ctx, 'Spacer', { w: 'fill' }));
+  else add(t, await input(ctx, spec.searchPlaceholder || 'Поиск…', { w: 320, kind: 'search-input' }), box(ctx, 'Spacer', { w: 'fill' }));
   return add(t, icon(ctx, 'bell', 'muted-foreground', 18), await avatar(ctx, spec.user.name));
 }
 
@@ -58,6 +63,9 @@ async function tabbar(ctx, spec, screen) {
   const bar = box(ctx, 'Tab bar', { dir: 'H', pad: [8, 8, 24, 8], fill: 'background', stroke: 'border', w: 'fill', justify: 'SPACE_BETWEEN' });
   for (const item of spec.nav.slice(0, 5)) {
     const on = item.id === screen.nav;
+    const inst = await place(ctx, 'tabbar-item', { props: { state: on ? 'selected' : 'default' }, label: item.label, w: 'fill' });
+    if (inst) { inst.name = `Tab / ${item.label}`; add(bar, link(inst, `nav:${item.id}`)); continue; }
+    count(ctx, 'tabbar-item', false);
     const it = link(box(ctx, `Tab / ${item.label}`, { gap: 4, align: 'CENTER', pad: [4, 6], w: 'fill' }), `nav:${item.id}`);
     add(bar, add(it, icon(ctx, item.icon || guessIcon(item.label), on ? 'primary' : 'muted-foreground', 22), await text(ctx, item.label, { size: 'xs', weight: on ? 'medium' : 'regular', color: on ? 'primary' : 'muted-foreground', align: 'CENTER' })));
   }

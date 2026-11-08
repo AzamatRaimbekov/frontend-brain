@@ -9,6 +9,7 @@ import * as ui from './blocks-ui.js';
 import * as crm from './blocks-crm.js';
 import { resolveLinks } from '../../core/links.js';
 import { pageFor, wirePage, buildPrototype, SCREEN_KEY } from './prototype.js';
+import { contractRegistry, rolesReport, handDrawn } from './place.js';
 
 const BUILDERS = { ...data, ...ui, ...crm };
 const GAP = 120;
@@ -109,7 +110,7 @@ export async function buildFrame(base, spec, screen, state, vp, seed) {
 
 /**
  * Builds the whole spec. opts: { vars, radius, kit, font, brand, style, theme: 'light'|'dark', only: [screenId],
- * prototype: false to skip links and the «Прототип» page }.
+ * prototype: false to skip links and the «Прототип» page, contracts: registry from place.js (scanned when absent) }.
  * onProgress(done, total, label) is called after every frame.
  */
 export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
@@ -117,6 +118,7 @@ export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
   const font = await loadFonts(opts.font || 'Inter');
   const base = createCtx({ vars: opts.vars, radius: opts.radius, font, kit: opts.kit || {} });
   base.kitStyles = new Map((await figma.getLocalTextStylesAsync()).map((s) => [s.name, s]));
+  base.sets = opts.contracts || (await contractRegistry()); // contract name -> its component set in this file
   const screens = spec.screens.filter((s) => !opts.only?.length || opts.only.includes(s.id));
   const total = screens.reduce((n, s) => n + s.states.length * s.viewports.length, 0);
   const result = { frames: [], sections: [], stats: base.stats, font, fallbackFonts: false };
@@ -172,5 +174,7 @@ export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
     result.links = links.length;
   }
   result.fallbackFonts = base.stats.fallbackFonts;
+  result.roles = rolesReport(base.stats);
+  result.handDrawn = handDrawn(base.stats);
   return result;
 }

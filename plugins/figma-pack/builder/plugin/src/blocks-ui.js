@@ -1,17 +1,33 @@
 // Structural blocks: page header, toolbars, forms, navigation and states.
-import { box, text, add, rect, skel, link } from './draw.js';
-import { button, badge, input, checkbox } from './kit.js';
+import { box, text, add, rect, link } from './draw.js';
+import { button, badge, input, checkbox, radio, skeleton } from './kit.js';
+import { place, count } from './place.js';
 import { card } from './blocks-data.js';
 import { actionLabel as clean, isPrimaryAction as isPrimary } from '../../core/links.js';
 
 // An action button tagged for the prototype: "+ Новая заявка → app-new" -> action:Новая заявка.
 const actionButton = async (ctx, a, variant, sz) => link(await button(ctx, clean(a), variant, sz), `action:${clean(a)}`);
 
+// «Заявки / CL-240118»: Breadcrumb item instances (the last one current), else one muted line.
+async function breadcrumbs(ctx, items) {
+  const row = box(ctx, 'Breadcrumbs', { dir: 'H', gap: 6, align: 'CENTER' });
+  for (const [i, label] of items.entries()) {
+    const inst = await place(ctx, 'breadcrumb-item', { props: { current: i === items.length - 1 ? 'true' : 'false' }, label });
+    if (!inst) {
+      row.remove();
+      for (let k = i; k < items.length; k++) count(ctx, 'breadcrumb-item', false);
+      return link(await text(ctx, items.join('  /  '), { size: 'sm', color: 'muted-foreground' }), 'back');
+    }
+    add(row, inst);
+  }
+  return link(row, 'back');
+}
+
 export async function header(ctx, b) {
   const mobile = ctx.vp === 'mobile';
   const h = box(ctx, 'Page header', { dir: mobile ? 'V' : 'H', gap: 16, align: mobile ? 'MIN' : 'CENTER', justify: 'SPACE_BETWEEN', w: 'fill' });
   const left = box(ctx, 'Title', { gap: 6, w: mobile ? 'fill' : 'hug' });
-  if (b.breadcrumbs) add(left, link(await text(ctx, b.breadcrumbs.join('  /  '), { size: 'sm', color: 'muted-foreground' }), 'back'));
+  if (b.breadcrumbs) add(left, await breadcrumbs(ctx, b.breadcrumbs));
   const titleRow = box(ctx, 'Title row', { dir: 'H', gap: 12, align: 'CENTER' });
   add(titleRow, await text(ctx, b.title, { size: mobile ? 'xl' : '2xl', weight: 'bold' }), b.badge && (await badge(ctx, b.badge, 'secondary')));
   add(left, titleRow, b.subtitle && (await text(ctx, b.subtitle, { size: 'sm', color: 'muted-foreground' })));
@@ -29,11 +45,15 @@ export async function header(ctx, b) {
 export async function toolbar(ctx, b) {
   const mobile = ctx.vp === 'mobile';
   const t = box(ctx, 'Toolbar', { dir: mobile ? 'V' : 'H', gap: 8, align: mobile ? 'MIN' : 'CENTER', w: 'fill' });
-  const search = await input(ctx, b.search || 'Поиск…', { w: mobile ? 'fill' : 320 });
+  const search = await input(ctx, b.search || 'Поиск…', { w: mobile ? 'fill' : 320, kind: 'search-input' });
   add(t, search);
   if (mobile && 'layoutSizingHorizontal' in search) search.layoutSizingHorizontal = 'FILL';
   const filters = box(ctx, 'Filters', { dir: 'H', gap: 8, wrap: true, w: mobile ? 'fill' : 'hug' });
-  for (const f of b.filters || []) add(filters, await button(ctx, `${f}  ▾`, 'outline', 'sm'));
+  for (const f of b.filters || []) {
+    const chip = await place(ctx, 'filter-chip', { props: { state: 'default' }, label: f });
+    if (!chip) count(ctx, 'filter-chip', 'stand-in'); // an outline button with a chevron
+    add(filters, chip || (await button(ctx, `${f}  ▾`, 'outline', 'sm')));
+  }
   if (b.filters?.length && !mobile) add(filters, await button(ctx, 'Сбросить', 'ghost', 'sm'));
   add(t, filters);
   if (b.actions?.length && !mobile) {
@@ -45,24 +65,43 @@ export async function toolbar(ctx, b) {
 
 export async function pagination(ctx, b) {
   const p = box(ctx, 'Pagination', { dir: 'H', gap: 8, align: 'CENTER', justify: 'SPACE_BETWEEN', w: 'fill' });
-  add(p, ctx.state === 'loading' ? skel(ctx, 140, 12) : await text(ctx, b.summary || 'Показано 1–8 из 128', { size: 'sm', color: 'muted-foreground' }));
+  add(p, ctx.state === 'loading' ? await skeleton(ctx, 140, 12) : await text(ctx, b.summary || 'Показано 1–8 из 128', { size: 'sm', color: 'muted-foreground' }));
   const pages = box(ctx, 'Pages', { dir: 'H', gap: 4, align: 'CENTER' });
   add(pages, await button(ctx, '‹ Назад', 'ghost', 'sm'));
-  if (ctx.vp !== 'mobile') for (const n of ['1', '2', '3', '…', '16']) add(pages, await button(ctx, n, n === '1' ? 'outline' : 'ghost', 'sm'));
+  if (ctx.vp !== 'mobile') {
+    for (const n of ['1', '2', '3', '…', '16']) {
+      const item = await place(ctx, 'pagination', { props: { state: n === '1' ? 'selected' : 'default', size: 'sm' }, label: n });
+      if (!item) count(ctx, 'pagination', 'stand-in'); // a ghost / outline button
+      add(pages, item || (await button(ctx, n, n === '1' ? 'outline' : 'ghost', 'sm')));
+    }
+  }
   add(pages, await button(ctx, 'Вперёд ›', 'ghost', 'sm'));
   return add(p, pages);
 }
 
+const tabState = (i, active) => ({ variant: 'segment', state: i === active ? 'selected' : 'default' });
+
 export async function tabs(ctx, b) {
-  const t = box(ctx, 'Tabs', { dir: 'H', gap: 4, pad: 4, fill: 'muted', radius: 'lg' });
   const active = b.active ?? 0;
   const items = ctx.vp === 'mobile' ? b.items.slice(0, 3) : b.items; // the rest scrolls off on a phone
+  // Three tabs: the Tabs list set as is (its nested triggers get the labels); otherwise triggers in a segment track.
+  if (items.length === 3) {
+    const nested = Object.fromEntries(items.map((label, i) => [`tab-${i + 1}`, { label, props: tabState(i, active) }]));
+    const list = await place(ctx, 'tabs-list', { props: { variant: 'segment' }, nested });
+    if (list) { list.name = 'Tabs'; return list; }
+  }
+  const t = box(ctx, 'Tabs', { dir: 'H', gap: 4, pad: 4, fill: 'muted', radius: 'lg' });
   for (const [i, label] of items.entries()) {
+    const trigger = await place(ctx, 'tabs-trigger', { props: tabState(i, active), label });
+    if (trigger) { trigger.name = `Tab / ${label}`; add(t, trigger); continue; }
+    count(ctx, 'tabs-trigger', false);
     const tab = box(ctx, `Tab / ${label}`, { dir: 'H', pad: [6, 12], radius: 'md', fill: i === active ? 'background' : null, align: 'CENTER' });
     add(t, add(tab, await text(ctx, label, { size: 'sm', weight: 'medium', color: i === active ? 'foreground' : 'muted-foreground' })));
   }
   return t;
 }
+
+const FIELD_KIND = { select: 'select-trigger', textarea: 'textarea', date: 'date-picker-trigger' };
 
 async function field(ctx, f, w, error) {
   const spec = typeof f === 'string' ? { label: f.split(':')[0], type: f.split(':')[1] || 'text' } : f;
@@ -71,10 +110,16 @@ async function field(ctx, f, w, error) {
     const row = box(ctx, 'Checkbox row', { dir: 'H', gap: 8, align: 'CENTER' });
     return add(wrap, add(row, await checkbox(ctx, true), await text(ctx, spec.label, { size: 'sm' })));
   }
+  if (spec.type === 'radio') {
+    const row = box(ctx, 'Radio row', { dir: 'H', gap: 8, align: 'CENTER' });
+    return add(wrap, add(row, await radio(ctx, true), await text(ctx, spec.label, { size: 'sm' })));
+  }
   add(wrap, await text(ctx, spec.label + (spec.required ? ' *' : ''), { size: 'sm', weight: 'medium' }));
-  const ph = spec.placeholder || (spec.type === 'select' ? 'Выберите…  ▾' : spec.type === 'date' ? 'дд.мм.гггг' : spec.type === 'money' ? '0 с' : spec.type === 'phone' ? '+996 ___ ___ ___' : '');
-  const inp = await input(ctx, ph, { error });
-  if (spec.type === 'textarea') inp.resize(inp.width, 88);
+  const kind = FIELD_KIND[spec.type];
+  const own = !!(kind && ctx.sets && ctx.sets[kind]); // a select trigger draws its own chevron
+  const ph = spec.placeholder || (spec.type === 'select' ? (own ? 'Выберите…' : 'Выберите…  ▾') : spec.type === 'date' ? 'дд.мм.гггг' : spec.type === 'money' ? '0 с' : spec.type === 'phone' ? '+996 ___ ___ ___' : '');
+  const inp = await input(ctx, ph, { error, kind });
+  if (spec.type === 'textarea' && !own) inp.resize(inp.width, 88);
   add(wrap, inp);
   if (error) add(wrap, await text(ctx, spec.error || 'Обязательное поле', { size: 'xs', color: 'destructive' }));
   else if (spec.hint) add(wrap, await text(ctx, spec.hint, { size: 'xs', color: 'muted-foreground' }));
@@ -100,11 +145,16 @@ export async function stepper(ctx, b) {
   const cur = b.current ?? 1;
   for (const [i, label] of b.steps.entries()) {
     const done = i < cur;
-    const st = box(ctx, `Step / ${label}`, { dir: 'H', gap: 8, align: 'CENTER' });
-    const dot = box(ctx, 'Dot', { dir: 'H', w: 24, h: 24, radius: 'full', align: 'CENTER', justify: 'CENTER', fill: i <= cur ? 'primary' : 'muted' });
-    add(dot, await text(ctx, done ? '✓' : String(i + 1), { size: 'xs', weight: 'semibold', color: i <= cur ? 'primary-foreground' : 'muted-foreground' }));
-    add(st, dot, await text(ctx, label, { size: 'sm', weight: i === cur ? 'semibold' : 'regular', color: i <= cur ? 'foreground' : 'muted-foreground' }));
-    add(s, st);
+    const status = done ? 'done' : i === cur ? 'current' : 'upcoming';
+    const step = await place(ctx, 'stepper-step', { props: { status }, label, texts: { Number: String(i + 1), Description: null } });
+    if (step) { step.name = `Step / ${label}`; add(s, step); } else {
+      count(ctx, 'stepper-step', false);
+      const st = box(ctx, `Step / ${label}`, { dir: 'H', gap: 8, align: 'CENTER' });
+      const dot = box(ctx, 'Dot', { dir: 'H', w: 24, h: 24, radius: 'full', align: 'CENTER', justify: 'CENTER', fill: i <= cur ? 'primary' : 'muted' });
+      add(dot, await text(ctx, done ? '✓' : String(i + 1), { size: 'xs', weight: 'semibold', color: i <= cur ? 'primary-foreground' : 'muted-foreground' }));
+      add(st, dot, await text(ctx, label, { size: 'sm', weight: i === cur ? 'semibold' : 'regular', color: i <= cur ? 'foreground' : 'muted-foreground' }));
+      add(s, st);
+    }
     if (i < b.steps.length - 1 && ctx.vp !== 'mobile') add(s, rect(ctx, 'Line', 32, 1, done ? 'primary' : 'border'));
   }
   return s;
@@ -112,7 +162,18 @@ export async function stepper(ctx, b) {
 
 const ALERT = { destructive: ['destructive', 'destructive'], warning: ['warning', 'foreground'], info: ['info', 'foreground'], success: ['success', 'foreground'] };
 
+const ALERT_TONE = { destructive: 'error', warning: 'warning', info: 'info', success: 'success' };
+
 export async function alert(ctx, b) {
+  const inst = await place(ctx, 'alert', { props: { tone: ALERT_TONE[b.variant] || 'info' }, texts: { Title: b.title || null, Description: b.text }, w: 'fill' });
+  if (inst) {
+    inst.name = `Alert / ${b.variant || 'info'}`;
+    if (!b.action) return inst;
+    // An instance takes no children: the action sits next to the alert.
+    const row = box(ctx, `Alert / ${b.variant || 'info'}`, { dir: 'H', gap: 12, align: 'CENTER', w: 'fill' });
+    return add(row, inst, await actionButton(ctx, b.action, 'outline', 'sm'));
+  }
+  count(ctx, 'alert', false);
   const [accent, tc] = ALERT[b.variant] || ALERT.info;
   const a = box(ctx, `Alert / ${b.variant || 'info'}`, { dir: 'H', gap: 12, pad: 16, stroke: accent, radius: 'lg', fill: 'background', w: 'fill' });
   add(a, rect(ctx, 'Mark', 4, 36, accent, 'full'));
@@ -122,6 +183,12 @@ export async function alert(ctx, b) {
 }
 
 export async function empty(ctx, b) {
+  const title = b.title || 'Пока ничего нет';
+  const body = b.text || 'Здесь появятся записи, когда они будут созданы.';
+  const act = b.action && clean(b.action);
+  const inst = await place(ctx, 'empty-state', { texts: { Title: title, Description: body, Action: act ? true : null }, nested: act ? { Action: { label: act } } : {}, w: 'fill' });
+  if (inst) { inst.name = 'Empty state'; return act ? link(inst, `action:${act}`) : inst; }
+  count(ctx, 'empty-state', false);
   const c = box(ctx, 'Empty state', { gap: 12, pad: [56, 24], align: 'CENTER', stroke: 'border', radius: 'xl', fill: 'card', w: 'fill' });
   c.dashPattern = [6, 4];
   const icon = box(ctx, 'Icon', { dir: 'H', w: 48, h: 48, radius: 'full', fill: 'muted', align: 'CENTER', justify: 'CENTER' });

@@ -1,6 +1,7 @@
-// Finds the kit's components by role and places instances; falls back to our
-// own token-bound drawing when the file has no matching component.
-import { box, text, add, fill, stroke, round, sizing } from './draw.js';
+// Kit components on screens: first the set built from the contract (place.js, plugin data), then a
+// component found by name in a foreign kit (ROLES), last our own token-bound drawing (counted as a fallback).
+import { box, text, add, fill, stroke, round, sizing, skel } from './draw.js';
+import { place, count } from './place.js';
 
 export const ROLES = {
   button: ['button'], badge: ['badge'], input: ['input', 'text-field', 'textfield'],
@@ -67,7 +68,7 @@ async function setLabel(inst, label) {
 }
 
 async function instance(ctx, role, want, label) {
-  const ref = ctx.kit[role];
+  const ref = ctx.kit && ctx.kit[role];
   if (!ref) return null;
   const node = await figma.getNodeByIdAsync(ref.id);
   if (!node) return null;
@@ -80,7 +81,7 @@ async function instance(ctx, role, want, label) {
   if (label != null) {
     try { await setLabel(inst, label); } catch (e) { inst.remove(); return null; } // kit font not installed
   }
-  ctx.stats.instances++;
+  count(ctx, role, true);
   return inst;
 }
 
@@ -96,9 +97,10 @@ const BTN_SIZE = { default: 'md', sm: 'sm', lg: 'lg', icon: 'icon' };
 const BADGE_TONE = { default: 'accent', secondary: 'neutral', outline: 'clear', destructive: 'error', success: 'success', warning: 'warning', info: 'info' };
 
 export async function button(ctx, label, variant = 'default', sz = 'default') {
-  const inst = await instance(ctx, 'button', { variant: BTN_VARIANT[variant] || variant, size: BTN_SIZE[sz] || sz, type: variant, style: variant, state: 'default' }, label);
+  const props = { variant: BTN_VARIANT[variant] || variant, size: BTN_SIZE[sz] || sz, state: 'default' };
+  const inst = (await place(ctx, 'button', { props, label })) || (await instance(ctx, 'button', { ...props, type: variant, style: variant }, label));
   if (inst) return inst;
-  ctx.stats.fallbacks++;
+  count(ctx, 'button', false);
   const [bg, fg, border] = BTN[variant] || BTN.default;
   const b = box(ctx, `Button / ${variant}`, { dir: 'H', gap: 8, pad: sz === 'sm' ? [6, 12] : [8, 16], fill: bg, stroke: border, radius: 'md', align: 'CENTER', justify: 'CENTER' });
   return add(b, await text(ctx, label, { size: 'sm', weight: 'medium', color: fg }));
@@ -111,32 +113,45 @@ const BADGE = {
 };
 
 export async function badge(ctx, label, variant = 'secondary') {
-  const inst = await instance(ctx, 'badge', { tone: BADGE_TONE[variant] || 'neutral', fill: 'ghost', shape: 'rounded', size: 'md', variant, type: variant }, label);
+  const props = { tone: BADGE_TONE[variant] || 'neutral', fill: 'ghost', shape: 'rounded', size: 'md' };
+  const inst = (await place(ctx, 'badge', { props, label })) || (await instance(ctx, 'badge', { ...props, variant, type: variant }, label));
   if (inst) return inst;
-  ctx.stats.fallbacks++;
+  count(ctx, 'badge', false);
   const [bg, fg] = BADGE[variant] || BADGE.secondary;
   const b = box(ctx, `Badge / ${variant}`, { dir: 'H', pad: [2, 8], fill: bg, stroke: variant === 'outline' ? 'border' : null, radius: 'full', align: 'CENTER' });
   return add(b, await text(ctx, label, { size: 'xs', weight: 'medium', color: fg }));
 }
 
+/**
+ * Text field: o.kind picks the contract (search-input, select-trigger, textarea, date-picker-trigger; plain input
+ * when that set is missing), o.error the invalid state, o.w the width (fills its column by default).
+ */
 export async function input(ctx, placeholder, o = {}) {
-  const inst = await instance(ctx, 'input', { state: o.error ? 'invalid' : 'default', size: 'md' }, placeholder);
-  if (inst) {
+  const props = { state: o.error ? 'invalid' : 'default', size: 'md' };
+  const w = o.w || 'fill';
+  const own = o.kind && (await place(ctx, o.kind, { props, texts: { Placeholder: placeholder }, w }));
+  if (own) return own;
+  let inst = await place(ctx, 'input', { props, texts: { Placeholder: placeholder }, w });
+  if (!inst && (inst = await instance(ctx, 'input', props, placeholder))) {
     // A kit instance keeps its own width unless told otherwise: fields fill their column by default.
-    if (typeof o.w === 'number') inst.resize(o.w, inst.height);
-    else sizing(inst, o.w || 'fill');
+    if (typeof w === 'number') inst.resize(w, inst.height);
+    else sizing(inst, w);
+  }
+  if (inst) {
+    if (o.kind) count(ctx, o.kind, 'stand-in'); // its own set is missing: a plain input stands in
     return inst;
   }
-  ctx.stats.fallbacks++;
+  count(ctx, o.kind || 'input', false);
   const f = box(ctx, 'Input', { dir: 'H', gap: 8, pad: [8, 12], fill: 'background', stroke: o.error ? 'destructive' : 'input', radius: 'md', align: 'CENTER', w: o.w || 'fill', h: 36 });
   return add(f, await text(ctx, placeholder, { size: 'sm', color: 'muted-foreground', truncate: true }));
 }
 
 export async function avatar(ctx, name, d = 32) {
   const initials = String(name).split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
-  const inst = await instance(ctx, 'avatar', { size: d <= 24 ? 'xs' : d <= 32 ? 'sm' : d <= 40 ? 'md' : 'lg' }, initials);
+  const props = { size: d <= 24 ? 'xs' : d <= 32 ? 'sm' : d <= 40 ? 'md' : 'lg' };
+  const inst = (await place(ctx, 'avatar', { props, label: initials })) || (await instance(ctx, 'avatar', props, initials));
   if (inst) return inst;
-  ctx.stats.fallbacks++;
+  count(ctx, 'avatar', false);
   const a = box(ctx, 'Avatar', { dir: 'H', fill: 'muted', radius: 'full', align: 'CENTER', justify: 'CENTER', w: d, h: d });
   a.primaryAxisSizingMode = 'FIXED';
   a.counterAxisSizingMode = 'FIXED';
@@ -144,8 +159,10 @@ export async function avatar(ctx, name, d = 32) {
 }
 
 export async function checkbox(ctx, checked = false) {
-  const inst = await instance(ctx, 'checkbox', { checked: checked ? 'true' : 'false', state: checked ? 'checked' : 'default' }, null);
+  const inst = (await place(ctx, 'checkbox', { props: { state: checked ? 'checked' : 'default' } }))
+    || (await instance(ctx, 'checkbox', { checked: checked ? 'true' : 'false', state: checked ? 'checked' : 'default' }, null));
   if (inst) return inst;
+  count(ctx, 'checkbox', false);
   const c = figma.createRectangle();
   c.name = 'Checkbox';
   c.resize(16, 16);
@@ -153,6 +170,28 @@ export async function checkbox(ctx, checked = false) {
   stroke(c, ctx, checked ? 'primary' : 'input');
   round(c, ctx, 'sm');
   return c;
+}
+
+export async function radio(ctx, checked = false) {
+  const inst = await place(ctx, 'radio', { props: { state: checked ? 'checked' : 'default' } });
+  if (inst) return inst;
+  count(ctx, 'radio', false);
+  const c = figma.createEllipse ? figma.createEllipse() : figma.createRectangle();
+  c.name = 'Radio';
+  c.resize(16, 16);
+  fill(c, ctx, 'background');
+  stroke(c, ctx, checked ? 'primary' : 'input', checked ? 5 : 1);
+  if (!figma.createEllipse) round(c, ctx, 'full');
+  return c;
+}
+
+/** Loading placeholder: the skeleton contract (line / circle / block) at w x h, else a muted bar. */
+export async function skeleton(ctx, w, h = 12, radius = 'sm') {
+  const shape = radius === 'full' && w === h ? 'circle' : h >= 24 ? 'block' : 'line';
+  const inst = await place(ctx, 'skeleton', { props: { shape }, w: typeof w === 'number' ? w : 'fill', h });
+  if (inst) return inst;
+  count(ctx, 'skeleton', false);
+  return skel(ctx, w, h, radius);
 }
 
 // Status label -> badge variant, so tables read at a glance.

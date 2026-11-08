@@ -13,6 +13,7 @@ import { screenVars } from './tokens-resolve.js';
 import BUNDLED_CONTRACTS from 'ds:contracts';
 import EXAMPLE_SPEC from '../../examples/credit-crm.spec.json';
 import { startBridge } from './bridge.js';
+import { ensureContracts } from './assemble.js';
 
 // Menu commands (manifest "menu") run without the window: an agent or a designer starts them from Plugins → DS Builder.
 const COMMAND = figma.command && figma.command !== 'open' ? figma.command : null;
@@ -44,6 +45,14 @@ async function exportTokens(brand, style) {
   };
 }
 
+// «Экземпляры 812, нарисовано вручную 14 (progress 14) · по ролям: …» for the window and the menu command.
+function screensReport(res) {
+  const s = res.stats;
+  const hand = (res.handDrawn || []).map((x) => `${x.role} ${x.count}`).join(', ');
+  const built = res.components && res.components.built.length ? ` · собраны компоненты: ${res.components.built.join(', ')}` : '';
+  return `Экземпляры компонентов ${s.instances}, нарисовано вручную ${s.fallbacks}${hand ? ` (${hand})` : ''}${built} · по ролям (экземпляры/вручную): ${res.roles}`;
+}
+
 const handlers = {
   async init() { return { status: await inspect() }; },
   async setup(m) { const report = await setupBrand(m); return { report, status: await inspect() }; },
@@ -63,9 +72,14 @@ const handlers = {
     const errors = [...validateSpec(m.spec), ...validateLinks(m.spec)];
     if (errors.length) return { errors };
     const { vars, radius } = await screenVars(await modeVars());
+    // components: false = use only the sets already in the file; otherwise build the missing contract sets first
+    const components = m.components === false ? null : await ensureContracts(m.spec, BUNDLED_CONTRACTS, { font: m.font, create: m.create });
+    if (components && components.built.length) kitCache = null;
     const k = await kit();
-    const res = await buildSpec(m.spec, { vars, radius, kit: k.kit, font: m.font, brand: m.brand, style: m.style, theme: m.theme, only: m.only },
+    const res = await buildSpec(m.spec, { vars, radius, kit: k.kit, font: m.font, brand: m.brand, style: m.style, theme: m.theme, only: m.only, contracts: components ? components.sets : undefined },
       (done, total, label) => post('progress', { done, total, label }));
+    res.components = components && { built: components.built, failed: components.failed, unknown: components.unknown };
+    res.report = screensReport(res);
     const audit = await auditFrames(res.frames.map((f) => f.id));
     const first = res.sections[0] && (await figma.getNodeByIdAsync(res.sections[0].id));
     if (first) {
@@ -98,7 +112,7 @@ const COMMANDS = {
   async 'build-example'() {
     const r = await handlers.build({ spec: EXAMPLE_SPEC, brand: 'bank', theme: 'light' });
     if (r.errors) return `Спека с ошибками: ${r.errors.slice(0, 3).join('; ')}`;
-    return `Экраны: ${r.result.frames.length} фреймов, ${r.result.sections.length} экранов · компоненты кита ${r.result.stats.instances}, нарисовано плагином ${r.result.stats.fallbacks}`;
+    return `Экраны: ${r.result.frames.length} фреймов, ${r.result.sections.length} экранов · ${r.result.report}`;
   },
 };
 
