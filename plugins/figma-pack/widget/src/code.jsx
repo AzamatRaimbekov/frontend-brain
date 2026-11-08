@@ -40,11 +40,13 @@ function MbankTokens() {
       { itemType: 'action', propertyName: 'apply', tooltip: 'Применить в Figma' },
       { itemType: 'action', propertyName: 'components', tooltip: 'Компоненты' },
       { itemType: 'action', propertyName: 'sync', tooltip: 'Синхронизация с кодом' },
+      { itemType: 'action', propertyName: 'site', tooltip: 'Сайт дизайн-системы' },
     ],
     async ({ propertyName, propertyValue }) => {
       if (propertyName === 'brand') setBrand(propertyValue);
       else if (propertyName === 'edit') await openUI(store, 'tokens');
       else if (propertyName === 'sync') await openUI(store, 'code');
+      else if (propertyName === 'site') await openUI(store, 'site');
       else if (propertyName === 'components') await openUI(store, 'bind');
       else if (propertyName === 'scan') {
         const snap = await scan(store);

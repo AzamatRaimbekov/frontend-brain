@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Internal design-system configurator: fork of the shadcn/ui /create generator with the Mbank preset, extra tokens and export to a shadcn registry:base item, tokens.css and a Figma use_figma script",
+  "description": "Design-system site: projects with shadcn tokens (Mbank base + overrides + custom tokens), API for the Figma widget, outputs tokens.css / shadcn registry:base / figma.json; plus the fork of the shadcn/ui /create generator",
   "license": "MIT",
   "scripts": {
     "prebuild": "node scripts/prebuild.mjs",
@@ -11,13 +11,17 @@
     "pretest": "node scripts/prebuild.mjs",
     "pretypecheck": "node scripts/prebuild.mjs",
     "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "build": "tsc --noEmit -p tsconfig.json && vite build && vite build --ssr server/main.ts --outDir dist-server",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "start": "node dist-server/main.js",
+    "serve": "npm run build && npm start",
+    "dev:server": "vite-node server/main.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.6.0",
+    "@tanstack/react-query": "^5.107.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "radix-ui": "^1.4.3",

@@ -9,7 +9,8 @@ export function useConfigurator() {
   const [state, setState] = useState<ConfiguratorState>(() => stateFromSearch(window.location.search, loadExtras()))
 
   useEffect(() => {
-    window.history.replaceState(null, "", stateToSearch(state))
+    // keep the hash: the site routes by it (#/configurator)
+    window.history.replaceState(null, "", stateToSearch(state) + window.location.hash)
   }, [state])
 
   useEffect(() => {

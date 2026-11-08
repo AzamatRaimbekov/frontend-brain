@@ -3,6 +3,7 @@
 import { validateExtra, KINDS } from '../../core/checks.js';
 import { renderGenerate, renderCode, renderFigma, onDone } from './views.js';
 import { renderBind, propagationBox } from './components-view.js';
+import { renderSite, onSiteDone } from './site-view.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
@@ -125,7 +126,7 @@ function renderExtra() {
   check();
 }
 
-const RENDER = { tokens: renderTokens, extra: renderExtra, generate: renderGenerate, bind: renderBind, code: renderCode, figma: renderFigma };
+const RENDER = { tokens: renderTokens, extra: renderExtra, generate: renderGenerate, bind: renderBind, code: renderCode, figma: renderFigma, site: renderSite };
 
 export function show(tab) {
   ui.tab = tab;
@@ -145,6 +146,7 @@ window.onmessage = (e) => {
     return;
   }
   if (m.type === 'error') { toast(`${m.for}: ${m.message}`, 'error'); return; }
+  if (m.type.startsWith('site-') && m.type.endsWith(':done')) { onSiteDone(m.type.slice(0, -5), m); return; }
   if (m.type.endsWith(':done')) onDone(m.type.slice(0, -5), m);
 };
 
