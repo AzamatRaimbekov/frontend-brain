@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "nav-item",
+  "type": "registry:ui",
+  "title": "nav-item",
+  "description": "Nav item (from contract nav-item.json): Figma item-sidemenu-menu-tree-1",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/nav-item.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { cva } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\n/*\n * Nav item (Figma `item-sidemenu-menu-tree-1`). Generated from the contract\n * registry/mbank/contracts/nav-item.json by contract-to-code --new (template button-like).\n * Change the look in the contract and run contract-to-code --write; the block between the markers is generated.\n * Accessibility: see the component comment below.\n */\n// @contract nav-item start\nconst navItemVariants = cva(\n  \"gap-3 px-3 h-11 rounded-md text-sm font-medium text-soft-foreground items-center hover:bg-accent aria-[current=page]:bg-muted aria-[current=page]:text-foreground aria-disabled:text-disabled-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:size-5 [&_svg]:text-muted-foreground [&_svg]:aria-[current=page]:text-foreground [&_svg]:aria-disabled:text-disabled-foreground flex w-full min-w-0 transition-colors outline-none aria-disabled:pointer-events-none [&_svg]:shrink-0\",\n)\n// @contract nav-item end\n\ntype NavItemProps = React.ComponentProps<\"a\"> & {\n  /** Current page: aria-current=\"page\" (selected look). */\n  active?: boolean\n  /** Icon on the left (Mbank 20px glyph). */\n  icon?: React.ReactNode\n  /** Counter on the right (number of new items). */\n  count?: React.ReactNode\n}\n\n/** Side menu item: a link; the selected look follows aria-current=\"page\", disabled — aria-disabled. */\nfunction NavItem({ className, active = false, icon, count, children, ...props }: NavItemProps) {\n  return (\n    <a\n      data-slot=\"nav-item\"\n      aria-current={active ? \"page\" : undefined}\n      className={cn(navItemVariants(), className)}\n      {...props}\n    >\n      {icon}\n      <span data-slot=\"nav-item-label\" className=\"min-w-0 flex-1 truncate\">\n        {children}\n      </span>\n      {count !== undefined && (\n        <span data-slot=\"nav-item-count\" className=\"text-caption font-medium text-muted-foreground tabular-nums\">\n          {count}\n        </span>\n      )}\n    </a>\n  )\n}\n\nexport { NavItem, navItemVariants }\n"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "table-head",
+  "title": "Table head",
+  "figma": {
+    "name": "item/cell/header",
+    "key": "e28abae96eaece6a3a3ca39eb048b04f138c2c0c",
+    "nodeId": "1113:46703"
+  },
+  "parts": [
+    "root",
+    "text",
+    "icon"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 160,
+      "sides": [
+        "bottom"
+      ]
+    },
+    "text": {
+      "kind": "text",
+      "layer": "Text",
+      "sample": "Клиент"
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "chevron"
+    }
+  },
+  "props": {
+    "sort": {
+      "values": [
+        "none",
+        "asc",
+        "desc"
+      ],
+      "default": "none"
+    }
+  },
+  "base": {
+    "root": {
+      "align": "center",
+      "gap": 1,
+      "height": 11,
+      "px": 3,
+      "text": "sm",
+      "weight": "medium",
+      "fg": "muted-foreground",
+      "border-width": 1,
+      "border": "border"
+    },
+    "icon": {
+      "size": 4,
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "sort": {
+      "none": {
+        "icon": {
+          "hidden": true
+        }
+      },
+      "asc": {
+        "root": {
+          "fg": "foreground"
+        },
+        "icon": {
+          "fg": "foreground"
+        }
+      },
+      "desc": {
+        "root": {
+          "fg": "foreground"
+        },
+        "icon": {
+          "fg": "foreground"
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "table.tsx",
+    "shape": "classes",
+    "template": "card-like",
+    "extra": "text-left align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+    "figmaOnly": [
+      "icon"
+    ],
+    "overrides": {
+      "root": {
+        "align": null,
+        "border": null,
+        "border-width": null
+      }
+    }
+  }
+}

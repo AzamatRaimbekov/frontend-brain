@@ -22,7 +22,19 @@
 
 ## Компоненты: кит из контрактов, а не руками
 
-Компонент описывается контрактом `mbank/component@1` (формат: [docs/component-contract.md](docs/component-contract.md)): части, свойства (variant, size…), состояния и какой токен стоит на каждом свойстве. Плагин собирает из контракта component set в Figma, генератор frontend-pack — React-код из того же JSON. Контракты лежат в `builder/contracts/*.json` и вшиваются в плагин при сборке; пока папка пуста, в плагине три примера (button, badge, input из `test/fixtures/contracts`).
+Компонент описывается контрактом `mbank/component@1` (формат: [docs/component-contract.md](docs/component-contract.md)): части, свойства (variant, size…), состояния и какой токен стоит на каждом свойстве. Плагин собирает из контракта component set в Figma, генератор frontend-pack — React-код из того же JSON. Контракты лежат в `builder/contracts/*.json` и вшиваются в плагин при сборке (если папка пуста — три примера из `test/fixtures/contracts`). Сейчас их 38, на листе кита они разложены по группам (`plugin/src/kit-sheet.js`):
+
+| Группа | Контракты |
+|---|---|
+| Основа | button, badge, avatar, card, separator |
+| Формы | input, textarea, search-input, select-trigger, date-picker-trigger, checkbox, radio, switch, filter-chip |
+| Навигация | nav-item, tabbar-item, breadcrumb-item, tabs-list, tabs-trigger, pagination, stepper-step |
+| Данные | table-head, table-cell |
+| Обратная связь | alert, toast, progress, spinner, skeleton, empty-state |
+| Оверлеи | dialog, tooltip, dropdown-menu-item |
+| CRM | crm-kpi-card, crm-application-card, crm-key-value-row, crm-timeline-item, crm-transfer-row, crm-list-item |
+
+Текстовая часть называется в Figma как имя части с заглавной (`delta-value` → слой «Delta value»), часть `label` (или `text`) — свойство «Label» набора: экраны ставят текст через него. Вложенные компоненты кита — части `kind: "instance"` (Button в empty-state и dialog, Avatar в crm-list-item, Tabs trigger в tabs-list); «Собрать все» строит их последними. Свойства и значения повторяют пропсы shadcn/ui там, где у shadcn есть такой компонент (`variant` у dropdown-menu-item, `orientation` у separator).
 
 Вкладка **Компоненты**:
 

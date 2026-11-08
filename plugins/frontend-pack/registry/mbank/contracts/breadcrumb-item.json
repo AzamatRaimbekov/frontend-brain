@@ -1,0 +1,70 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "breadcrumb-item",
+  "title": "Breadcrumb item",
+  "figma": {
+    "name": "Breadcrumb",
+    "key": "385c08c28fbb4a95a06b073d1fc99963af0c26c8",
+    "nodeId": "4240:4717"
+  },
+  "parts": [
+    "root",
+    "label",
+    "separator"
+  ],
+  "anatomy": {
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "sample": "Заявки"
+    },
+    "separator": {
+      "kind": "text",
+      "layer": "Separator",
+      "sample": "/"
+    }
+  },
+  "props": {
+    "current": {
+      "values": [
+        "false",
+        "true"
+      ],
+      "default": "false"
+    }
+  },
+  "base": {
+    "root": {
+      "align": "center",
+      "gap": 2,
+      "text": "sm",
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "current": {
+      "false": {},
+      "true": {
+        "root": {
+          "fg": "foreground",
+          "weight": "medium"
+        },
+        "separator": {
+          "hidden": true
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "breadcrumb-item.tsx",
+    "template": "badge-like",
+    "extra": "inline-flex min-w-0 whitespace-nowrap",
+    "figmaOnly": [
+      "label",
+      "separator"
+    ]
+  }
+}

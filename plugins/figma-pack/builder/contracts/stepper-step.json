@@ -1,0 +1,121 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "stepper-step",
+  "title": "Stepper step",
+  "figma": {
+    "name": "item-stepper-basic",
+    "key": "954b3a3b55fce287426091c632d9f1e6e84b1a13",
+    "nodeId": "3098:7661"
+  },
+  "parts": [
+    "root",
+    "marker",
+    "number",
+    "label",
+    "description"
+  ],
+  "anatomy": {
+    "marker": {
+      "kind": "frame",
+      "layer": "Marker"
+    },
+    "number": {
+      "kind": "text",
+      "layer": "Number",
+      "sample": "2",
+      "parent": "marker"
+    },
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "sample": "Проверка"
+    },
+    "description": {
+      "kind": "text",
+      "layer": "Description",
+      "sample": "до 2 дней"
+    }
+  },
+  "props": {
+    "status": {
+      "values": [
+        "done",
+        "current",
+        "upcoming"
+      ],
+      "default": "upcoming"
+    }
+  },
+  "base": {
+    "root": {
+      "align": "center",
+      "gap": 2,
+      "py": 2,
+      "text": "base",
+      "fg": "foreground"
+    },
+    "marker": {
+      "size": 8,
+      "radius": "full",
+      "align": "center"
+    },
+    "number": {
+      "text": "sm",
+      "weight": "medium"
+    },
+    "description": {
+      "text": "caption",
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "status": {
+      "done": {
+        "marker": {
+          "bg": "status-success-muted"
+        },
+        "number": {
+          "fg": "status-success"
+        }
+      },
+      "current": {
+        "root": {
+          "weight": "medium"
+        },
+        "marker": {
+          "bg": "status-success"
+        },
+        "number": {
+          "fg": "static-light"
+        }
+      },
+      "upcoming": {
+        "root": {
+          "fg": "muted-foreground"
+        },
+        "marker": {
+          "bg": "soft"
+        },
+        "number": {
+          "fg": "muted-foreground"
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "stepper-step.tsx",
+    "template": "card-like",
+    "parts": {
+      "marker": "*:data-[slot=stepper-step-marker]",
+      "number": "**:data-[slot=stepper-step-number]"
+    },
+    "extra": "inline-flex min-w-0 *:data-[slot=stepper-step-marker]:inline-flex *:data-[slot=stepper-step-marker]:shrink-0 *:data-[slot=stepper-step-marker]:justify-center",
+    "figmaOnly": [
+      "label",
+      "description"
+    ]
+  }
+}

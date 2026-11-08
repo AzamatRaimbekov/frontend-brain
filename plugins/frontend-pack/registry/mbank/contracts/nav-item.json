@@ -1,0 +1,88 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "nav-item",
+  "title": "Nav item",
+  "figma": {
+    "name": "item-sidemenu-menu-tree-1",
+    "key": "9789323b5edf20b5384e1623e5d2f75cf7df0c57",
+    "nodeId": "410:11518"
+  },
+  "parts": [
+    "root",
+    "icon",
+    "label",
+    "count"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 256
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "home"
+    },
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "sample": "Заявки",
+      "fill": true
+    },
+    "count": {
+      "kind": "text",
+      "layer": "Count",
+      "sample": "12"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "gap": 3,
+      "px": 3,
+      "height": 11,
+      "radius": "md",
+      "text": "sm",
+      "weight": "medium",
+      "fg": "soft-foreground",
+      "align": "center",
+      "bg:hover": "accent",
+      "bg:selected": "muted",
+      "fg:selected": "foreground",
+      "fg:disabled": "disabled-foreground",
+      "focus-ring": "ring/30"
+    },
+    "icon": {
+      "size": 5,
+      "fg": "muted-foreground",
+      "fg:selected": "foreground",
+      "fg:disabled": "disabled-foreground"
+    },
+    "count": {
+      "text": "caption",
+      "weight": "medium",
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default",
+    "hover",
+    "selected",
+    "disabled"
+  ],
+  "code": {
+    "file": "nav-item.tsx",
+    "template": "button-like",
+    "modifiers": {
+      "selected": "aria-[current=page]",
+      "disabled": "aria-disabled"
+    },
+    "parts": {
+      "icon": "[&_svg]"
+    },
+    "extra": "flex w-full min-w-0 transition-colors outline-none aria-disabled:pointer-events-none [&_svg]:shrink-0",
+    "figmaOnly": [
+      "label",
+      "count"
+    ]
+  }
+}

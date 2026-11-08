@@ -1,0 +1,101 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "crm-list-item",
+  "title": "CRM / List item",
+  "figma": {
+    "name": "CRM / List item",
+    "page": "☰ CRM blocks"
+  },
+  "parts": [
+    "root",
+    "avatar",
+    "content",
+    "title",
+    "subtitle",
+    "meta"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 360,
+      "sides": [
+        "bottom"
+      ]
+    },
+    "avatar": {
+      "kind": "instance",
+      "layer": "Avatar",
+      "sample": "АН",
+      "component": {
+        "name": "Avatar",
+        "set": "a3d5e7947473b09bf719839c62a18d751927d7a8",
+        "key": "2c3fca6917c56c5d664a8c1a8159dedb38cc26ac",
+        "variant": "Size=40 px, Placeholder=False, Upload=False, Name=False"
+      }
+    },
+    "content": {
+      "kind": "frame",
+      "layer": "Content",
+      "fill": true
+    },
+    "title": {
+      "kind": "text",
+      "layer": "Title",
+      "sample": "Асанов Нурлан",
+      "parent": "content",
+      "fill": true
+    },
+    "subtitle": {
+      "kind": "text",
+      "layer": "Subtitle",
+      "sample": "Потребительский · 450 000 KGS",
+      "parent": "content",
+      "fill": true
+    },
+    "meta": {
+      "kind": "text",
+      "layer": "Meta",
+      "sample": "09:14"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "row",
+      "align": "center",
+      "gap": 3,
+      "px": 4,
+      "py": 3,
+      "bg": "card",
+      "border-width": 1,
+      "border": "border"
+    },
+    "content": {
+      "layout": "column",
+      "gap": 1
+    },
+    "title": {
+      "text": "sm",
+      "weight": "medium",
+      "fg": "foreground"
+    },
+    "subtitle": {
+      "text": "caption",
+      "weight": "regular",
+      "fg": "muted-foreground"
+    },
+    "meta": {
+      "text": "caption",
+      "weight": "regular",
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {},
+  "states": [
+    "default"
+  ],
+  "code": {
+    "kind": "block",
+    "file": "blocks/crm/ListItem.tsx",
+    "slot": "crm-list-item"
+  }
+}

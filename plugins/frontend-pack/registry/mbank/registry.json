@@ -942,6 +942,170 @@
         "card",
         "crm-status-dot"
       ]
+    },
+    {
+      "name": "nav-item",
+      "type": "registry:ui",
+      "description": "Nav item (from contract nav-item.json): Figma item-sidemenu-menu-tree-1",
+      "files": [
+        {
+          "path": "components/nav-item.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "tabbar-item",
+      "type": "registry:ui",
+      "description": "Tabbar item (from contract tabbar-item.json): Figma Tabbar item",
+      "files": [
+        {
+          "path": "components/tabbar-item.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "breadcrumb-item",
+      "type": "registry:ui",
+      "description": "Breadcrumb item (from contract breadcrumb-item.json): Figma Breadcrumb",
+      "files": [
+        {
+          "path": "components/breadcrumb-item.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "search-input",
+      "type": "registry:ui",
+      "description": "Search input (from contract search-input.json): Figma input/search",
+      "files": [
+        {
+          "path": "components/search-input.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "filter-chip",
+      "type": "registry:ui",
+      "description": "Filter chip (from contract filter-chip.json): Figma Item / chipsButton",
+      "files": [
+        {
+          "path": "components/filter-chip.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "icons"
+      ]
+    },
+    {
+      "name": "radio",
+      "type": "registry:ui",
+      "description": "Radio (from contract radio.json): Figma Switchers - Check, Type=Radiobutton; RadioGroup + RadioGroupItem",
+      "files": [
+        {
+          "path": "components/radio.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "stepper-step",
+      "type": "registry:ui",
+      "description": "Stepper step (from contract stepper-step.json): Figma item-stepper-basic",
+      "files": [
+        {
+          "path": "components/stepper-step.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "description": "Separator (from contract separator.json): Figma Separator",
+      "files": [
+        {
+          "path": "components/separator.tsx",
+          "target": "ui"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils",
+        "tokens"
+      ]
+    },
+    {
+      "name": "crm-list-item",
+      "type": "registry:block",
+      "description": "CRM / List item (contract crm-list-item): avatar, title, subtitle, meta, bottom divider",
+      "files": [
+        {
+          "path": "blocks/crm/ListItem.tsx",
+          "target": "blocks"
+        }
+      ],
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "tokens",
+        "avatar"
+      ]
     }
   ]
 }

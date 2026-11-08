@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "breadcrumb-item",
+  "type": "registry:ui",
+  "title": "breadcrumb-item",
+  "description": "Breadcrumb item (from contract breadcrumb-item.json): Figma Breadcrumb",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/breadcrumb-item.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { cva } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\n/*\n * Breadcrumb item (Figma `Breadcrumb`). Generated from the contract\n * registry/mbank/contracts/breadcrumb-item.json by contract-to-code --new (template badge-like).\n * Change the look in the contract and run contract-to-code --write; the block between the markers is generated.\n * Accessibility: see the component comment below.\n */\n// @contract breadcrumb-item start\nconst breadcrumbItemVariants = cva(\n  \"items-center gap-2 text-sm text-muted-foreground inline-flex min-w-0 whitespace-nowrap\",\n  {\n    variants: {\n      current: {\n        false: \"\",\n        true: \"text-foreground font-medium\",\n      },\n    },\n    defaultVariants: { current: \"false\" },\n  },\n)\n// @contract breadcrumb-item end\n\ntype BreadcrumbItemProps = Omit<React.ComponentProps<\"li\">, \"children\"> & {\n  label: React.ReactNode\n  /** Link of a parent item; the current page has none. */\n  href?: string\n  /** The current page: aria-current=\"page\", no separator after it. */\n  current?: boolean\n}\n\n/** One item of a breadcrumb trail: put them in <nav aria-label><ol>. */\nfunction BreadcrumbItem({ className, label, href, current = false, ...props }: BreadcrumbItemProps) {\n  return (\n    <li data-slot=\"breadcrumb-item\" className={cn(breadcrumbItemVariants({ current }), className)} {...props}>\n      {current || !href ? (\n        <span data-slot=\"breadcrumb-item-label\" aria-current={current ? \"page\" : undefined} className=\"truncate\">\n          {label}\n        </span>\n      ) : (\n        <a\n          data-slot=\"breadcrumb-item-label\"\n          href={href}\n          className=\"truncate rounded-xs outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30\"\n        >\n          {label}\n        </a>\n      )}\n      {!current && (\n        <span data-slot=\"breadcrumb-item-separator\" aria-hidden=\"true\">\n          /\n        </span>\n      )}\n    </li>\n  )\n}\n\nexport { BreadcrumbItem, breadcrumbItemVariants }\n"
+    }
+  ]
+}

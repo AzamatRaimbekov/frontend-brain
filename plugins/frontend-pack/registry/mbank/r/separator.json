@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "separator",
+  "type": "registry:ui",
+  "title": "separator",
+  "description": "Separator (from contract separator.json): Figma Separator",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/separator.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\n/*\n * Separator (Figma `Separator`). Generated from the contract\n * registry/mbank/contracts/separator.json by contract-to-code --new (template card-like).\n * Change the look in the contract and run contract-to-code --write; the block between the markers is generated.\n * Accessibility: see the component comment below.\n */\n// @contract separator start\nconst separatorVariants = cva(\n  \"bg-border shrink-0\",\n  {\n    variants: {\n      orientation: {\n        horizontal: \"h-px w-full\",\n        vertical: \"h-full w-px\",\n      },\n    },\n    defaultVariants: { orientation: \"horizontal\" },\n  },\n)\n// @contract separator end\n\ntype SeparatorProps = Omit<React.ComponentProps<\"div\">, \"orientation\"> &\n  VariantProps<typeof separatorVariants> & {\n    /** Decorative (default): hidden from screen readers; false -> role=\"separator\". */\n    decorative?: boolean\n  }\n\nfunction Separator({ className, orientation = \"horizontal\", decorative = true, ...props }: SeparatorProps) {\n  return (\n    <div\n      data-slot=\"separator\"\n      role={decorative ? \"none\" : \"separator\"}\n      aria-orientation={decorative ? undefined : (orientation ?? undefined)}\n      className={cn(separatorVariants({ orientation }), className)}\n      {...props}\n    />\n  )\n}\n\nexport { Separator, separatorVariants }\n"
+    }
+  ]
+}

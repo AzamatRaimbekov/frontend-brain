@@ -1,0 +1,64 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "tabbar-item",
+  "title": "Tabbar item",
+  "figma": {
+    "name": "Tabbar item"
+  },
+  "parts": [
+    "root",
+    "icon",
+    "label"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 80
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "home"
+    },
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "sample": "Главная"
+    }
+  },
+  "props": {},
+  "base": {
+    "root": {
+      "layout": "column",
+      "align": "center",
+      "gap": 1,
+      "px": 2,
+      "py": 2,
+      "text": "2xs",
+      "weight": "medium",
+      "fg": "muted-foreground",
+      "fg:selected": "brand-text",
+      "focus-ring": "ring/30"
+    },
+    "icon": {
+      "size": 6
+    }
+  },
+  "variants": {},
+  "states": [
+    "default",
+    "selected"
+  ],
+  "code": {
+    "file": "tabbar-item.tsx",
+    "template": "button-like",
+    "modifiers": {
+      "selected": "aria-[current=page]"
+    },
+    "parts": {
+      "icon": "[&_svg]"
+    },
+    "extra": "min-w-0 flex-1 justify-center transition-colors outline-none [&_svg]:shrink-0",
+    "figmaOnly": [
+      "label"
+    ]
+  }
+}

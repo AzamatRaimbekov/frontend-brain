@@ -1554,6 +1554,170 @@
           "type": "registry:component"
         }
       ]
+    },
+    {
+      "name": "nav-item",
+      "type": "registry:ui",
+      "title": "nav-item",
+      "description": "Nav item (from contract nav-item.json): Figma item-sidemenu-menu-tree-1",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/nav-item.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabbar-item",
+      "type": "registry:ui",
+      "title": "tabbar-item",
+      "description": "Tabbar item (from contract tabbar-item.json): Figma Tabbar item",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/tabbar-item.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumb-item",
+      "type": "registry:ui",
+      "title": "breadcrumb-item",
+      "description": "Breadcrumb item (from contract breadcrumb-item.json): Figma Breadcrumb",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/breadcrumb-item.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "search-input",
+      "type": "registry:ui",
+      "title": "search-input",
+      "description": "Search input (from contract search-input.json): Figma input/search",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/search-input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "filter-chip",
+      "type": "registry:ui",
+      "title": "filter-chip",
+      "description": "Filter chip (from contract filter-chip.json): Figma Item / chipsButton",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/icons"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/filter-chip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "radio",
+      "type": "registry:ui",
+      "title": "radio",
+      "description": "Radio (from contract radio.json): Figma Switchers - Check, Type=Radiobutton; RadioGroup + RadioGroupItem",
+      "dependencies": [
+        "class-variance-authority",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/radio.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "stepper-step",
+      "type": "registry:ui",
+      "title": "stepper-step",
+      "description": "Stepper step (from contract stepper-step.json): Figma item-stepper-basic",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/stepper-step.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "separator",
+      "description": "Separator (from contract separator.json): Figma Separator",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "@mbank/utils"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/ui/separator.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "crm-list-item",
+      "type": "registry:component",
+      "title": "crm-list-item",
+      "description": "CRM / List item (contract crm-list-item): avatar, title, subtitle, meta, bottom divider",
+      "dependencies": [],
+      "registryDependencies": [
+        "@mbank/utils",
+        "@mbank/avatar"
+      ],
+      "files": [
+        {
+          "path": "registry/mbank/blocks/crm/ListItem.tsx",
+          "type": "registry:component"
+        }
+      ]
     }
   ]
 }

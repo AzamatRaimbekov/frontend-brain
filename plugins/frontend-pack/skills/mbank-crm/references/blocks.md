@@ -61,7 +61,11 @@ Card badge tones used in the frame: SLA `info`, SLA at risk `warning`, «Про�
 
 `transfer: { id, dateTime, sender, recipient, country, amount, channel, status: { label, tone } }`, `onOpen?(id)` (row becomes focusable, Enter/Space open the transfer card), `className?`. A `TableRow` of 8 `TableCell`s with right dividers and a Badge-status; put it in `<Table><TableBody>` under `TableHead`s «ID, Дата и время, Отправитель, Получатель, Страна, Сумма, Канал, Статус». Column widths come from the table, not the row.
 
-Contracts: the five blocks the designers re-created locally (Key-value row, Application card, Transfer row, KPI card, Timeline item) have `mbank/component@1` contracts `registry/mbank/contracts/crm-*.json` (`code.kind: "block"`): every part has `data-slot="<slot>-<part>"`, checked by `contract-to-code --check`. Keep the slots when editing these blocks.
+Contracts: the five blocks the designers re-created locally (Key-value row, Application card, Transfer row, KPI card, Timeline item) and List item have `mbank/component@1` contracts `registry/mbank/contracts/crm-*.json` (`code.kind: "block"`): every part has `data-slot="<slot>-<part>"`, checked by `contract-to-code --check`. Keep the slots when editing these blocks.
+
+## crm-list-item — `ListItem` (`CRM / List item`, contract crm-list-item)
+
+`title`, `subtitle?`, `meta?` (time, amount or a Badge), `initials?` / `src?` (Avatar md 40), `li` props. Row gap 12, px 16 py 12, divider at the bottom (none on the last item); put items in a `<ul>` and wrap the content in a link or button when the row opens a card.
 
 ## crm-summary-header — `SummaryHeader` (35:212 Summary)
 

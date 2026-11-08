@@ -31,8 +31,8 @@ const varName = (m, ref) => m.vars.get(ref.id).name;
 const fill = (m, node) => varName(m, node.fills[0].boundVariables.color);
 const part = (root, name) => root.findOne((n) => n.name === name);
 
-test('there are five CRM contracts, all for the CRM UI KIT page', () => {
-  assert.deepEqual(CRM.map((c) => c.title).sort(), ['CRM / Application card', 'CRM / KPI card', 'CRM / Key-value row', 'CRM / Timeline item', 'CRM / Transfer row']);
+test('there are six CRM contracts, all for the CRM UI KIT page', () => {
+  assert.deepEqual(CRM.map((c) => c.title).sort(), ['CRM / Application card', 'CRM / KPI card', 'CRM / Key-value row', 'CRM / List item', 'CRM / Timeline item', 'CRM / Transfer row']);
   for (const c of CRM) assert.equal(c.figma.page, '☰ CRM blocks');
 });
 
@@ -172,7 +172,7 @@ test('anatomy: kinds, parents and geometry are validated', () => {
   for (const re of [/anatomy\.id\.parent: «meta» должна стоять в parts раньше/, /anatomy\.top\.width/, /anatomy\.top\.sides/, /anatomy\.badge\.component/, /anatomy\.ghost: часть не объявлена/, /anatomy\.meta\.layer/]) assert.match(text, re);
 });
 
-test('dist/code.js (the plugin the designer imports): «Собрать в Figma» builds all five CRM blocks, all bound', async () => {
+test('dist/code.js (the plugin the designer imports): «Собрать в Figma» builds every CRM block, all bound', async () => {
   const code = readFileSync(new URL('../plugin/dist/code.js', import.meta.url), 'utf8');
   const m = createFigma({ library: library() });
   const out = [];
@@ -181,7 +181,7 @@ test('dist/code.js (the plugin the designer imports): «Собрать в Figma�
   const ask = async (msg) => { await m.figma.ui.onmessage(msg); return out.at(-1); };
   const list = await ask({ type: 'contracts-list' });
   const crm = list.contracts.filter((c) => c.name.startsWith('crm-'));
-  assert.equal(crm.length, 5, 'crm-* contracts are bundled into dist');
+  assert.equal(crm.length, CRM.length, 'crm-* contracts are bundled into dist (rebuild dist after adding one)');
   for (const c of crm) {
     const built = await ask({ type: 'contract-render', name: c.name, states: ['default'] });
     assert.equal(built.type, 'contract-render:done', JSON.stringify(built));

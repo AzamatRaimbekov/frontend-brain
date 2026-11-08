@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crm-list-item",
+  "type": "registry:component",
+  "title": "crm-list-item",
+  "description": "CRM / List item (contract crm-list-item): avatar, title, subtitle, meta, bottom divider",
+  "dependencies": [],
+  "registryDependencies": [
+    "@mbank/utils",
+    "@mbank/avatar"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/blocks/crm/ListItem.tsx",
+      "type": "registry:component",
+      "content": "import type * as React from \"react\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\nimport { Avatar, AvatarFallback, AvatarImage } from \"@/registry/mbank/ui/avatar\"\n\ntype ListItemProps = Omit<React.ComponentProps<\"li\">, \"title\"> & {\n  title: React.ReactNode\n  subtitle?: React.ReactNode\n  /** Right column: time, amount or a status badge. */\n  meta?: React.ReactNode\n  /** Initials for the avatar fallback (\"АН\"); with src the photo is shown. */\n  initials?: string\n  src?: string\n}\n\n/**\n * `CRM / List item` (contract crm-list-item): avatar 40, title body/s medium + subtitle label/m muted,\n * meta on the right, row gap 12, px 16 py 12, divider at the bottom. Put items in a <ul>; wrap the content\n * in a link or button yourself when the row opens a card.\n */\nexport function ListItem({ title, subtitle, meta, initials, src, className, ...props }: ListItemProps) {\n  return (\n    <li\n      data-slot=\"crm-list-item\"\n      className={cn(\"flex items-center gap-3 border-b border-border bg-card px-4 py-3 last:border-b-0\", className)}\n      {...props}\n    >\n      <Avatar data-slot=\"crm-list-item-avatar\" size=\"md\">\n        {src && <AvatarImage src={src} alt=\"\" />}\n        <AvatarFallback>{initials}</AvatarFallback>\n      </Avatar>\n      <div data-slot=\"crm-list-item-content\" className=\"flex min-w-0 flex-1 flex-col gap-1\">\n        <span data-slot=\"crm-list-item-title\" className=\"truncate text-sm font-medium text-foreground\">\n          {title}\n        </span>\n        {subtitle && (\n          <span data-slot=\"crm-list-item-subtitle\" className=\"truncate text-caption text-muted-foreground\">\n            {subtitle}\n          </span>\n        )}\n      </div>\n      {meta && (\n        <span data-slot=\"crm-list-item-meta\" className=\"shrink-0 text-caption text-muted-foreground tabular-nums\">\n          {meta}\n        </span>\n      )}\n    </li>\n  )\n}\n"
+    }
+  ]
+}

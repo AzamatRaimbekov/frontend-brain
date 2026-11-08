@@ -1,4 +1,4 @@
-# CRM UI KIT: пять блоков, которые команда рисует локально
+# CRM UI KIT: блоки, которые команда рисует локально
 
 Для дизайнера с правом редактирования CRM UI KIT. Сделано 2026-11-01 по файлу «[draft] Mbank CRM — тест ИИ» (`vVuM5uw3TsWo1xm3vJelXG`, страница Components, секция CRM).
 
@@ -13,6 +13,7 @@
 | CRM / Transfer row | 10 | таблица «Все переводы» | `TransferRow` | `crm-transfer-row` |
 | CRM / KPI card | 8 | дашборд | `KpiCard` | `crm-kpi-card` |
 | CRM / Timeline item | 8 | блок «История» | `TimelineItem` | `crm-timeline-item` |
+| CRM / List item | — | списки клиентов и задач (нарисован из токенов, в тестовом файле его нет) | `ListItem` | `crm-list-item` |
 
 Контракт — JSON в `figma-pack/builder/contracts/crm-*.json`: части, вложенность, размеры и **какая переменная стоит на каждом свойстве** — ровно как в ваших локальных компонентах (переменные 2.theme, `spacing/*`, `radius/*` из Foundation, Badge-status из Web components). По этому же контракту проверяется код, так что Figma и фронт не разойдутся.
 
@@ -21,10 +22,10 @@
 1. Откройте **CRM UI KIT** (нужно право редактирования). Библиотеки Foundation и Web components должны быть подключены (Assets → Libraries) — они уже подключены, если в файле есть их переменные.
 2. Plugins → Development → **DS Builder** (если плагина нет: Import plugin from manifest… → `plugins/figma-pack/builder/plugin/manifest.json`).
 3. Вкладка **«Компоненты»** → в списке выберите `crm-key-value-row` → состояния оставьте как есть (`default`) → **«Собрать в Figma»**.
-4. Повторите для `crm-application-card`, `crm-transfer-row`, `crm-kpi-card`, `crm-timeline-item`.
+4. Повторите для `crm-application-card`, `crm-transfer-row`, `crm-kpi-card`, `crm-timeline-item`, `crm-list-item` (в нём экземпляр Avatars 40 px из Web components).
 5. Плагин кладёт компоненты на страницу **«☰ CRM blocks»** (создаст её). Под кнопкой — отчёт: «привязок N», «Без переменной» должно отсутствовать. Если написано «Не найден компонент библиотеки: Badge-status» — подключите Web components и соберите ещё раз.
 6. Проверьте глазами рядом с локальными копиями из тестового файла, при желании переложите страницу в нужное место кита.
-7. **Publish library** (Assets → Publish), в описании: «CRM blocks: Key-value row, Application card, Transfer row, KPI card, Timeline item».
+7. **Publish library** (Assets → Publish), в описании: «CRM blocks: Key-value row, Application card, Transfer row, KPI card, Timeline item, List item».
 
 Повторная сборка обновляет компонент на месте (тот же узел, экземпляры в макетах не отваливаются, ваш текст сохраняется).
 

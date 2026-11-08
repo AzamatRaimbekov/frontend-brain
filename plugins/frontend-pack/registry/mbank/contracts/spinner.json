@@ -1,0 +1,64 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "spinner",
+  "title": "Spinner",
+  "figma": {
+    "name": "spinner",
+    "key": "03ca97e314c9e429cb882a5f42b978718bc3070d",
+    "nodeId": "2153:1584"
+  },
+  "parts": [
+    "root"
+  ],
+  "props": {
+    "size": {
+      "values": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "sm"
+    }
+  },
+  "base": {
+    "root": {
+      "radius": "full",
+      "border-width": 2,
+      "border": "brand"
+    }
+  },
+  "variants": {
+    "size": {
+      "sm": {
+        "root": {
+          "size": 4
+        }
+      },
+      "md": {
+        "root": {
+          "size": 5
+        }
+      },
+      "lg": {
+        "root": {
+          "size": 6
+        }
+      }
+    }
+  },
+  "states": [
+    "default"
+  ],
+  "code": {
+    "file": "spinner.tsx",
+    "template": "card-like",
+    "extra": "shrink-0 animate-spin motion-reduce:animate-none",
+    "overrides": {
+      "root": {
+        "radius": null,
+        "border-width": null,
+        "border": null
+      }
+    }
+  }
+}

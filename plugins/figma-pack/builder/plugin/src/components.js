@@ -254,9 +254,10 @@ function textProperty(set, c) {
   if (!part || set.type !== 'COMPONENT_SET') return;
   const defs = set.componentPropertyDefinitions;
   let key = Object.keys(defs).find((k) => defs[k].type === 'TEXT' && /^Label#/.test(k));
-  if (!key) key = set.addComponentProperty('Label', 'TEXT', defaultText(part, c));
+  if (!key) key = set.addComponentProperty('Label', 'TEXT', (c.anatomy && c.anatomy[part] && c.anatomy[part].sample) || defaultText(part, c));
+  const layer = (c.anatomy && c.anatomy[part] && c.anatomy[part].layer) || part; // «Label» in contracts that name layers
   for (const v of set.children) {
-    const t = v.findOne((n) => n.type === 'TEXT' && n.name === part);
+    const t = v.findOne((n) => n.type === 'TEXT' && n.name === layer);
     if (t) t.componentPropertyReferences = { characters: key };
   }
 }

@@ -86,7 +86,7 @@ Values were read in full on 2026-10-09. When the library changes, re-read them w
 - `references/catalog.md` - human-readable catalog: kits, token tables, typography, component index per kit, blocks, icons
 - `references/code-mapping.md` - Figma token -> web CSS variable / Tailwind class, React Native and Flutter names; brand themes; fonts; icon export procedure; component mapping
 - `references/gaps.md` - issues report for the designers (in Russian), by severity, with a fix per item
-- `references/crm-kit-additions.md` - designer handoff (in Russian): five CRM blocks the team re-created locally (Key-value row, Application card, Transfer row, KPI card, Timeline item) to build in CRM UI KIT with DS Builder from `builder/contracts/crm-*.json`, publish, and swap the local copies
+- `references/crm-kit-additions.md` - designer handoff (in Russian): the CRM blocks the team re-created locally (Key-value row, Application card, Transfer row, KPI card, Timeline item) plus List item drawn from tokens to build in CRM UI KIT with DS Builder from `builder/contracts/crm-*.json`, publish, and swap the local copies
 - `../mbank-figma-patterns/` - verified build patterns, full token values with keys, icon keys by role, mobile screen recipe
 
 ## Fonts available to the Figma MCP (re-checked 2026-10-09)

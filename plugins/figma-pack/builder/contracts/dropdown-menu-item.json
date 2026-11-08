@@ -1,0 +1,105 @@
+{
+  "$schema": "mbank/component@1",
+  "name": "dropdown-menu-item",
+  "title": "Dropdown menu item",
+  "figma": {
+    "name": "Item / dropdown / simple",
+    "key": "79cec158925db00a687b7dc969846592cf4cb98f",
+    "nodeId": "5020:11626"
+  },
+  "parts": [
+    "root",
+    "icon",
+    "label",
+    "shortcut"
+  ],
+  "anatomy": {
+    "root": {
+      "width": 220
+    },
+    "icon": {
+      "kind": "icon",
+      "icon": "file"
+    },
+    "label": {
+      "kind": "text",
+      "layer": "Label",
+      "sample": "Открыть",
+      "fill": true
+    },
+    "shortcut": {
+      "kind": "text",
+      "layer": "Shortcut",
+      "sample": "⌘O"
+    }
+  },
+  "props": {
+    "variant": {
+      "values": [
+        "default",
+        "destructive"
+      ],
+      "default": "default"
+    }
+  },
+  "base": {
+    "root": {
+      "align": "center",
+      "gap": 2,
+      "px": 2,
+      "height": 8,
+      "radius": "xs",
+      "text": "sm",
+      "fg": "foreground",
+      "bg:hover": "accent",
+      "fg:disabled": "disabled-foreground"
+    },
+    "icon": {
+      "size": 4,
+      "fg": "muted-foreground"
+    },
+    "shortcut": {
+      "text": "xs",
+      "fg": "muted-foreground"
+    }
+  },
+  "variants": {
+    "variant": {
+      "default": {},
+      "destructive": {
+        "root": {
+          "fg": "destructive-text",
+          "bg:hover": "destructive-soft"
+        },
+        "icon": {
+          "fg": "destructive-text"
+        }
+      }
+    }
+  },
+  "states": [
+    "default",
+    "hover",
+    "disabled"
+  ],
+  "code": {
+    "file": "dropdown-menu.tsx",
+    "shape": "classes",
+    "template": "button-like",
+    "modifiers": {
+      "hover": "data-[highlighted]",
+      "disabled": "data-[disabled]"
+    },
+    "parts": {
+      "icon": "[&_svg]"
+    },
+    "prefix": {
+      "variant": "data-[variant={value}]"
+    },
+    "extra": "relative flex cursor-default outline-none select-none data-[disabled]:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
+    "figmaOnly": [
+      "label",
+      "shortcut"
+    ]
+  }
+}

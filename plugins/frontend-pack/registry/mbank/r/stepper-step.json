@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stepper-step",
+  "type": "registry:ui",
+  "title": "stepper-step",
+  "description": "Stepper step (from contract stepper-step.json): Figma item-stepper-basic",
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "@mbank/utils"
+  ],
+  "files": [
+    {
+      "path": "registry/mbank/ui/stepper-step.tsx",
+      "type": "registry:ui",
+      "content": "import type * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\n\nimport { cn } from \"@/registry/mbank/lib/utils\"\n\n/*\n * Stepper step (Figma `item-stepper-basic`). Generated from the contract\n * registry/mbank/contracts/stepper-step.json by contract-to-code --new (template card-like).\n * Change the look in the contract and run contract-to-code --write; the block between the markers is generated.\n * Accessibility: see the component comment below.\n */\n// @contract stepper-step start\nconst stepperStepVariants = cva(\n  \"items-center gap-2 py-2 text-base text-foreground *:data-[slot=stepper-step-marker]:size-8 *:data-[slot=stepper-step-marker]:rounded-full *:data-[slot=stepper-step-marker]:items-center **:data-[slot=stepper-step-number]:text-sm **:data-[slot=stepper-step-number]:font-medium inline-flex min-w-0 *:data-[slot=stepper-step-marker]:inline-flex *:data-[slot=stepper-step-marker]:shrink-0 *:data-[slot=stepper-step-marker]:justify-center\",\n  {\n    variants: {\n      status: {\n        done: \"*:data-[slot=stepper-step-marker]:bg-status-success-muted **:data-[slot=stepper-step-number]:text-status-success\",\n        current: \"font-medium *:data-[slot=stepper-step-marker]:bg-status-success **:data-[slot=stepper-step-number]:text-static-light\",\n        upcoming: \"text-muted-foreground *:data-[slot=stepper-step-marker]:bg-soft **:data-[slot=stepper-step-number]:text-muted-foreground\",\n      },\n    },\n    defaultVariants: { status: \"upcoming\" },\n  },\n)\n// @contract stepper-step end\n\ntype StepperStepProps = Omit<React.ComponentProps<\"li\">, \"children\"> &\n  VariantProps<typeof stepperStepVariants> & {\n    number: React.ReactNode\n    label: React.ReactNode\n    description?: React.ReactNode\n  }\n\nconst statusText = { done: \"пройден\", current: \"текущий шаг\", upcoming: \"впереди\" } as const\n\n/** One step of a stepper: numbered circle, label, optional description. Put steps in an <ol>. */\nfunction StepperStep({ className, status = \"upcoming\", number, label, description, ...props }: StepperStepProps) {\n  return (\n    <li\n      data-slot=\"stepper-step\"\n      aria-current={status === \"current\" ? \"step\" : undefined}\n      className={cn(stepperStepVariants({ status }), className)}\n      {...props}\n    >\n      <span data-slot=\"stepper-step-marker\" aria-hidden=\"true\">\n        <span data-slot=\"stepper-step-number\">{number}</span>\n      </span>\n      <span data-slot=\"stepper-step-label\" className=\"truncate\">\n        {label}\n        <span className=\"sr-only\">, {statusText[status ?? \"upcoming\"]}</span>\n      </span>\n      {description && (\n        <span data-slot=\"stepper-step-description\" className=\"truncate text-caption text-muted-foreground\">\n          {description}\n        </span>\n      )}\n    </li>\n  )\n}\n\nexport { StepperStep, stepperStepVariants }\n"
+    }
+  ]
+}

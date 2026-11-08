@@ -61,8 +61,12 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
+      // Figma CRM UI KIT `item/cell/header`: 44px, body/s 14/20 medium, muted until the column is sorted.
       className={cn(
-        "h-11 px-3 text-left align-middle text-xs font-medium whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0",
+        // @contract table-head start
+        "h-11 px-3 text-left align-middle text-sm font-medium whitespace-nowrap text-muted-foreground [&:has([role=checkbox])]:pr-0 gap-1",
+        // @contract table-head end
+        "aria-[sort=ascending]:text-foreground aria-[sort=descending]:text-foreground",
         className,
       )}
       {...props}
