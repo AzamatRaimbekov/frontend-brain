@@ -34,7 +34,7 @@ Write it in this shape, 15-30 lines. Fill unknowns with an explicit assumption, 
            ошибка действия / нет доступа / частичные данные / очень много данных
 Адаптив: мобильный 375 / планшет 768 / десктоп 1280 - что меняется
 Доступность: заголовки h1-h3, порядок фокуса, клавиатура, что объявляется aria-live
-Тексты: заголовок, подписи кнопок (глагол), тексты пустых состояний и ошибок (ключи i18n)
+Тексты: заголовок, подписи кнопок (глагол), тексты пустых состояний и ошибок (ключи i18n) - по бюджету ui-copy, всего строк: <N>
 Допущения: <...>
 ```
 
@@ -50,7 +50,7 @@ If the page has a destructive action, a form, or a multi-step flow, add those fl
 - **Destructive actions**: reversible -> act immediately with Undo; irreversible -> `AlertDialog` naming the object and consequence.
 - **Navigation**: the user always knows where they are (page title, active nav item, breadcrumbs for depth >= 2) and how to go back.
 - **Mobile is not a shrunk desktop**: tables become cards or get horizontal scroll with a sticky first column; secondary actions move into a menu; tap targets >= 24px (44px preferred).
-- **Copy**: buttons are verbs ("Сохранить заказ", not "OK"); errors say what to do; no jargon or raw server text; every string is an i18n key. If the project has no i18n set up yet, do not install it unasked: put the feature's strings in `features/<f>/lib/messages.ts` (one exported object) so they move to i18n in one step, and say so in the report.
+- **Copy**: as little as possible - the budget, the banned filler and button placement are in `ui-copy`; buttons are verbs ("Сохранить заказ", not "OK"); errors say what to do; no jargon or raw server text; every string is an i18n key. If the project has no i18n set up yet, do not install it unasked: put the feature's strings in `features/<f>/lib/messages.ts` (one exported object) so they move to i18n in one step, and say so in the report.
 - **Accessibility**: one `h1` in every state - loading, error and 404 too (visible title, or `sr-only` when the design shows none); `EmptyState`/`ErrorState` titles are `h2` inside it (`react-ux` async-states.md); landmarks (`header`, `nav`, `main`); visible focus; keyboard reaches every action; dialogs trap and return focus; status changes announced.
 
 ## 3. Flows to sketch when present

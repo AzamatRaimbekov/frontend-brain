@@ -192,6 +192,8 @@ Details: `references/accessibility-ux.md`.
 
 ## 9. Microcopy
 
+How much text and where buttons go: [ui-copy](../ui-copy/SKILL.md) (text budget, filler list, button placement). This section is about tone and i18n.
+
 - Every user-facing string goes through the i18n layer (`t('key')`); no string concatenation, use ICU plurals and interpolation: `t('orders.count', { count })`.
 - Error = what happened + why (if known) + what to do: "Couldn't save the order. Check your connection and try again." Never show raw `error.message`, status codes or stack traces.
 - Buttons are verbs naming the outcome: "Create order", "Delete 3 files". Avoid "OK", "Submit", "Yes".

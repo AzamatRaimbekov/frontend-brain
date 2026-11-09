@@ -17,6 +17,7 @@ Load the relevant skills of this plugin before reviewing:
 - `react-ui` — shadcn/Tailwind, tokens, variants, accessibility of UI
 - `react-ux` — async states, forms, feedback, focus, URL state
 - `react-page-ux` — for new or redesigned pages: one primary action, all states, 375px layout, copy
+- `ui-copy` — text budget, no filler or invented blocks, button count and placement
 - `react-error-handling` — boundaries, typed API errors, logging
 - `react-testing` — tests exist for new pages, hooks and queryOptions; MSW handlers per state
 - `react-forms-state` — complex forms, state placement (URL / local / store)
@@ -31,7 +32,7 @@ Load each skill with the Skill tool (`frontend-pack:<skill-name>`). If the Skill
 ## Procedure
 
 1. Determine scope: changed files (`git diff --name-only` plus untracked) or the paths the caller gave. Review only those, but follow imports when needed to judge them.
-2. Run the size check: `node <plugin-root>/scripts/check-file-size.mjs <paths>`.
+2. Run the size check: `node <plugin-root>/scripts/check-file-size.mjs <paths>` and the copy check: `node <plugin-root>/scripts/check-ui-copy.mjs <paths>`.
 3. Check `package.json` dependencies against `rules/libraries.json` (forbidden or unapproved libraries).
 4. Read each file and check it against the skills. Look specifically for:
    - files over 150 lines, more than one component per file, logic that belongs in a hook or `lib/`
@@ -40,6 +41,7 @@ Load each skill with the Skill tool (`frontend-pack:<skill-name>`). If the Skill
    - inline query keys instead of the feature's key factory; missing invalidation after mutations
    - repeated JSX or logic in three or more places
    - hard-coded colors or arbitrary values instead of tokens; missing accessible names; boolean-prop explosions instead of variants
+   - filler text (subtitles and descriptions under headings, «Здесь вы можете», tips blocks not in the task), two primary buttons in one area, primary not rightmost, more than two visible actions in a group
    - async views missing loading, error or empty states; forms without validation or double-submit protection
    - empty `catch`, swallowed errors, raw server messages shown to users, `console.log` left in code
    - Mbank products: hex or palette classes instead of kit tokens, `lucide-react` or other icon sets instead of the kit icons, UI built outside `shared/ui` when the kit has the component, `data-brand`/`.dark` not on `<html>`

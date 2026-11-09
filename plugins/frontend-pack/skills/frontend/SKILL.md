@@ -76,7 +76,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | Задача | Скиллы |
 |---|---|
 | Новый проект с нуля | [react-new-project](../react-new-project/SKILL.md); CRM или админка на Mbank — сразу [mbank-crm](../mbank-crm/SKILL.md) (`new-crm.mjs`); потом остальные по мере работы |
-| Новая страница, экран, раздел, форма | [react-page-ux](../react-page-ux/SKILL.md) (сначала `UX.md`), [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md) |
+| Новая страница, экран, раздел, форма | [react-page-ux](../react-page-ux/SKILL.md) (сначала `UX.md`), [react-architecture](../react-architecture/SKILL.md), [react-ui](../react-ui/SKILL.md), [react-ux](../react-ux/SKILL.md), [ui-copy](../ui-copy/SKILL.md) |
 | Запросы к API, кэш, мутации | [react-data-fetching](../react-data-fetching/SKILL.md), [react-error-handling](../react-error-handling/SKILL.md) |
 | Вёрстка, стили, тема, адаптив | [react-ui](../react-ui/SKILL.md), [shadcn](../shadcn/SKILL.md) при `components.json` |
 | Продукт Mbank (банк, касса, travel, artwin, koko) или экран из Mbank Figma | [mbank-ui](../mbank-ui/SKILL.md): кодовый UI-кит и токены, ставится `add-ui.mjs`; плюс [react-ui](../react-ui/SKILL.md) |
@@ -90,6 +90,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | Проект на Next.js: App Router, кэш, Server Actions, SEO, свой хостинг; «что нового в Next», «обновить Next» | [nextjs](../nextjs/SKILL.md): практики с nextjs.org, новости и советы под проект — `node <plugin-root>/scripts/nextjs-news.mjs --project .` |
 | «Обнови мозг», «метрики мозга», что нового в источниках мозга | [brain-update](../brain-update/SKILL.md): `brain-watch.mjs`, `brain-metrics.mjs`, PR с обновлениями |
 | Загрузка, пустые состояния, формы, тосты | [react-ux](../react-ux/SKILL.md) |
+| Любые тексты интерфейса и кнопки: заголовки, подписи, пустые состояния, тосты, диалоги; «слишком много текста», «где поставить кнопки» | [ui-copy](../ui-copy/SKILL.md): бюджет текста, ничего сверх задачи, одна главная кнопка справа; проверка `check-ui-copy.mjs` |
 | Ошибки, белый экран, error boundary | [react-error-handling](../react-error-handling/SKILL.md) |
 | Большой компонент, структура папок | [react-architecture](../react-architecture/SKILL.md) |
 | Повторяющийся код | [react-dry](../react-dry/SKILL.md) |
@@ -103,6 +104,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 - Проверь изменённые файлы по загруженным скиллам и исправь замечания.
 - Компонент не длиннее 150 строк: `node <plugin-root>/scripts/check-file-size.mjs <файлы>`. Старые большие файлы можно править, если они не выросли.
 - У каждой новой страницы рядом лежит `UX.md`.
+- Лишнего текста нет: только блоки из задачи, кнопки по [ui-copy](../ui-copy/SKILL.md), `node <plugin-root>/scripts/check-ui-copy.mjs <файлы>` без замечаний.
 - Ошибки ESLint, которые вернул хук после правки, исправлены в том же файле.
 - В приложении есть экран падения, страница 404 и баннер «нет интернета» ([app-shell](../react-error-handling/references/app-shell.md)).
 - Если в задаче нашлось то, чего нет в мозге (ловушка, рецепт, решение), предложи пользователю добавить это через [frontend-contribute](../frontend-contribute/SKILL.md). Сам PR не создавай без его согласия.
