@@ -69,3 +69,36 @@ export function A({ ok }: P) {
 }`;
   assert.deepEqual(checkSource(src, 'src/A.tsx'), []);
 });
+
+test('subtitles without data are found; a subtitle with data stays', () => {
+  const r = rules(`<h1>Клиенты</h1>
+      <p className="text-sm text-muted-foreground">Управляйте клиентами банка</p>
+      <PageHeader title="Заявки" subtitle="Все заявки в одном месте" />`);
+  assert.equal(r.filter((x) => x === 'subtitle').length, 2, r.join());
+  assert.deepEqual(rules(`<h1>Обзор</h1><p className="text-muted-foreground">Обновлено в 09:40</p><Header subtitle="128 заявок" />`), []);
+  assert.deepEqual(rules(`<h1>Страница не найдена</h1><p className="text-muted-foreground">Проверьте адрес или вернитесь назад.</p>`), [], 'an instruction on an error screen stays');
+});
+
+test('--hook feeds findings back to the agent with exit 2 and stays quiet on clean files', async () => {
+  const { mkdtempSync, writeFileSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join, dirname } = await import('node:path');
+  const { spawnSync } = await import('node:child_process');
+  const { fileURLToPath } = await import('node:url');
+  const script = join(dirname(fileURLToPath(import.meta.url)), 'check-ui-copy.mjs');
+  const dir = mkdtempSync(join(tmpdir(), 'ui-copy-'));
+  const bad = join(dir, 'Page.tsx');
+  const good = join(dir, 'Ok.tsx');
+  writeFileSync(bad, '<h1>Клиенты</h1>\n<p className="text-muted-foreground">Здесь вы можете управлять клиентами</p>\n');
+  writeFileSync(good, '<h1>Клиенты</h1>\n<Button>Сохранить</Button>\n');
+  const run = (file, env = {}) => spawnSync(process.execPath, [script, '--hook'], {
+    input: JSON.stringify({ tool_name: 'Write', tool_input: { file_path: file } }), encoding: 'utf8', env: { ...process.env, ...env },
+  });
+  const r = run(bad);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /subtitle/);
+  assert.match(r.stderr, /filler/);
+  assert.equal(run(good).status, 0);
+  assert.equal(run(bad, { MDIGITAL_COPY_HOOK: 'off' }).status, 0);
+  assert.equal(run(join(dir, 'notes.md')).status, 0, 'not a component');
+});

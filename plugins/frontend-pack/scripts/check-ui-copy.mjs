@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Finds filler and overgrown interface text in React files (skill ui-copy).
 // Usage: node check-ui-copy.mjs [dir-or-file ...] [--json]   (default ./src; exit 1 on findings)
+//        node check-ui-copy.mjs --hook   PostToolUse: check the edited file, feed findings back (exit 2).
+//        Off per project: MDIGITAL_COPY_HOOK=off.
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -41,11 +43,22 @@ function strings(raw) {
   for (const m of src.matchAll(/\b(title|description|placeholder|label|aria-label|alt|subtitle|text)=["']([^"']+)["']/g)) {
     out.push({ text: m[2].trim(), line: line(m.index), kind: m[1] });
   }
+  // A muted paragraph right after a heading: the classic AI subtitle
+  for (const m of src.matchAll(/<\/h[1-4]>\s*<p\b[^>]*>([^<{]+)<\/p>/g)) {
+    out.push({ text: m[1].replace(/\s+/g, ' ').trim(), line: line(m.index + m[0].indexOf('<p')), kind: 'under-heading' });
+  }
   return out;
 }
 
+// A subtitle earns its place with data (a number, date, time, count) or by telling what to do
+// next on an error / 404 screen («Проверьте адрес…», «Try again…»).
+const carriesData = (t) => /\d/.test(t) || /^(проверьте|перезагрузите|обновите|попробуйте|повторите|вернитесь|обратитесь|напишите|войдите|подождите|измените|сбросьте)(?=[\s.,!]|$)/i.test(t) || /^(try|check|reload|refresh|contact)\b/i.test(t);
+
 function checkText(s, add) {
   const low = s.text.toLowerCase();
+  if ((s.kind === 'under-heading' || s.kind === 'subtitle') && !carriesData(s.text)) {
+    add(s.line, 'subtitle', `подзаголовок без данных — удали: «${s.text}»`);
+  }
   const filler = FILLER.find((f) => new RegExp(`(^|[^a-zа-яё])${f.replace(/[.*+?^${}()|[\]\\!]/g, '\\$&')}`, 'i').test(low));
   if (filler) add(s.line, 'filler', `«${filler.trim()}» — лишние слова: «${s.text}»`);
   if (/!/.test(s.text) && s.kind !== 'aria-label') add(s.line, 'exclamation', `«!» в тексте интерфейса: «${s.text}»`);
@@ -102,7 +115,22 @@ export function checkPaths(paths) {
   return paths.flatMap((p) => collect(p, [])).flatMap((f) => checkSource(readFileSync(f, 'utf8'), f));
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+function runHook() {
+  if (process.env.MDIGITAL_COPY_HOOK === 'off') process.exit(0);
+  let file;
+  try { file = JSON.parse(readFileSync(0, 'utf8'))?.tool_input?.file_path; } catch { process.exit(0); }
+  if (!file || !existsSync(file) || statSync(file).isDirectory() || !collect(file, []).length) process.exit(0);
+  const found = checkSource(readFileSync(file, 'utf8'), file);
+  if (!found.length) process.exit(0);
+  process.stderr.write(
+    `Лишний текст в интерфейсе (${file}). Удали или сократи его по скиллу ui-copy, не отключай проверку. ` +
+      `Подзаголовки и описания без данных удаляй целиком.\n\n${found.map((f) => `строка ${f.line} [${f.rule}] ${f.message}`).join('\n')}\n`,
+  );
+  process.exit(2); // exit code 2 feeds stderr back to the agent
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url) && process.argv.includes('--hook')) runHook();
+else if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   const json = args.includes('--json');
   const paths = args.filter((a) => !a.startsWith('--'));

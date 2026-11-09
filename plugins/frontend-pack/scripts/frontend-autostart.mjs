@@ -38,5 +38,6 @@ if (!isFrontendProject(cwd) && !STACK.test(prompt)) process.exit(0);
 // Exit 0 with plain stdout: Claude Code adds it to the context of this prompt.
 process.stdout.write(
   'Frontend task detected (frontend-pack). Start with the `frontend` skill (frontend-pack:frontend): ' +
-    'announce the route line it defines, load only the skills it routes to, and finish with its checks.\n',
+    'announce the route line it defines, load only the skills it routes to, and finish with its checks. ' +
+    'Interface text follows ui-copy: only blocks from the task, no subtitles or descriptions without data, one primary button on the right.\n',
 );

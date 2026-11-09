@@ -9,7 +9,6 @@ export function SectionPage({ title }: { title: string }) {
       <title>{`${title} — Mbank CRM`}</title>
       <EmptyState
         title="Раздел в разработке"
-        description={`«${title}» появится здесь. Пока можно работать с конвейером заявок.`}
         action={
           <Button asChild variant="secondary">
             <Link to="/">К конвейеру</Link>

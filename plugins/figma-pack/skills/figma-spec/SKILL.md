@@ -38,6 +38,7 @@ Format and block catalog: `references/spec-format.md`. Validator: `node <plugin-
 - Detail screens: `split` with ratio `2:1` — facts left, risk/alerts/history right.
 - Forms: ≤ 8 fields per card, `required` marked, hints only where they help, `width` 640–760 on desktop.
 - Russian UI copy, sentence case, verbs on buttons («Создать клиента», not «ОК»).
+- Less text: `subtitle` only when it carries data («Обновлено в 09:40», «128 заявок в работе»), never a description («Здесь вы можете…», «Список всех клиентов»); no blocks the ТЗ did not ask for. The code generator copies every string into the app, so filler in the spec becomes filler in the code (frontend-pack `ui-copy`).
 
 ## Report
 

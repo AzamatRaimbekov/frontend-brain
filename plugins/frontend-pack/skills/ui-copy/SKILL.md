@@ -63,12 +63,14 @@ Before code (or before a spec for Figma), list every string the screen will show
 
 ## 5. Checker
 
+The plugin runs it **after every edit** of a `.tsx`/`.jsx` file (hook, like ESLint) and returns the findings to the agent; fix them in the same file. Off for one project: `MDIGITAL_COPY_HOOK=off`.
+
 ```bash
 node <plugin-root>/scripts/check-ui-copy.mjs src            # scan; exit 1 on findings
 node <plugin-root>/scripts/check-ui-copy.mjs src/pages/Clients.tsx --json
 ```
 
-It flags filler phrases, «!», ALL CAPS, long text in JSX, buttons longer than 3 words, two primary buttons (no `variant` or `variant="default"`) within a few lines of each other, and placeholders that repeat their label. Exempt: tests, stories, `components/ui`, `shared/ui`, i18n dictionaries (checked by phrase only). A finding is fixed by deleting or shortening the text, not by disabling the rule.
+It flags subtitles without data (a muted `<p>` right after a heading or a `subtitle="…"` with no number, date or count and not an instruction like «Проверьте адрес…»), filler phrases, «!», ALL CAPS, long text in JSX, buttons longer than 3 words, two primary buttons (no `variant` or `variant="default"`) within a few lines of each other, and placeholders that repeat their label. Exempt: tests, stories, `components/ui`, `shared/ui`, i18n dictionaries (checked by phrase only). A finding is fixed by deleting or shortening the text, not by disabling the rule.
 
 ## Checklist before finishing
 

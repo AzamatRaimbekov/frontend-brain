@@ -21,7 +21,7 @@
             "type": "command",
             "command": "node \"${PLUGIN_ROOT}/scripts/codex-hooks.mjs\" post",
             "timeout": 60,
-            "statusMessage": "Checking component size and ESLint"
+            "statusMessage": "Checking component size, ESLint and UI copy"
           }
         ]
       }

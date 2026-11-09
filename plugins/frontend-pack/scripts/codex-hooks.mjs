@@ -65,8 +65,8 @@ for (const change of changes) {
       },
     };
   }
-  // After a patch also lint the changed file with the project's ESLint.
-  const runs = phase === 'post' ? [[script, args], ['lint-on-edit.mjs', []]] : [[script, args]];
+  // After a patch also lint the changed file with the project's ESLint and check its interface text.
+  const runs = phase === 'post' ? [[script, args], ['lint-on-edit.mjs', []], ['check-ui-copy.mjs', ['--hook']]] : [[script, args]];
   for (const [name, extra] of runs) {
     const result = spawnSync(process.execPath, [join(scripts, name), ...extra], {
       input: JSON.stringify(input), encoding: 'utf8', cwd,
