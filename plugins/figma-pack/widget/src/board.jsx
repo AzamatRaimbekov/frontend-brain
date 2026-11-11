@@ -1,12 +1,12 @@
-// Canvas board of the widget: brand switcher, counters, group tabs, token rows with swatches and
-// status chips. Presentational only; every colour is an Mbank token (src/theme.js).
+// Canvas board of the widget: counters, group tabs, token rows with swatches and status chips.
+// Presentational only; every colour of the chrome is a shadcn token (src/theme.js).
 import { paint, TONES } from './theme.js';
-import { STATUS, propagationLines } from '../core/sync.js';
-import { normHex } from '../core/model.js';
+import { STATUS } from '../core/sync.js';
+import { toPx } from '../core/model.js';
 
 const { AutoLayout, Text, Rectangle } = figma.widget;
 const W = 960;
-const COL = { swatch: 132, css: 250, figma: 300, status: 190 };
+const COL = { swatch: 220, css: 230, figma: 230, status: 190 };
 
 function Chip({ c, tone, label, onClick, tooltip }) {
   const [bg, fg] = TONES[tone] || TONES.neutral;
@@ -30,19 +30,19 @@ function Counter({ c, label, value, tone }) {
 function Swatch({ c, row, mode }) {
   const value = row[mode];
   if (row.kind !== 'color') {
-    const px = Math.max(0, Math.min(14, Number(value) || 0));
+    const px = toPx(value);
     return (
       <AutoLayout spacing={6} verticalAlignItems="center" width={COL.swatch / 2}>
-        <Rectangle width={24} height={24} cornerRadius={px} fill={c.soft} stroke={c.border} />
-        <Text fontSize={11} fill={c.muted}>{value == null ? '—' : `${value}px`}</Text>
+        <Rectangle width={24} height={24} cornerRadius={Math.max(0, Math.min(12, px || 0))} fill={c.soft} stroke={c.border} />
+        <Text fontSize={11} fill={c.muted}>{value == null ? '—' : String(value)}</Text>
       </AutoLayout>
     );
   }
-  const hex = normHex(value);
+  const short = String(value == null ? '—' : value).replace(/^oklch\((.*)\)$/, '$1');
   return (
     <AutoLayout spacing={6} verticalAlignItems="center" width={COL.swatch / 2} tooltip={String(value)}>
-      <Rectangle width={24} height={24} cornerRadius={6} fill={hex ? paint(hex) : c.soft} stroke={c.border} />
-      <Text fontSize={10} fill={c.muted}>{hex ? hex.slice(1, 7) : 'var'}</Text>
+      <Rectangle width={24} height={24} cornerRadius={6} fill={paint(value)} stroke={c.border} />
+      <Text fontSize={9} fill={c.muted} width={COL.swatch / 2 - 30}>{short}</Text>
     </AutoLayout>
   );
 }
@@ -51,34 +51,25 @@ function Row({ c, row, status, issue, onOpen }) {
   const st = STATUS[status] || STATUS.unknown;
   return (
     <AutoLayout width="fill-parent" spacing={12} padding={{ vertical: 6, horizontal: 12 }} verticalAlignItems="center"
-      hoverStyle={{ fill: c.soft }} onClick={() => onOpen(row.key)} tooltip={row.note || 'Открыть редактор токена'}>
+      hoverStyle={{ fill: c.soft }} onClick={() => onOpen(row.key)} tooltip="Открыть редактор токена">
       <Swatch c={c} row={row} mode="light" />
       <Swatch c={c} row={row} mode="dark" />
-      <Text fontSize={12} fontWeight={600} fill={c.text} width={COL.css}>{`--${row.css}`}</Text>
-      <Text fontSize={11} fill={c.muted} width={COL.figma}>{`${row.collection} / ${row.figma}`}</Text>
+      <Text fontSize={12} fontWeight={600} fill={c.text} width={COL.css}>{`--${row.name}`}</Text>
+      <Text fontSize={11} fill={c.muted} width={COL.figma}>{`shadcn / ${row.name}`}</Text>
       <AutoLayout spacing={4} width={COL.status}>
         <Chip c={c} tone={st.tone} label={st.label} />
-        {row.edited ? <Chip c={c} tone="brand" label={row.extra ? 'новый' : 'изменён'} tooltip="Отличается от tokens.json" /> : null}
+        {row.edited ? <Chip c={c} tone="brand" label="изменён" tooltip="Отличается от значения shadcn по умолчанию" /> : null}
         {issue ? <Chip c={c} tone="error" label="AA" tooltip={issue} /> : null}
       </AutoLayout>
     </AutoLayout>
   );
 }
 
-function Header({ c, brand, brands, onBrand, source }) {
+function Header({ c, source }) {
   return (
-    <AutoLayout width="fill-parent" verticalAlignItems="center" spacing={16}>
-      <AutoLayout direction="vertical" spacing={2} width="fill-parent">
-        <Text fontSize={22} fontWeight={700} fill={c.text}>Mbank Tokens</Text>
-        <Text fontSize={11} fill={c.muted}>{source}</Text>
-      </AutoLayout>
-      <AutoLayout spacing={4} padding={4} fill={c.soft} cornerRadius={12}>
-        {brands.map((b) => (
-          <AutoLayout key={b} padding={{ vertical: 6, horizontal: 12 }} cornerRadius={9} fill={b === brand ? c.brand : c.soft} onClick={() => onBrand(b)}>
-            <Text fontSize={12} fontWeight={600} fill={b === brand ? c.onBrand : c.text}>{b}</Text>
-          </AutoLayout>
-        ))}
-      </AutoLayout>
+    <AutoLayout direction="vertical" spacing={2} width="fill-parent">
+      <Text fontSize={22} fontWeight={700} fill={c.text}>shadcn Tokens</Text>
+      <Text fontSize={11} fill={c.muted}>{source}</Text>
     </AutoLayout>
   );
 }
@@ -96,23 +87,7 @@ function Tabs({ c, groups, group, counts, onGroup }) {
   );
 }
 
-// "Changed once -> changed everywhere": what the last apply or component update reached in the file.
-function Propagation({ c, p }) {
-  const l = propagationLines(p);
-  if (!l) return null;
-  const line = (key, text, bold) => <Text key={key} fontSize={12} fontWeight={bold ? 700 : 400} fill={c.successFg} width="fill-parent">{text}</Text>;
-  return (
-    <AutoLayout direction="vertical" spacing={4} width="fill-parent" padding={{ vertical: 10, horizontal: 12 }} cornerRadius={10} fill={c.successBg}>
-      {line('title', l.title, true)}
-      {line('summary', l.summary)}
-      {l.components.map((x, i) => line(`c${i}`, `• ${x}`))}
-      {l.variables ? line('vars', l.variables) : null}
-      {line('note', l.note)}
-    </AutoLayout>
-  );
-}
-
-/** props: { c, brand, brands, groups, group, rows, status, issues, counters, totals, scan, report, propagation, handlers } */
+/** props: { c, groups, group, rows, status, issues, counters, totals, scan, report, source, handlers } */
 export function Board(p) {
   const { c } = p;
   const counts = {};
@@ -122,34 +97,32 @@ export function Board(p) {
   for (const i of p.issues) if (!i.ok) issueOf[i.fg] = `${issueOf[i.fg] ? `${issueOf[i.fg]}; ` : ''}${i.mode}: ${i.ratio} на --${i.bg} (нужно ${i.min})`;
   const t = p.totals;
   const fileLine = p.scan
-    ? `Файл проверен ${p.scan.scannedAt.slice(0, 16).replace('T', ' ')}: ✓ ${t.bound} · ≠ ${t.differs} · нет ${t.missing}${t.library ? ` · в библиотеке ${t.library}` : ''}`
+    ? `Файл проверен ${p.scan.scannedAt.slice(0, 16).replace('T', ' ')}${p.scan.exists ? '' : ' (коллекции shadcn нет)'}: ✓ ${t.bound} · ≠ ${t.differs} · нет ${t.missing}${t.library ? ` · в библиотеке ${t.library}` : ''}`
     : 'Файл ещё не проверяли: свойства виджета → «Проверить файл»';
   return (
     <AutoLayout direction="vertical" width={W} padding={24} spacing={16} fill={p.c.page} cornerRadius={20} stroke={c.border}>
-      <Header c={c} brand={p.brand} brands={p.brands} onBrand={p.handlers.brand} source={p.source} />
+      <Header c={c} source={p.source} />
       <AutoLayout width="fill-parent" spacing={8}>
         <Counter c={c} label="токенов" value={p.counters.tokens} tone="neutral" />
-        <Counter c={c} label="токенов проекта" value={p.counters.extras} tone="info" />
         <Counter c={c} label="изменено" value={p.counters.edited} tone="brand" />
         <Counter c={c} label="проблем контраста AA" value={p.counters.contrast} tone={p.counters.contrast ? 'error' : 'success'} />
       </AutoLayout>
       <Text fontSize={12} fill={c.muted} width="fill-parent">{fileLine}</Text>
       {p.report ? <Text fontSize={12} fill={c.text} width="fill-parent">{p.report}</Text> : null}
-      <Propagation c={c} p={p.propagation} />
       <Tabs c={c} groups={p.groups} group={p.group} counts={counts} onGroup={p.handlers.group} />
       <AutoLayout direction="vertical" width="fill-parent" fill={c.card} cornerRadius={12} stroke={c.border} padding={{ vertical: 6 }}>
         <AutoLayout width="fill-parent" spacing={12} padding={{ vertical: 6, horizontal: 12 }}>
           <Text fontSize={11} fontWeight={600} fill={c.muted} width={COL.swatch / 2}>light</Text>
           <Text fontSize={11} fontWeight={600} fill={c.muted} width={COL.swatch / 2}>dark</Text>
-          <Text fontSize={11} fontWeight={600} fill={c.muted} width={COL.css}>CSS-токен</Text>
+          <Text fontSize={11} fontWeight={600} fill={c.muted} width={COL.css}>CSS-переменная</Text>
           <Text fontSize={11} fontWeight={600} fill={c.muted} width={COL.figma}>Переменная Figma</Text>
           <Text fontSize={11} fontWeight={600} fill={c.muted} width={COL.status}>Статус</Text>
         </AutoLayout>
         {visible.length ? visible.map((r) => (
-          <Row key={r.key} c={c} row={r} status={p.status[r.key]} issue={issueOf[r.css]} onOpen={p.handlers.open} />
-        )) : <Text fontSize={12} fill={c.muted} width="fill-parent" horizontalAlignText="center">Пусто. Токен проекта добавляется в «Редактировать» → «Новый токен».</Text>}
+          <Row key={r.key} c={c} row={r} status={p.status[r.key]} issue={issueOf[r.name]} onOpen={p.handlers.open} />
+        )) : <Text fontSize={12} fill={c.muted} width="fill-parent" horizontalAlignText="center">Пусто.</Text>}
       </AutoLayout>
-      <Text fontSize={11} fill={c.muted} width="fill-parent">Свойства виджета: Редактировать · Проверить файл · Применить в Figma · Компоненты · Синхронизация с кодом. Клик по строке открывает токен.</Text>
+      <Text fontSize={11} fill={c.muted} width="fill-parent">Свойства виджета: Редактировать · Проверить файл · Применить в Figma · Выгрузить для кода · Сайт. Клик по строке открывает токен. Набор имён shadcn фиксирован: меняются только значения.</Text>
     </AutoLayout>
   );
 }

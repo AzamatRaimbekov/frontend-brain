@@ -1,11 +1,14 @@
 // Site <-> Figma sync logic of the widget (pure, node:test). The design-system site (apps/ds-configurator)
-// serves figma.json: the plan of the `shadcn` collection (modes light/dark, variables named as the CSS
-// tokens, values = alias to a Foundation variable | ref to another shadcn variable | plain value).
-// Here: comparable signatures, the sync status and the token document a push sends back.
-import { normHex } from './model.js';
+// serves figma.json (ds-configurator/figma-plan@2): the plan of the `shadcn` collection (modes Light/Dark,
+// variables named as the shadcn CSS tokens: 31 colours, radius + derived radius-*, font-sans / font-heading;
+// values = { value: #hex | px | family, css, ref? }). Derived (editable: false) variables are never pushed.
+// Here: comparable signatures, the sync status and the token document a push sends back. A project changes
+// values of the shadcn names only: names the site does not know are never sent.
+import { colorKey } from './oklch.js';
+import { toPx, MODES } from './model.js';
 
 export const SITE_COLLECTION = 'shadcn';
-export const SITE_MODES = ['light', 'dark'];
+export const SITE_MODES = MODES;
 export const PROJECT_ID = /^[a-z][a-z0-9-]{1,39}$/;
 
 export const STATUS = {
@@ -22,16 +25,21 @@ export function siteOrigin(url) {
   return m ? `${m[1].toLowerCase()}://${m[2].toLowerCase()}` : null;
 }
 
-const plain = (value) => {
+/** Comparable plain form of a value: 8-bit colour "#rrggbb[aa]", px number as a string, else the text. */
+export function plain(value) {
+  if (value == null) return '';
   if (typeof value === 'number') return String(value);
-  return normHex(value) || (value == null ? '' : String(value));
-};
+  const c = colorKey(value);
+  if (c) return c;
+  const px = toPx(value);
+  return px === null ? String(value) : String(px);
+}
 
-/** Signature of a plan value: alias:<Foundation name> | ref:<shadcn name> | value:<hex or number>. */
+/** Signature of a plan value: ref:<shadcn name> | value:<plain>. */
 export function planSig(v) {
   if (!v) return null;
-  if (v.alias) return `alias:${v.alias.name}`;
   if (v.ref) return `ref:${v.ref}`;
+  if (v.value == null) return null;
   return `value:${plain(v.value)}`;
 }
 
@@ -61,32 +69,28 @@ export function syncStatus(siteVersion, state, current) {
   return { status, figmaChanges };
 }
 
+// cur: { sig, value, css } as site-io readMode returns it. A font variable holds a family name in Figma
+// ("Inter"): CSS gets a font-family list ('Inter', sans-serif) unless it already is one.
 const cssOf = (cur, kind) => {
   if (cur.sig && cur.sig.startsWith('ref:')) return `var(--${cur.sig.slice(4)})`;
-  if (cur.value == null) return null;
-  if (kind === 'color' || typeof cur.value === 'string') return normHex(cur.value);
-  return `${Number(cur.value)}px`;
+  if (cur.css == null) return null;
+  if (kind === 'font' && !/[,'"]/.test(cur.css)) return `'${cur.css}', sans-serif`;
+  return cur.css;
 };
 
-const sameAsBase = (cur, base) => !!cur && !!base && (cur.sig === planSig(base) || (!base.ref && base.value != null && plain(cur.value) === plain(base.value)));
-
-const kindOf = (cur, planned) => {
-  if (planned) return planned.kind;
-  if (cur.type === 'COLOR') return 'color';
-  return (cur.scopes || []).includes('CORNER_RADIUS') || /radius/.test(cur.name || '') ? 'radius' : 'size';
-};
+/** The base value of a mode (what the site has without this project's override), else the planned one. */
+const baseOf = (v, mode) => (v.base && v.base[mode]) || v.values[mode];
 
 /**
- * Token document of a push: base tokens whose Figma value differs from the Mbank base become
- * overrides; every other variable named <prefix>-<role> is a custom token. Returns { tokens, skipped }.
+ * Token document of a push: every shadcn variable whose Figma value differs from the base becomes an
+ * override (oklch() / px / var(--ref)); names the plan does not have are skipped. Returns { tokens, skipped }.
  */
 export function pushPayload(plan, current) {
-  const byName = new Map(plan.variables.map((v) => [v.name, v]));
   const overrides = {};
-  const custom = [];
   const skipped = [];
+  const known = new Set(plan.variables.map((v) => v.name));
   for (const v of plan.variables) {
-    if (v.custom) continue;
+    if (v.editable === false || v.derived) continue; // radius-sm… follow radius on the site
     const cur = current[v.name];
     if (!cur) { // removed in Figma: the site keeps what it had
       if (v.overridden) skipped.push(`${v.name}: переменной нет в Figma, правка на сайте оставлена`);
@@ -94,23 +98,18 @@ export function pushPayload(plan, current) {
     }
     const entry = {};
     for (const mode of SITE_MODES) {
-      if (sameAsBase(cur[mode], v.base && v.base[mode])) continue;
-      const css = cssOf(cur[mode], v.kind);
+      const now = cur[mode];
+      if (!now || now.sig === planSig(baseOf(v, mode))) continue;
+      const css = cssOf(now, v.kind);
       if (css) entry[mode] = css;
       else skipped.push(`${v.name} (${mode}): значение не прочиталось (ссылка на переменную без значения)`);
     }
-    if (Object.keys(entry).length) overrides[v.name] = entry;
+    // Single-value tokens (radius, font-*): the site takes `light` only.
+    if (v.kind && v.kind !== 'color' && Object.keys(entry).length) overrides[v.name] = { light: entry.light || entry.dark };
+    else if (Object.keys(entry).length) overrides[v.name] = entry;
   }
-  const own = new RegExp(`^${plan.prefix}-[a-z0-9]+(-[a-z0-9]+)*$`);
-  for (const [name, cur] of Object.entries(current)) {
-    const planned = byName.get(name);
-    if (planned && !planned.custom) continue;
-    if (!own.test(name)) { skipped.push(`${name}: свой токен должен называться ${plan.prefix}-<роль> — не отправлен`); continue; }
-    const kind = kindOf({ ...cur, name }, planned);
-    const light = cssOf(cur.light, kind);
-    const dark = cssOf(cur.dark || cur.light, kind) || light;
-    if (!light) { skipped.push(`${name}: значение не прочиталось`); continue; }
-    custom.push({ name, kind, light, dark, ...(planned && planned.pairWith ? { pairWith: planned.pairWith } : {}) });
+  for (const name of Object.keys(current)) {
+    if (!known.has(name)) skipped.push(`${name}: такого токена shadcn нет — имена не добавляются, не отправлен`);
   }
-  return { tokens: { brand: plan.brand, prefix: plan.prefix, overrides, custom, source: 'figma' }, skipped };
+  return { tokens: { overrides, source: 'figma' }, skipped };
 }

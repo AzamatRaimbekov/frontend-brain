@@ -21,16 +21,15 @@ function reportBox() {
   if (r) {
     parts.push(`<b>Получено с сайта, версия ${esc(r.version)}</b><ul>
       <li>создано ${r.created.length}, обновлено ${r.updated.length}, без изменений ${r.unchanged}</li>
-      <li>ссылок на Foundation ${r.aliased}, ссылок внутри shadcn ${r.refs}</li>
-      ${r.collectionCreated ? '<li>создана коллекция shadcn (light, dark)</li>' : ''}
-      ${r.raw.length ? `<li>значением, без библиотеки (${r.raw.length}): ${r.raw.slice(0, 6).map(esc).join('; ')}${r.raw.length > 6 ? '…' : ''}</li>` : ''}
-      ${r.extra.length ? `<li>только в Figma (не тронуты): ${r.extra.map(esc).join(', ')}</li>` : ''}
+      <li>ссылок внутри shadcn ${r.refs}</li>
+      ${r.collectionCreated ? '<li>создана коллекция shadcn (Light, Dark)</li>' : ''}
+      ${r.extra.length ? `<li>не из набора shadcn (не тронуты, на сайт не уходят): ${r.extra.map(esc).join(', ')}</li>` : ''}
       ${r.errors.map((e) => `<li class="err">${esc(e)}</li>`).join('')}</ul>`);
   }
   if (p) {
     parts.push(p.conflict
       ? `<b class="err">Конфликт: на сайте версия ${esc(p.siteVersion)}, правки Figma от версии ${esc(p.localVersion)}.</b><p class="muted">Посмотрите изменения на сайте. «Получить с перезаписью» возьмёт версию сайта (правки Figma пропадут) — или перенесите их на сайте руками.</p>`
-      : `<b>Отправлено: версия ${esc(p.version)}</b> — правок ${p.overrides}, своих токенов ${p.custom}`);
+      : `<b>Отправлено: версия ${esc(p.version)}</b> — изменённых токенов ${p.overrides}`);
     if (p.skipped && p.skipped.length) parts.push(`<ul>${p.skipped.map((x) => `<li class="muted">${esc(x)}</li>`).join('')}</ul>`);
   }
   return parts.length ? `<div class="box">${parts.join('')}</div>` : '';
@@ -40,7 +39,7 @@ export function renderSite() {
   const s = view.site || {};
   if (!view.asked) { view.asked = true; send('site-status'); }
   $('#tab-site').innerHTML = `
-    <p class="muted">Источник токенов проекта — сайт дизайн-системы. Виджет берёт оттуда коллекцию <span class="mono">shadcn</span> (light, dark; имена как в CSS: primary, primary-foreground, radius…; значения Mbank — ссылками на Foundation) и отправляет правки дизайнера обратно. Сайт в Figma не пишет.</p>
+    <p class="muted">Источник токенов проекта — сайт дизайн-системы. Виджет берёт оттуда коллекцию <span class="mono">shadcn</span> (Light, Dark; имена как в CSS: primary, primary-foreground, radius…; значения shadcn проекта) и отправляет правки значений обратно. Новые имена не отправляются: набор shadcn фиксирован. Сайт в Figma не пишет.</p>
     <div class="box">
       <div class="row"><label>Сайт <input id="s-url" value="${esc(s.url || 'http://localhost:8797')}" size="28"></label>
         <label>Проект <input id="s-project" class="mono" value="${esc(s.project || '')}" size="18" placeholder="credit-crm"></label></div>

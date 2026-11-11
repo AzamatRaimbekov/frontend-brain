@@ -1,38 +1,42 @@
 // «Сайт»: the built widget (dist/code.js) on the Figma mock against a fake design-system site:
-// pull creates/updates the `shadcn` collection (aliases to Foundation by library key, refs, values),
-// push sends overrides + custom tokens with If-Match, statuses and the version conflict.
+// pull creates/updates the `shadcn` collection (oklch values -> Figma RGBA with alpha, refs inside shadcn,
+// radius in px), push sends value overrides of the shadcn names with If-Match, statuses and the conflict.
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { boot, openWindow, hex, MANIFEST } from './helpers.mjs';
 import { pushPayload, syncStatus, siteOrigin } from '../core/site.js';
 
-const KEYS = { bg: 'k-bg', primary: 'k-primary', radius: 'k-radius' };
-const LIBRARY = { variables: [
-  { key: KEYS.bg, name: 'background/surface/light', type: 'COLOR' },
-  { key: KEYS.primary, name: 'accent/primary/default', type: 'COLOR' },
-  { key: KEYS.radius, name: 'radius/m', type: 'FLOAT' },
-] };
-const alias = (collection, name, key) => ({ collection, name, key });
+// figma.json as apps/ds-configurator serves it (ds-configurator/figma-plan@2), for a site document
+// { version, overrides }: value = resolved #hex / px / family, css = the raw CSS value, ref = var(--other).
+const BASE = [
+  { name: 'background', kind: 'color', type: 'COLOR', scopes: ['FRAME_FILL', 'SHAPE_FILL'], light: { value: '#ffffff', css: 'oklch(1 0 0)' }, dark: { value: '#0a0a0a', css: 'oklch(0.145 0 0)' } },
+  { name: 'primary', kind: 'color', type: 'COLOR', scopes: ['FRAME_FILL', 'SHAPE_FILL'], light: { value: '#171717', css: 'oklch(0.205 0 0)' }, dark: { value: '#e5e5e5', css: 'oklch(0.922 0 0)' } },
+  { name: 'border', kind: 'color', type: 'COLOR', scopes: ['STROKE_COLOR'], light: { value: '#e5e5e5', css: 'oklch(0.922 0 0)' }, dark: { value: '#ffffff1a', css: 'oklch(1 0 0 / 10%)' } },
+  { name: 'ring', kind: 'color', type: 'COLOR', scopes: ['STROKE_COLOR'], light: { ref: 'primary', value: '#171717', css: 'var(--primary)' }, dark: { ref: 'primary', value: '#e5e5e5', css: 'var(--primary)' } },
+  { name: 'radius', kind: 'radius', type: 'FLOAT', scopes: ['CORNER_RADIUS'], light: { value: 10, css: '0.625rem' }, dark: { value: 10, css: '0.625rem' } },
+  { name: 'radius-sm', kind: 'radius', type: 'FLOAT', scopes: ['CORNER_RADIUS'], editable: false, derived: true, light: { value: 6, css: 'calc(var(--radius) * 0.6)' }, dark: { value: 6, css: 'calc(var(--radius) * 0.6)' } },
+  { name: 'font-sans', kind: 'font', type: 'STRING', scopes: ['FONT_FAMILY'], light: { value: 'Geist', css: "'Geist Variable', sans-serif" }, dark: { value: 'Geist', css: "'Geist Variable', sans-serif" } },
+  { name: 'font-heading', kind: 'font', type: 'STRING', scopes: ['FONT_FAMILY'], light: { value: 'Geist', css: 'var(--font-sans)', ref: 'font-sans' }, dark: { value: 'Geist', css: 'var(--font-sans)', ref: 'font-sans' } },
+];
 
-// figma.json as apps/ds-configurator serves it, for a site document { version, overrides, custom }.
+const px = (css) => (/rem$/.test(css) ? parseFloat(css) * 16 : parseFloat(css));
 function planOf(doc) {
-  const base = [
-    { name: 'background', kind: 'color', type: 'COLOR', scopes: ['FRAME_FILL', 'SHAPE_FILL'], light: { value: '#ffffff', alias: alias('2.theme', 'background/surface/light', KEYS.bg) }, dark: { value: '#0e0f11', alias: alias('2.theme', 'background/surface/light', KEYS.bg) } },
-    { name: 'primary', kind: 'color', type: 'COLOR', scopes: ['FRAME_FILL', 'SHAPE_FILL'], light: { value: '#fddb2b', alias: alias('2.theme', 'accent/primary/default', KEYS.primary) }, dark: { value: '#f7c21c', alias: alias('2.theme', 'accent/primary/default', KEYS.primary) } },
-    { name: 'ring', kind: 'color', type: 'COLOR', scopes: ['STROKE_COLOR'], light: { value: '#fddb2b', ref: 'primary' }, dark: { value: '#f7c21c', ref: 'primary' } },
-    { name: 'radius', kind: 'radius', type: 'FLOAT', scopes: ['CORNER_RADIUS'], light: { value: 12, alias: alias('1.brand', 'radius/m', KEYS.radius) }, dark: { value: 12, alias: alias('1.brand', 'radius/m', KEYS.radius) } },
-  ];
-  const variables = base.map((b) => {
+  const variables = BASE.map((b) => {
     const o = doc.overrides[b.name] || {};
-    const val = (m) => (o[m] ? (/^var/.test(o[m]) ? { value: null, ref: o[m].slice(6, -1) } : { value: b.type === 'FLOAT' ? parseFloat(o[m]) : o[m] }) : b[m]);
-    return { name: b.name, kind: b.kind, type: b.type, scopes: b.scopes, codeSyntax: `var(--${b.name})`, custom: false, overridden: !!(o.light || o.dark), values: { light: val('light'), dark: val('dark') }, base: { light: b.light, dark: b.dark } };
+    const val = (m) => {
+      const css = o[m] || (m === 'dark' && b.kind !== 'color' && o.light);
+      if (!css) return b[m];
+      if (/^var/.test(css)) return { ref: css.slice(6, -1), value: null, css };
+      return { value: b.kind === 'radius' ? px(css) : b.kind === 'font' ? css : css, css };
+    };
+    return { name: b.name, kind: b.kind, type: b.type, scopes: b.scopes, codeSyntax: `var(--${b.name})`, editable: b.editable !== false, ...(b.derived ? { derived: true } : {}),
+      overridden: !!(o.light || o.dark), values: { light: val('light'), dark: val('dark') }, base: { light: b.light, dark: b.dark } };
   });
-  for (const t of doc.custom) variables.push({ name: t.name, kind: t.kind, type: t.kind === 'color' ? 'COLOR' : 'FLOAT', scopes: [], codeSyntax: `var(--${t.name})`, custom: true, overridden: false, values: { light: { value: t.light }, dark: { value: t.dark } }, base: null });
-  return { collection: 'shadcn', modes: ['light', 'dark'], project: 'demo', version: doc.version, brand: 'bank', prefix: 'mb', variables };
+  return { $schema: 'ds-configurator/figma-plan@2', collection: 'shadcn', modes: ['Light', 'Dark'], project: 'demo', version: doc.version, variables };
 }
 
 function fakeSite() {
-  const site = { doc: { version: 1, overrides: {}, custom: [{ name: 'mb-promo', kind: 'color', light: '#fef3c7', dark: '#451a03' }] }, puts: [], syncs: [] };
+  const site = { doc: { version: 1, overrides: {} }, puts: [], syncs: [] };
   site.fetch = async (url, init = {}) => {
     const path = new URL(url).pathname;
     const reply = (status, body) => ({ ok: status < 400, status, text: async () => JSON.stringify(body) });
@@ -44,7 +48,7 @@ function fakeSite() {
       const body = JSON.parse(init.body);
       site.puts.push({ ifMatch: init.headers['If-Match'], body });
       if (init.headers['If-Match'] !== `"${site.doc.version}"`) return reply(409, { error: 'Конфликт', current: site.doc });
-      site.doc = { version: site.doc.version + 1, overrides: body.overrides, custom: body.custom };
+      site.doc = { version: site.doc.version + 1, overrides: body.overrides };
       return reply(200, { tokens: site.doc, diff: {} });
     }
     return reply(404, { error: 'нет' });
@@ -55,7 +59,7 @@ function fakeSite() {
 const realFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = realFetch; });
 
-async function connected(opts = { library: LIBRARY }) {
+async function connected(opts = {}) {
   const site = fakeSite();
   globalThis.fetch = site.fetch;
   const m = boot(null, opts);
@@ -81,7 +85,7 @@ test('manifest allows the site; site helpers', () => {
   assert.equal(syncStatus(1, null, {}).status, 'never');
 });
 
-test('connect, pull: shadcn collection with Foundation aliases, refs and values; idempotent', async () => {
+test('connect, pull: shadcn collection (Light, Dark) with oklch values, alpha, refs and px; idempotent', async () => {
   const { m, ui, site, store, connect } = await connected();
   assert.equal(connect.status, 'never');
   assert.deepEqual(JSON.parse(m.figma.root.getPluginData('site:conn')), { url: 'http://localhost:8797', project: 'demo' });
@@ -91,86 +95,82 @@ test('connect, pull: shadcn collection with Foundation aliases, refs and values;
   let r = await ui.send('site-pull');
   const rep = r.done.report;
   assert.equal(rep.collectionCreated, true);
-  assert.deepEqual(rep.created.sort(), ['background', 'mb-promo', 'primary', 'radius', 'ring']);
-  assert.equal(rep.aliased, 6, 'background, primary, radius x light/dark from the library');
-  assert.equal(rep.refs, 2);
+  assert.deepEqual(rep.created.sort(), ['background', 'border', 'font-heading', 'font-sans', 'primary', 'radius', 'radius-sm', 'ring']);
+  assert.equal(rep.refs, 4, 'ring -> primary, font-heading -> font-sans');
+  assert.deepEqual(rep.errors, []);
   assert.equal(r.done.site.status, 'same');
   assert.deepEqual(site.syncs.map((s) => [s.from, s.version]), [['site', 1]]);
   const { col, vars, mode } = shadcn(m);
-  assert.deepEqual(col.modes.map((x) => x.name), ['light', 'dark']);
-  const bg = vars.get('background').valuesByMode[mode('dark')];
-  assert.equal(m.vars.get(bg.id).key, KEYS.bg, 'alias to the imported Foundation variable');
-  assert.equal(vars.get('ring').valuesByMode[mode('light')].id, vars.get('primary').id, 'ring -> shadcn/primary');
-  assert.equal(hex(vars.get('mb-promo').valuesByMode[mode('dark')]), '#451a03');
+  assert.deepEqual(col.modes.map((x) => x.name), ['Light', 'Dark']);
+  assert.equal(hex(vars.get('background').valuesByMode[mode('Dark')]), '#0a0a0a');
+  assert.equal(hex(vars.get('border').valuesByMode[mode('Dark')]), '#ffffff1a', 'alpha kept');
+  assert.equal(vars.get('ring').valuesByMode[mode('Light')].id, vars.get('primary').id, 'ring -> shadcn/primary');
   assert.equal(vars.get('primary').codeSyntax.WEB, 'var(--primary)');
   assert.deepEqual(vars.get('radius').scopes, ['CORNER_RADIUS']);
+  assert.equal(vars.get('radius').valuesByMode[mode('Light')], 10);
+  assert.equal(vars.get('radius-sm').valuesByMode[mode('Dark')], 6);
+  assert.equal(vars.get('font-sans').valuesByMode[mode('Light')], 'Geist');
+  assert.equal(vars.get('font-heading').valuesByMode[mode('Light')].id, vars.get('font-sans').id);
 
   const count = m.vars.size;
   r = await ui.send('site-pull');
   assert.equal(r.done.report.created.length + r.done.report.updated.length, 0, 'second pull changes nothing');
-  assert.equal(r.done.report.unchanged, 10);
+  assert.equal(r.done.report.unchanged, 16);
   assert.equal(m.vars.size, count, 'no new variables');
 });
 
-test('without the library: plain values, each reported', async () => {
-  const { m, ui } = await connected({});
-  const r = await ui.send('site-pull');
-  assert.equal(r.done.report.aliased, 0);
-  assert.equal(r.done.report.raw.length, 6);
-  const { vars, mode } = shadcn(m);
-  assert.equal(hex(vars.get('primary').valuesByMode[mode('light')]), '#fddb2b');
-  assert.equal(vars.get('radius').valuesByMode[mode('light')], 12);
-  assert.equal(r.done.site.status, 'same');
-});
-
-test('designer edits in Figma: «в Figma новее», push with If-Match, then «совпадает»', async () => {
+test('designer edits in Figma: «в Figma новее», push of the changed value as oklch with If-Match, then «совпадает»', async () => {
   const { m, ui, site } = await connected();
   await ui.send('site-pull');
   const { col, vars, mode } = shadcn(m);
-  vars.get('primary').setValueForMode(mode('light'), { r: 0x7c / 255, g: 0x3a / 255, b: 0xed / 255, a: 1 });
-  const extra = m.figma.variables.createVariable('mb-card', col, 'FLOAT');
-  extra.scopes = ['CORNER_RADIUS'];
-  extra.setValueForMode(mode('light'), 20);
-  extra.setValueForMode(mode('dark'), 20);
-  m.figma.variables.createVariable('Bad Name', col, 'COLOR').setValueForMode(mode('light'), { r: 0, g: 0, b: 0, a: 1 });
+  vars.get('primary').setValueForMode(mode('Light'), { r: 0x7c / 255, g: 0x3a / 255, b: 0xed / 255, a: 1 });
+  vars.get('radius').setValueForMode(mode('Light'), 12);
+  vars.get('radius').setValueForMode(mode('Dark'), 12);
+  vars.get('radius-sm').setValueForMode(mode('Light'), 8); // derived: never pushed
+  vars.get('font-sans').setValueForMode(mode('Light'), 'Inter');
+  vars.get('font-sans').setValueForMode(mode('Dark'), 'Inter');
+  m.figma.variables.createVariable('brand', col, 'COLOR').setValueForMode(mode('Light'), { r: 0, g: 0, b: 0, a: 1 });
   let r = await ui.send('site-status');
   assert.equal(r.done.site.status, 'figma-newer');
-  assert.deepEqual(r.done.site.figmaChanges, ['Bad Name', 'mb-card', 'primary']);
+  assert.deepEqual(r.done.site.figmaChanges, ['brand', 'font-sans', 'primary', 'radius', 'radius-sm']);
 
   r = await ui.send('site-push');
   const put = site.puts.at(-1);
   assert.equal(put.ifMatch, '"1"');
-  assert.deepEqual(put.body.overrides, { primary: { light: '#7c3aed' } }, 'only the changed mode, dark stays the Mbank alias');
-  assert.deepEqual(put.body.custom.map((t) => [t.name, t.kind, t.light]), [['mb-promo', 'color', '#fef3c7'], ['mb-card', 'radius', '20px']]);
-  assert.equal(put.body.source, 'figma');
-  assert.ok(r.done.push.skipped.some((s) => s.startsWith('Bad Name')));
+  assert.deepEqual(put.body, { overrides: { primary: { light: 'oklch(0.541 0.247 293.009)' }, radius: { light: '12px' }, 'font-sans': { light: "'Inter', sans-serif" } }, source: 'figma' }, 'only changed modes; no derived, no custom tokens');
+  assert.ok(r.done.push.skipped.some((s) => s.startsWith('brand: такого токена shadcn нет')));
   assert.equal(r.done.push.version, 2);
   assert.equal(r.done.site.status, 'same');
+  // The site serves the override back: the next pull keeps the Figma value.
+  r = await ui.send('site-pull');
+  assert.equal(hex(vars.get('primary').valuesByMode[mode('Light')]), '#7c3aed');
 });
 
 test('both sides changed: conflict on push, pull refuses without force, force takes the site', async () => {
   const { m, ui, site } = await connected();
   await ui.send('site-pull');
   const { vars, mode } = shadcn(m);
-  vars.get('primary').setValueForMode(mode('light'), { r: 1, g: 0, b: 0, a: 1 });
-  site.doc = { ...site.doc, version: 2, overrides: { primary: { light: '#16a34a' } } }; // edited on the site meanwhile
+  vars.get('primary').setValueForMode(mode('Light'), { r: 1, g: 0, b: 0, a: 1 });
+  site.doc = { ...site.doc, version: 2, overrides: { primary: { light: '#1447e6', dark: 'oklch(0.922 0 0)' } } }; // edited on the site meanwhile
   let r = await ui.send('site-status');
   assert.equal(r.done.site.status, 'conflict');
   r = await ui.send('site-push');
   assert.deepEqual({ conflict: r.done.push.conflict, site: r.done.push.siteVersion, local: r.done.push.localVersion }, { conflict: true, site: 2, local: 1 });
   await assert.rejects(ui.send('site-pull'), /неотправленные правки.*primary/);
   r = await ui.send('site-pull', { force: true });
-  assert.equal(hex(vars.get('primary').valuesByMode[mode('light')]), '#16a34a');
+  assert.equal(hex(vars.get('primary').valuesByMode[mode('Light')]), '#1447e6');
   assert.equal(r.done.site.status, 'same');
   assert.equal(r.done.site.localVersion, 2);
 });
 
-test('pushPayload: a value equal to the base is not an override; refs become var()', () => {
-  const plan = planOf({ version: 1, overrides: {}, custom: [] });
+test('pushPayload: a value equal to the base (other notation) is not an override; refs become var()', () => {
+  const plan = planOf({ version: 1, overrides: {} });
   const cur = {
-    primary: { type: 'COLOR', light: { sig: 'value:#fddb2b', value: '#fddb2b' }, dark: { sig: 'alias:accent/primary/default', value: null } },
-    ring: { type: 'COLOR', light: { sig: 'ref:background', value: '#ffffff' }, dark: { sig: 'ref:primary', value: '#f7c21c' } },
+    primary: { type: 'COLOR', light: { sig: 'value:#171717', value: '#171717', css: 'oklch(0.205 0 0)' }, dark: { sig: 'value:#e5e5e5', value: '#e5e5e5', css: 'oklch(0.922 0 0)' } },
+    'radius-sm': { type: 'FLOAT', light: { sig: 'value:99', value: 99, css: '99px' }, dark: { sig: 'value:99', value: 99, css: '99px' } },
+    ring: { type: 'COLOR', light: { sig: 'ref:background', value: '#ffffff', css: 'var(--background)' }, dark: { sig: 'ref:primary', value: '#e5e5e5', css: 'var(--primary)' } },
   };
-  const { tokens } = pushPayload(plan, cur);
+  const { tokens, skipped } = pushPayload(plan, cur);
   assert.deepEqual(tokens.overrides, { ring: { light: 'var(--background)' } });
+  assert.deepEqual(skipped, []);
 });

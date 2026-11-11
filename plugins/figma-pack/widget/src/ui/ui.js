@@ -1,8 +1,7 @@
-// Iframe of the Mbank Tokens widget: plain DOM, talks to the sandbox (src/ui-bridge.js) by messages.
-// Tabs: tokens, project tokens, brand from one colour, components, code sync, Figma apply.
-import { validateExtra, KINDS } from '../../core/checks.js';
-import { renderGenerate, renderCode, renderFigma, onDone } from './views.js';
-import { renderBind, propagationBox } from './components-view.js';
+// Iframe of the shadcn Tokens widget: plain DOM, talks to the sandbox (src/ui-bridge.js) by messages.
+// Tabs: tokens (values of the fixed shadcn names), code (exports + import), Figma apply, site sync.
+import { colorKey } from '../../core/oklch.js';
+import { renderCode, renderFigma, onDone } from './views.js';
 import { renderSite, onSiteDone } from './site-view.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
@@ -15,7 +14,8 @@ export const STATUS = {
   library: ['в библиотеке', 'info'], unknown: ['не проверено', 'neutral'],
 };
 export const chip = (label, tone) => `<span class="chip t-${tone}">${esc(label)}</span>`;
-export const swatch = (v) => (/^#[0-9a-f]{3,8}$/i.test(String(v)) ? `<span class="sw" style="background:${esc(v)}"></span>` : '<span class="sw"></span>');
+// Only a parsed colour reaches the style attribute (8-bit #hex, alpha kept).
+export const swatch = (v) => { const hex = colorKey(v); return hex ? `<span class="sw" style="background:${hex}"></span>` : '<span class="sw"></span>'; };
 
 export function toast(text, tone = 'neutral') {
   const t = $('#toast');
@@ -29,28 +29,30 @@ export function toast(text, tone = 'neutral') {
 function renderTokens() {
   const s = ui.state;
   const q = ui.query.toLowerCase();
-  const rows = s.rows.filter((r) => (ui.group === 'all' || r.group === ui.group) && (!q || r.css.includes(q) || r.figma.toLowerCase().includes(q)));
+  const rows = s.rows.filter((r) => (ui.group === 'all' || r.group === ui.group) && (!q || r.name.includes(q)));
   const issues = s.issues.map((i) => `<li><b>--${esc(i.fg)}</b> на --${esc(i.bg)} (${i.mode}): ${i.ratio} &lt; ${i.min}</li>`).join('');
   const opt = (id, label) => `<option value="${id}" ${ui.group === id ? 'selected' : ''}>${esc(label)}</option>`;
   $('#tab-tokens').innerHTML = `
+    <p class="muted">Набор shadcn/ui фиксирован: меняются только значения (light / dark). Цвет — <span class="mono">oklch(L C H)</span>, <span class="mono">oklch(L C H / 10%)</span> или #hex; радиус — rem или px.</p>
     <div class="row">
       <select id="group">${opt('all', 'Все группы')}${s.groups.map((g) => opt(g.id, g.label)).join('')}</select>
-      <input id="query" placeholder="Поиск: primary, text/default…" value="${esc(ui.query)}">
+      <input id="query" placeholder="Поиск: primary, sidebar…" value="${esc(ui.query)}">
       <span class="muted">${rows.length} из ${s.rows.length}</span>
       <span style="flex:1"></span>
       <button class="btn" id="reset-all">Сбросить все правки</button>
     </div>
-    ${issues ? `<div class="box"><b>Контраст AA (бренд ${esc(s.brand)}): ${s.issues.length}</b><ul>${issues}</ul></div>` : ''}
-    <table><thead><tr><th>light</th><th>dark</th><th>CSS-токен</th><th>Переменная Figma</th><th>Статус</th><th></th></tr></thead><tbody>
+    ${issues ? `<div class="box"><b>Контраст AA: ${s.issues.length}</b><ul>${issues}</ul></div>` : ''}
+    <table><thead><tr><th>light</th><th>dark</th><th>CSS-переменная</th><th>Статус</th><th></th></tr></thead><tbody>
     ${rows.map((r) => {
       const [label, tone] = STATUS[r.status] || STATUS.unknown;
-      const input = (mode) => `${r.kind === 'color' ? swatch(r[mode]) : ''} <input class="hex" data-key="${esc(r.key)}" data-mode="${mode}" value="${esc(r[mode])}" ${r.derivedFrom ? 'disabled' : ''}>`;
+      const input = (mode) => (r.kind === 'radius' && mode === 'dark'
+        ? '<span class="muted">как light</span>'
+        : `${r.kind === 'color' ? swatch(r[mode]) : ''} <input class="hex" data-key="${esc(r.key)}" data-mode="${mode}" value="${esc(r[mode])}">`);
       return `<tr class="${ui.focus === r.key ? 'focus' : ''}" id="row-${esc(r.key)}">
         <td>${input('light')}</td><td>${input('dark')}</td>
-        <td class="mono">--${esc(r.css)}${r.note ? `<div class="muted">${esc(r.note)}</div>` : ''}${r.derivedFrom ? `<div class="muted">следует за ${esc(r.derivedFrom)}</div>` : ''}</td>
-        <td class="muted">${esc(r.collection)} / ${esc(r.figma)}</td>
-        <td>${chip(label, tone)} ${r.edited ? chip(r.extra ? 'новый' : 'изменён', 'brand') : ''}</td>
-        <td>${r.extra ? `<button class="btn" data-remove="${esc(r.css)}">Удалить</button>` : r.edited ? `<button class="btn" data-reset="${esc(r.key)}" title="Вернуть значение из tokens.json">↺</button>` : ''}</td>
+        <td class="mono">--${esc(r.name)}<div class="muted">shadcn / ${esc(r.name)}</div></td>
+        <td>${chip(label, tone)} ${r.edited ? chip('изменён', 'brand') : ''}</td>
+        <td>${r.edited ? `<button class="btn" data-reset="${esc(r.key)}" title="Вернуть значение shadcn по умолчанию">↺</button>` : ''}</td>
       </tr>`;
     }).join('')}
     </tbody></table>`;
@@ -68,71 +70,20 @@ function renderTokens() {
     el.onchange = () => {
       const key = el.dataset.key;
       const other = document.querySelector(`#tab-tokens input[data-key="${CSS.escape(key)}"][data-mode="${el.dataset.mode === 'light' ? 'dark' : 'light'}"]`);
-      const values = { [el.dataset.mode]: el.value, [other.dataset.mode]: other.value };
-      if (key.startsWith('extra:')) send('set-extra', { token: { name: key.slice(6), ...values } });
-      else send('set-token', { key, ...values });
+      send('set-token', { key, [el.dataset.mode]: el.value, ...(other ? { [other.dataset.mode]: other.value } : {}) });
     };
   }
   for (const b of document.querySelectorAll('[data-reset]')) b.onclick = () => send('reset-token', { key: b.dataset.reset });
-  for (const b of document.querySelectorAll('[data-remove]')) b.onclick = () => send('remove-extra', { name: b.dataset.remove });
   if (ui.focus) { const el = document.getElementById(`row-${ui.focus}`); if (el) el.scrollIntoView({ block: 'center' }); ui.focus = null; }
 }
 
-function renderExtra() {
-  const s = ui.state;
-  const extras = s.rows.filter((r) => r.extra);
-  const colors = s.rows.filter((r) => r.kind === 'color').map((r) => r.css);
-  $('#tab-extra').innerHTML = `
-    <p class="muted">Токен проекта: <span class="mono">&lt;префикс&gt;-&lt;роль&gt;</span>, kebab-case. В Figma — переменная <span class="mono">2.theme / custom/&lt;префикс&gt;/&lt;роль&gt;</span> с light/dark, в коде — <span class="mono">--&lt;префикс&gt;-&lt;роль&gt;</span>. Сначала проверьте, нет ли подходящего токена Mbank.</p>
-    <div class="box">
-      <div class="row"><label>Префикс проекта <input id="x-prefix" value="${esc(s.prefix)}" size="8"></label>
-        <label>Имя <input id="x-name" value="${esc(s.prefix)}-" size="28"></label>
-        <label>Тип <select id="x-kind">${KINDS.map((k) => `<option>${k}</option>`).join('')}</select></label></div>
-      <div class="row"><label>light <input id="x-light" class="hex" placeholder="#rrggbb / 12px"></label>
-        <label>dark <input id="x-dark" class="hex" placeholder="как light"></label>
-        <label>Фон для контраста <select id="x-pair"><option value="">— (по имени *-foreground)</option>${colors.map((c) => `<option>${esc(c)}</option>`).join('')}</select></label></div>
-      <div id="x-errors" class="err"></div>
-      <button class="btn primary" id="x-add">Добавить токен</button>
-    </div>
-    <h3>Токены проекта (${extras.length})</h3>
-    ${extras.length ? `<table><thead><tr><th>light</th><th>dark</th><th>CSS-токен</th><th>Переменная Figma</th><th>Статус</th><th></th></tr></thead><tbody>${extras.map((r) => {
-      const [label, tone] = STATUS[r.status] || STATUS.unknown;
-      const input = (mode) => `${r.kind === 'color' ? swatch(r[mode]) : ''} <input class="hex" data-extra="${esc(r.css)}" data-mode="${mode}" value="${esc(r[mode])}">`;
-      return `<tr><td>${input('light')}</td><td>${input('dark')}</td><td class="mono">--${esc(r.css)}</td><td class="muted">${esc(r.collection)} / ${esc(r.figma)}</td><td>${chip(label, tone)}</td><td><button class="btn" data-remove="${esc(r.css)}">Удалить</button></td></tr>`;
-    }).join('')}</tbody></table>
-    <div class="row"><button class="btn primary" id="x-apply">Применить в Figma</button><button class="btn" id="x-dry">Что изменится</button>
-      <span class="muted">Создаёт или меняет переменные 2.theme / custom/… (light и dark). Дальше — вкладка «Компоненты».</span></div>
-    ${propagationBox(s.propagation && s.propagation.kind === 'apply' ? s.propagation : null)}` : '<p class="muted">Пока нет.</p>'}`;
-  const token = () => ({ name: $('#x-name').value.trim(), kind: $('#x-kind').value, light: $('#x-light').value, dark: $('#x-dark').value || $('#x-light').value, pairWith: $('#x-pair').value || undefined });
-  const check = () => {
-    const taken = new Set(s.rows.map((r) => r.css));
-    const errors = validateExtra(token(), $('#x-prefix').value.trim(), taken);
-    $('#x-errors').innerHTML = errors.map(esc).join('<br>');
-    $('#x-add').disabled = errors.length > 0;
-  };
-  for (const id of ['#x-name', '#x-kind', '#x-light', '#x-dark', '#x-pair']) $(id).oninput = check;
-  $('#x-prefix').onchange = () => send('prefix', { prefix: $('#x-prefix').value });
-  $('#x-prefix').oninput = check;
-  $('#x-add').onclick = () => send('add-extra', { token: token() });
-  for (const b of document.querySelectorAll('#tab-extra [data-remove]')) b.onclick = () => send('remove-extra', { name: b.dataset.remove });
-  for (const el of document.querySelectorAll('#tab-extra input[data-extra]')) {
-    el.onchange = () => {
-      const other = document.querySelector(`#tab-extra input[data-extra="${CSS.escape(el.dataset.extra)}"][data-mode="${el.dataset.mode === 'light' ? 'dark' : 'light'}"]`);
-      send('set-extra', { token: { name: el.dataset.extra, [el.dataset.mode]: el.value, [other.dataset.mode]: other.value } });
-    };
-  }
-  if ($('#x-apply')) $('#x-apply').onclick = () => send('apply', {});
-  if ($('#x-dry')) $('#x-dry').onclick = () => { send('apply', { dryRun: true }); show('figma'); };
-  check();
-}
-
-const RENDER = { tokens: renderTokens, extra: renderExtra, generate: renderGenerate, bind: renderBind, code: renderCode, figma: renderFigma, site: renderSite };
+const RENDER = { tokens: renderTokens, code: renderCode, figma: renderFigma, site: renderSite };
 
 export function show(tab) {
-  ui.tab = tab;
-  for (const b of document.querySelectorAll('#tabs button')) b.classList.toggle('on', b.dataset.tab === tab);
-  for (const s of document.querySelectorAll('main section')) s.classList.toggle('on', s.id === `tab-${tab}`);
-  if (ui.state) RENDER[tab]();
+  ui.tab = RENDER[tab] ? tab : 'tokens';
+  for (const b of document.querySelectorAll('#tabs button')) b.classList.toggle('on', b.dataset.tab === ui.tab);
+  for (const s of document.querySelectorAll('main section')) s.classList.toggle('on', s.id === `tab-${ui.tab}`);
+  if (ui.state) RENDER[ui.tab]();
 }
 
 window.onmessage = (e) => {
@@ -141,8 +92,7 @@ window.onmessage = (e) => {
   if (m.type === 'open') { ui.focus = m.focus; if (m.focus) ui.group = 'all'; ui.pendingTab = m.tab; return; }
   if (m.type === 'state') {
     ui.state = m.state;
-    $('#brand').innerHTML = m.state.brands.map((b) => `<option ${b === m.state.brand ? 'selected' : ''}>${b}</option>`).join('');
-    if (ui.pendingTab) { const t = ui.pendingTab; ui.pendingTab = null; show(t); } else if (['tokens', 'extra', 'bind', 'figma'].includes(ui.tab)) RENDER[ui.tab]();
+    if (ui.pendingTab) { const t = ui.pendingTab; ui.pendingTab = null; show(t); } else if (['tokens', 'figma'].includes(ui.tab)) RENDER[ui.tab]();
     return;
   }
   if (m.type === 'error') { toast(`${m.for}: ${m.message}`, 'error'); return; }
@@ -150,7 +100,6 @@ window.onmessage = (e) => {
   if (m.type.endsWith(':done')) onDone(m.type.slice(0, -5), m);
 };
 
-$('#brand').onchange = (e) => send('brand', { brand: e.target.value });
 for (const b of document.querySelectorAll('#tabs button')) b.onclick = () => show(b.dataset.tab);
 $('#close').onclick = () => send('close');
 send('ready');

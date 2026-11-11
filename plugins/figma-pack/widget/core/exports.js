@@ -1,162 +1,74 @@
-// "Sync with code": the board state as files the repo already understands.
-//   tokens.json      owner contract shape (skills/mbank-figma-patterns/references/tokens.json)
-//   raw dump         read-tokens.js format mbank-figma-raw/1 -> frontend-pack tokens-build.mjs --from
-//   registry:base    shadcn registry item (https://ui.shadcn.com/schema/registry-item.json)
-//   tokens.css       Tailwind v4 + shadcn/ui theme for one brand (preview; the canonical one is tokens-build)
-import { TOKEN_MAP } from '../../builder/core/token-map.js';
-import { buildModel, indexSource, normHex, resolveValue, rowsByCss, BRANDS, THEME, BRAND } from './model.js';
+// "Sync with code": the board state as files code understands.
+//   shadcn-tokens.json  schema shadcn/tokens@1 (same shape as skills/ds-tokens/references/shadcn-tokens.json)
+//   tokens.css          Tailwind v4 + shadcn/ui theme: :root, .dark, @theme inline, @layer base
+//   registry item       shadcn registry:theme (https://ui.shadcn.com/schema/registry-item.json)
+import { buildModel, RADIUS } from './model.js';
 
 const clone = (x) => JSON.parse(JSON.stringify(x));
-const str = (v) => (typeof v === 'number' ? String(Number(v.toFixed(4))) : v);
 
-/** Board state (edits of every brand + extras) applied to tokens.json. */
-export function exportTokensJson(tokens, { edits = {}, extras = [] } = {}) {
+/** Board edits applied to the token document (same names, edited values). */
+export function exportTokensJson(tokens, { edits = {} } = {}) {
   const out = clone(tokens);
-  const ix = indexSource(out);
-  const themeVar = (name, light) => {
-    let v = ix.theme.get(name);
-    if (!v) {
-      v = { name, key: null, light, dark: light, aliasLight: null };
-      out.theme.vars.push(v);
-      ix.theme.set(name, v);
-    }
-    return v;
-  };
-  for (const brand of ix.brandModes) {
-    const model = buildModel(tokens, { brand, edits });
-    const bi = ix.brandModes.indexOf(brand);
-    for (const r of model.rows) {
-      if (!r.edited) continue;
-      if (r.kind === 'radius') { const v = ix.radius.get(r.figma); if (v) v.values = v.values.map(() => str(r.light)); continue; }
-      if (r.collection === BRAND) {
-        const v = ix.brand.get(r.figma);
-        if (v) v.values[bi] = r.light;
-        const d = themeVar(r.darkFigma, r.light);
-        d.light = r.light;
-        d.dark = r.dark;
-        continue;
-      }
-      if (brand !== ix.brandModes[0]) continue; // 2.theme does not depend on the brand
-      const v = themeVar(r.figma, r.light);
-      if (!v || r.light == null) continue;
-      if (v.light !== r.light) v.aliasLight = null;
-      v.light = r.light;
-      v.dark = r.dark;
-    }
-  }
-  const model = buildModel(out, { brand: ix.brandModes[0], extras });
-  const byCss = rowsByCss(model.rows);
-  for (const r of model.rows.filter((x) => x.extra)) {
-    const val = (mode) => (r.kind === 'color' ? normHex(resolveValue(r[mode], mode, byCss)) : str(r[mode]));
-    const alias = /^var\(--([\w-]+)\)$/.exec(String(r.light));
-    const target = alias && byCss.get(alias[1]);
-    const v = themeVar(r.figma, val('light'));
-    Object.assign(v, { light: val('light'), dark: val('dark'), aliasLight: target ? target.figma : null });
+  for (const r of buildModel(tokens, { edits }).rows) {
+    if (!r.edited) continue;
+    if (r.name === RADIUS) out.radius = r.light;
+    else out.colors[r.name] = { light: r.light, dark: r.dark };
   }
   return out;
 }
 
-/** tokens.json -> read-tokens.js dump of the Foundation file (2.theme + 1.brand), for tokens-build --from. */
-export function rawDump(tokens, { date = new Date().toISOString() } = {}) {
-  const theme = tokens.theme.vars.map((v) => {
-    const color = normHex(v.light) !== null;
-    return {
-      name: v.name, key: v.key || null, type: color ? 'COLOR' : 'FLOAT',
-      values: { light: color ? v.light : Number(v.light), dark: color ? v.dark : Number(v.dark) },
-      alias: { light: v.aliasLight || null, dark: null },
-    };
-  });
-  const modes = tokens.brand.modes || tokens.brand.columns || BRANDS;
-  const per = (fn) => Object.fromEntries(modes.map((m, i) => [m, fn(i)]));
-  const brand = [
-    ...tokens.brand.vars.map((v) => ({ name: v.name, key: v.key || null, type: 'COLOR', values: per((i) => v.values[i]), alias: per(() => null) })),
-    ...((tokens.brandRadius && tokens.brandRadius.vars) || []).map((v) => ({ name: v.name, key: v.key || null, type: 'FLOAT', values: per(() => Number(v.values[0])), alias: per(() => null) })),
-  ];
-  return {
-    format: 'mbank-figma-raw/1',
-    kit: 'foundation',
-    file: { name: 'Mbank Tokens widget', key: null },
-    readAt: date,
-    collections: [
-      { name: THEME, key: (tokens.theme && tokens.theme.key) || null, modes: ['light', 'dark'], variables: theme },
-      { name: BRAND, key: null, modes, variables: brand },
-    ],
-    textStyles: [],
-    effectStyles: [],
-    warnings: [],
-  };
-}
-
-/** CSS variables of one brand: { light: { primary: '#..' }, dark: {...}, theme: {...} } (names without --). */
-export function cssVarsOf(model) {
-  const byCss = rowsByCss(model.rows);
-  const light = {};
+/** CSS variables of the board: { theme, light, dark } (names without --). */
+export function cssVarsOf(tokens, model) {
+  const radius = model.rows.find((r) => r.name === RADIUS);
+  const light = radius ? { radius: radius.light } : {}; // shadcn writes --radius first
   const dark = {};
   for (const r of model.rows) {
-    if (r.light == null) continue;
-    if (r.kind === 'color') {
-      light[r.css] = normHex(resolveValue(r.light, 'light', byCss)) || r.light;
-      dark[r.css] = normHex(resolveValue(r.dark, 'dark', byCss)) || r.dark;
-    } else {
-      light[r.css] = `${Number(r.light)}px`;
-      if (r.dark != null && Number(r.dark) !== Number(r.light)) dark[r.css] = `${Number(r.dark)}px`;
-    }
+    if (r.name === RADIUS) continue;
+    light[r.name] = r.light;
+    dark[r.name] = r.dark;
   }
-  for (const [css, m] of Object.entries(TOKEN_MAP.colors)) {
-    if (m.alias && !(css in light)) { light[css] = `var(--${m.alias})`; dark[css] = `var(--${m.alias})`; }
-  }
-  if (light['radius-md']) light.radius = light['radius-md'];
-  const theme = { 'font-sans': '"Inter Mbank", Inter, ui-sans-serif, system-ui, sans-serif' };
-  return { light, dark, theme };
+  const theme = {};
+  for (const [k, v] of Object.entries(tokens.font || {})) theme[`font-${k}`] = v;
+  for (const [k, v] of Object.entries(tokens.radiusScale || {})) theme[`radius-${k}`] = v;
+  return { theme, light, dark };
 }
 
 export const REGISTRY_ITEM_SCHEMA = 'https://ui.shadcn.com/schema/registry-item.json';
 
-/** shadcn registry item of type registry:base for one brand. */
-export function registryBase(model) {
-  const vars = cssVarsOf(model);
+/** shadcn registry item of type registry:theme. */
+export function registryTheme(tokens, model, { name = 'project-theme' } = {}) {
   return {
     $schema: REGISTRY_ITEM_SCHEMA,
-    name: `mbank-${model.brand}`,
-    type: 'registry:base',
-    title: `Mbank ${model.brand}`,
-    description: `Mbank design system, brand ${model.brand}: Figma tokens (2.theme + 1.brand) from the Mbank Tokens widget for shadcn/ui + Tailwind v4`,
-    cssVars: vars,
-    meta: {
-      generator: 'figma-pack/widget (Mbank Tokens)',
-      brand: model.brand,
-      figma: { collections: [THEME, BRAND], brandMode: model.brand },
-      extras: model.rows.filter((r) => r.extra).map((r) => r.css),
-    },
+    name,
+    type: 'registry:theme',
+    title: 'shadcn theme',
+    description: 'shadcn/ui tokens (Tailwind v4, oklch) from the shadcn Tokens Figma widget',
+    cssVars: cssVarsOf(tokens, model),
+    meta: { generator: 'figma-pack/widget (shadcn Tokens)', figma: { collection: 'shadcn', modes: ['Light', 'Dark'] } },
   };
 }
 
 const block = (selector, vars) => `${selector} {\n${Object.entries(vars).map(([k, v]) => `  --${k}: ${v};`).join('\n')}\n}`;
 
-/** tokens.css for one brand: :root, .dark, @theme inline, @layer base. */
-export function tokensCss(model) {
-  const vars = cssVarsOf(model);
-  const inline = {};
-  for (const r of model.rows) {
-    if (r.kind === 'color') inline[`color-${r.css}`] = `var(--${r.css})`;
-    else if (r.kind === 'radius' && r.css.startsWith('radius-')) inline[r.css] = `var(--${r.css})`;
-  }
-  for (const [css, m] of Object.entries(TOKEN_MAP.colors)) if (m.alias) inline[`color-${css}`] = `var(--${css})`;
-  Object.assign(inline, vars.theme);
+/** tokens.css: the shadcn/ui theme block of globals.css. */
+export function tokensCss(tokens, model) {
+  const vars = cssVarsOf(tokens, model);
+  const inline = { ...vars.theme };
+  for (const r of model.rows) if (r.kind === 'color') inline[`color-${r.name}`] = `var(--${r.name})`;
   return [
     '/*',
-    ` * Mbank ${model.brand}: design tokens for Tailwind CSS v4 + shadcn/ui.`,
-    ' * GENERATED by the Figma widget Mbank Tokens (figma-pack/widget). Preview of one brand; the canonical',
-    ' * file is frontend-pack registry/mbank/tokens.css from tokens-build.mjs. Do not edit by hand.',
+    ' * shadcn/ui design tokens for Tailwind CSS v4 (oklch).',
+    ' * GENERATED by the Figma widget shadcn Tokens (figma-pack/widget). Do not edit by hand:',
+    ' * change the values in the widget or on the design-system site and export again.',
     ' */',
     '',
-    '@custom-variant dark (&:where(.dark, .dark *));',
+    '@custom-variant dark (&:is(.dark *));',
+    '',
+    block('@theme inline', inline),
     '',
     block(':root', vars.light),
     '',
     block('.dark', vars.dark),
-    '',
-    block('@theme inline', inline),
     '',
     '@layer base {',
     '  * { @apply border-border outline-ring/50; }',
@@ -166,23 +78,16 @@ export function tokensCss(model) {
   ].join('\n');
 }
 
-export const OWNER_TOKENS = 'plugins/figma-pack/skills/mbank-figma-patterns/references/tokens.json';
+export const OWNER_TOKENS = 'plugins/figma-pack/skills/ds-tokens/references/shadcn-tokens.json';
 
-/** What the developer runs after downloading the files (repo root). */
-export function syncCommands({ contracts = [] } = {}) {
-  const out = [
-    { title: 'tokens.json → репозиторий (владелец контракта), затем копия во frontend-pack и tokens.css',
-      cmd: `cp ~/Downloads/tokens.json ${OWNER_TOKENS}\nnode plugins/figma-pack/scripts/tokens-platforms.mjs split\nnode plugins/design-engine/scripts/sync-contracts.mjs` },
-    { title: 'Или сырой дамп, как после read-tokens.js',
-      cmd: `node plugins/frontend-pack/scripts/tokens-build.mjs --from ~/Downloads/mbank-tokens-raw.json --tokens ${OWNER_TOKENS}\nnode plugins/figma-pack/scripts/tokens-platforms.mjs split\nnode plugins/design-engine/scripts/sync-contracts.mjs` },
-    { title: 'Проверка: копии и tokens.css совпадают с владельцем', cmd: 'npm test' },
+/** What the developer does with the downloaded files. */
+export function syncCommands() {
+  return [
+    { title: 'Проект: тема в приложение — блок tokens.css заменяет тему shadcn в globals.css (src/app/globals.css или src/index.css)',
+      cmd: 'cp ~/Downloads/tokens.css src/styles/tokens.css   # и @import "./styles/tokens.css"; в globals.css вместо старых :root / .dark' },
+    { title: 'Или через shadcn CLI: registry-элемент темы',
+      cmd: 'npx shadcn@latest add ./shadcn-theme.json' },
+    { title: 'Значения по умолчанию всей дизайн-системы (только с согласия владельца): shadcn-tokens.json → репозиторий frontend-brain',
+      cmd: `cp ~/Downloads/shadcn-tokens.json ${OWNER_TOKENS}\nnode plugins/design-engine/scripts/sync-contracts.mjs\nnpm test` },
   ];
-  if (contracts.length) {
-    const files = contracts.length > 1 ? `{${contracts.join(',')}}` : contracts[0];
-    out.splice(2, 0, {
-      title: `Контракты компонентов (${contracts.join(', ')}) → builder/contracts, затем код кита`,
-      cmd: `cp ~/Downloads/${files}.json plugins/figma-pack/builder/contracts/\nnode plugins/design-engine/scripts/sync-contracts.mjs\nnode plugins/frontend-pack/scripts/contract-to-code.mjs`,
-    });
-  }
-  return out;
 }

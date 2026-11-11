@@ -1,35 +1,8 @@
-// Tabs of the iframe that talk to the sandbox per action: brand generator, code sync (exports +
-// import) and Figma apply; «Компоненты» is components-view.js. Results arrive as '<type>:done' (onDone).
-import { $, esc, send, ui, chip, swatch, toast } from './ui.js';
-import { propagationBox, onComponentDone } from './components-view.js';
-import { contrast } from '../../../builder/core/color.js';
+// Tabs of the iframe that talk to the sandbox per action: code sync (exports + import) and Figma apply.
+// Results arrive as '<type>:done' (onDone).
+import { $, esc, send, ui, chip, toast } from './ui.js';
 
-const view = { preview: null, exports: null, report: null };
-
-// ---- brand from one colour ----
-export function renderGenerate() {
-  const p = view.preview;
-  const ratio = (fg, bg) => {
-    try { return Math.round(contrast(fg, bg) * 100) / 100; } catch (e) { return null; }
-  };
-  const slot = (name) => p && p.slots.find((x) => x.slot === name);
-  const pairs = p ? [['on-accent', 'default'], ['ghost-on-accent', 'ghost-default']].flatMap(([fg, bg]) => ['light', 'dark'].map((mode) => {
-    const r = ratio(slot(fg)[mode], slot(bg)[mode]);
-    return `<li>${fg} на ${bg} (${mode}): ${r} ${r !== null && r >= 4.5 ? chip('AA', 'success') : chip('ниже AA', 'error')}</li>`;
-  })).join('') : '';
-  $('#tab-generate').innerHTML = `
-    <p class="muted">Один цвет → 12 слотов бренда (1.brand light + 2.theme brand/&lt;бренд&gt;/* dark). Основа — генератор DS Builder (OKLCH, контраст текста), состояния и ghost-оттенки — шаги того же тона.</p>
-    <div class="row"><label>Цвет бренда <input id="g-color" type="color" value="${esc(p ? p.hex : (ui.state.rows.find((r) => r.css === 'brand') || {}).light || '')}"></label>
-      <input id="g-hex" class="hex" value="${esc(p ? p.hex : '')}" placeholder="#rrggbb">
-      <button class="btn" id="g-preview">Предпросмотр</button>
-      <button class="btn primary" id="g-apply" ${p ? '' : 'disabled'}>Записать в бренд ${esc(ui.state.brand)}</button></div>
-    ${p ? `<table><thead><tr><th>Слот</th><th>light</th><th>dark</th></tr></thead><tbody>${p.slots.map((s) => `<tr><td class="mono">brand/${esc(s.slot)}</td><td>${swatch(s.light)} <span class="mono">${esc(s.light)}</span></td><td>${swatch(s.dark)} <span class="mono">${esc(s.dark)}</span></td></tr>`).join('')}</tbody></table>
-    <div class="box"><b>Контраст</b><ul>${pairs}</ul></div>
-    <p class="muted">Запись меняет только доску виджета (правки бренда). В файл Figma — вкладка «Figma» → «Применить».</p>` : ''}`;
-  $('#g-color').oninput = (e) => { $('#g-hex').value = e.target.value; };
-  $('#g-preview').onclick = () => send('gen-preview', { hex: $('#g-hex').value || $('#g-color').value });
-  $('#g-apply').onclick = () => p && send('gen-apply', { hex: p.hex });
-}
+const view = { exports: null, report: null };
 
 // ---- code sync ----
 function download(file) {
@@ -55,14 +28,14 @@ export function renderCode() {
   if (!x) send('export');
   $('#tab-code').innerHTML = `
     <h3>Выгрузить</h3>
-    ${x ? `<table><tbody>${x.files.map((f, i) => `<tr><td class="mono">${esc(f.name)}</td><td class="muted">${(f.text.length / 1024).toFixed(1)} КБ ${f.errors && f.errors.length ? chip(`ошибок ${f.errors.length}`, 'error') : ''}</td>
+    ${x ? `<table><tbody>${x.files.map((f, i) => `<tr><td class="mono">${esc(f.name)}</td><td class="muted">${(f.text.length / 1024).toFixed(1)} КБ</td>
       <td><button class="btn" data-dl="${i}">Скачать</button> <button class="btn" data-cp="${i}">Копировать</button> <button class="btn" data-pv="${i}">Показать</button></td></tr>`).join('')}</tbody></table>
       <textarea id="c-preview" readonly placeholder="Нажмите «Показать»"></textarea>
-      <h3>Что запустить в репозитории (корень frontend-brain)</h3>
+      <h3>Что сделать с файлами</h3>
       ${x.commands.map((c) => `<div class="box"><div>${esc(c.title)}</div><pre>${esc(c.cmd)}</pre><button class="btn" data-cmd="${esc(c.cmd)}">Копировать команду</button></div>`).join('')}` : '<p class="muted">Собираю файлы…</p>'}
-    <h3>Загрузить tokens.json</h3>
-    <p class="muted">Вставьте tokens.json (из репозитория или выгрузки другого файла): отличия от вшитого источника станут правками доски, переменные custom/* — токенами проекта. Текущие правки заменятся.</p>
-    <textarea id="c-import" placeholder='{ "theme": { "vars": [...] }, "brand": { ... } }'></textarea>
+    <h3>Загрузить shadcn-tokens.json</h3>
+    <p class="muted">Вставьте shadcn-tokens.json (schema shadcn/tokens@1): отличия от значений по умолчанию станут правками доски. Незнакомые имена не добавляются. Текущие правки заменятся.</p>
+    <textarea id="c-import" placeholder='{ "$schema": "shadcn/tokens@1", "radius": "0.625rem", "colors": { "primary": { "light": "oklch(…)", "dark": "oklch(…)" } } }'></textarea>
     <div class="row"><button class="btn primary" id="c-import-go">Импортировать</button> <span id="c-import-res"></span></div>`;
   if (x) {
     for (const b of document.querySelectorAll('[data-dl]')) b.onclick = () => download(x.files[Number(b.dataset.dl)]);
@@ -74,23 +47,21 @@ export function renderCode() {
 }
 
 // ---- Figma ----
-const list = (title, items, tone) => (items && items.length ? `<div class="box"><b>${esc(title)}: ${items.length}</b> ${tone ? chip(tone[0], tone[1]) : ''}<ul>${items.slice(0, 200).map((i) => `<li>${esc(typeof i === 'string' ? i : `${i.css}: ${i.reason}`)}</li>`).join('')}</ul></div>` : '');
+const list = (title, items, tone) => (items && items.length ? `<div class="box"><b>${esc(title)}: ${items.length}</b> ${tone ? chip(tone[0], tone[1]) : ''}<ul>${items.slice(0, 200).map((i) => `<li>${esc(typeof i === 'string' ? i : `${i.name}: ${i.reason}`)}</li>`).join('')}</ul></div>` : '');
 
 export function renderFigma() {
   const s = ui.state;
   const r = view.report;
   const t = s.totals;
   $('#tab-figma').innerHTML = `
-    <p class="muted">Записывает доску в переменные файла: <span class="mono">2.theme</span> (режимы light / dark) и <span class="mono">1.brand</span> (режим на бренд: ${s.brands.join(', ')}). Нет коллекции или режима — создаются. Цвет становится ссылкой на примитив файла с тем же значением, иначе — hex, и каждый такой случай в отчёте.</p>
-    <div class="box">${s.scan ? `Файл проверен ${esc(s.scan.scannedAt.slice(0, 16).replace('T', ' '))}: ${s.scan.count} переменных. ${chip(`✓ ${t.bound}`, 'success')} ${chip(`≠ ${t.differs}`, 'warning')} ${chip(`нет ${t.missing}`, 'error')} ${t.library ? chip(`в библиотеке ${t.library}`, 'info') : ''}` : 'Файл ещё не проверяли.'}</div>
+    <p class="muted">Записывает доску в коллекцию переменных <span class="mono">shadcn</span> (режимы Light / Dark): имена как в CSS (background, primary, chart-1, sidebar-primary-foreground…), радиус — <span class="mono">radius</span> в px. Нет коллекции или режима — создаются. Значения oklch переводятся в цвет Figma, прозрачность сохраняется. Ничего не удаляется.</p>
+    <div class="box">${s.scan ? `Файл проверен ${esc(s.scan.scannedAt.slice(0, 16).replace('T', ' '))}: ${s.scan.exists ? `${s.scan.count} переменных shadcn` : 'коллекции shadcn нет'}. ${chip(`✓ ${t.bound}`, 'success')} ${chip(`≠ ${t.differs}`, 'warning')} ${chip(`нет ${t.missing}`, 'error')} ${t.library ? chip(`в библиотеке ${t.library}`, 'info') : ''}` : 'Файл ещё не проверяли.'}</div>
     <div class="row"><button class="btn" id="f-scan">Проверить файл</button>
-      <label><input type="checkbox" id="f-all"> все токены (новый файл), а не только изменённые</label></div>
+      <label><input type="checkbox" id="f-all"> все токены (новый файл), а не только изменённые и расходящиеся</label></div>
     <div class="row"><button class="btn" id="f-dry">Что изменится (без записи)</button><button class="btn primary" id="f-apply">Применить в Figma</button></div>
-    ${r ? `<h3>${r.dryRun ? 'Предпросмотр' : 'Отчёт'}: создано ${r.created.length}, изменено ${r.updated.length}, ссылок ${r.aliased.length}, hex ${r.raw.length}, без изменений ${r.unchanged}</h3>
-      ${list('Ошибки', r.errors, ['проверьте', 'error'])}${list('Новые коллекции', r.collectionsCreated)}${list('Новые режимы', r.modesAdded)}
-      ${list('Новые переменные', r.created)}${list('Изменены', r.updated)}${list('Hex без примитива в файле', r.raw, ['не ссылка', 'warning'])}
-      ${propagationBox(r.propagation)}
-      ${list('Ссылки на примитивы', r.aliased)}${list('Пропущено', r.skipped)}` : ''}`;
+    ${r ? `<h3>${r.dryRun ? 'Предпросмотр' : 'Отчёт'}: создано ${r.created.length}, изменено значений ${r.updated.length}, без изменений ${r.unchanged}</h3>
+      ${list('Ошибки', r.errors, ['проверьте', 'error'])}${r.collectionCreated ? list('Новая коллекция', ['shadcn (Light, Dark)']) : ''}${list('Новые режимы', r.modesAdded)}
+      ${list('Новые переменные', r.created)}${list('Изменены', r.updated)}${list('Пропущено', r.skipped)}` : ''}`;
   $('#f-scan').onclick = () => send('scan');
   $('#f-dry').onclick = () => send('apply', { dryRun: true, all: $('#f-all').checked });
   $('#f-apply').onclick = () => send('apply', { all: $('#f-all').checked });
@@ -99,18 +70,14 @@ export function renderFigma() {
 /** '<type>:done' from the sandbox. */
 export function onDone(type, m) {
   if (m.errors && m.errors.length) { toast(m.errors.join('; '), 'error'); return; }
-  if (type === 'gen-preview') { view.preview = m.preview; renderGenerate(); }
-  else if (type === 'gen-apply') toast(`Записано в бренд: ${m.count} токенов`, 'success');
-  else if (type === 'add-extra') toast('Токен добавлен', 'success');
-  else if (onComponentDone(type, m)) { /* «Компоненты» */ }
-  else if (type === 'export') { view.exports = { files: m.files, commands: m.commands }; renderCode(); }
+  if (type === 'export') { view.exports = { files: m.files, commands: m.commands }; renderCode(); }
   else if (type === 'import') {
     const res = m.result;
     if (res.errors.length) toast(res.errors.join('; '), 'error');
-    else { toast(`Импорт: ${res.changed} правок, ${res.extras.length} токенов проекта`, 'success'); view.exports = null; }
+    else { toast(`Импорт: ${res.changed} правок${res.ignored.length ? `, не добавлены незнакомые имена: ${res.ignored.join(', ')}` : ''}`, 'success'); view.exports = null; }
   } else if (type === 'apply' && m.report) {
     view.report = m.report; // the 'state' message that follows re-renders
-    if (!m.report.dryRun) toast(`Применено: изменено переменных ${m.report.changed.length}, экземпляров затронуто ${m.report.propagation.instances}`, 'success');
+    if (!m.report.dryRun) toast(`Применено: изменено переменных ${m.report.changed.length}`, 'success');
   }
-  if (['set-token', 'reset-token', 'reset-all', 'gen-apply', 'add-extra', 'set-extra', 'remove-extra', 'binding', 'binding-reset', 'import', 'brand'].includes(type)) view.exports = null;
+  if (['set-token', 'reset-token', 'reset-all', 'import'].includes(type)) view.exports = null;
 }

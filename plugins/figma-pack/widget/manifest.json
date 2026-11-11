@@ -1,5 +1,5 @@
 {
-  "name": "Mbank Tokens",
+  "name": "shadcn Tokens",
   "id": "mbank-tokens-mdigital",
   "api": "1.0.0",
   "widgetApi": "1.0.0",
@@ -12,6 +12,6 @@
   "networkAccess": {
     "allowedDomains": ["http://localhost:8797", "https://ds.example.mdigital.kg"],
     "devAllowedDomains": ["http://localhost:8797"],
-    "reasoning": "Mbank Tokens pulls a project's design tokens from the internal design-system site (apps/ds-configurator) and pushes designers' edits back. Replace ds.example.mdigital.kg with the production domain of the site."
+    "reasoning": "shadcn Tokens pulls a project's shadcn/ui token values from the internal design-system site (apps/ds-configurator) and pushes designers' edits back. Replace ds.example.mdigital.kg with the production domain of the site."
   }
 }

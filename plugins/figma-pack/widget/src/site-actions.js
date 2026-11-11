@@ -106,7 +106,7 @@ export async function sitePull({ force = false } = {}) {
   return report;
 }
 
-/** «Отправить на сайт»: overrides + custom tokens from the collection, If-Match = the version Figma has. */
+/** «Отправить на сайт»: value overrides of the shadcn names, If-Match = the version Figma has. */
 export async function sitePush() {
   const conn = need();
   const key = await getKey(conn);
@@ -120,7 +120,7 @@ export async function sitePush() {
   try {
     const res = await call(conn, `${project(conn)}/tokens`, { method: 'PUT', key, version: state.version, body: tokens });
     await remember(conn, res.tokens.version);
-    return { version: res.tokens.version, diff: res.diff, skipped, overrides: Object.keys(tokens.overrides).length, custom: tokens.custom.length };
+    return { version: res.tokens.version, diff: res.diff, skipped, overrides: Object.keys(tokens.overrides).length };
   } catch (e) {
     if (e.status === 409) return { conflict: true, siteVersion: e.data && e.data.current ? e.data.current.version : null, localVersion: state.version, skipped };
     throw e;

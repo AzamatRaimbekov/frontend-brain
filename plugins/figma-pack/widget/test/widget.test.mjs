@@ -1,169 +1,131 @@
 // The built widget (dist/code.js) on the mocked Figma API with Widget API stubs: renders the board,
-// switches brand, edits through the iframe messages, applies to variables, rescans, exports.
+// edits through the iframe messages, applies to the `shadcn` collection, rescans, exports.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { boot, openWindow, byName, hex, UI, MANIFEST } from './helpers.mjs';
 
-test('manifest is a Figma widget for Figma and FigJam', () => {
+test('manifest: widget "shadcn Tokens" for Figma and FigJam, same id as before (updates in place)', () => {
+  assert.equal(MANIFEST.name, 'shadcn Tokens');
+  assert.equal(MANIFEST.id, 'mbank-tokens-mdigital');
   assert.equal(MANIFEST.containsWidget, true);
   assert.deepEqual(MANIFEST.editorType, ['figma', 'figjam']);
   assert.equal(MANIFEST.main, 'dist/code.js');
   assert.ok(!/#[0-9a-f]{6}\b/i.test(readFileSync(new URL('../src/ui/ui.html', import.meta.url), 'utf8')), 'no hex in the UI source');
-  assert.match(UI, /--brand:#[0-9a-f]{6}/, 'Mbank colours injected at build');
+  assert.match(UI, /--primary:#171717/, 'shadcn primary injected at build');
+  assert.match(UI, /<h1>shadcn Tokens<\/h1>/);
 });
 
-test('renders the board: brand switcher, counters, rows with Figma names and statuses', () => {
+test('renders the board: title, counters, rows named as the shadcn CSS variables, no brand switcher', () => {
   const { w } = boot();
   assert.ok(w.registered);
   const tree = w.render();
   const texts = w.texts(tree);
-  assert.ok(texts.includes('Mbank Tokens'));
-  for (const b of ['bank', 'kassa', 'travel', 'artwin', 'koko']) assert.ok(texts.includes(b), b);
+  assert.ok(texts.includes('shadcn Tokens'));
   assert.ok(texts.includes('проблем контраста AA'));
-  assert.ok(texts.includes('--brand') && texts.includes('1.brand / brand/default'));
+  assert.ok(texts.includes('--background') && texts.includes('shadcn / background'));
   assert.ok(texts.includes('не проверено'));
-  assert.ok(w.menu.items.some((i) => i.propertyName === 'apply'));
-  const swatch = w.find(tree, (n) => n.type === 'Rectangle' && n.props.fill && Math.abs(n.props.fill.g - 0xa3 / 255) < 0.002 && Math.abs(n.props.fill.r - 0x16 / 255) < 0.002);
-  assert.ok(swatch.length, 'bank brand swatch #16a34a');
-
-  // Brand switch on the canvas and group tabs.
-  const kassa = w.find(tree, (n) => n.type === 'AutoLayout' && n.props.onClick && n.children[0]?.children?.[0] === 'kassa')[0];
-  kassa.props.onClick();
-  assert.equal(w.state.get('brand'), 'kassa');
-  const tab = w.find(w.render(), (n) => n.type === 'AutoLayout' && n.props.onClick && String(n.children[0]?.children?.[0]).startsWith('Акценты'))[0];
+  for (const gone of ['bank', 'Mbank Tokens']) assert.ok(!texts.includes(gone), gone);
+  assert.deepEqual(w.menu.items.map((i) => i.propertyName), ['edit', 'scan', 'apply', 'sync', 'site']);
+  const white = w.find(tree, (n) => n.type === 'Rectangle' && n.props.fill && Math.abs(n.props.fill.r - 1) < 1e-6 && Math.abs(n.props.fill.b - 1) < 1e-6 && n.props.fill.a === 1);
+  assert.ok(white.length, 'background swatch is white from oklch(1 0 0)');
+  // Group tab.
+  const tab = w.find(tree, (n) => n.type === 'AutoLayout' && n.props.onClick && String(n.children[0]?.children?.[0]).startsWith('Сайдбар'))[0];
   tab.props.onClick();
-  assert.ok(w.texts(w.render()).includes('--primary'));
-  w.menu.handler({ propertyName: 'brand', propertyValue: 'koko' });
-  assert.equal(w.state.get('brand'), 'koko');
+  assert.ok(w.texts(w.render()).includes('--sidebar-primary-foreground'));
 });
 
-test('edit in the window, apply to an empty file, rescan, export', async () => {
-  const { w, ...m } = boot((f) => {
-    // A primitive the brand colour can alias to.
-    const prim = f.variables.createVariableCollection('Primitives');
-    const v = f.variables.createVariable('violet/60', prim, 'COLOR');
-    v.setValueForMode(prim.defaultModeId, { r: 0x7c / 255, g: 0x3a / 255, b: 0xed / 255, a: 1 });
-  });
+test('edit in the window, apply to an empty file (collection shadcn, Light/Dark), rescan, export', async () => {
+  const { w, ...m } = boot();
   const ui = await openWindow(w);
   let r = await ui.send('ready');
   assert.equal(w.sent.find((x) => x.type === 'open')?.tab, 'tokens');
-  assert.equal(r.state.rows.length > 100, true);
-  await ui.send('brand', { brand: 'kassa' });
-  r = await ui.send('set-token', { key: 'primary', light: '#7C3AED', dark: '#8b5cf6' });
+  assert.equal(r.state.rows.length, 32);
+  r = await ui.send('set-token', { key: 'primary', light: 'oklch(0.541 0.247 293.009)', dark: '#8B5CF6' });
   assert.deepEqual(r.done.errors, []);
-  assert.deepEqual(w.maps.get('edits').get('primary'), { light: '#7c3aed', dark: '#8b5cf6' });
+  assert.deepEqual(w.maps.get('edits').get('primary'), { light: 'oklch(0.541 0.247 293.009)', dark: '#8b5cf6' });
   r = await ui.send('set-token', { key: 'primary', light: 'red' });
-  assert.match(r.done.errors.join(), /hex/);
-  r = await ui.send('add-extra', { token: { name: 'mb-promo', kind: 'color', light: '#fef3c7', dark: '#451a03' } });
-  assert.deepEqual(r.done.errors, []);
-  r = await ui.send('add-extra', { token: { name: 'promo', kind: 'color', light: '#fef3c7' } });
-  assert.match(r.done.errors.join(), /префикс/);
-  r = await ui.send('gen-preview', { hex: '#0ea5e9' });
-  assert.equal(r.done.preview.slots.length, 12);
-  r = await ui.send('gen-apply', { hex: '#7c3aed' });
-  assert.equal(r.done.count, 12);
-  assert.equal(w.maps.get('edits').get('kassa:brand').light, '#7c3aed');
-  r = await ui.send('contract', { name: 'button' });
-  const bg = r.done.contract.rows.find((x) => x.prop === 'bg');
-  r = await ui.send('binding', { contract: 'button', rowId: bg.id, path: bg.path, key: bg.key, value: 'brand' });
-  assert.equal(r.done.contract.edited, 1);
-  assert.equal(r.state.rows.find((x) => x.key === 'kassa:brand').edited, true);
+  assert.match(r.done.errors.join(), /oklch/);
+  r = await ui.send('set-token', { key: 'brand', light: '#000000' });
+  assert.match(r.done.errors.join(), /не добавляются/);
+  assert.equal(w.maps.get('edits').has('brand'), false);
+  r = await ui.send('set-token', { key: 'radius', light: '12px' });
+  assert.deepEqual(w.maps.get('edits').get('radius'), { light: '12px' });
+  r = await ui.send('set-token', { key: 'ring', light: '#a1a1a1', dark: 'oklch(0.556 0 0)' });
+  assert.equal(w.maps.get('edits').has('ring'), false, 'same as the source: no edit');
 
-  // Dry run writes nothing, then the real apply of every token into an empty file.
-  r = await ui.send('apply', { dryRun: true, all: true });
-  assert.deepEqual(r.done.report.collectionsCreated, ['2.theme', '1.brand']);
-  assert.equal([...m.cols.values()].filter((c) => c.name === '2.theme').length, 0, 'dry run did not write');
+  // Preview, then the real apply of every token into a file without variables.
+  r = await ui.send('apply', { all: true, dryRun: true });
+  assert.equal(r.done.report.dryRun, true);
+  assert.equal(r.done.report.collectionCreated, true);
+  assert.equal(r.done.report.created.length, 32);
+  assert.equal(m.vars.size, 0, 'dry run writes nothing');
   r = await ui.send('apply', { all: true });
   const rep = r.done.report;
   assert.deepEqual(rep.errors, []);
-  assert.ok(rep.created.length > 150, `created ${rep.created.length}`);
-  assert.ok(rep.raw.length > 0 && rep.raw.every((x) => /#[0-9a-f]{6}/.test(x)), 'every raw hex is reported');
-  assert.ok(rep.aliased.some((x) => x.includes('violet/60')), 'equal colour became an alias to the primitive');
-  const primary = byName(m, '2.theme', 'accent/primary/default');
-  assert.deepEqual(primary.col.modes.map((x) => x.name), ['light', 'dark']);
-  assert.equal(hex(primary.v.valuesByMode[primary.mode('dark')]), '#8b5cf6');
-  assert.equal(primary.v.valuesByMode[primary.mode('light')].type, 'VARIABLE_ALIAS');
-  assert.deepEqual(primary.v.scopes, ['FRAME_FILL', 'SHAPE_FILL']);
-  assert.equal(primary.v.codeSyntax.WEB, 'var(--primary)');
-  const brand = byName(m, '1.brand', 'brand/default');
-  assert.deepEqual(brand.col.modes.map((x) => x.name), ['bank', 'kassa', 'travel', 'artwin', 'koko']);
-  assert.equal(hex(brand.v.valuesByMode[brand.mode('bank')]), '#16a34a');
-  assert.equal(brand.v.valuesByMode[brand.mode('kassa')].type, 'VARIABLE_ALIAS', 'generated #7c3aed = primitive violet/60');
-  const promo = byName(m, '2.theme', 'custom/mb/promo');
-  assert.equal(hex(promo.v.valuesByMode[promo.mode('dark')]), '#451a03');
-  assert.ok(byName(m, '1.brand', 'radius/m').v.resolvedType === 'FLOAT');
+  assert.equal(rep.created.length, 32);
+  const { col, v, mode } = byName(m, 'shadcn', 'primary');
+  assert.deepEqual(col.modes.map((x) => x.name), ['Light', 'Dark']);
+  assert.equal(hex(v.valuesByMode[mode('Light')]), '#7c3aed');
+  assert.equal(hex(v.valuesByMode[mode('Dark')]), '#8b5cf6');
+  assert.equal(v.codeSyntax.WEB, 'var(--primary)');
+  assert.deepEqual(v.scopes, ['FRAME_FILL', 'SHAPE_FILL']);
+  const border = byName(m, 'shadcn', 'border');
+  assert.equal(hex(border.v.valuesByMode[border.mode('Dark')]), '#ffffff1a', 'alpha 10% kept');
+  assert.deepEqual(border.v.scopes, ['STROKE_COLOR']);
+  assert.deepEqual(byName(m, 'shadcn', 'card-foreground').v.scopes, ['TEXT_FILL']);
+  const radius = byName(m, 'shadcn', 'radius');
+  assert.equal(radius.v.resolvedType, 'FLOAT');
+  assert.equal(radius.v.valuesByMode[radius.mode('Dark')], 12);
+  assert.deepEqual(radius.v.scopes, ['CORNER_RADIUS']);
+  assert.equal(hex(byName(m, 'shadcn', 'destructive').v.valuesByMode[mode('Light')]), '#e7000b');
+  assert.equal([...m.cols.values()].length, 1, 'only the shadcn collection');
 
-  // Apply rescans: everything on the board is now in the file.
-  assert.equal(r.state.totals.missing, 0);
-  assert.equal(r.state.totals.differs, 0);
-  const again = (await ui.send('apply', { all: true })).done.report;
-  assert.equal(again.created.length + again.updated.length + again.raw.length, 0, 'second apply changes nothing');
-  assert.match(w.texts(w.render()).join('\n'), /Применено: создано/);
+  // Rescan: everything bound; a second apply changes nothing.
+  assert.equal(r.state.totals.bound, 32);
+  r = await ui.send('apply', { all: true });
+  assert.deepEqual([r.done.report.created.length, r.done.report.updated.length, r.done.report.unchanged], [0, 0, 64]);
 
-  // A designer changes a variable by hand: the board shows it differs.
-  primary.v.setValueForMode(primary.mode('dark'), { r: 0, g: 0, b: 0, a: 1 });
+  // A value changed by hand in Figma shows as "≠ файл" and comes back with apply.
+  v.setValueForMode(mode('Light'), { r: 1, g: 0, b: 0, a: 1 });
   r = await ui.send('scan');
-  assert.equal(r.state.rows.find((x) => x.css === 'primary').status, 'differs');
+  assert.equal(r.state.rows.find((x) => x.name === 'primary').status, 'differs');
+  r = await ui.send('apply', {});
+  assert.deepEqual(r.done.report.updated, ['primary (Light): #ff0000 → #7c3aed']);
 
+  // Exports.
   r = await ui.send('export');
-  const names = r.done.files.map((f) => f.name);
-  assert.deepEqual(names, ['tokens.json', 'mbank-tokens-raw.json', 'registry-mbank-kassa.json', 'tokens-kassa.css', 'button.json']);
-  const tokens = JSON.parse(r.done.files[0].text);
-  assert.equal(tokens.theme.vars.find((v) => v.name === 'accent/primary/default').light, '#7c3aed');
-  assert.equal(JSON.parse(r.done.files[2].text).type, 'registry:base');
-  assert.ok(r.done.commands.some((c) => c.cmd.includes('sync-contracts.mjs')));
+  assert.deepEqual(r.done.files.map((f) => f.name), ['shadcn-tokens.json', 'tokens.css', 'shadcn-theme.json']);
+  const json = JSON.parse(r.done.files[0].text);
+  assert.equal(json.colors.primary.dark, '#8b5cf6');
+  assert.equal(json.radius, '12px');
+  assert.match(r.done.files[1].text, /--primary: oklch\(0\.541 0\.247 293\.009\);/);
 
-  r = await ui.send('import', { text: r.done.files[0].text });
-  assert.deepEqual(r.done.result.errors, []);
-  await figma.ui.onmessage({ type: 'close' });
-  await ui.pending;
-  assert.equal(figma.closed, true);
+  // Import replaces the edits.
+  r = await ui.send('import', { text: JSON.stringify({ $schema: 'shadcn/tokens@1', colors: { accent: { light: '#fafafa', dark: '#262626' } } }) });
+  assert.equal(r.done.result.changed, 1);
+  assert.deepEqual([...w.maps.get('edits').keys()], ['accent']);
+
+  r = await ui.send('reset-all');
+  assert.equal(w.maps.get('edits').size, 0);
 });
 
-test('scan of an empty file shows missing variables and FigJam refuses to apply', async () => {
-  const { w } = boot();
-  w.render();
-  await w.menu.handler({ propertyName: 'scan' });
-  assert.match(figma.notifications.at(-1), /Проверено: 0/);
-  assert.equal(w.state.get('scan').count, 0);
-  assert.ok(w.texts(w.render()).includes('нет в файле'));
-  figma.editorType = 'figjam';
-  const ui = await openWindow(w, 'apply');
-  assert.equal(w.sent.length, 0);
-  await assert.rejects(ui.send('apply', {}), /FigJam/);
-});
-
-test('a file that connects Foundation as a library refuses apply (dry run still works)', async () => {
-  const { w } = boot((f) => {
-    f.teamLibrary = {
-      getAvailableLibraryVariableCollectionsAsync: async () => [
-        { key: 'k1', name: '2.theme', libraryName: 'Foundation' },
-        { key: 'k2', name: '1.brand', libraryName: 'Foundation' },
-      ],
-      getVariablesInLibraryCollectionAsync: async () => [],
-    };
-  });
-  const ui = await openWindow(w, 'apply');
-  const r = await ui.send('apply', { dryRun: true, all: true });
-  assert.equal(r.done.report.dryRun, true);
-  await assert.rejects(ui.send('apply', { all: true }), /библиотеки «Foundation»/);
-});
-
-test('bindings are shared with DS Builder through document sharedPluginData "mbank"', async () => {
-  const { w } = boot();
+test('a file that connects shadcn from a library: apply refuses, dry run works', async () => {
+  const { w, figma } = boot();
+  figma.teamLibrary = { getAvailableLibraryVariableCollectionsAsync: async () => [{ key: 'L1', name: 'shadcn', libraryName: 'DS Library' }], getVariablesInLibraryCollectionAsync: async () => [{ name: 'primary' }] };
   const ui = await openWindow(w);
-  let r = await ui.send('contract', { name: 'button' });
-  const bg = r.done.contract.rows.find((x) => x.prop === 'bg');
-  await ui.send('binding', { contract: 'button', rowId: bg.id, path: bg.path, key: bg.key, value: 'brand' });
-  const stored = JSON.parse(figma.root.getSharedPluginData('mbank', 'contract:button'));
-  assert.equal(stored.name, 'button');
-  assert.ok(JSON.stringify(stored).includes('"brand"'), 'the edited binding is in the shared contract');
-  // An edit made by DS Builder (written to the same place) shows up in the widget.
-  stored.title = 'Button (DS Builder)';
-  figma.root.setSharedPluginData('mbank', 'contract:button', JSON.stringify(stored));
-  r = await ui.send('contract', { name: 'button' });
-  assert.equal(r.done.contract.title, 'Button (DS Builder)');
-  await ui.send('binding-reset', { contract: 'button' });
-  assert.equal(figma.root.getSharedPluginData('mbank', 'contract:button'), '');
+  await ui.send('ready');
+  let r = await ui.send('scan');
+  assert.equal(r.state.totals.library, 1);
+  r = await ui.send('apply', { all: true, dryRun: true });
+  assert.equal(r.done.report.created.length, 32);
+  await assert.rejects(ui.send('apply', { all: true }), /библиотеки «DS Library»/);
+});
+
+test('FigJam: board and editing work, writing variables is refused', async () => {
+  const { w, figma } = boot();
+  figma.editorType = 'figjam';
+  const ui = await openWindow(w);
+  await ui.send('ready');
+  await assert.rejects(ui.send('apply', { all: true }), /FigJam/);
 });

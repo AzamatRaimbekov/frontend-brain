@@ -1,9 +1,9 @@
 {
-  "name": "mbank-tokens-widget",
+  "name": "shadcn-tokens-widget",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Figma widget Mbank Tokens: token board on the canvas, editing, apply to Figma variables, export for code",
+  "description": "Figma widget shadcn Tokens: shadcn/ui token board on the canvas, value editing, apply to the shadcn variable collection, site sync, export for code",
   "scripts": {
     "build": "node scripts/build.mjs",
     "watch": "node scripts/build.mjs --watch",

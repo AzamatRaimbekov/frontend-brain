@@ -11,14 +11,14 @@ header h1 { font-size: 14px; margin: 0 8px 0 0; }
 nav { display: flex; gap: 4px; flex-wrap: wrap; }
 nav button, .btn { border: 1px solid var(--border); background: var(--card); color: var(--text); border-radius: 8px; padding: 5px 10px; font: inherit; cursor: pointer; }
 nav button.on { background: var(--accentSoft); color: var(--accentText); border-color: var(--accentSoft); font-weight: 600; }
-.btn.primary { background: var(--brand); color: var(--onBrand); border-color: var(--brand); font-weight: 600; }
+.btn.primary { background: var(--primary); color: var(--onPrimary); border-color: var(--primary); font-weight: 600; }
 .btn:disabled { opacity: .5; cursor: default; }
 main { padding: 12px 14px 40px; }
 section { display: none; }
 section.on { display: block; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
 input, select, textarea { font: inherit; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 4px 6px; }
-input.hex { width: 104px; font-family: ui-monospace, monospace; }
+input.hex { width: 210px; font-family: ui-monospace, monospace; }
 textarea { width: 100%; min-height: 160px; font-family: ui-monospace, monospace; font-size: 11px; }
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -43,13 +43,9 @@ ul { margin: 4px 0; padding-left: 18px; }
 </head>
 <body>
 <header>
-  <h1>Mbank Tokens</h1>
-  <select id="brand" title="Бренд"></select>
+  <h1>shadcn Tokens</h1>
   <nav id="tabs">
     <button data-tab="tokens">Токены</button>
-    <button data-tab="extra">Токены проекта</button>
-    <button data-tab="generate">Бренд из цвета</button>
-    <button data-tab="bind">Компоненты</button>
     <button data-tab="code">Код</button>
     <button data-tab="figma">Figma</button>
     <button data-tab="site">Сайт</button>
@@ -59,9 +55,6 @@ ul { margin: 4px 0; padding-left: 18px; }
 </header>
 <main>
   <section id="tab-tokens"></section>
-  <section id="tab-extra"></section>
-  <section id="tab-generate"></section>
-  <section id="tab-bind"></section>
   <section id="tab-code"></section>
   <section id="tab-figma"></section>
   <section id="tab-site"></section>
