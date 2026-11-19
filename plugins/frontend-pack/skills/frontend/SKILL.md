@@ -91,6 +91,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | «Обнови мозг», «метрики мозга», что нового в источниках мозга | [brain-update](../brain-update/SKILL.md): `brain-watch.mjs`, `brain-metrics.mjs`, PR с обновлениями |
 | Загрузка, пустые состояния, формы, тосты | [react-ux](../react-ux/SKILL.md) |
 | Любые тексты интерфейса и кнопки: заголовки, подписи, пустые состояния, тосты, диалоги; «слишком много текста», «где поставить кнопки» | [ui-copy](../ui-copy/SKILL.md): бюджет текста, ничего сверх задачи, одна главная кнопка справа; проверка `check-ui-copy.mjs` |
+| Подобрать дизайн-систему, стиль, палитру, шрифты для нового не-Mbank продукта; UX-проверка по базе | [ui-ux-pro-max](../ui-ux-pro-max/SKILL.md): `--design-system` → выбор человека → токены в переменные shadcn. Mbank — всегда [mbank-ui](../mbank-ui/SKILL.md) |
 | Ошибки, белый экран, error boundary | [react-error-handling](../react-error-handling/SKILL.md) |
 | Большой компонент, структура папок | [react-architecture](../react-architecture/SKILL.md) |
 | Повторяющийся код | [react-dry](../react-dry/SKILL.md) |
@@ -98,6 +99,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 | План большой фичи | процедура [frontend-architect](../../agents/frontend-architect.md) |
 | Ревью или «проверь фронт» | процедура [frontend-reviewer](../../agents/frontend-reviewer.md), только чтение |
 | «Добавь в мозг», новое правило, рецепт, ловушка | [frontend-contribute](../frontend-contribute/SKILL.md): PR в frontend-brain |
+| В работе узнали новое и проверенное | [brain-learn](../brain-learn/SKILL.md): сам открывает MR в GitLab frontend-brain |
 
 ## Перед финишем
 
@@ -107,7 +109,7 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 - Лишнего текста нет: только блоки из задачи, кнопки по [ui-copy](../ui-copy/SKILL.md), `node <plugin-root>/scripts/check-ui-copy.mjs <файлы>` без замечаний.
 - Ошибки ESLint, которые вернул хук после правки, исправлены в том же файле.
 - В приложении есть экран падения, страница 404 и баннер «нет интернета» ([app-shell](../react-error-handling/references/app-shell.md)).
-- Если в задаче нашлось то, чего нет в мозге (ловушка, рецепт, решение), предложи пользователю добавить это через [frontend-contribute](../frontend-contribute/SKILL.md). Сам PR не создавай без его согласия.
+- Если в задаче нашлось то, чего нет в мозге (ловушка, рецепт, решение, неверное правило), прогони [brain-learn](../brain-learn/SKILL.md): прошло его ворота — он сам откроет MR в frontend-brain, без вопроса человеку.
 - Прогони проверки проекта, которые есть: `tsc --noEmit`, линтер, тесты. Видимый UI проверь в браузере, если он доступен.
 - Файл задачи отражает последний этап, решения и результаты проверок; закрытая задача — `task.mjs stage <slug> done`.
 
@@ -127,4 +129,4 @@ description: Entry point and conductor of the Mdigital frontend brain. Use when 
 - Не придумывай контракты API: если бэкенда нет, сделай мок MSW в `src/features/<f>/api/<f>.handlers.ts` (сборка в `src/mocks/handlers.ts`, подробно — [react-testing](../react-testing/SKILL.md) §5) и отметь это в итоге. В существующем проекте оставь его раскладку моков.
 - Не называй код соответствующим правилам только потому, что скилл загружен: подтверди проверкой.
 - Не пропускай ворота и этапы с человеком; пропуск этапа — только по таблице конвейера и через `task.mjs skip` (он пишет причину в «Решения»).
-- Не пушь, не создавай merge request и не публикуй без прямой просьбы.
+- Не пушь, не создавай merge request и не публикуй без прямой просьбы. Исключение — MR знаний в frontend-brain через [brain-learn](../brain-learn/SKILL.md).

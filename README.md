@@ -119,6 +119,8 @@ $frontend Проверь фронтенд в этой ветке перед merg
 | `mbank-crm` | CRM и админки на Mbank: 11 блоков из Figma (меню, шапка, KPI, канбан, карточки, степпер, скоринг, история), новый проект одной командой `node plugins/frontend-pack/scripts/new-crm.mjs <папка>` |
 | `brain-update` | Мозг обновляется сам: следит за 17 источниками (Next.js, React, TanStack, shadcn, Tailwind, Vite, MSW, Zod, Figma…), считает метрики здоровья и работы в проектах, открывает PR с обновлениями |
 | `frontend-contribute` | Пополнить мозг: статья в базе знаний или правка правила через PR |
+| `ui-ux-pro-max` | Подбор дизайн-системы для нового продукта: стиль, палитра, шрифты → токены shadcn (вендор nextlevelbuilder, MIT) |
+| `brain-learn` | Мозг учится сам: новое проверенное знание из работы → сразу MR в GitLab |
 
 База знаний: `plugins/frontend-pack/knowledge/` — короткие статьи (правило, рецепт, решение, ловушка) по областям и стекам, оглавление в [knowledge/INDEX.md](plugins/frontend-pack/knowledge/INDEX.md). Агент ищет в ней перед работой: `node plugins/frontend-pack/scripts/knowledge.mjs search <слова> --stack vite`.
 

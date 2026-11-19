@@ -45,7 +45,7 @@ Without these markers (the user called you directly and no conductor is running)
 - Never weaken a check to make it pass: no `eslint-disable` without a reason comment, no `any`, no skipped tests, no `--force` installs.
 - Secrets, tokens and `.env` never go into code, commits or logs.
 - Stay in scope: problems outside the task (missing `strict` in tsconfig, outdated config, an old `http()` layer) go to the report as proposals, not fixes, unless the task cannot work without the fix; then make the smallest fix and say why.
-- Do not open a brain PR (`frontend-contribute`) yourself unless asked; propose it in the report.
+- Do not open a brain PR (`frontend-contribute`) yourself unless asked. New verified knowledge goes to the report as a `brain-learn` candidate; the conductor opens the MR.
 
 ## Report
 
