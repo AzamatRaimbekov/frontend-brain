@@ -1,9 +1,6 @@
 // «Мост для Claude»: a hidden-ish window long-polls the local figma-bridge server (bridge/server.mjs) and runs each
 // command here with the plugin's own engine, so an agent drives the file without clicks or pasted code.
-import TOKENS from '../../../skills/mbank-figma-patterns/references/tokens.json';
-import { buildModel, BRANDS } from '../../../widget/core/model.js';
-import { planAllBrands } from '../../../widget/core/sync.js';
-import { applyWrites } from '../../../widget/src/figma-io.js';
+import { ensureShadcn } from './variables.js';
 
 const URL_BASE = 'http://localhost:3055';
 
@@ -63,10 +60,10 @@ export const BRIDGE_COMMANDS = {
     const cols = await figma.variables.getLocalVariableCollectionsAsync();
     return { file: figma.root.name, pages, collections: cols.map((c) => ({ name: c.name, modes: c.modes.map((m) => m.name), variables: c.variableIds.length })) };
   },
+  // Creates / completes the «shadcn» collection (canonical values); reset: true rewrites every value.
   async 'tokens-apply'(a) {
-    const plan = planAllBrands((b) => buildModel(TOKENS, { brand: b, edits: a.edits || {}, extras: a.extras || [] }), BRANDS, { all: true });
-    const r = await applyWrites(plan.writes, { dryRun: !!a.dryRun });
-    return { created: r.created.length, updated: r.updated.length, raw: r.raw.length, errors: r.errors };
+    const r = await ensureShadcn({ reset: !!a.reset });
+    return { created: r.created.length, reset: r.reset, collection: r.collection };
   },
 };
 

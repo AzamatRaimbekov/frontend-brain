@@ -22,7 +22,7 @@ Platform is clear when the repo has `next.config.*`/`vite.config.*` + `react-dom
 
 `figma-design` and the code routes both need the catalog. No `<project>/.figma/design-system.json` -> run `figma-design-system` first (it costs ~5 calls once and saves them on every later task).
 
-**Mbank / MDigital products** (Mbank, kassa, artwin, travel, or the "Mbank Tokens" kits): a ready catalog exists in the `mbank-design-system` skill. Copy its `references/catalog.json` / `catalog.md` into `<project>/.figma/` instead of running a new inventory, and follow its rules (own icon library, product brand modes). Any Figma write on these kits also loads `mbank-figma-patterns` (verified keys, layer names, screen recipe).
+**Mbank / MDigital products** (the Mdigital kits Web components, CRM UI KIT, Mobile KIT): a ready component catalog exists in the `mbank-design-system` skill. Copy its `references/catalog.json` / `catalog.md` into `<project>/.figma/` instead of running a new inventory, and follow its rules (own icon library). Tokens are the standard shadcn/ui set only (`ds-tokens`): Figma layers bind to variables with the shadcn names, never to the old Foundation collections. Any Figma write on these kits also loads `mbank-figma-patterns` (verified keys, layer names, screen recipe).
 
 ## 2. Preconditions (once per session)
 

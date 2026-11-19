@@ -4,7 +4,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFigma, seedKit } from './figma-mock.mjs';
-import { COLOR_TOKENS, EXTENSION_TOKENS } from '../core/tokens.js';
 import { validateSpec, framePlan, normalizeSpec } from '../core/spec.js';
 import { validateLinks, resolveLinks } from '../core/links.js';
 
@@ -29,9 +28,8 @@ test('the CRM covers every section of a credit pipeline and is valid', () => {
 test('builds every screen, state and viewport with a clean audit', async () => {
   const m = createFigma();
   globalThis.figma = m.figma;
-  await seedKit(m.figma, COLOR_TOKENS.filter((t) => !EXTENSION_TOKENS.includes(t)));
-  const brand = await import('../plugin/src/brand.js');
-  await brand.setupBrand({ fixNames: true });
+  await seedKit(m.figma);
+  const brand = await import('../plugin/src/variables.js');
   const { vars, radius } = await brand.modeVars();
   const { buildSpec } = await import('../plugin/src/screens.js');
   const { auditFrames } = await import('../plugin/src/audit.js');

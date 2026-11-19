@@ -6,7 +6,7 @@ import { CheckIcon } from "./icons"
 
 /*
  * Figma `Item / dropdown / simple` + `Action Sheet Container`: action menu on the popover surface,
- * shadow/dropdown, z-index dropdown 1000. Sub-menus and radio items: add from shadcn when needed.
+ * shadow-md, z-50. Sub-menus and radio items: add from shadcn when needed.
  */
 function DropdownMenu(props: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />
@@ -31,7 +31,7 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-(--z-popover) max-h-(--radix-dropdown-menu-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-dropdown data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none",
+          "z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-48 overflow-x-hidden overflow-y-auto rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none",
           className,
         )}
         {...props}
@@ -41,7 +41,7 @@ function DropdownMenuContent({
 }
 
 const itemBase =
-  "relative flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none select-none focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:text-disabled-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+  "relative flex cursor-default items-center gap-2 rounded-sm px-3 py-2 text-sm outline-none select-none focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
 
 function DropdownMenuItem({
   className,
@@ -54,8 +54,8 @@ function DropdownMenuItem({
       data-variant={variant}
       className={cn(
         // @contract dropdown-menu-item start
-        "items-center gap-2 px-2 h-8 rounded-xs text-sm text-foreground data-[highlighted]:bg-accent data-[disabled]:text-disabled-foreground [&_svg]:size-4 [&_svg]:text-muted-foreground relative flex cursor-default outline-none select-none data-[disabled]:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        "data-[variant=destructive]:text-destructive-text data-[variant=destructive]:data-[highlighted]:bg-destructive-soft data-[variant=destructive]:[&_svg]:text-destructive-text",
+        "items-center gap-2 px-2 h-8 rounded-sm text-sm text-foreground data-[highlighted]:bg-accent [&_svg]:size-4 [&_svg]:text-muted-foreground relative flex cursor-default outline-none select-none data-[disabled]:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[disabled]:opacity-50 data-[highlighted]:text-accent-foreground",
+        "data-[variant=destructive]:text-destructive data-[variant=destructive]:data-[highlighted]:bg-destructive/10 data-[variant=destructive]:[&_svg]:text-destructive data-[variant=destructive]:data-[highlighted]:text-destructive",
         // @contract dropdown-menu-item end
         className,
       )}
@@ -76,7 +76,7 @@ function DropdownMenuCheckboxItem({
       {...props}
     >
       {children}
-      <span className="absolute right-3 flex size-4 items-center justify-center text-brand-text">
+      <span className="absolute right-3 flex size-4 items-center justify-center text-primary">
         <DropdownMenuPrimitive.ItemIndicator>
           <CheckIcon />
         </DropdownMenuPrimitive.ItemIndicator>

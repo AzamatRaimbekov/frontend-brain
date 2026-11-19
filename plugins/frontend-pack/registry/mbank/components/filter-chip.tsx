@@ -12,7 +12,7 @@ import { ChevronDownIcon } from "./icons"
  */
 // @contract filter-chip start
 const filterChipVariants = cva(
-  "items-center gap-1 px-3 h-9 rounded-sm border border-outline bg-background text-sm font-medium text-foreground hover:border-border-secondary aria-pressed:bg-secondary aria-pressed:border-secondary aria-pressed:text-inverse-foreground [&_svg]:size-5 inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:shrink-0",
+  "items-center gap-1 px-3 h-9 rounded-sm border border-border bg-background text-sm font-medium text-foreground aria-pressed:bg-primary aria-pressed:border-primary aria-pressed:text-primary-foreground [&_svg]:size-5 inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:shrink-0 hover:bg-accent",
 )
 // @contract filter-chip end
 

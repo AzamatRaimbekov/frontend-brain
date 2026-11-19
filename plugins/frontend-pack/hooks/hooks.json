@@ -2,6 +2,16 @@
   "hooks": {
     "PreToolUse": [
       {
+        "matcher": "Write|Edit|MultiEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/require-frontend-skill.mjs\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "matcher": "Write",
         "hooks": [
           {

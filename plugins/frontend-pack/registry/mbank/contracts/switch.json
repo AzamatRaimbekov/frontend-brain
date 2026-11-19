@@ -18,11 +18,11 @@
       "height": 6,
       "radius": "full",
       "opacity:disabled": 50,
-      "bg:checked": "brand",
-      "bg:unchecked": "surface-3",
+      "bg:checked": "primary",
+      "bg:unchecked": "input",
       "align": "start",
-      "focus-ring": "ring/30",
-      "bg": "surface-3",
+      "focus-ring": "ring/50",
+      "bg": "input",
       "px": 0.5,
       "align:checked": "end"
     },
@@ -48,7 +48,7 @@
       "checked": "data-[state=checked]",
       "unchecked": "data-[state=unchecked]"
     },
-    "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30",
+    "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
     "figmaOnly": [
       "thumb"
     ],

@@ -1,31 +1,27 @@
 // Site token table edits -> the document the PUT sends.
 import { describe, expect, it } from "vitest"
 
-import type { Row, TokensInput } from "@/site/api"
-import { parseHash } from "@/site/router"
+import { buildFigmaPlan } from "@/lib/export/figma-plan"
+import { SHADCN_TOKENS } from "@/lib/tokens"
+import type { TokensInput } from "@/site/api"
 import { applyEdit } from "@/site/project/use-token-edits"
+import { parseHash } from "@/site/router"
 
-const base: TokensInput = { brand: "bank", prefix: "mb", overrides: { primary: { light: "#7c3aed" } }, custom: [{ name: "mb-promo", kind: "color", light: "#fff", dark: "#000" }] }
-const row = (name: string, custom = false): Row => ({
-  name, kind: "color", scope: "root", custom, light: "", dark: "",
-  base: custom ? null : { light: "#fddb2b", dark: "#f7c21c", source: { light: { literal: true }, dark: { literal: true } }, resolved: { light: null, dark: null } },
-  overridden: { light: false, dark: false }, resolved: { light: null, dark: null },
-})
+const rows = buildFigmaPlan({ project: "p", name: "P", version: 1 }, SHADCN_TOKENS, SHADCN_TOKENS).variables
+const row = (name: string) => rows.find((r) => r.name === name)!
+const base: TokensInput = { overrides: { primary: { light: "#7c3aed" } } }
 
 describe("token edits", () => {
-  it("typing the base value back drops the override", () => {
-    expect(applyEdit(base, { type: "set", row: row("primary"), mode: "light", value: "#fddb2b" }).overrides).toEqual({})
+  it("typing the default value back drops the override", () => {
+    expect(applyEdit(base, { type: "set", row: row("primary"), mode: "light", value: "oklch(0.205 0 0)" }).overrides).toEqual({})
     expect(applyEdit(base, { type: "set", row: row("primary"), mode: "dark", value: "#000" }).overrides.primary).toEqual({ light: "#7c3aed", dark: "#000" })
   })
-  it("custom tokens: edit, add, remove; reset", () => {
-    expect(applyEdit(base, { type: "set", row: row("mb-promo", true), mode: "dark", value: " #111 " }).custom[0].dark).toBe("#111")
-    expect(applyEdit(base, { type: "remove", name: "mb-promo" }).custom).toEqual([])
-    expect(applyEdit(base, { type: "add", token: { name: "mb-x", kind: "size", light: "8px", dark: "8px" } }).custom).toHaveLength(2)
+  it("reset and single-value tokens", () => {
     expect(applyEdit(base, { type: "reset", name: "primary" }).overrides).toEqual({})
+    expect(applyEdit(base, { type: "set", row: row("radius"), mode: "light", value: " 8px " }).overrides.radius).toEqual({ light: "8px" })
   })
-  it("hash routes", () => {
+  it("routes", () => {
     expect(parseHash("#/p/credit/figma")).toEqual({ page: "project", id: "credit", tab: "figma" })
-    expect(parseHash("#/p/credit/nope")).toEqual({ page: "project", id: "credit", tab: "tokens" })
     expect(parseHash("#/configurator")).toEqual({ page: "configurator" })
     expect(parseHash("")).toEqual({ page: "projects" })
   })

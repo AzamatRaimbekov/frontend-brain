@@ -46,17 +46,17 @@ App files: `src/app/router.tsx` (routes, `/` → first menu screen, placeholder 
 | `timeline` | `Timeline` + `TimelineItem` |
 | `stepper` | `StageStepper` (`current` from the spec) |
 | `cards` | grid of `Card` + `Badge` |
-| `alert` | kit `Alert` (`warning`, `destructive` → `error`, `success`, `info`) |
+| `alert` | kit `Alert`: `tone="error"` for errors, `clear` for warning / success / info, meaning in the title |
 | `form` | `FormField` + `Input` (phone, money, date, email, number) / `Select` / `Checkbox` / `Textarea`; zod in `lib/form.ts`, `useMutation` POST |
 | `login` | `Card` + email / password `FormField`s, POST `/session`, 401 → error `Alert`, success → first menu screen |
 | `empty` | `EmptyState` |
 | `split` | CSS grid `lg:grid-cols-[2fr_1fr]` from `ratio` |
 | `funnel` | `Card` region: stage rows, bar width by `value`, `rate` on the right, `hint` under the label |
-| `meters` | `Card` region + kit `Progress` per item (`tone` success / warning / danger → error / info → brand) |
+| `meters` | `Card` region + kit `Progress` per item (`danger` → `destructive`, every other tone → default `primary`) |
 | `score` | `Card` region: value «из max», `grade` `Badge`, 5-zone risk scale with a marker (`role="img"`), factors `+48` green / `−12` red |
 | `decision` | `Card` region: terms grid (`dl`, `columns`), `note`, actions (`Отказать`-like destructive, first / `+` primary, rest outline; default Одобрить / На доработку / Отказать, `[]` = none) |
 | `files` | `Card` region: `FileIcon` tile, name + meta, status `Badge`, ghost menu button |
-| `checks` | `Card` region: status icon `ok` / `warn` / `fail` / `wait`, label + hint, `result` in the status colour |
+| `checks` | `Card` region: status icon `ok` / `warn` / `fail` / `wait`, label + hint, `result` in `text-destructive` for `fail`, otherwise `text-muted-foreground` / `text-foreground` |
 | `comments` | `Card` region: `Avatar` + bubble per comment, reply `Input` + «Отправить» (added locally until the API exists) |
 | `profile` | `Card` region: `Avatar` initials, name h2, meta, `badges`, actions (`+` primary), key facts `dl` |
 | `breakdown` | `Card` region: stacked bar by `share` (`role="img"`) + legend rows (dot, label, value, share) |

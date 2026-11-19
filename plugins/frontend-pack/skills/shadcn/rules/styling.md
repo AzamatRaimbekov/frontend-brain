@@ -39,7 +39,7 @@ See [customization.md](../customization.md) for theming, CSS variables, and addi
 
 ## No raw color values for status/state indicators
 
-For positive, negative, or status indicators, use Badge variants, semantic tokens like `text-destructive`, or define custom CSS variables — don't reach for raw Tailwind colors.
+For positive, negative, or status indicators, use Badge variants (`default`, `secondary`, `outline`) or semantic tokens like `text-destructive` — don't reach for raw Tailwind colors and don't add custom CSS variables.
 
 **Incorrect:**
 
@@ -57,7 +57,7 @@ For positive, negative, or status indicators, use Badge variants, semantic token
 <span className="text-destructive">-3.2%</span>
 ```
 
-If you need a success/positive color that doesn't exist as a semantic token, use a Badge variant or ask the user about adding a custom CSS variable to the theme (see [customization.md](../customization.md)).
+There is no success/warning token in Mdigital projects: use a neutral Badge variant with clear text (and an icon), not colour alone (see [customization.md](../customization.md)).
 
 ---
 

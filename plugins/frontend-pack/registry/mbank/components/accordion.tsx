@@ -8,7 +8,7 @@ import { ChevronDownIcon } from "./icons"
 /*
  * Figma `accordion`, `Item  / accordion / states` (selected off/on = closed/open),
  * `Item / accordion / header` (default / hover / active) and `item / accordion / bottomInfo`.
- * variant="card" = FAQ look (`item-faq`): every item is a surface-1 card. Set variant on Accordion.
+ * variant="card" = FAQ look (`item-faq`): every item is a muted card. Set variant on Accordion.
  */
 const accordionVariants = cva("group/accordion flex w-full flex-col", {
   variants: {
@@ -39,7 +39,7 @@ function AccordionItem({ className, ...props }: React.ComponentProps<typeof Acco
       data-slot="accordion-item"
       className={cn(
         "group-data-[variant=line]/accordion:border-b group-data-[variant=line]/accordion:border-border group-data-[variant=line]/accordion:last:border-b-0",
-        "group-data-[variant=card]/accordion:rounded-lg group-data-[variant=card]/accordion:bg-surface-1 group-data-[variant=card]/accordion:px-4",
+        "group-data-[variant=card]/accordion:rounded-lg group-data-[variant=card]/accordion:bg-muted group-data-[variant=card]/accordion:px-4",
         className,
       )}
       {...props}
@@ -53,7 +53,7 @@ function AccordionTrigger({ className, children, ...props }: React.ComponentProp
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "flex flex-1 items-center justify-between gap-4 rounded-sm py-4 text-left text-md font-medium text-foreground transition-colors outline-none hover:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:text-disabled-foreground [&[data-state=open]>svg]:rotate-180",
+          "flex flex-1 items-center justify-between gap-4 rounded-sm py-4 text-left text-base font-medium text-foreground transition-colors outline-none hover:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
           className,
         )}
         {...props}

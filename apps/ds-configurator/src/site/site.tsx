@@ -1,6 +1,6 @@
 // Root of the design-system site: top navigation and the page of the current hash route.
 import { App as Configurator } from "@/App"
-import { cn } from "@/generated/kit/lib/utils"
+import { cn } from "@/kit/lib/utils"
 
 import { ProjectPage } from "./project/project-page"
 import { ProjectsPage } from "./projects/projects-page"
@@ -12,8 +12,8 @@ function NavLink({ to, active, children }: { to: Route; active: boolean; childre
       href={hrefOf(to)}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
-        active && "bg-brand-ghost text-brand-ghost-foreground hover:bg-brand-ghost-hover"
+        "rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+        active && "bg-secondary text-secondary-foreground"
       )}
     >
       {children}
@@ -24,10 +24,10 @@ function NavLink({ to, active, children }: { to: Route; active: boolean; childre
 export function Site() {
   const route = useRoute()
   return (
-    <div className="min-h-svh bg-surface-1 text-foreground">
+    <div className="min-h-svh bg-muted/40 text-foreground">
       <nav aria-label="Разделы" className="flex items-center gap-2 border-b border-border bg-background px-4 py-2 md:px-6">
         <a href="#/" className="mr-3 flex items-center gap-2 font-semibold">
-          <span aria-hidden className="grid size-7 place-items-center rounded-md bg-brand text-sm text-brand-foreground">DS</span>
+          <span aria-hidden className="grid size-7 place-items-center rounded-md bg-primary text-sm text-primary-foreground">DS</span>
           Дизайн-системы
         </a>
         <NavLink to={{ page: "projects" }} active={route.page !== "configurator"}>Проекты</NavLink>

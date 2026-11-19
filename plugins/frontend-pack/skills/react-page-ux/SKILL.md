@@ -17,7 +17,7 @@ A page is not done when it renders. It is done when a real user can reach their 
 
 1. Load this skill first, before any other pack skill.
 2. Write the brief to `UX.md` next to the page (`src/pages/<route>/UX.md`, or the Next.js route folder). A hook blocks creating a new page file until that `UX.md` exists.
-3. Show the brief to the user and wait for an answer when running interactively. In non-interactive runs (`claude -p`) do not wait, and repeat the brief at the top of the final report.
+3. **Pipeline `vibe` (the default, see the `frontend` skill):** the brief is 5 lines (goal, primary action, blocks, states, mobile), you do not wait — build right away and repeat the brief in one line in the final report. **Pipelines `feature`/`figma` (team mode):** show the brief to the user and wait for an answer when running interactively; in non-interactive runs (`claude -p`) do not wait, and repeat the brief at the top of the final report.
 4. Only then build. Load only the skills the page needs: `react-ux` and `react-data-fetching` almost always; `react-ui` for new visual components; `react-error-handling` when touching `shared/api` or boundaries; `react-architecture` when creating folders. Do not load every skill for one page.
 
 ## 1. Write the UX brief (before any code)
@@ -85,7 +85,7 @@ If the API does not exist yet, mock it with MSW (layout and code: `react-testing
 
 ## 6. Checklist before finishing
 
-- [ ] `UX.md` written and shown before code; deviations from it are explained
+- [ ] `UX.md` written before code (shown and approved in team mode); deviations from it are explained
 - [ ] One primary action; hierarchy matches the user's goal
 - [ ] Loading, both empty states, error, no-access states exist and were seen in the browser (or covered by RTL tests when no browser)
 - [ ] At least one test per state for the page (Vitest + RTL + MSW)

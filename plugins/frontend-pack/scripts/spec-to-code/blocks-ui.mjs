@@ -33,13 +33,13 @@ const DESTRUCTIVE = /отклон|отказ|удал|заблок|аннули�
 
 /**
  * Header actions split (model.mjs): "+ …" = primary (yellow), "Отклонить"-like = destructive.
- * On an object page (Summary card) all actions stay in the card, the rest soft (Figma "Запросить документы").
+ * On an object page (Summary card) all actions stay in the card, the rest outline (Figma "Запросить документы").
  * On other pages the secondary ones go to TopHeader as the dark "Экспорт ˅" button.
  */
 export function splitHeaderActions(actions = [], summary = false) {
   const all = actions.map((a) => {
     const label = clean(a);
-    const tone = /^\+/.test(actionText(a)) ? 'primary' : DESTRUCTIVE.test(label) ? 'destructive' : summary ? 'soft' : 'secondary';
+    const tone = /^\+/.test(actionText(a)) ? 'primary' : DESTRUCTIVE.test(label) ? 'destructive' : summary ? 'outline' : 'secondary';
     return { label, tone };
   });
   return { page: summary ? all : all.filter((a) => a.tone !== 'secondary'), top: summary ? [] : all.filter((a) => a.tone === 'secondary') };
@@ -52,8 +52,8 @@ function start(ctx, b, extra = []) {
   return imp;
 }
 
-// Figma Summary buttons are 36 high; the soft one is "neutral flat" with link-blue text ("Запросить документы").
-const LOOK = { primary: 'variant="primary"', destructive: 'variant="destructive"', soft: 'variant="soft" className="bg-secondary-muted text-link hover:bg-soft"', secondary: 'variant="secondary"' };
+// Figma Summary buttons are 36 high; the quiet one ("Запросить документы") is the kit outline button.
+const LOOK = { primary: 'variant="primary"', destructive: 'variant="destructive"', outline: 'variant="outline"', secondary: 'variant="secondary"' };
 const actionButtons = (acts, pad, plus) => acts.map((a, i) => `${pad}{/* TODO(spec-to-code): wire «${a.label}»; the spec names only the label */}
 ${pad}<Button type="button" size="sm" ${LOOK[a.tone]}>
 ${plus && a.tone === 'primary' ? `${pad}  <PlusIcon />\n` : ''}${pad}  {t.actions[${i}].label}
@@ -288,7 +288,7 @@ const t = m.blocks.${b.key}
  */
 export function ${b.comp}() {
   return (
-    <div role="note" className="rounded-lg border border-dashed border-border-secondary p-6 text-sm text-muted-foreground">
+    <div role="note" className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">
       {t.todo}
     </div>
   )

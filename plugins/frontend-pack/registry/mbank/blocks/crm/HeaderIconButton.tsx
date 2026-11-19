@@ -10,7 +10,7 @@ type HeaderIconButtonProps = React.ComponentProps<typeof Button> & {
   indicator?: boolean
 }
 
-/** Figma `iconCont` 36x36 on background/surface/soft with a 20px icon. */
+/** Figma `iconCont` 36x36 on bg-muted with a 20px icon. */
 export function HeaderIconButton({ label, indicator = false, className, children, ...props }: HeaderIconButtonProps) {
   return (
     <Button
@@ -22,7 +22,7 @@ export function HeaderIconButton({ label, indicator = false, className, children
     >
       {children}
       {indicator && (
-        <span aria-hidden="true" className="absolute top-2 right-2 size-2 rounded-full bg-status-error ring-2 ring-muted" />
+        <span aria-hidden="true" className="absolute top-2 right-2 size-2 rounded-full bg-destructive ring-2 ring-muted" />
       )}
     </Button>
   )

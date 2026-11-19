@@ -34,13 +34,13 @@ export function ListItem({ title, subtitle, meta, initials, src, className, ...p
           {title}
         </span>
         {subtitle && (
-          <span data-slot="crm-list-item-subtitle" className="truncate text-caption text-muted-foreground">
+          <span data-slot="crm-list-item-subtitle" className="truncate text-xs text-muted-foreground">
             {subtitle}
           </span>
         )}
       </div>
       {meta && (
-        <span data-slot="crm-list-item-meta" className="shrink-0 text-caption text-muted-foreground tabular-nums">
+        <span data-slot="crm-list-item-meta" className="shrink-0 text-xs text-muted-foreground tabular-nums">
           {meta}
         </span>
       )}

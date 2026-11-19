@@ -5,7 +5,7 @@ const nid = (p) => `${p}:${++seq}`;
 
 // library: { variables: [{ key, name, type }], styles: [{ key, name, fontName }], components: [{ key, name }] } —
 // what importVariableByKeyAsync / importStyleByKeyAsync / importComponentByKeyAsync can reach (a file that
-// uses Foundation and Web components as libraries, like CRM UI KIT). Unknown keys throw, like Figma.
+// uses a component library, like CRM UI KIT). Unknown keys throw, like Figma.
 export function createFigma({ missingFonts = ['Inter Mbank'], library = null } = {}) {
   const loaded = new Set();
   const vars = new Map();
@@ -347,41 +347,15 @@ export function installWidget(figma) {
   };
 }
 
-// Builds a small shadcn-kit-shaped file: Tailwind -> Style -> Mode, plus a legacy custom token.
-export async function seedKit(figma, tokens) {
-  const v = figma.variables;
-  const hex = (h) => ({ r: parseInt(h.slice(1, 3), 16) / 255, g: parseInt(h.slice(3, 5), 16) / 255, b: parseInt(h.slice(5, 7), 16) / 255, a: 1 });
-  const tw = v.createVariableCollection('Tailwind');
-  const palette = { 'neutral/50': '#fafafa', 'neutral/100': '#f5f5f5', 'neutral/200': '#e5e5e5', 'neutral/500': '#737373', 'neutral/900': '#171717', 'neutral/950': '#0a0a0a', 'zinc/100': '#f4f4f5', 'zinc/800': '#27272a', 'amber/400': '#ffb900', 'amber/500': '#fe9a00', 'amber/950': '#461901', 'green/500': '#00c950', 'green/600': '#00a63e', 'green/950': '#032e15', 'blue/500': '#2b7fff', 'blue/600': '#155dfc', red: '#e7000b', white: '#ffffff' };
-  const twv = {};
-  for (const [k, h] of Object.entries(palette)) { twv[k] = v.createVariable(`colors/${k}`, tw, 'COLOR'); twv[k].setValueForMode(tw.defaultModeId, hex(h)); }
-  const style = v.createVariableCollection('Style');
-  style.renameMode(style.defaultModeId, 'Vega');
-  style.addMode('Nova');
-  const mode = v.createVariableCollection('Mode');
-  mode.renameMode(mode.defaultModeId, 'Light');
-  const darkId = mode.addMode('Dark');
-  for (const t of tokens) {
-    const sv = {};
-    for (const theme of ['light', 'dark']) {
-      sv[theme] = v.createVariable(`color/${theme}/${t}`, style, 'COLOR');
-      for (const m of style.modes) sv[theme].setValueForMode(m.modeId, v.createVariableAlias(twv[theme === 'light' ? 'neutral/100' : 'neutral/900']));
-    }
-    const mv = v.createVariable(t, mode, 'COLOR');
-    mv.setValueForMode(mode.defaultModeId, v.createVariableAlias(sv.light));
-    mv.setValueForMode(darkId, v.createVariableAlias(sv.dark));
-  }
-  const legacy = v.createVariable('custom/mmarket/mmarket badge bg slate', mode, 'COLOR');
-  legacy.setValueForMode(mode.defaultModeId, v.createVariableAlias(twv['zinc/100']));
-  legacy.setValueForMode(darkId, v.createVariableAlias(twv['zinc/800']));
-  const font = v.createVariable('font/family/sans', style, 'STRING');
-  for (const m of style.modes) font.setValueForMode(m.modeId, 'Inter');
-  for (const r of [['sm', 6], ['md', 8], ['lg', 10], ['xl', 14]]) {
-    const rv = v.createVariable(`radius/${r[0]}`, style, 'FLOAT');
-    for (const m of style.modes) rv.setValueForMode(m.modeId, r[1]);
-  }
+// A file with the «shadcn» variable collection (canonical values, Light/Dark) and one kit text style
+// whose font is not installed (Inter Mbank is in missingFonts by default).
+export async function seedKit(figma) {
+  globalThis.figma = figma;
+  const { ensureShadcn, loadIndex } = await import('../plugin/src/variables.js');
+  await ensureShadcn();
+  const ix = await loadIndex();
   const ts = figma.createTextStyle();
   ts.name = 'text-sm/leading-normal/medium';
   ts.fontName = { family: 'Inter Mbank', style: 'Medium' };
-  return { tw, style, mode, legacy };
+  return { collection: ix.col.shadcn, named: ix.named.shadcn };
 }

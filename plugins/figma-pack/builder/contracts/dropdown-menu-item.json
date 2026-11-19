@@ -48,11 +48,12 @@
       "gap": 2,
       "px": 2,
       "height": 8,
-      "radius": "xs",
+      "radius": "sm",
       "text": "sm",
       "fg": "foreground",
       "bg:hover": "accent",
-      "fg:disabled": "disabled-foreground"
+      "opacity:disabled": 50,
+      "fg:hover": "accent-foreground"
     },
     "icon": {
       "size": 4,
@@ -68,11 +69,12 @@
       "default": {},
       "destructive": {
         "root": {
-          "fg": "destructive-text",
-          "bg:hover": "destructive-soft"
+          "fg": "destructive",
+          "bg:hover": "destructive/10",
+          "fg:hover": "destructive"
         },
         "icon": {
-          "fg": "destructive-text"
+          "fg": "destructive"
         }
       }
     }

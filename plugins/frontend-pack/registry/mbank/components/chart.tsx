@@ -8,7 +8,7 @@ import { cn } from "@/shared/lib/utils"
  * Figma `Chart` (Type Lines / Coulm / Coulm group, Stacked, Hover) and `Chart-tooltip`, CRM
  * `Widget-Chart`. shadcn chart pattern on recharts: ChartContainer sets --color-<key> for every
  * series in ChartConfig, series use fill / stroke = "var(--color-<key>)". Without a colour a series
- * takes the Mbank supportive palette in order (supportive-1..10), so light / dark follow the tokens.
+ * takes the shadcn chart palette in order (chart-1..5), so light / dark follow the tokens.
  */
 type ChartConfig = Record<string, { label?: React.ReactNode; color?: string; icon?: React.ComponentType }>
 
@@ -20,11 +20,11 @@ function useChart() {
   return context
 }
 
-/** CSS variables --color-<key> for each series; unset colours walk the supportive palette. */
+/** CSS variables --color-<key> for each series; unset colours walk chart-1..5. */
 function chartColorVars(config: ChartConfig) {
   const vars: Record<string, string> = {}
   Object.entries(config).forEach(([key, item], index) => {
-    vars[`--color-${key}`] = item.color ?? `var(--supportive-${(index % 10) + 1})`
+    vars[`--color-${key}`] = item.color ?? `var(--chart-${(index % 5) + 1})`
   })
   return vars as React.CSSProperties
 }
@@ -46,7 +46,7 @@ function ChartContainer({ id, className, config, style, children, ...props }: Ch
         className={cn(
           "flex aspect-video justify-center text-xs text-muted-foreground",
           "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border",
-          "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-surface-1 [&_.recharts-reference-line_line]:stroke-border",
+          "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_line]:stroke-border",
           "[&_.recharts-layer]:outline-none [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
           className,
         )}

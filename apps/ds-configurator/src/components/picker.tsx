@@ -1,11 +1,11 @@
 // Forked from shadcn-ui/ui apps/v4/app/(app)/(create)/components/picker.tsx (MIT), see NOTICE.md.
 // Trimmed to the parts the configurator uses; IconPlaceholder replaced by the kit CheckIcon,
-// neutral-* palette classes replaced by Mbank token utilities (surface-inverse, inverse-foreground).
+// neutral-* palette classes replaced by shadcn token utilities (popover, accent).
 import * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
-import { CheckIcon } from "@/generated/kit/ui/icons"
-import { cn } from "@/generated/kit/lib/utils"
+import { CheckIcon } from "@/kit/ui/icons"
+import { cn } from "@/kit/lib/utils"
 
 function Picker(props: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
@@ -37,7 +37,7 @@ function PickerContent({
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={cn(
-            "z-50 max-h-(--available-height) w-56 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-surface-inverse p-1.5 text-inverse-foreground shadow-dropdown outline-none",
+            "z-50 max-h-(--available-height) w-56 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg border bg-popover p-1.5 text-popover-foreground shadow-md outline-none",
             className
           )}
           {...props}
@@ -55,7 +55,7 @@ function PickerLabel({ className, ...props }: MenuPrimitive.GroupLabel.Props) {
   return (
     <MenuPrimitive.GroupLabel
       data-slot="dropdown-menu-label"
-      className={cn("px-2 py-1.5 text-caption font-medium text-disabled-foreground", className)}
+      className={cn("px-2 py-1.5 text-xs font-medium text-muted-foreground", className)}
       {...props}
     />
   )
@@ -91,7 +91,7 @@ function PickerRadioItem({ className, children, value, onMouseMove, onFocus, ...
         onItemPreview?.(value as string)
       }}
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-md py-1.5 pr-8 pl-2 text-sm font-medium outline-hidden select-none focus:bg-surface-6 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex cursor-default items-center gap-2 rounded-md py-1.5 pr-8 pl-2 text-sm font-medium outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -110,7 +110,7 @@ function PickerSeparator({ className, ...props }: MenuPrimitive.Separator.Props)
   return (
     <MenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
-      className={cn("-mx-1.5 my-1.5 h-px bg-surface-6", className)}
+      className={cn("-mx-1.5 my-1.5 h-px bg-border", className)}
       {...props}
     />
   )

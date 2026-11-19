@@ -103,7 +103,7 @@ export function cssImportHint(root, tokensFile) {
     lines.push(`Add to ${where} after @import "tailwindcss":\n${anim}@import "${importPath(dirname(entry), tokensFile)}";`);
   }
   if (SHADCN_THEME.test(text)) {
-    lines.push(`WARNING: ${where} still has a shadcn theme (--primary / oklch( / @theme inline). It overrides the Mbank tokens.`,
+    lines.push(`WARNING: ${where} still has a shadcn theme (--primary / oklch( / @theme inline). It overrides the kit tokens.`,
       'Delete the :root, .dark, @theme inline, @custom-variant dark and @layer base blocks; keep only the imports.');
   }
   return lines.join('\n');

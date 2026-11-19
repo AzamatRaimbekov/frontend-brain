@@ -47,14 +47,11 @@
       "px": 3,
       "text": "sm",
       "fg": "foreground",
-      "border:hover": "input-hover",
       "border:focus": "ring",
-      "border:disabled": "input-disabled",
-      "bg:disabled": "muted",
-      "fg:disabled": "disabled-foreground",
       "layout": "row",
       "align": "center",
-      "focus-ring": "ring/30"
+      "focus-ring": "ring/50",
+      "opacity:disabled": 50
     },
     "placeholder": {
       "fg": "muted-foreground"
@@ -88,7 +85,6 @@
   },
   "states": [
     "default",
-    "hover",
     "focus",
     "disabled"
   ],

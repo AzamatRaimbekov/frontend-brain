@@ -14,7 +14,7 @@
     {
       "name": "tokens",
       "type": "registry:style",
-      "description": "Mbank design tokens: light/dark, 5 brand modes, radius, typography, shadows, z-index, @theme inline mapping (Tailwind v4)",
+      "description": "Design tokens: the standard shadcn/ui set (light/dark, radius scale, font), @theme inline mapping (Tailwind v4), nothing custom",
       "files": [
         {
           "path": "tokens.css",
@@ -29,7 +29,7 @@
     {
       "name": "utils",
       "type": "registry:lib",
-      "description": "cn() = clsx + tailwind-merge extended with the Mbank font sizes",
+      "description": "cn() = clsx + tailwind-merge",
       "files": [
         {
           "path": "lib/utils.ts",
@@ -77,7 +77,7 @@
     {
       "name": "button",
       "type": "registry:ui",
-      "description": "Figma button/default: primary, brand, secondary, destructive, success, soft, ghost, outline, static, link; sizes xs-lg + icon; loading",
+      "description": "Figma button/default: primary, secondary, destructive, outline, ghost, link; sizes xs-lg + icon; loading",
       "files": [
         {
           "path": "components/button.tsx",
@@ -149,7 +149,7 @@
     {
       "name": "badge",
       "type": "registry:ui",
-      "description": "Figma Badge-status: tone (status roles), fill ghost/solid, shape, size",
+      "description": "Figma Badge-status: tone neutral/accent/error/clear (shadcn secondary/default/destructive/outline), shape, size",
       "files": [
         {
           "path": "components/badge.tsx",
@@ -466,7 +466,7 @@
     {
       "name": "popover",
       "type": "registry:ui",
-      "description": "Floating panel on the dropdown surface (z-popover, above Dialog) for pickers and filters",
+      "description": "Floating panel on the popover surface for pickers and filters",
       "files": [
         {
           "path": "components/popover.tsx",
@@ -625,7 +625,7 @@
     {
       "name": "empty-state",
       "type": "registry:component",
-      "description": "Shared EmptyState composite (react-ux API) styled with Mbank tokens",
+      "description": "Shared EmptyState composite (react-ux API) styled with shadcn tokens",
       "files": [
         {
           "path": "components/EmptyState.tsx",
@@ -657,7 +657,7 @@
     {
       "name": "crm-status-dot",
       "type": "registry:block",
-      "description": "Coloured status dot (success/warning/error/info/neutral) for stepper, timeline, scoring",
+      "description": "Status dot (neutral/accent/error/clear) for stepper, timeline, scoring",
       "files": [
         {
           "path": "blocks/crm/StatusDot.tsx",

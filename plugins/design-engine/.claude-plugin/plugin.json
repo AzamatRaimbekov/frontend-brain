@@ -1,6 +1,6 @@
 {
   "name": "design-engine",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mdigital design-to-code engine: one screen spec drives Figma (figma-pack) and React code (frontend-pack); design-to-code process, Figma-to-React/React Native/Flutter translation, design QA, Figma-to-code component map and token sync. Installs figma-pack and frontend-pack as dependencies.",
   "author": {
     "name": "Mdigital"
@@ -16,11 +16,11 @@
   "dependencies": [
     {
       "name": "figma-pack",
-      "version": "^0.6.0"
+      "version": "^0.7.0"
     },
     {
       "name": "frontend-pack",
-      "version": "^0.14.0"
+      "version": "^0.16.0"
     }
   ]
 }

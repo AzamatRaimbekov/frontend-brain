@@ -12,7 +12,7 @@ import { cn } from "@/shared/lib/utils"
  */
 // @contract radio start
 const radioVariants = cva(
-  "size-5 rounded-full border border-input bg-background items-center hover:border-input-hover disabled:border-input-disabled disabled:bg-muted data-[state=checked]:border-brand data-[state=checked]:bg-brand focus-visible:ring-[3px] focus-visible:ring-ring/30 peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50",
+  "size-5 rounded-full border border-input bg-background items-center data-[state=checked]:border-primary data-[state=checked]:bg-primary focus-visible:ring-[3px] focus-visible:ring-ring/50 peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed disabled:opacity-50",
 )
 // @contract radio end
 
@@ -24,7 +24,7 @@ function RadioGroup({ className, ...props }: React.ComponentProps<typeof RadioGr
 function RadioGroupItem({ className, ...props }: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
   return (
     <RadioGroupPrimitive.Item data-slot="radio" className={cn(radioVariants(), className)} {...props}>
-      <RadioGroupPrimitive.Indicator data-slot="radio-dot" className="size-2 rounded-full bg-brand-foreground" />
+      <RadioGroupPrimitive.Indicator data-slot="radio-dot" className="size-2 rounded-full bg-primary-foreground" />
     </RadioGroupPrimitive.Item>
   )
 }

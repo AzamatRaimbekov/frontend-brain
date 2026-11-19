@@ -57,7 +57,6 @@
 <body>
 <nav>
   <button data-tab="easy" class="on">✨ Нарисовать</button>
-  <button data-tab="brand" class="pro">Бренд</button>
   <button data-tab="tokens" class="pro">Токены</button>
   <button data-tab="screens" class="pro">Экраны (JSON)</button>
   <button data-tab="kit" class="pro">Кит</button>
@@ -104,46 +103,21 @@
   </div>
 </section>
 
-<section id="brand">
-  <div class="card" id="status">Загрузка…</div>
-  <div class="card" id="setupCard">
-    <h3>Слой Brand</h3>
-    <p class="muted">Между Style и Mode появится коллекция Brand: один режим на проект. Компоненты кита не меняются.</p>
-    <label class="row"><input type="checkbox" id="fixScopes" checked> Навести порядок в областях применения (scopes)</label>
-    <label class="row"><input type="checkbox" id="fixNames" checked> Исправить имена custom/* (без пробелов, kebab-case)</label>
-    <div class="row"><button class="btn primary" id="setup">Включить слой Brand</button><button class="btn danger" id="rollback">Откатить</button></div>
-  </div>
-  <div class="card">
-    <h3>Бренды</h3>
-    <div class="row"><select id="brandSel"></select><select id="styleSel"></select></div>
-    <div class="row"><input id="newBrand" placeholder="Новый бренд, например MMarket"><button class="btn" id="addBrand">Добавить</button><button class="btn danger" id="removeBrand">Удалить выбранный</button></div>
-  </div>
-</section>
-
 <section id="tokens">
+  <div class="card" id="status">Загрузка…</div>
   <div class="card">
-    <h3>Сгенерировать тему бренда</h3>
-    <div class="row"><input type="color" id="brandColor" value="#fabf00"><input id="brandHex" value="#fabf00" size="9">
-      <select id="neutral"><option>neutral</option><option>zinc</option><option>slate</option><option>stone</option><option>gray</option><option value="tinted">в тон бренда</option></select>
-      <input id="font" placeholder="Шрифт (Inter Mbank)" size="14"></div>
-    <label class="row"><input type="checkbox" id="withNeutrals"> Переопределить и нейтральные цвета (фон, карточки, границы)</label>
-    <label class="row"><input type="checkbox" id="snap" checked> Привязывать к палитре Tailwind, если цвет почти совпадает</label>
-    <div class="row"><button class="btn" id="generate">Сгенерировать</button><button class="btn primary" id="apply" disabled>Применить к бренду</button></div>
-    <div id="preview"></div>
+    <h3>Переменные shadcn</h3>
+    <p class="muted">Одна коллекция <b>shadcn</b> (Light / Dark), имена как CSS-переменные shadcn/ui: background, primary, border, radius-md… Компоненты и экраны привязаны только к ним. Значения — стандартные shadcn (neutral).</p>
+    <label class="row"><input type="checkbox" id="tReset"> Вернуть стандартные значения всем переменным</label>
+    <div class="row"><button class="btn primary" id="tApply">Создать / обновить переменные</button></div>
   </div>
   <div class="card">
-    <h3>Текущие значения бренда</h3>
-    <div id="brandTable" class="muted">Выберите бренд на вкладке «Бренд».</div>
-  </div>
-  <div class="card">
-    <h3>Новый проектный токен</h3>
-    <div class="row"><input id="tProject" placeholder="проект: mmarket" size="10"><input id="tRole" placeholder="роль: badge-bg-orange" size="16"></div>
-    <div class="row"><input id="tLight" placeholder="light: orange/200 или #hex" size="16"><input id="tDark" placeholder="dark: orange/900" size="16"><button class="btn" id="addToken">Добавить</button></div>
-    <div id="customList" class="muted"></div>
+    <h3>Текущие значения</h3>
+    <div id="tTable" class="muted">—</div>
   </div>
   <div class="card">
     <h3>В код</h3>
-    <div class="row"><button class="btn" id="exportCss">Получить globals.css и tokens.json</button><button class="btn" id="copyCss" disabled>Скопировать CSS</button></div>
+    <div class="row"><button class="btn" id="exportCss">Получить globals.css</button><button class="btn" id="copyCss" disabled>Скопировать CSS</button></div>
     <textarea id="cssOut" rows="8" readonly placeholder="Здесь появится globals.css для shadcn/ui"></textarea>
   </div>
 </section>
@@ -157,8 +131,7 @@
     <div id="specInfo" class="muted"></div>
   </div>
   <div class="card">
-    <div class="row"><span>Бренд</span><select id="bBrand"></select><span>Стиль</span><select id="bStyle"></select>
-      <select id="bTheme"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div>
+    <div class="row"><span>Тема</span><select id="bTheme"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div>
     <div class="row"><input id="bFont" placeholder="Шрифт для запасных стилей: Inter" size="22"></div>
     <div class="row"><button class="btn primary" id="build" disabled>Собрать экраны</button></div>
     <div class="bar"><i id="progress"></i></div>
@@ -181,7 +154,7 @@
     <div class="row"><select id="cSel"></select><button class="btn primary" id="cRender">Собрать в Figma</button><button class="btn" id="cRefresh" title="Обновить список">Обновить</button></div>
     <div class="row"><button class="btn primary" id="cRenderAll">Собрать все компоненты на одну страницу</button></div>
     <div class="row muted">Состояния: <span id="cStates"></span></div>
-    <label class="row"><input type="checkbox" id="cCreate" checked> Недостающие цветовые токены создать в Brand (заглушка, потом задать значение)</label>
+    <label class="row"><input type="checkbox" id="cCreate" checked> Нет переменных shadcn в файле — создать их (стандартные значения)</label>
     <label class="row"><input type="checkbox" id="cPrune"> Удалить варианты, которых больше нет в контракте</label>
     <div id="cOut" class="muted"></div>
     <div id="cList"></div>

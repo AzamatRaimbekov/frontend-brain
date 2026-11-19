@@ -14,7 +14,7 @@ const SCRIPTS = dirname(fileURLToPath(import.meta.url));
 const TEMPLATE = resolve(SCRIPTS, '..', 'templates', 'mbank-crm');
 const ADD_UI = join(SCRIPTS, 'add-ui.mjs');
 
-// react-new-project (Vite) whitelist + the kit (radix-ui, cva, clsx, tailwind-merge, tw-animate-css) + MSW.
+// react-new-project (Vite) whitelist + the kit (radix-ui, cva, clsx, tailwind-merge, tw-animate-css, Geist font) + MSW.
 // Only what the template uses: no lucide-react (Mbank icons), no i18n, and react-hook-form +
 // @hookform/resolvers come with the first form (resolvers@6 currently fails npm peer resolution
 // in a fresh project, checked 2026-10-25), sonner with the first toast.
@@ -22,6 +22,8 @@ export const PACKAGES = [
   'tailwindcss', '@tailwindcss/vite', '@tanstack/react-query', '@tanstack/react-router', 'zod',
   'react-error-boundary',
   'radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge', 'tw-animate-css',
+  // The sans font of the shadcn tokens (font.sans = 'Geist Variable'), as shadcn init installs it.
+  '@fontsource-variable/geist',
 ];
 // The kit as a package: one repository, updated by changing the tag. Private: npm needs git access to it.
 export const KIT_PACKAGE = 'github:AzamatRaimbekov/mbank-ui#v0.2.2';

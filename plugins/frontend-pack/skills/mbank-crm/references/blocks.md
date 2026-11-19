@@ -2,19 +2,21 @@
 
 Source: [`registry/mbank/blocks/crm`](../../../registry/mbank/blocks/crm). Install with `add-ui.mjs <name>` (or `blocks` for all) into `--blocks-dir` (default `src/shared/components/crm`); kit dependencies come along. Import as `@/shared/components/crm/<File>`. Blocks import the kit from `@/shared/ui/*`, so keep the kit there.
 
+Colours: blocks use only the standard shadcn tokens (see `mbank-ui` Token rules). A `tone` prop is a meaning, not a colour: `error` renders as `destructive`; the other tones (`neutral`, `accent`, `clear`) render neutral (secondary / primary / outline look, `text-muted-foreground`, `bg-muted`); old success / warning / info values are gone (except `scoreTone`, where they stay neutral), so the text must carry the meaning. No palette colours, no `surface-*` / `status-*` / `brand` classes.
+
 Figma: file `vVuM5uw3TsWo1xm3vJelXG`, frames 35:29 (board) and 35:178 (application). Links are optional props everywhere: `renderLink` receives `{ className, children, ... }` and returns the router's `Link` (default: a plain `<a href>`), so the blocks do not depend on a router.
 
 ## crm-app-shell
 
 | Component | Figma | Props |
 |---|---|---|
-| `CrmLayout` | frame: sideMenu 280 + Content | `sideMenu`, `header`, `banner?` (OfflineBanner), `collapsed?` (72px rail), `children` (page). Side menu from 1024px; body `p-4 sm:p-6` on `surface-1` |
+| `CrmLayout` | frame: sideMenu 280 + Content | `sideMenu`, `header`, `banner?` (OfflineBanner), `collapsed?` (72px rail), `children` (page). Side menu from 1024px; body `p-4 sm:p-6` on `bg-muted` |
 | `SideMenu` | 35:30 `sideMenu` | `brand`, `sections: SideMenuSectionData[]`, `footerSections?`, `user?`, `activeId?`, `renderLink?`, `collapsed?`, `onToggleCollapsed?` (shows «<<»), `label?` |
 | `SideMenuSection` | `listMenu` + `header` 36px | `section` (`id`, `title?`, `items`, `collapsible?`, `action?`), `activeId?`, `collapsed?`, `renderLink?` |
-| `SideMenuItem` | `item-sidemenu-menu-tree-states` 44px | `item` (`id`, `label`, `href`, `icon?`, `badge?`), `active?` (aria-current=page, white surface), `collapsed?`, `renderLink?` |
+| `SideMenuItem` | `item-sidemenu-menu-tree-states` 44px | `item` (`id`, `label`, `href`, `icon?`, `badge?`), `active?` (aria-current=page, `bg-background` / `bg-accent`), `collapsed?`, `renderLink?` |
 | `SideMenuUser` | user card at the bottom of `sideMenu` | `name`, `role?`, `avatarSrc?`, `initials`, `children?` (DropdownMenuItem: Профиль, Выйти) |
 | `SideMenuSheet` | — (mobile, not in Figma) | `children` (the same `SideMenu`), `label?`. Menu button `lg:hidden` + left drawer on the kit Dialog; closes on link click |
-| `TopHeader` | 35:32 `topHeader` 68px | `title?` (h1), `breadcrumbs?`, `back?`, `leading?` (SideMenuSheet), `search?` (hidden < 768), `actions?`, `user?`. Sticky, `z-(--z-sticky)` |
+| `TopHeader` | 35:32 `topHeader` 68px | `title?` (h1), `breadcrumbs?`, `back?`, `leading?` (SideMenuSheet), `search?` (hidden < 768), `actions?`, `user?`. Sticky, `z-10` (no z-index tokens) |
 | `Breadcrumbs` | 35:181 `topHeader subheader` | `items: { id, label, href? }[]`, `renderLink?`. Last item = current page, never truncates; parents hide below 768 |
 | `HeaderSearch` | 35:39 `Search` 272×36 | `onSearch(query)`, `placeholder?`, `label?`, `defaultValue?`. `role="search"` form, submits on Enter |
 | `HeaderIconButton` | 35:42 / 35:44 `iconCont` 36 | Button props + `label` (aria-label), `indicator?` (red dot, adds «есть новые» to the label) |
@@ -40,22 +42,22 @@ Types: `side-menu-types.ts` (`SideMenuItemData`, `SideMenuSectionData`, `RenderS
 | `ShowMore` | 35:1958 `Show more` 28px | `count` (renders nothing at 0), `label?(count)`, Button props (`onClick`) |
 | `BoardSkeleton` | — | `columns?`, `cards?`, `label?` (`role="status"`) |
 
-Card badge tones used in the frame: SLA `info`, SLA at risk `warning`, «Просрочено N мин» `error`, statuses («Ждёт ответа бюро», «Ждёт подписи», «Закрыта») `neutral`.
+Card badges in the frame: «Просрочено N мин» → `error`; SLA, SLA at risk and statuses («Ждёт ответа бюро», «Ждёт подписи», «Закрыта») → `neutral` / `clear` with the meaning in the label.
 
 ## crm-key-value (35:225 cards, 35:228 row)
 
 - `KeyValueSection`: `title` (h2), `children` (rows, inside a `dl`), `action?`. Card p 20, `role="region"` named by the title.
-- `KeyValueRow`: `label`, `children` (value), `tone?: default | error | warning | success | muted`. 36px row, label column 180px + 16 gap, value medium, top-aligned (contract `crm-key-value-row`); stacks on phones. Problem values (a missing document) use `tone="error"`.
+- `KeyValueRow`: `label`, `children` (value), `tone?: default | error | muted` (`text-destructive` for error). 36px row, label column 180px + 16 gap, value medium, top-aligned (contract `crm-key-value-row`); stacks on phones. Problem values (a missing document) use `tone="error"`.
 
 ## crm-stage-stepper (35:2217 Stages)
 
 - `StageStepper`: `stages: { id, title, state, meta? }[]`, `label?`. Card p 20, equal columns; vertical list on phones.
-- `StageStep`: `title`, `state: done | current | upcoming | failed` (green / orange + bold / grey / red dot, state also in sr-only text, `aria-current="step"`), `meta?`.
+- `StageStep`: `title`, `state: done | current | upcoming | failed` (`primary` dot / `primary` + bold / `muted` dot / `destructive` dot, state also in sr-only text, `aria-current="step"`), `meta?`.
 
 ## crm-timeline (35:267 History, 35:269 item)
 
 - `Timeline`: `title` (h2), `children` (items, newest first, in an `ol`), `empty?`.
-- `TimelineItem`: `title`, `meta?`, `tone?` (dot colour: border/accent/* as drawn), `dateTime?` (renders `<time>`).
+- `TimelineItem`: `title`, `meta?`, `tone?` (dot: `destructive` for errors, otherwise `primary` / `muted-foreground`), `dateTime?` (renders `<time>`).
 
 ## crm-transfer-row — `TransferRow` (23:10079 `CRM / Transfer row`)
 
@@ -69,15 +71,15 @@ Contracts: the five blocks the designers re-created locally (Key-value row, Appl
 
 ## crm-summary-header — `SummaryHeader` (35:212 Summary)
 
-`title` (the page h1, `tabIndex=-1` for focus after an action), `titleRef?`, `status?: { label, tone }`, `amount?`, `context?`, `actions?`. Figma button order: Отклонить (`destructive`), Запросить документы (`soft` + `bg-secondary-muted text-link`), Одобрить кредит (`primary`), all `size="sm"`; on phones they stack full width, primary on top.
+`title` (the page h1, `tabIndex=-1` for focus after an action), `titleRef?`, `status?: { label, tone }`, `amount?`, `context?`, `actions?`. Figma button order: Отклонить (`destructive`), Запросить документы (`secondary`), Одобрить кредит (`primary`), all `size="sm"`; on phones they stack full width, primary on top.
 
 ## crm-score-card — `ScoreCard` (35:249 Scoring)
 
-`title?`, `score`, `scoreTone?: success | warning | error`, `scale?` («из 900 · модель v3.2»), `risk?: { label, tone }`, `reasons?: { id, text, tone? }[]`, `meta?`.
+`title?`, `score`, `scoreTone?: success | warning | error` (only `error` changes the colour: `text-destructive`; the others stay `text-foreground`), `scale?` («из 900 · модель v3.2»), `risk?: { label, tone }`, `reasons?: { id, text, tone? }[]`, `meta?`.
 
 ## crm-status-dot — `StatusDot`
 
-`tone?: success | warning | error | info | neutral | brand`, `size?: sm (6px) | md (12px)`. Decorative (`aria-hidden`): put the meaning in the text next to it.
+`tone?: neutral | accent | error | clear` (`error` → `bg-destructive`, others neutral), `size?: sm (6px) | md (12px)`. Decorative (`aria-hidden`): put the meaning in the text next to it.
 
 ## crm-icons
 

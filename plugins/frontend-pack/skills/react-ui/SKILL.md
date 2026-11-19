@@ -42,19 +42,20 @@ Scope: how components look and are composed. Loading/empty/feedback flows belong
 // GOOD: one cva per component, finite named variants
 const badgeVariants = cva("inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium", {
   variants: {
-    tone: {
-      neutral: "bg-secondary text-secondary-foreground",
-      success: "bg-success text-success-foreground",
-      danger: "bg-destructive text-white",
+    variant: {
+      default: "bg-primary text-primary-foreground",
+      secondary: "bg-secondary text-secondary-foreground",
+      outline: "border-border text-foreground",
+      destructive: "bg-destructive text-white",
     },
   },
-  defaultVariants: { tone: "neutral" },
+  defaultVariants: { variant: "default" },
 })
 
 type BadgeProps = React.ComponentProps<"span"> & VariantProps<typeof badgeVariants>
 
-export function Badge({ className, tone, ...props }: BadgeProps) {
-  return <span data-slot="badge" className={cn(badgeVariants({ tone }), className)} {...props} />
+export function Badge({ className, variant, ...props }: BadgeProps) {
+  return <span data-slot="badge" className={cn(badgeVariants({ variant }), className)} {...props} />
 }
 ```
 
@@ -83,11 +84,11 @@ export function Badge({ className, tone, ...props }: BadgeProps) {
 <p className="text-muted-foreground" />
 ```
 
-- Colors: semantic tokens only (`bg-background`, `text-foreground`, `bg-card`, `text-muted-foreground`, `border-border`, `bg-primary`, `bg-destructive`, `ring-ring`). No hex, rgb, oklch or raw palette (`blue-600`, `gray-500`) in components.
-- Need a new color (warning, success, brand)? Add a token pair in globals.css (`--warning` + `--warning-foreground`, light and `.dark`) and map it in `@theme inline`. See `references/tokens-and-theming.md`.
+- Colors: only the standard shadcn tokens (`bg-background`, `text-foreground`, `bg-card`, `bg-muted`, `bg-accent`, `bg-secondary`, `bg-popover`, `text-muted-foreground`, `border-border`, `border-input`, `bg-primary`, `bg-destructive`, `ring-ring`, `chart-1..5`). No hex, rgb, oklch or raw palette (`blue-600`, `green-500`, `gray-500`) in components.
+- **No custom tokens** (no `success`, `warning`, `brand`, `surface-*`, `*-hover`): a project may only change the values of the shadcn names. Hover = opacity (`hover:bg-primary/90`, `hover:bg-secondary/80`, `hover:bg-accent`), disabled = `disabled:opacity-50`, error = `destructive`, other statuses = neutral Badge `default` / `secondary` / `outline` + text. See `references/tokens-and-theming.md`.
 - Spacing/sizing: the Tailwind scale (`p-4`, `gap-6`, `size-9`). Arbitrary values (`w-[372px]`) only for a real external constraint, with a comment explaining why.
 - No `style={{...}}` except for truly dynamic runtime values (e.g. a computed width from a virtualizer, a CSS variable from data). Even then prefer `style={{ "--progress": `${pct}%` }}` + a class.
-- Radius from `--radius` (`rounded-md/lg/xl`), shadows from the scale (`shadow-xs/sm/md`).
+- Radius from `--radius` (`rounded-sm..4xl`), shadows: Tailwind defaults as shadcn uses them (`shadow-xs/sm/md`), no shadow tokens.
 
 ## 5. Typography and spacing scale
 

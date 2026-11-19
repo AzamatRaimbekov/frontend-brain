@@ -52,10 +52,10 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
       data-slot="tabs-trigger"
       className={cn(
         // @contract tabs-trigger start
-        "inline-flex h-9 items-center justify-center gap-2 px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:text-disabled-foreground [&_svg]:size-4 [&_svg]:shrink-0",
+        "inline-flex h-9 items-center justify-center gap-2 px-3 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 disabled:opacity-50",
         "group-data-[variant=segment]/tabs-list:rounded-sm group-data-[variant=segment]/tabs-list:data-[state=active]:bg-background group-data-[variant=segment]/tabs-list:data-[state=active]:text-foreground group-data-[variant=segment]/tabs-list:data-[state=active]:shadow-xs",
-        "group-data-[variant=outline]/tabs-list:rounded-md group-data-[variant=outline]/tabs-list:border group-data-[variant=outline]/tabs-list:border-border group-data-[variant=outline]/tabs-list:data-[state=active]:border-secondary group-data-[variant=outline]/tabs-list:data-[state=active]:bg-secondary group-data-[variant=outline]/tabs-list:data-[state=active]:text-secondary-foreground",
-        "group-data-[variant=line]/tabs-list:-mb-px group-data-[variant=line]/tabs-list:border-b-2 group-data-[variant=line]/tabs-list:border-transparent group-data-[variant=line]/tabs-list:px-0 group-data-[variant=line]/tabs-list:data-[state=active]:border-brand group-data-[variant=line]/tabs-list:data-[state=active]:text-foreground",
+        "group-data-[variant=outline]/tabs-list:rounded-md group-data-[variant=outline]/tabs-list:border group-data-[variant=outline]/tabs-list:border-border group-data-[variant=outline]/tabs-list:data-[state=active]:border-primary group-data-[variant=outline]/tabs-list:data-[state=active]:bg-primary group-data-[variant=outline]/tabs-list:data-[state=active]:text-primary-foreground",
+        "group-data-[variant=line]/tabs-list:-mb-px group-data-[variant=line]/tabs-list:border-b-2 group-data-[variant=line]/tabs-list:border-transparent group-data-[variant=line]/tabs-list:px-0 group-data-[variant=line]/tabs-list:data-[state=active]:border-foreground group-data-[variant=line]/tabs-list:data-[state=active]:text-foreground",
         // @contract tabs-trigger end
         className,
       )}

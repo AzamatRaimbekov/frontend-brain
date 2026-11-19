@@ -2,7 +2,7 @@ import type * as React from "react"
 
 import { cn } from "@/shared/lib/utils"
 
-/** Surface on background/onsurface/0 with border/divider/primary; radius/l. */
+/** Surface: bg-card, border-border, rounded-lg (shadcn tokens). */
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

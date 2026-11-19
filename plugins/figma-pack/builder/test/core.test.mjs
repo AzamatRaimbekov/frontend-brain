@@ -1,18 +1,66 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { hexToOklch, oklchToHex, contrast, onColor } from '../core/color.js';
-import { generateTokens, validateTokens, contrastReport, COLOR_TOKENS, scopesFor, withOverrides } from '../core/tokens.js';
+import { hexToOklch, oklchToHex, contrast, onColor, parseOklch, oklchToRgba, rgbaToOklch, rgbToHex } from '../core/color.js';
+import { SHADCN_TOKENS, validateTokens, contrastReport, COLOR_TOKENS, scopesFor, radiusScale, RADIUS, RADIUS_TOKENS, rgbaOf, hexOf } from '../core/tokens.js';
 import { toShadcnCss } from '../core/css.js';
-import { snap, deltaE } from '../core/palette.js';
-import { customName, cssVar, fixLegacyName } from '../core/naming.js';
 import { validateSpec, framePlan, normalizeSpec } from '../core/spec.js';
 import { fakeRows } from '../core/fake.js';
 import { readFileSync } from 'node:fs';
 
-test('oklch round-trip keeps the color', () => {
+const CANON = JSON.parse(readFileSync(new URL('../../skills/ds-tokens/references/shadcn-tokens.json', import.meta.url)));
+
+test('hex -> oklch -> hex round-trip keeps the color', () => {
   for (const hex of ['#fabf00', '#16a34a', '#0a0a0a', '#ffffff', '#2563eb']) {
-    assert.ok(deltaE(hex, oklchToHex(hexToOklch(hex))) < 0.5, hex);
+    assert.equal(oklchToHex(hexToOklch(hex)), hex);
   }
+});
+
+test('oklch() strings parse, convert to Figma RGBA with alpha, and back', () => {
+  assert.deepEqual(parseOklch('oklch(0.145 0 0)'), { l: 0.145, c: 0, h: 0, a: 1 });
+  assert.deepEqual(parseOklch('oklch(1 0 0 / 10%)'), { l: 1, c: 0, h: 0, a: 0.1 });
+  const pct = parseOklch('oklch(57.7% 0.245 27.325deg / 0.5)');
+  assert.ok(Math.abs(pct.l - 0.577) < 1e-9 && pct.c === 0.245 && pct.h === 27.325 && pct.a === 0.5, JSON.stringify(pct));
+  assert.throws(() => parseOklch('#fff'));
+  assert.equal(rgbToHex(oklchToRgba('oklch(1 0 0)')), '#ffffff');
+  assert.equal(oklchToRgba('oklch(1 0 0)').a, 1);
+  assert.equal(rgbToHex(oklchToRgba('oklch(0 0 0)')), '#000000');
+  const glass = oklchToRgba('oklch(1 0 0 / 15%)');
+  assert.equal(glass.a, 0.15);
+  assert.equal(rgbToHex(oklchToRgba('oklch(0.145 0 0)')), '#0a0a0a', 'shadcn neutral-950');
+  assert.equal(rgbToHex(oklchToRgba('oklch(0.922 0 0)')), '#e5e5e5', 'shadcn neutral-200');
+  assert.equal(rgbToHex(oklchToRgba('oklch(0.577 0.245 27.325)')), '#e7000b', 'out of gamut: clipped per channel, like Tailwind');
+  assert.equal(rgbToHex(oklchToRgba('oklch(0.704 0.191 22.216)')), '#ff6467', 'Tailwind red-400');
+  // an in-gamut chromatic colour: the round trip stays within 8-bit rounding (clipped ones change by design)
+  const back = parseOklch(rgbaToOklch(oklchToRgba('oklch(0.6 0.1 150)')));
+  assert.ok(Math.abs(back.l - 0.6) < 0.005 && Math.abs(back.c - 0.1) < 0.005 && Math.abs(back.h - 150) < 1, JSON.stringify(back));
+  assert.equal(rgbaToOklch(oklchToRgba('oklch(1 0 0 / 10%)')), 'oklch(1 0 0 / 10%)');
+  assert.equal(rgbaToOklch({ r: 1, g: 1, b: 1 }), 'oklch(1 0 0)');
+});
+
+test('the token set is exactly the canonical shadcn file: 31 colours, radius scale in px', () => {
+  assert.equal(SHADCN_TOKENS.$schema, 'shadcn/tokens@1');
+  assert.deepEqual(COLOR_TOKENS, Object.keys(CANON.colors));
+  assert.equal(COLOR_TOKENS.length, 31);
+  for (const gone of ['success', 'warning', 'info', 'destructive-foreground', 'brand', 'status-muted']) assert.ok(!COLOR_TOKENS.includes(gone), gone);
+  assert.equal(RADIUS, 10);
+  assert.deepEqual(radiusScale(), { sm: 6, md: 8, lg: 10, xl: 14, '2xl': 18, '3xl': 22, '4xl': 26 });
+  assert.deepEqual(RADIUS_TOKENS, ['radius', 'radius-sm', 'radius-md', 'radius-lg', 'radius-xl', 'radius-2xl', 'radius-3xl', 'radius-4xl']);
+  for (const k of COLOR_TOKENS) for (const th of ['light', 'dark']) assert.ok(rgbaOf(k, th).a > 0, `${k} ${th}`);
+  assert.equal(hexOf('background', 'light'), '#ffffff');
+  assert.equal(rgbaOf('border', 'dark').a, 0.1);
+});
+
+test('canonical tokens validate and read in both themes', () => {
+  assert.deepEqual(validateTokens(CANON), []);
+  assert.deepEqual(contrastReport().filter((r) => !r.ok), []);
+  const extra = JSON.parse(JSON.stringify(CANON));
+  extra.colors.success = { light: 'oklch(0.6 0.1 150)', dark: 'oklch(0.6 0.1 150)' };
+  delete extra.colors.ring;
+  extra.colors.border.dark = 'nope';
+  const errors = validateTokens(extra);
+  assert.ok(errors.includes('colors.success: not a shadcn token'));
+  assert.ok(errors.includes('colors.ring.light: missing'));
+  assert.ok(errors.some((e) => e.startsWith('colors.border.dark: bad value')));
 });
 
 test('contrast and onColor', () => {
@@ -21,43 +69,27 @@ test('contrast and onColor', () => {
   assert.equal(onColor('#1d4ed8'), '#ffffff');
 });
 
-test('generated tokens are complete and readable for several brands', () => {
-  for (const brand of ['#fabf00', '#16a34a', '#2563eb', '#da78f2', '#111111']) {
-    const t = generateTokens({ name: 'p', brand, neutral: 'zinc' });
-    assert.deepEqual(validateTokens(t), [], brand);
-    const bad = contrastReport(t).filter((r) => !r.ok);
-    assert.deepEqual(bad, [], `${brand}: ${JSON.stringify(bad)}`);
+test('globals.css: every shadcn colour in :root and .dark as oklch, theme mapping and radius scale', () => {
+  const css = toShadcnCss();
+  for (const k of COLOR_TOKENS) {
+    assert.ok(css.includes(`  --${k}: ${CANON.colors[k].light};`), k);
+    assert.ok(css.includes(`  --${k}: ${CANON.colors[k].dark};`), k);
+    assert.match(css, new RegExp(`--color-${k}: var\\(--${k}\\)`));
   }
+  assert.match(css, /--radius: 0\.625rem;/);
+  assert.match(css, /--radius-xl: calc\(var\(--radius\) \* 1\.4\);/);
+  assert.match(css, /--font-sans: 'Geist Variable', sans-serif;/);
+  assert.ok(!/--(success|warning|info|brand)\b/.test(css), 'shadcn names only');
 });
 
-test('override re-derives a readable foreground', () => {
-  const t = withOverrides(generateTokens({ brand: '#2563eb' }), { light: { primary: '#fde047' } });
-  assert.ok(contrast(t.colors.light['primary-foreground'], '#fde047') >= 4.5);
-});
-
-test('css has every token in both themes plus custom tokens', () => {
-  const t = { ...generateTokens({ name: 'mmarket', brand: '#fabf00' }), custom: { 'mmarket-badge-bg-orange': { light: '#ffd6a7', dark: '#7e2a0c' } } };
-  const css = toShadcnCss(t);
-  for (const k of COLOR_TOKENS) { assert.match(css, new RegExp(`--${k}: #`)); assert.match(css, new RegExp(`--color-${k}: var`)); }
-  assert.match(css, /--mmarket-badge-bg-orange: #ffd6a7/);
-  assert.match(css, /--color-mmarket-badge-bg-orange: var\(--mmarket-badge-bg-orange\)/);
-});
-
-test('snap finds the nearest primitive only when close', () => {
-  const pal = { 'amber/400': '#ffb900', 'blue/600': '#155dfc' };
-  assert.equal(snap('#ffba02', pal).name, 'amber/400');
-  assert.equal(snap('#ff00ff', pal), null);
-});
-
-test('naming', () => {
-  assert.equal(customName('MMarket', 'badge bg orange'), 'custom/mmarket/badge-bg-orange');
-  assert.equal(fixLegacyName('custom/mmarket/mmarket badge bg slate'), 'custom/mmarket/badge-bg-slate');
-  assert.equal(cssVar('custom/mmarket/badge-bg-slate'), '--mmarket-badge-bg-slate');
-  assert.equal(cssVar('primary-foreground'), '--primary-foreground');
-  assert.throws(() => customName('', 'x'));
-  assert.deepEqual(scopesFor('primary-foreground'), ['TEXT_FILL', 'SHAPE_FILL', 'STROKE_COLOR']);
+test('variable scopes by role (same set as the widget)', () => {
+  assert.deepEqual(scopesFor('primary-foreground'), ['TEXT_FILL']);
   assert.deepEqual(scopesFor('background'), ['FRAME_FILL', 'SHAPE_FILL']);
-  assert.ok(scopesFor('border').includes('STROKE_COLOR'));
+  assert.deepEqual(scopesFor('border'), ['STROKE_COLOR']);
+  assert.deepEqual(scopesFor('sidebar-ring'), ['STROKE_COLOR']);
+  assert.deepEqual(scopesFor('input'), ['STROKE_COLOR', 'FRAME_FILL', 'SHAPE_FILL']);
+  assert.deepEqual(scopesFor('destructive'), ['FRAME_FILL', 'SHAPE_FILL', 'TEXT_FILL', 'STROKE_COLOR']);
+  assert.deepEqual(scopesFor('chart-3'), ['FRAME_FILL', 'SHAPE_FILL', 'STROKE_COLOR']);
 });
 
 test('example spec is valid and plans frames', () => {
@@ -78,4 +110,23 @@ test('spec validation reports precise paths', () => {
 
 test('fake rows are deterministic', () => {
   assert.deepEqual(fakeRows(['id', 'person', 'money', 'status'], 3, 5), fakeRows(['id', 'person', 'money', 'status'], 3, 5));
+});
+
+// Builder and widget write the same «shadcn» variables: values and scopes must be identical.
+test('oklchToRgba equals the widget (oklchToSrgb, clipped per channel) for every canonical value; scopes equal scopesOf', async () => {
+  const { oklchToSrgb, parseOklch: widgetParse } = await import('../../widget/core/oklch.js');
+  const { scopesOf } = await import('../../widget/core/sync.js');
+  const clip = (v) => Math.min(1, Math.max(0, v));
+  for (const k of COLOR_TOKENS) {
+    for (const th of ['light', 'dark']) {
+      const css = CANON.colors[k][th];
+      const w = oklchToSrgb(widgetParse(css));
+      const mine = oklchToRgba(css);
+      for (const ch of ['r', 'g', 'b']) assert.ok(Math.abs(mine[ch] - clip(w[ch])) < 1e-9, `${k} ${th} ${ch}: ${mine[ch]} vs ${clip(w[ch])}`);
+      assert.equal(mine.a, widgetParse(css).alpha, `${k} ${th} alpha`);
+    }
+    assert.deepEqual(scopesFor(k), scopesOf(k), `${k} scopes`);
+  }
+  const d = oklchToRgba('oklch(0.577 0.245 27.325)');
+  assert.ok(Math.abs(d.r - 0.90646) < 1e-5 && d.g === 0 && Math.abs(d.b - 0.04221) < 1e-5, JSON.stringify(d));
 });

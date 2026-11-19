@@ -16,7 +16,7 @@ async function cardTitle(ctx, title, sub) {
 
 const cols = (ctx, desktop) => (ctx.vp === 'mobile' ? Math.min(desktop, 1) : ctx.vp === 'tablet' ? Math.min(desktop, 2) : desktop);
 
-const DELTA_TONE = { positive: 'success', negative: 'destructive', neutral: 'muted-foreground' };
+const DELTA_TONE = { positive: 'primary', negative: 'destructive', neutral: 'muted-foreground' };
 
 // CRM / KPI card instance: label, value, «+14%» coloured by meaning and «к вчера» (or the hint).
 async function kpiCard(ctx, it, w) {
@@ -44,7 +44,7 @@ export async function stats(ctx, b) {
       const value = ctx.state === 'empty' ? '0' : it.value;
       // "+14% к вчера": the value coloured by meaning (it.better up | down), the comparison muted.
       const d = ctx.state !== 'empty' ? statDelta(it) : null;
-      const tone = { positive: 'success', negative: 'destructive', neutral: 'muted-foreground' };
+      const tone = { positive: 'primary', negative: 'destructive', neutral: 'muted-foreground' };
       const delta = d
         ? add(box(ctx, 'Delta', { dir: 'H', gap: 4, align: 'CENTER' }),
           await text(ctx, d.value, { size: 'xs', weight: 'medium', color: tone[d.tone] }),
@@ -216,7 +216,7 @@ export async function chart(ctx, b) {
   return add(c, plot);
 }
 
-const STATUS_TONE = { success: 'success', destructive: 'destructive', warning: 'warning', info: 'info', secondary: 'muted-foreground' };
+const STATUS_TONE = { success: 'primary', destructive: 'destructive', warning: 'muted-foreground', info: 'primary', secondary: 'muted-foreground' };
 const initials = (name) => String(name).split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
 export async function list(ctx, b) {

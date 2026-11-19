@@ -49,7 +49,7 @@
       "py": 16,
       "radius": "lg",
       "border-width": 1,
-      "border": "border-secondary"
+      "border": "border"
     },
     "icon": {
       "size": 7,

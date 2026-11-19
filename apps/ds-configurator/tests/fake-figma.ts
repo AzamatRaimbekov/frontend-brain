@@ -63,6 +63,7 @@ export function createFakeFigma() {
         if (a?.type === "VARIABLE_ALIAS" && !vars.has(a.id!)) throw new Error("alias to missing variable")
         if (type === "COLOR" && typeof value === "object" && a?.type !== "VARIABLE_ALIAS" && !("r" in (value as object))) throw new Error("bad color")
         if (type === "FLOAT" && typeof value !== "number") throw new Error("bad float")
+        if (type === "STRING" && typeof value !== "string") throw new Error("bad string")
         v.valuesByMode[modeId] = value
       },
       setVariableCodeSyntax(p, value) {

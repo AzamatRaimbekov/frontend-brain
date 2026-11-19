@@ -8,11 +8,11 @@ export function AppFallback() {
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="h-11 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary-hover"
+          className="h-11 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           Перезагрузить
         </button>
-        <a href="/" className="inline-flex h-11 items-center rounded-md bg-soft px-4 text-sm font-medium text-soft-foreground-strong">
+        <a href="/" className="inline-flex h-11 items-center rounded-md bg-secondary px-4 text-sm font-medium text-secondary-foreground hover:bg-secondary/80">
           На главную
         </a>
       </div>

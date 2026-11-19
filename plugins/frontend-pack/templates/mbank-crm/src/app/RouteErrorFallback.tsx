@@ -9,7 +9,7 @@ export function RouteErrorFallback() {
       <p className="text-muted-foreground">Перезагрузите страницу. Если ошибка повторится, напишите в поддержку.</p>
       <div className="flex flex-wrap gap-2">
         <Button onClick={() => window.location.reload()}>Перезагрузить</Button>
-        <Button asChild variant="soft">
+        <Button asChild variant="secondary">
           <Link to="/">К конвейеру</Link>
         </Button>
       </div>

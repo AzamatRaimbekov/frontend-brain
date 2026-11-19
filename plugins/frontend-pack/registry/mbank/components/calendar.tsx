@@ -34,9 +34,9 @@ function CalendarDayButton({ className, day, modifiers, ...props }: React.Compon
       data-range-middle={modifiers.range_middle || undefined}
       data-range-end={modifiers.range_end || undefined}
       className={cn(
-        "inline-flex size-10 items-center justify-center rounded-sm text-sm tabular-nums text-foreground transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:text-disabled-foreground",
-        "data-[range-middle]:rounded-none data-[range-middle]:bg-transparent data-[range-middle]:hover:bg-brand-ghost-hover",
-        "data-[selected-single]:bg-brand data-[selected-single]:text-brand-foreground data-[range-start]:bg-brand data-[range-start]:text-brand-foreground data-[range-end]:bg-brand data-[range-end]:text-brand-foreground",
+        "inline-flex size-10 items-center justify-center rounded-sm text-sm tabular-nums text-foreground transition-colors outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
+        "data-[range-middle]:rounded-none data-[range-middle]:bg-transparent data-[range-middle]:hover:bg-accent",
+        "data-[selected-single]:bg-primary data-[selected-single]:text-primary-foreground data-[range-start]:bg-primary data-[range-start]:text-primary-foreground data-[range-end]:bg-primary data-[range-end]:text-primary-foreground",
         className,
       )}
       {...props}
@@ -64,19 +64,19 @@ function Calendar({ className, classNames, showOutsideDays = true, locale = ru, 
         month_caption: "flex h-9 items-center justify-center px-10",
         caption_label: "inline-flex items-center gap-1 text-sm font-medium first-letter:uppercase [&>svg]:size-4",
         dropdowns: "flex items-center gap-1 text-sm font-medium",
-        dropdown_root: "relative rounded-sm px-2 py-1 hover:bg-accent has-focus-visible:ring-[3px] has-focus-visible:ring-ring/30",
+        dropdown_root: "relative rounded-sm px-2 py-1 hover:bg-accent has-focus-visible:ring-[3px] has-focus-visible:ring-ring/50",
         dropdown: "absolute inset-0 cursor-pointer opacity-0",
         month_grid: "border-collapse",
         weekdays: "flex",
         weekday: "w-10 text-xs font-normal text-muted-foreground capitalize",
         week: "mt-1 flex",
         day: "relative p-0 text-center",
-        range_start: "rounded-l-sm bg-brand-muted",
-        range_middle: "bg-brand-muted",
-        range_end: "rounded-r-sm bg-brand-muted",
-        today: "[&>button]:font-bold [&>button]:text-brand-text",
+        range_start: "rounded-l-sm bg-accent",
+        range_middle: "bg-accent",
+        range_end: "rounded-r-sm bg-accent",
+        today: "[&>button]:font-bold [&>button]:text-primary",
         outside: "[&>button]:text-muted-foreground",
-        disabled: "[&>button]:text-disabled-foreground",
+        disabled: "[&>button]:opacity-50",
         hidden: "invisible",
         ...classNames,
       }}

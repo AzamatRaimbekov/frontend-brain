@@ -11,7 +11,7 @@ export const alertVariants = cva(
     variants: {
       tone: {
         neutral: "bg-card text-card-foreground",
-        warning: "border-warning/50 bg-warning/10 text-foreground",
+        muted: "bg-muted text-foreground",
         danger: "border-destructive/50 text-destructive",
       },
       size: {
@@ -31,7 +31,7 @@ export type AlertVariantProps = VariantProps<typeof alertVariants>
 
 - `base` - always applied.
 - `variants` - finite, named options. Each key becomes a typed prop.
-- `compoundVariants` - classes for a combination (also accepts arrays: `tone: ["warning", "danger"]`).
+- `compoundVariants` - classes for a combination (also accepts arrays: `tone: ["muted", "danger"]`).
 - `defaultVariants` - makes the prop optional.
 - `VariantProps<typeof x>` - derive prop types; never retype unions by hand.
 
@@ -74,8 +74,8 @@ Edit the existing cva in `src/shared/ui/button.tsx`:
 ```ts
 variant: {
   default: "...",
-  // added: semantic success action used in checkout and payouts
-  success: "bg-success text-success-foreground hover:bg-success/90",
+  // added: quiet action on muted surfaces (shadcn tokens only, hover = opacity / accent)
+  subtle: "bg-muted text-foreground hover:bg-accent hover:text-accent-foreground",
 },
 ```
 

@@ -45,7 +45,7 @@ export function PeriodSegment<T extends string>({
             <TabsTrigger
               key={option.value}
               value={option.value}
-              className="h-10 flex-1 rounded-md px-2 text-sm font-normal text-soft-foreground sm:flex-none sm:px-4 sm:text-base group-data-[variant=segment]/tabs-list:rounded-md"
+              className="h-10 flex-1 rounded-md px-2 text-sm font-normal text-muted-foreground sm:flex-none sm:px-4 sm:text-base group-data-[variant=segment]/tabs-list:rounded-md"
             >
               {option.label}
             </TabsTrigger>

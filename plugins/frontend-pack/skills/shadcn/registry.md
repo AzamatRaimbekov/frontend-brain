@@ -117,10 +117,10 @@ Common item fields:
   ],
   "cssVars": {
     "light": {
-      "brand": "oklch(0.62 0.18 250)"
+      "primary": "oklch(0.62 0.18 250)"
     },
     "dark": {
-      "brand": "oklch(0.72 0.16 250)"
+      "primary": "oklch(0.72 0.16 250)"
     }
   }
 }

@@ -40,15 +40,12 @@
       "px": 3,
       "text": "sm",
       "fg": "foreground",
-      "border:hover": "input-hover",
       "border:focus": "ring",
-      "border:disabled": "input-disabled",
-      "bg:disabled": "muted",
-      "fg:disabled": "disabled-foreground",
-      "border:invalid": "border-destructive",
+      "border:invalid": "destructive",
       "layout": "row",
       "align": "between",
-      "focus-ring": "ring/30"
+      "focus-ring": "ring/50",
+      "opacity:disabled": 50
     },
     "placeholder": {
       "fg": "muted-foreground"
@@ -81,7 +78,6 @@
   },
   "states": [
     "default",
-    "hover",
     "focus",
     "disabled",
     "invalid"
@@ -99,7 +95,7 @@
         "part": "root"
       }
     },
-    "extra": "w-full whitespace-nowrap transition-colors outline-none disabled:pointer-events-none *:data-[slot=select-value]:truncate",
+    "extra": "w-full whitespace-nowrap transition-colors outline-none disabled:pointer-events-none *:data-[slot=select-value]:truncate aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
     "figmaOnly": [
       "icon"
     ]

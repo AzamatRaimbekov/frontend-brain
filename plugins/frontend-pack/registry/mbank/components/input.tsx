@@ -5,12 +5,11 @@ import { cn } from "@/shared/lib/utils"
 
 /*
  * Figma `input/default` (and password, phone, search ...). Size L 56 / M 44 / S 36.
- * States: hover -> border/global/soft/hover, focus -> brand ring, error -> aria-invalid,
- * disabled -> border/global/soft/disabled + text/disabled.
+ * shadcn tokens: border-input, focus ring, error = aria-invalid (destructive), disabled = opacity-50.
  */
 // @contract input start
 const inputVariants = cva(
-  "flex w-full min-w-0 rounded-md border border-input bg-background px-3 text-foreground transition-colors outline-none placeholder:text-muted-foreground hover:border-input-hover focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:border-input-disabled disabled:bg-muted disabled:text-disabled-foreground aria-invalid:border-border-destructive aria-invalid:ring-border-destructive/20 file:border-0 file:bg-transparent file:text-sm file:font-medium",
+  "flex w-full min-w-0 rounded-md border border-input bg-background px-3 text-foreground transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none aria-invalid:border-destructive aria-invalid:ring-destructive/20 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:opacity-50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       size: {

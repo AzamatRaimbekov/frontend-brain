@@ -81,12 +81,23 @@ test('cssImportHint: full block without entry, warns about a leftover shadcn the
   }
 });
 
-test('portal content (Select, DropdownMenu) sits above Dialog: z-popover > z-modal', () => {
+test('kit colour classes use only the shadcn tokens of tokens.css (no custom tokens)', () => {
   const css = readFileSync(join(REGISTRY, 'tokens.css'), 'utf8');
-  const z = (name) => Number(css.match(new RegExp(`--z-${name}:\\s*(\\d+)`))[1]);
-  assert.ok(z('popover') > z('modal') && z('modal') > z('overlay'));
-  for (const file of ['select.tsx', 'dropdown-menu.tsx'])
-    assert.match(readFileSync(join(REGISTRY, 'components', file), 'utf8'), /z-\(--z-popover\)/, file);
+  const tokens = new Set([...css.matchAll(/--color-([\w-]+):/g)].map((m) => m[1]));
+  assert.equal(tokens.size, 31);
+  const util = /(?<![\w-])(?:bg|text|border|ring|fill|stroke|outline|divide|from|to|via|caret|decoration)-([a-z][a-z0-9-]*?)(?:\/\d+)?(?![\w-])/g;
+  const allowed = /^(transparent|current|inherit|black|none|xs|sm|base|lg|xl|[2-9]xl|left|right|center|start|end|wrap|nowrap|balance|pretty|ellipsis|clip|dashed|dotted|solid|double|hidden|collapse|separate|offset|inset|[trblxyse]|[trblxy]-0|[trblxy]-2|current|spacing)$/;
+  const files = [
+    ...readdirSync(join(REGISTRY, 'components')).map((f) => join(REGISTRY, 'components', f)),
+    ...readdirSync(BLOCKS).map((f) => join(BLOCKS, f)),
+  ];
+  for (const file of files) {
+    const text = readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
+    for (const [, name] of text.matchAll(util)) {
+      if (/^\d|^\[/.test(name) || allowed.test(name)) continue;
+      assert.ok(tokens.has(name), `${file.split('/').pop()}: "${name}" is not a shadcn token`);
+    }
+  }
 });
 
 test('copies files, never overwrites without --force, CLI exits 0', () => {

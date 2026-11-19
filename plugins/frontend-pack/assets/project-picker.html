@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Новый проект</title>
+<!-- The same design tokens as the kit and the projects: registry/mbank/tokens.css (shadcn/tokens@1). -->
+<link rel="stylesheet" href="/tokens.css?k={{KEY}}">
+<script>
+  try { if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark') } catch {}
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px 16px;
+    background: var(--background); color: var(--foreground);
+    font: 14px/1.5 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  main { width: 100%; max-width: 560px; display: grid; gap: 24px; }
+  h1 { margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; }
+  fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 480px) { fieldset { grid-template-columns: 1fr; } }
+  legend, label.field { font-weight: 500; margin-bottom: 8px; display: block; }
+  .kind { position: relative; display: grid; gap: 4px; padding: 16px; cursor: pointer;
+    background: var(--card); color: var(--card-foreground);
+    border: 1px solid var(--border); border-radius: calc(var(--radius) * 1.4); transition: border-color .15s, box-shadow .15s; }
+  .kind:hover { border-color: var(--ring); }
+  .kind input { position: absolute; opacity: 0; pointer-events: none; }
+  .kind:has(input:checked) { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+  .kind:has(input:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px; }
+  .kind svg { width: 24px; height: 24px; margin-bottom: 8px; }
+  .kind strong { font-weight: 600; }
+  .kind span { color: var(--muted-foreground); font-size: 13px; }
+  input[type=text] { width: 100%; height: 40px; padding: 0 12px; font: inherit; color: inherit;
+    background: transparent; border: 1px solid var(--input); border-radius: var(--radius); }
+  input[type=text]:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+  input[aria-invalid=true] { border-color: var(--destructive); }
+  .error { color: var(--destructive); font-size: 13px; min-height: 20px; margin: 4px 0 0; }
+  .actions { display: flex; justify-content: flex-end; }
+  button { height: 40px; padding: 0 20px; font: inherit; font-weight: 500; cursor: pointer; border: 0;
+    border-radius: var(--radius); background: var(--primary); color: var(--primary-foreground); }
+  button:hover { opacity: .9; }
+  button:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  button:disabled { opacity: .5; cursor: default; }
+  .done { display: none; text-align: center; }
+  body.sent form { display: none; }
+  body.sent .done { display: block; }
+  @media (prefers-reduced-motion: reduce) { .kind { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <form id="picker" novalidate>
+    <div style="display:grid;gap:24px">
+      <h1>Новый проект</h1>
+      <fieldset>
+        <legend>Тип</legend>
+        <label class="kind">
+          <input type="radio" name="type" value="webview" checked>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+          <strong>WebView-микросервис</strong>
+          <span>Внутри приложения Мбанк</span>
+        </label>
+        <label class="kind">
+          <input type="radio" name="type" value="crm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 18v3M7 9h4M7 13h10"/></svg>
+          <strong>CRM</strong>
+          <span>Бэк-офис для сотрудников</span>
+        </label>
+      </fieldset>
+      <div>
+        <label class="field" for="name">Папка</label>
+        <input id="name" name="name" type="text" value="{{NAME}}" autocomplete="off" spellcheck="false" aria-describedby="error">
+        <p id="error" class="error" role="alert"></p>
+      </div>
+      <div class="actions"><button type="submit">Создать</button></div>
+    </div>
+  </form>
+  <div class="done" role="status">
+    <h1>Создаю проект</h1>
+    <p style="color:var(--muted-foreground)">Вкладку можно закрыть, дальше всё в терминале.</p>
+  </div>
+</main>
+<script>
+  const form = document.getElementById('picker')
+  const name = document.getElementById('name')
+  const error = document.getElementById('error')
+  const defaults = { webview: 'mbank-webview', crm: 'mbank-crm' }
+  let touched = false
+  name.addEventListener('input', () => { touched = true; error.textContent = ''; name.removeAttribute('aria-invalid') })
+  form.addEventListener('change', (e) => {
+    if (e.target.name === 'type' && !touched) name.value = defaults[e.target.value]
+  })
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const button = form.querySelector('button')
+    button.disabled = true
+    try {
+      const body = JSON.stringify({ type: form.elements.type.value, name: name.value.trim() })
+      const res = await fetch('/choose?k={{KEY}}', { method: 'POST', headers: { 'content-type': 'application/json' }, body })
+      const data = await res.json()
+      if (!data.ok) throw new Error(data.error)
+      document.body.classList.add('sent')
+    } catch (err) {
+      error.textContent = err instanceof TypeError ? 'Терминал больше не ждёт ответа. Вернитесь в чат.' : err.message
+      name.setAttribute('aria-invalid', 'true')
+      name.focus()
+    } finally {
+      button.disabled = false
+    }
+  })
+</script>
+</body>
+</html>

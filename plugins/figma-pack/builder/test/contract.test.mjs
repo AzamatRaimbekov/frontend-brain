@@ -41,7 +41,7 @@ test('variant list = props x states, state only when there are several', () => {
 
 test('resolved style: layers, state suffixes, compound, focus ring, disabled', () => {
   const hover = resolveStyle(button, { variant: 'primary', size: 'md' }, 'hover');
-  assert.equal(hover.root.bg, 'primary-hover');
+  assert.equal(hover.root.bg, 'primary/90');
   assert.equal(hover.root.height, 11);
   assert.equal(hover.root.radius, 'md');
   assert.equal(hover.root['focus-ring'], undefined, 'ring only in focus');
@@ -49,13 +49,13 @@ test('resolved style: layers, state suffixes, compound, focus ring, disabled', (
   assert.equal(resolveStyle(button, { variant: 'outline', size: 'sm' }, 'disabled').root.opacity, 50);
   assert.equal(resolveStyle(button, { variant: 'outline', size: 'sm' }, 'default').icon.size, 4, 'size overrides base icon size');
   const solid = resolveStyle(badge, { tone: 'success', fill: 'solid', size: 'sm' });
-  assert.equal(solid.root.bg, 'status-success', 'compound wins');
-  assert.equal(solid.root.fg, 'status-filled-foreground');
-  assert.equal(resolveStyle(badge, { tone: 'success', fill: 'ghost', size: 'sm' }).root.bg, 'status-success-muted');
+  assert.equal(solid.root.bg, 'primary', 'compound wins');
+  assert.equal(solid.root.fg, 'primary-foreground');
+  assert.equal(resolveStyle(badge, { tone: 'success', fill: 'ghost', size: 'sm' }).root.bg, 'primary/10');
   const dis = resolveStyle(input, { size: 'lg' }, 'disabled');
-  assert.equal(dis.root.border, 'input-disabled');
+  assert.equal(dis.root.border, 'input/50');
   assert.equal(dis.root.px, 4);
-  assert.equal(dis.placeholder.fg, 'disabled-foreground');
+  assert.equal(dis.placeholder.fg, 'muted-foreground/50');
   assert.equal(dis.root.opacity, undefined, 'explicit disabled styles: no implicit opacity');
   const plain = { ...badge, states: ['default', 'disabled'] };
   assert.equal(resolveStyle(plain, { tone: 'neutral', fill: 'ghost', size: 'sm' }, 'disabled').root.opacity, 50);
@@ -81,16 +81,16 @@ test('layout mapping and binding targets', () => {
 test('binding rows and setBinding round trip', () => {
   const rows = bindingRows(button);
   const r = rows.find((x) => x.source === 'variant=primary' && x.key === 'bg:hover');
-  assert.deepEqual([r.part, r.prop, r.state, r.value, r.kind], ['root', 'bg', 'hover', 'primary-hover', 'color']);
-  const next = setBinding(button, r.path, r.key, 'brand-hover');
-  assert.equal(next.variants.variant.primary.root['bg:hover'], 'brand-hover');
-  assert.equal(button.variants.variant.primary.root['bg:hover'], 'primary-hover', 'immutable');
-  const added = setBinding(button, ['variants', 'variant', 'ghost', 'root'], 'fg:disabled', 'disabled-foreground');
+  assert.deepEqual([r.part, r.prop, r.state, r.value, r.kind], ['root', 'bg', 'hover', 'primary/90', 'color']);
+  const next = setBinding(button, r.path, r.key, 'primary/80');
+  assert.equal(next.variants.variant.primary.root['bg:hover'], 'primary/80');
+  assert.equal(button.variants.variant.primary.root['bg:hover'], 'primary/90', 'immutable');
+  const added = setBinding(button, ['variants', 'variant', 'ghost', 'root'], 'fg:disabled', 'muted-foreground/50');
   assert.ok(bindingRows(added).some((x) => x.key === 'fg:disabled' && x.source === 'variant=ghost'));
   assert.equal(setBinding(next, r.path, r.key, null).variants.variant.primary.root['bg:hover'], undefined);
-  assert.ok(bindingRows(badge).some((x) => x.source === 'fill=solid + tone=neutral' && x.value === 'status-neutral'));
+  assert.ok(bindingRows(badge).some((x) => x.source === 'fill=solid + tone=neutral' && x.value === 'muted-foreground'));
   const used = tokensUsed(button);
-  assert.ok(used.color.has('ring') && used.color.has('primary-hover'));
+  assert.ok(used.color.has('ring') && used.color.has('primary'));
   assert.ok(used.space.has(11) && used.radius.has('md'));
 });
 

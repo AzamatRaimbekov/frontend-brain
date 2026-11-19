@@ -2,7 +2,7 @@ import type * as React from "react"
 
 import { cn } from "@/shared/lib/utils"
 
-/** Loading placeholder (no Web components skeleton yet, G11/G12): surface-2 with pulse. */
+/** Loading placeholder as upstream shadcn: bg-accent with pulse. */
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -10,7 +10,7 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
       aria-hidden="true"
       className={cn(
         // @contract skeleton start
-        "animate-pulse rounded-md bg-surface-2 motion-reduce:animate-none",
+        "animate-pulse rounded-md bg-accent motion-reduce:animate-none",
         // @contract skeleton end
         className,
       )}

@@ -1,0 +1,40 @@
+/*
+ * WebView inside the Mbank app (knowledge mobile/webview-embedded-mode.md).
+ * Needs <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">.
+ * Colours and radii come only from the shadcn tokens (mbank-tokens.css), never from here.
+ */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Content stays clear of the notch, the home indicator and the rounded corners. */
+.webview-screen {
+  min-height: 100dvh;
+  padding: calc(env(safe-area-inset-top) + 1rem) calc(env(safe-area-inset-right) + 1rem)
+    calc(env(safe-area-inset-bottom) + 1rem) calc(env(safe-area-inset-left) + 1rem);
+}
+
+/* Long-press menus and text selection only where the person reads or copies. */
+button,
+[role='button'],
+a {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+input,
+textarea,
+select {
+  /* iOS zooms into fields with a font below 16px. */
+  font-size: max(16px, 1em);
+}

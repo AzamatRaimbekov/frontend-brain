@@ -6,31 +6,22 @@ import { cn } from "@/shared/lib/utils"
 import { Spinner } from "./spinner"
 
 /*
- * Figma `button/default` (Web components). variant -> Figma variant:
- * primary (accent/primary, yellow), brand (1.brand), secondary (neutral/primary, near-black),
- * destructive (negative), success (positive), soft (flat filled), ghost (flat), outline, static.
- * Heights follow the input scale (L 56 / M 44 / S 36 / 32); Figma has no focus state (G10),
- * so focus-visible uses the brand ring.
+ * Figma `button/default` on shadcn tokens, upstream styling: primary (shadcn default), secondary,
+ * destructive, outline, ghost, link. Hover = opacity or accent, disabled = opacity-50.
+ * Heights follow the input scale (L 56 / M 44 / S 36 / 32).
  */
 // @contract button start
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors outline-none select-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors outline-none select-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active",
-        brand: "bg-brand text-brand-foreground hover:bg-brand-hover active:bg-brand-active",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary-hover active:bg-secondary-active",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive-hover active:bg-destructive-active",
-        success: "bg-success text-success-foreground hover:bg-success-hover active:bg-success-active",
-        soft: "bg-soft text-soft-foreground-strong hover:bg-soft-hover",
-        ghost: "bg-ghost text-ghost-foreground hover:bg-ghost-hover",
-        outline:
-          "border border-outline bg-background text-outline-foreground hover:border-outline-hover hover:bg-muted",
-        static: "bg-static text-static-foreground hover:bg-static-hover active:bg-static-active",
-        link: "h-auto px-0 text-link underline-offset-4 hover:underline",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive: "bg-destructive/10 text-destructive hover:bg-destructive/20",
+        outline: "border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
+        ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
+        link: "h-auto px-0 text-primary underline-offset-4 hover:underline",
       },
       size: {
         xs: "h-8 px-3 text-xs [&_svg:not([class*='size-'])]:size-4",

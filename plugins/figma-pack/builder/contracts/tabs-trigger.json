@@ -31,9 +31,9 @@
       "weight": "medium",
       "fg": "muted-foreground",
       "fg:hover": "foreground",
-      "fg:disabled": "disabled-foreground",
       "align": "center",
-      "focus-ring": "ring/30"
+      "focus-ring": "ring/50",
+      "opacity:disabled": 50
     },
     "icon": {
       "size": 4,
@@ -55,15 +55,15 @@
           "radius": "md",
           "border-width": 1,
           "border": "border",
-          "border:selected": "secondary",
-          "bg:selected": "secondary",
-          "fg:selected": "secondary-foreground"
+          "border:selected": "primary",
+          "bg:selected": "primary",
+          "fg:selected": "primary-foreground"
         }
       },
       "line": {
         "root": {
           "px": 0,
-          "border:selected": "brand",
+          "border:selected": "foreground",
           "fg:selected": "foreground"
         }
       }

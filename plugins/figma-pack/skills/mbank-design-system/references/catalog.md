@@ -1,8 +1,8 @@
 # Design system catalog: Mbank (Mbank Tokens folder)
 
 Source: https://www.figma.com/files/project/75563647 (folder "Mbank Tokens", org MDigital LLC) | main library Web components `MFsAQPQULevnHwBcECccGc` | libraryKey `lk-8f7b6b84fe01…`
-Updated: 2026-10-09 | components: Dev-seat inventory (2026-10-07) | **values: complete** (Full-seat read 2026-10-09) - every token value and key, light/dark and the 5 brand modes are in `mbank-figma-patterns/references/tokens.md`; where a table below still shows `?`, that file wins
-Product font: Inter Mbank on web/CRM (`font/Body/*`), Nunito on mobile (confirmed) | Icons: Icons library, 2776 icon sets + 266 flags, component set per icon
+Updated: 2026-11-11 | components: Dev-seat inventory (2026-10-07) | **tokens are not part of this catalog**: the design system uses only the standard shadcn/ui tokens (`ds-tokens`, decision of 2026-11-11)
+Kit font in Figma: Inter Mbank on web/CRM, Nunito on mobile | Icons: Icons library, 2776 icon sets + 266 flags, component set per icon
 
 `?` = value not read yet (never guessed). Full keys are in `catalog.json`; short keys below are the first 8 characters.
 
@@ -10,9 +10,9 @@ Product font: Inter Mbank on web/CRM (`font/Body/*`), Nunito on mobile (confirme
 
 | Kit | Files (libraries) | Use for | Notes |
 |---|---|---|---|
-| web | Web components + Hero Section + Foundation + Icons | public sites, landings, promo pages, client web apps | Hero Section = ready marketing blocks, Desktop 1920 first |
-| crm | CRM UI KIT + Web components + Foundation + Icons | CRM, admin panels, back-office, dashboards | CRM adds side menu, top header, tables, chart widget; buttons/inputs come from Web components |
-| mobile | Mobile KIT + Foundation + Icons | iOS/Android apps (React Native, Flutter) | iOS 393 + Android 360 frames; font Nunito |
+| web | Web components + Hero Section + Icons | public sites, landings, promo pages, client web apps | Hero Section = ready marketing blocks, Desktop 1920 first |
+| crm | CRM UI KIT + Web components + Icons | CRM, admin panels, back-office, dashboards | CRM adds side menu, top header, tables, chart widget; buttons/inputs come from Web components |
+| mobile | Mobile KIT + Icons | iOS/Android apps (React Native, Flutter) | iOS 393 + Android 360 frames; font Nunito |
 
 | Product type | Kit | Start from |
 |---|---|---|
@@ -20,14 +20,12 @@ Product font: Inter Mbank on web/CRM (`font/Body/*`), Nunito on mobile (confirme
 | Client web app (cabinet, forms) | web | Web components (input/*, button/default, Dialog, Toast) |
 | CRM / admin / back-office | crm | sideMenu + topHeader + TableSection 2.0 + Web components controls |
 | Mobile app | mobile | Mobile KIT (Top-app-bar, Tab Bar, Cell/list item, bttn / default) |
-| Product brand (bank, kassa, artwin, travel) | any | switch the `1.brand` mode, never recolour by hand |
 
 ## 1. Libraries
 
 | Library | libraryKey | fileKey | Role | In folder |
 |---|---|---|---|---|
-| Foundation | lk-9c863272c240… | uvwWMJmo79mf4L6J3BQCV6 | tokens: variables 1.brand, 2.theme, 3.Primitive Colors, 4.border-radius; z-index doc page | yes |
-| Web components | lk-8f7b6b84fe01… | MFsAQPQULevnHwBcECccGc | primary (web): base components, text styles, shadows, spacing | yes |
+| Web components | lk-8f7b6b84fe01… | MFsAQPQULevnHwBcECccGc | primary (web): base components | yes |
 | Hero Section | - | dJHk9SLzZJmqrrqrcMDu2n | blocks: marketing sections for sites and landings (built from Web components) | yes |
 | CRM UI KIT | lk-5c207a9c4525… | MisYjVLDaBvvQ95uzxpFB0 | admin/CRM organisms: side menu, top header, tables, chart widget (base controls come from Web components) | yes |
 | Mobile KIT | lk-10093ae5d153… | DDGKxlACx8C55wVs641I7I | mobile app components (iOS 393 / Android 360) | yes |
@@ -39,146 +37,9 @@ Product font: Inter Mbank on web/CRM (`font/Body/*`), Nunito on mobile (confirme
 
 Untitled `eUOV1NJcObN4mLupTfUmB4` is empty and ignored.
 
-## 2. Tokens
+## 2-3. Tokens and typography
 
-### Semantic colours (2.theme; modes Light / Dark, names assumed)
-
-| Figma variable | Token | Light | Dark | Key |
-|---|---|---|---|---|
-| `background/surface/light` | background | #FFFFFF | ? | 6b620b04 |
-| `background/surface/soft` | muted | #F4F6F7 | #17191D | 9937a923 |
-| `background/onsurface/0` | surface-0 | #FFFFFF | ? | 597e34eb |
-| `background/onsurface/1` | surface-1 | #F4F6F7 | ? | 6ff51ba6 |
-| `background/onsurface/2` | surface-2 | #EAEEF0 | ? | fbe8e323 |
-| `background/global/soft/hover` | accent | ? | ? | da113c8a |
-| `text/default` | foreground | #0E0F11 | ? | 8af86f38 |
-| `text/muted` | muted-foreground | #768793 | ? | 8bb44dbe |
-| `text/soft` | soft-foreground | #40474F | ? | f729c62f |
-| `text/disabled` | disabled-foreground | ? | ? | 667c29a1 |
-| `text/inverse` | inverse-foreground | #F4F6F7 | ? | f85ccfae |
-| `text/brand` | brand-text | ? | ? | 91827752 |
-| `text/link` | link | #3B82F6 | ? | 3019aa5c |
-| `text/danger` | destructive-text | ? | ? | c71864d1 |
-| `text/warning` | warning-text | ? | ? | 863eb273 |
-| `text/positive` | success-text | ? | ? | 38f2afee |
-| `border/divider/primary` | border | #E0E5E8 | ? | 51813af7 |
-| `border/divider/secondary` | border-secondary | #D7DCE1 | ? | - |
-| `border/divider/tetriary` | border-subtle | ? | ? | a8277d11 |
-| `border/global/soft/default` | input | #D7DCE1 | ? | - |
-| `border/accent/brand` | ring | ? | ? | dc946628 |
-| `border/accent/danger` | border-destructive | ? | ? | a725b522 |
-| `accent/primary/default` | primary | #FDDB2B | ? | 25473330 |
-| `accent/primary/hover` | primary-hover | #F7C21C | ? | 6b557bc7 |
-| `accent/primary/active` | primary-active | ? | ? | 7dad401d |
-| `accent/primary/on-accent` | primary-foreground | ? | ? | 5e755c94 |
-| `accent/primary/container-muted` | primary-muted | ? | ? | f51910b0 |
-| `neutral/primary/default` | secondary | #17191D | ? | 082d1082 |
-| `neutral/primary/hover` | secondary-hover | ? | ? | 2cb95313 |
-| `neutral/primary/on-accent` | secondary-foreground | ? | ? | 850d035c |
-| `neutral/primary/container-muted` | secondary-muted | ? | ? | c1195d12 |
-| `neutral/secondary/flat default/default` | neutral-flat | #E0E5E8 | ? | - |
-| `neutral/static/container-muted` | static-muted | #F0F3F4 | ? | - |
-| `accent/positive/default` | success | #0FA976 | ? | - |
-| `accent/negative/default` | destructive | #EF4444 | ? | - |
-| `accent/static/default` | static | ? | ? | cc0476ad |
-| `static/light` | static-light | #FFFFFF | ? | - |
-| `supportive/filled/3` | supportive-3 | #10B981 | ? | - |
-| `supportive/filled/5-hc` | supportive-5-hc | #F43F5E | ? | - |
-
-Other 2.theme groups (keys in JSON, values `?`): `background/onsurface/3..6` -> surface-3..6; `background/global/{soft/active, clear/hover, clear/active, light/hover}` -> accent-active, state-*; `accent/primary/on-accent-muted` -> primary-foreground-muted; `neutral/primary/{active, on-accent-muted}`; `accent/static/{hover,active}`; `accent/positive|negative/{hover,active}` -> success-*/destructive-*; `border/accent/{warning,positive}`, `border/global/soft/hover` -> input-hover; `status/ghost/bg/{default,info,clear,error,accent,success,warning}` -> status-*-muted, `status/filled/bg/{info,clear,error,success,accent}` -> status-*, `status/ghost/text/{info,clear,error,accent}` -> status-*-foreground.
-
-### Brand (1.brand; modes per product assumed: bank, kassa, artwin, travel)
-
-| Figma variable | Token | Value (default mode) | Key |
-|---|---|---|---|
-| `brand/default` | brand | #16A34A | 3fcd6d12 |
-| `brand/hover` | brand-hover | #189547 | 82a3be58 |
-| `brand/active` | brand-active | ? | 1b3f03e7 |
-| `brand/on-accent-muted` | brand-foreground-muted | #A9B4BC | - |
-| `brand/ghost-container-muted` | brand-muted | #F0FDF4 | - |
-| `neutral/brand/on-accent` | brand-foreground | #FFFFFF | - |
-
-2.theme also holds fixed per-product colours `brand/{bank,kassa,artwin,travel}/{default,hover,active}` (tokens brand-bank, brand-bank-hover, ...; values `?`). Use them only for cross-product UI (logos, product switcher); everything else takes `brand` and the 1.brand mode.
-
-### Radius (1.brand `radius/*`, duplicated by 4.border-radius `border-radius/*`)
-
-| Figma | Token | px |
-|---|---|---|
-| `radius/none` | radius.none | ? |
-| `radius/xss` | radius.2xs | 2 |
-| `radius/xs` | radius.xs | 4 |
-| `radius/s` | radius.sm | 8 |
-| `radius/m` | radius.md | 12 |
-| `radius/l` | radius.lg | ? |
-| `radius/xl` | radius.xl | ? |
-| `radius/xl-2` | radius.2xl | ? |
-| `radius/xl-3` | radius.3xl | ? |
-| `radius/xl-4` | radius.4xl | ? |
-| `radius/full` | radius.full | ? |
-
-Conflict: CRM topHeader resolves `radius/xs` = 8 (Web and Mobile: 4). Controls use 8-12 (`radius/s`, `radius/m`); chips, segment and FloatButton have a pill option.
-
-### Spacing (no spacing in Foundation; three schemes in kits)
-
-| Figma | Token | px | Seen in |
-|---|---|---|---|
-| `spacing/none` | space.0 | 0 | Web/CRM |
-| `spacing/xs` | space.1 | 4 | Web/CRM |
-| `spacing/s-1` | space.3 | 12 | Web/CRM |
-| `spacing/s-2` | - | ? | Web/CRM |
-| `spacing/s-3` | space.2 | 8 | Web/CRM |
-| `spacing/m-1` | - | ? | Web/CRM |
-| `spacing/l-1` | - | ? | Web/CRM |
-| `spacing/l-2` | - | ? | Web/CRM |
-| `spacing/xl-1` | - | ? | Web/CRM |
-| `spacing/xl-2` | - | ? | Web/CRM |
-| `spacing/xxl-1` | - | ? | Web/CRM |
-| `spacing/xxl-2` | - | ? | Web/CRM |
-| `spacing/m-2-base` | space.4 | 16 | Web/CRM |
-| `paddings/default/none` | space.0 | 0 | Mobile/CRM |
-| `paddings/default/xs` | space.1 | 4 | Mobile/CRM |
-| `paddings/default/s` | space.2 | 8 | Mobile/CRM |
-| `paddings/default/s-2` | space.3 | 12 | Mobile/CRM |
-| `paddings/default/m-2` | space.4 | 16 | Mobile/CRM |
-| `paddings/default/l` | space.5 | 20 | Mobile/CRM |
-| `paddings/default/xs 2` | space.1 | 4 | Mobile/CRM |
-| `rem/default/{4,8,10,12,14,16,20}` | - | ? (name suggests px) | Web/CRM padding |
-
-### Shadows (effect styles, keys not read)
-
-- web (Web components, each published twice): `shadow/none`, `shadow/top/s`, `shadow/top/m`, `shadow/top/l`, `shadow/top/xl`, `shadow/bottom/s`, `shadow/modal`
-- mobile (Mobile KIT): `shadow/modal`, `shadow/Default`, `shadow/tooltip`
-
-Visual: flat UI, shadows only on overlays (dropdowns, modals, tooltips).
-
-### Z-index (text table on Foundation page Z-Index, not variables)
-
-| Layer | hide | default | dropdown | sticky | fab | overlay | loader | modal | toast | popover | tooltip |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| z | -1 | 0 | 1000 | 1100 | 1200 | 1300 | 1400 | 1500 | 1600 | 1700 | 1800 |
-
-## 3. Typography
-
-| Style | Kit | Family / weight | Size / line height |
-|---|---|---|---|
-| `font/Heading/h1..h6` | web | Inter Mbank | ? / ? (metrics not read) |
-| `body/large, body/medium, body/small` | mobile | Nunito | ? / ? |
-| `font/Body/xs` | web | Inter Mbank Regular | 13 / 16 |
-| `font/Body/xs-md` | web | Inter Mbank Medium | 13 / 16 |
-| `font/Body/s` | web | Inter Mbank Regular | 14 / 20 |
-| `font/Body/s-md` | web | Inter Mbank Medium | 14 / 20 |
-| `font/Body/m` | web | Inter Mbank Regular | ? / ? |
-| `font/Body/m-md` | web | Inter Mbank Medium | ? / ? |
-| `font/Body/l` | web | Inter Mbank Regular | 16 / 24 |
-| `font/Body/l-md` | web | Inter Mbank Medium | 16 / 24 |
-| `font/Body/xl` | web | Inter Mbank Regular | ? / ? |
-| `font/Body/xl-md` | web | Inter Mbank Medium | ? / ? |
-| `font/Body/s-strong` | web | Inter Mbank Bold | 14 / 20 |
-| `font/Body/xl-strong` | web | Inter Mbank Bold | 18 / 26 |
-| `label/large-prominent` | mobile | Nunito Bold | 16 / 24 |
-| `label/medium-prominent` | mobile | Nunito Bold | 14 / 20 |
-
-Variables: `font/size/body/{xs,s,l}` = 13/14/16, `font/height/body/{xs,s,l}` = 16/20/24, `font/family/primary` = Inter Mbank (web), `font/family/Primary` = Nunito (mobile). UI text is Medium 500.
+Removed on 2026-11-11: the design system has no token layer of its own. Colours, radius and fonts are the standard shadcn/ui tokens (`figma-pack:ds-tokens`, `skills/ds-tokens/references/shadcn-tokens.json`); spacing and type sizes follow the Tailwind scale.
 
 ## 4. Components
 
@@ -476,13 +337,12 @@ Figma -> code map: design-engine `references/components-map.json` (2026-10-31), 
 
 ## 8. Gaps
 
-27 gaps: 3 blocker, 12 major, 12 minor (JSON `gaps[]`, ids G01..G27). Report for the designers, in Russian, with a fix per item: `gaps.md`.
+19 gaps (JSON `gaps[]`; the token gaps G01, G02, G04–G09, G20, G25 were removed on 2026-11-11, tokens are shadcn). Report for the designers, in Russian, with a fix per item: `gaps.md`.
 
-- **G01 2.theme / 1.brand / 3.Primitive Colors values**: Only ~30 colour values resolved (from nodes); palette and typography specimen pages unreachable via MCP (page list truncated); hue ramps unknown
-- **G02 1.brand, 2.theme**: Mode names unconfirmed (Light/Dark and bank/kassa/artwin/travel assumed); brand colours exist both as 1.brand modes (assumed) and as brand/<product>/* variables in 2.theme
 - **G03 font family**: Web/CRM use 'Inter Mbank' (font/family/primary), Mobile uses 'Nunito' (font/family/Primary); Inter Mbank files and licence not supplied
 
 ## 9. Changelog
 
+- 2026-11-11 token sections removed (variables, brand modes, text and effect styles, z-index): tokens are the standard shadcn/ui set only (`ds-tokens`); token gaps G01, G02, G04–G09, G20, G25 removed
 - 2026-10-09 Full-seat read: all values, modes (2.theme light/dark; 1.brand bank/kassa/travel/artwin/koko), text and effect styles; fonts re-checked (Inter Mbank, SF UI Display still missing)
 - 2026-10-07 created from the Foundation, Web components, Hero Section, CRM UI KIT, Mobile KIT and Icons inventories (Dev seat, no use_figma)

@@ -1,13 +1,13 @@
 // WCAG AA of text tokens on their fill, light and dark: failures first, a count of the rest.
-import { Badge } from "@/generated/kit/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/generated/kit/ui/card"
+import { Badge } from "@/kit/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/kit/ui/card"
 
 import type { ContrastCheck } from "../api"
 
 export function ContrastPanel({ checks }: { checks: ContrastCheck[] }) {
   const failed = checks.filter((c) => !c.ok)
   return (
-    <Card className="py-4">
+    <Card className="gap-3 py-4">
       <CardHeader className="px-4">
         <CardTitle>Контраст AA</CardTitle>
         <CardDescription>
@@ -22,12 +22,12 @@ export function ContrastPanel({ checks }: { checks: ContrastCheck[] }) {
                 <span className="min-w-0 truncate font-mono text-xs" title={`--${c.fg} на --${c.bg}`}>
                   --{c.fg} на --{c.bg}
                 </span>
-                <Badge size="sm" tone="error">{c.mode} {c.ratio ?? "?"}</Badge>
+                <Badge variant="destructive">{c.mode} {c.ratio ?? "?"}</Badge>
               </li>
             ))}
           </ul>
         ) : (
-          <Badge tone="success">Все пары проходят</Badge>
+          <Badge variant="secondary">Все пары проходят</Badge>
         )}
       </CardContent>
     </Card>

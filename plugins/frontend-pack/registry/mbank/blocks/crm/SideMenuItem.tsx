@@ -13,12 +13,12 @@ type SideMenuItemProps = {
   renderLink?: RenderSideMenuLink
 }
 
-/** Figma `item-sidemenu-menu-tree-states`: 44px, icon 20, active = white surface. */
+/** Figma `item-sidemenu-menu-tree-states`: 44px, icon 20, active = sidebar-accent (upstream shadcn sidebar). */
 export function SideMenuItem({ item, active = false, collapsed = false, renderLink = anchor }: SideMenuItemProps) {
   const Icon = item.icon
   const className = cn(
-    "flex h-11 items-center gap-3 rounded-md px-3 text-md text-foreground transition-colors outline-none",
-    "hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/30 aria-[current=page]:bg-background",
+    "flex h-11 items-center gap-3 rounded-md px-3 text-sm text-sidebar-foreground transition-colors outline-none",
+    "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-[3px] focus-visible:ring-sidebar-ring aria-[current=page]:bg-sidebar-accent aria-[current=page]:font-medium aria-[current=page]:text-sidebar-accent-foreground",
     collapsed && "justify-center px-0",
   )
   return (

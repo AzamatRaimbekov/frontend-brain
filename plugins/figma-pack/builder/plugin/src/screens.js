@@ -3,7 +3,7 @@
 import { normalizeSpec, VIEWPORTS, DATA_BLOCKS } from '../../core/spec.js';
 import { createCtx, loadFonts, box, add, size } from './draw.js';
 import { shell } from './shell.js';
-import { setFrameModes } from './brand.js';
+import { setFrameModes } from './variables.js';
 import * as data from './blocks-data.js';
 import * as ui from './blocks-ui.js';
 import * as crm from './blocks-crm.js';
@@ -109,7 +109,7 @@ export async function buildFrame(base, spec, screen, state, vp, seed) {
 }
 
 /**
- * Builds the whole spec. opts: { vars, radius, kit, font, brand, style, theme: 'light'|'dark', only: [screenId],
+ * Builds the whole spec. opts: { vars, radius, kit, font, theme: 'light'|'dark', only: [screenId],
  * prototype: false to skip links and the «Прототип» page, contracts: registry from place.js (scanned when absent) }.
  * onProgress(done, total, label) is called after every frame.
  */
@@ -146,7 +146,7 @@ export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
         section.appendChild(f);
         f.x = x;
         f.y = y;
-        await setFrameModes(f, { brand: opts.brand, style: opts.style, theme: opts.theme || 'light' });
+        await setFrameModes(f, { theme: opts.theme || 'light' });
         x += f.width + GAP;
         rowH = Math.max(rowH, f.height);
         result.frames.push({ id: f.id, name: f.name, page: page.name });
@@ -168,7 +168,7 @@ export async function buildSpec(rawSpec, opts, onProgress = () => {}) {
     for (const page of touched.values()) await wirePage(page, spec, links);
     result.prototype = await buildPrototype(spec, links, base, async (screen, state, vp) => {
       const f = await buildFrame(base, spec, screen, state, vp, spec.screens.indexOf(screen) * 13);
-      await setFrameModes(f, { brand: opts.brand, style: opts.style, theme: opts.theme || 'light' });
+      await setFrameModes(f, { theme: opts.theme || 'light' });
       return f;
     });
     result.links = links.length;

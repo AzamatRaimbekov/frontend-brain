@@ -6,7 +6,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { check, create, write, KIT } from './contract-to-code.mjs';
-import { parseLiteral, findBlocks, readBlock, keepOrder } from './contract-to-code/blocks.mjs';
+import { parseLiteral, findBlocks, readBlock, keepOrder, blockText, contractBlocks } from './contract-to-code/blocks.mjs';
 import { readClasses, readTokens, renderScope, sameSet, splitClass } from './contract-to-code/classes.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -40,13 +40,13 @@ test('literal parser reads cva configs and const maps without eval', () => {
 test('classes split at top-level colons; properties round-trip, the rest stays extra', () => {
   assert.deepEqual(splitClass("hover:[&_svg:not([class*='size-'])]:size-4"), { mods: ['hover', "[&_svg:not([class*='size-'])]"], util: 'size-4' });
   const contract = { name: 'x', code: { parts: { icon: '[&>svg]' }, modifiers: { selected: 'data-[state=on]' } } };
-  const classes = ['h-11', 'px-4', 'bg-primary', 'hover:bg-primary-hover', 'data-[state=on]:text-foreground', 'border', 'border-input',
+  const classes = ['h-11', 'px-4', 'bg-primary', 'hover:bg-primary/90', 'data-[state=on]:text-foreground', 'border', 'border-input',
     'focus-visible:ring-[3px]', 'focus-visible:ring-ring/50', '[&>svg]:size-5', 'text-sm', 'font-medium', 'rounded-md',
-    'transition-colors', 'inline-flex', 'bg-primary/50', 'aria-invalid:ring-border-destructive/20', 'hover:focus-visible:bg-muted', 'bg-transparent'];
+    'transition-colors', 'inline-flex', 'bg-primary/50', 'aria-invalid:ring-destructive/20', 'hover:focus-visible:bg-muted', 'bg-transparent'];
   const { scope, extra } = readClasses(classes, contract, tokens);
-  assert.deepEqual(scope.root, { height: 11, px: 4, bg: 'primary', 'bg:hover': 'primary-hover', 'fg:selected': 'foreground', 'border-width': 1, border: 'input', text: 'sm', weight: 'medium', radius: 'md', 'focus-ring': 'ring/50' });
+  assert.deepEqual(scope.root, { height: 11, px: 4, bg: 'primary', 'bg:hover': 'primary/90', 'fg:selected': 'foreground', 'border-width': 1, border: 'input', text: 'sm', weight: 'medium', radius: 'md', 'focus-ring': 'ring/50' });
   assert.deepEqual(scope.icon, { size: 5 });
-  assert.deepEqual(extra.sort(), ['aria-invalid:ring-border-destructive/20', 'bg-primary/50', 'bg-transparent', 'hover:focus-visible:bg-muted', 'inline-flex', 'transition-colors']);
+  assert.deepEqual(extra.sort(), ['aria-invalid:ring-destructive/20', 'bg-primary/50', 'bg-transparent', 'hover:focus-visible:bg-muted', 'inline-flex', 'transition-colors']);
   assert.ok(sameSet([...renderScope(scope, contract), ...extra], classes));
 });
 
@@ -59,12 +59,12 @@ test('the fixture kit matches its contract: cva block, const map and part block'
 test('--check reports drift per variant and exits 1', () =>
   withKit((kit) => {
     editContract(kit, 'chip', (c) => {
-      c.variants.tone.brand.root.bg = 'primary';
+      c.variants.tone.accent.root.bg = 'secondary';
       c.variants.size.sm.root.height = 7;
       c.base.label.weight = 'bold';
     });
     const diffs = check({ kit })[0].diffs.join('\n');
-    assert.match(diffs, /chip \[tone=brand\]: contract has bg-primary; file has bg-brand/);
+    assert.match(diffs, /chip \[tone=accent\]: contract has bg-secondary; file has bg-primary/);
     assert.match(diffs, /chip\.size \[sm\]: contract has h-7; file has h-6/);
     assert.match(diffs, /chip\.label \[all\]: contract has font-bold/);
     const cli = spawnSync(process.execPath, [CLI, '--kit', kit, '--check'], { encoding: 'utf8' });
@@ -78,13 +78,13 @@ test('--write rewrites only the marked blocks, keeps class order and the rest of
     const before = readFileSync(file, 'utf8');
     assert.equal(write({ kit, name: 'chip' }).changed, false, 'in sync: nothing to write');
     editContract(kit, 'chip', (c) => {
-      c.variants.tone.brand.root.bg = 'primary';
+      c.variants.tone.accent.root.bg = 'secondary';
       c.variants.size.md.root.height = 9;
     });
     const res = write({ kit, name: 'chip' });
     assert.deepEqual(res.diffs, []);
     const after = readFileSync(file, 'utf8');
-    assert.match(after, /brand: "bg-primary text-brand-foreground"/);
+    assert.match(after, /accent: "bg-secondary text-primary-foreground"/);
     assert.match(after, /md: "h-9 px-3 text-sm"/);
     const outside = (text) => text.split('\n').filter((l, i, all) => !Object.values(findBlocks(text)).some((b) => i > b.start && i < b.end)).join('\n');
     assert.equal(outside(after), outside(before));
@@ -92,8 +92,8 @@ test('--write rewrites only the marked blocks, keeps class order and the rest of
   }));
 
 test('keepOrder puts a changed class where the old one was', () => {
-  assert.deepEqual(keepOrder(['h-11', 'bg-primary', 'hover:bg-primary-hover', 'px-4'], ['px-4', 'h-11', 'hover:bg-brand-hover', 'bg-brand', 'gap-2']),
-    ['h-11', 'bg-brand', 'hover:bg-brand-hover', 'px-4', 'gap-2']);
+  assert.deepEqual(keepOrder(['h-11', 'bg-primary', 'hover:bg-primary/90', 'px-4'], ['px-4', 'h-11', 'hover:bg-secondary/80', 'bg-secondary', 'gap-2']),
+    ['h-11', 'bg-secondary', 'hover:bg-secondary/80', 'px-4', 'gap-2']);
 });
 
 test('--new scaffolds a component and a registry item from a cva contract', () =>
@@ -141,3 +141,10 @@ test('block contracts: --check proves every part has its data-slot element; --wr
     assert.throws(() => write({ kit, name: 'crm-note' }), /block contract/);
     assert.throws(() => create({ kit, name: 'crm-note' }), /block contract/);
   }));
+
+test('a true/false variant gets a boolean default, so tsc accepts it', () => {
+  const contract = JSON.parse(readFileSync(join(KIT, 'contracts', 'breadcrumb-item.json'), 'utf8'));
+  const text = blockText(contractBlocks(contract)['breadcrumb-item']);
+  assert.match(text, /defaultVariants: \{ current: false \}/);
+  assert.deepEqual(readBlock(text).defaults, { current: false }, 'reads back the same, no drift');
+});

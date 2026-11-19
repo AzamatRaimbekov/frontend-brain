@@ -12,8 +12,8 @@ const str = (description) => ({ type: 'string', description });
 export const TOOLS = [
   {
     name: 'ds_tokens',
-    description: 'Mbank design tokens: name (CSS var / Tailwind suffix), light and dark value, Figma variable. Use before writing any colour, radius or text class.',
-    inputSchema: { type: 'object', properties: { query: str('filter by name or Figma variable, e.g. "brand", "text/muted"') } },
+    description: 'Design-system tokens: the standard shadcn/ui set only (31 colours, radius scale, fonts) - name (CSS var / Tailwind suffix), kind, light and dark value, Figma variable (same name). There are no other tokens: never invent one, use the closest standard name. Use before writing any colour, radius or font class.',
+    inputSchema: { type: 'object', properties: { query: str('filter by name or kind, e.g. "primary", "sidebar", "radius", "color"') } },
     run: (a) => tokens({ query: a.query }),
   },
   {
@@ -36,7 +36,7 @@ export const TOOLS = [
   },
   {
     name: 'ds_sync_project',
-    description: 'Replaces the project\'s copy of the Mbank tokens with the current design system (copy-mode projects). Dry run unless write=true.',
+    description: 'Replaces the project\'s copy of the design-system tokens.css with the current design system (copy-mode projects). Dry run unless write=true.',
     inputSchema: { type: 'object', properties: { path: str('absolute project root'), write: { type: 'boolean' } }, required: ['path'] },
     run: (a) => syncProject({ path: a.path, write: a.write === true }),
   },

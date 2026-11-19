@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readdirSync } from 'node
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { resolvePlugin, ENGINE } from './resolve-plugin.mjs';
-import { syncContracts } from './sync-contracts.mjs';
+import { syncContracts, CONTRACTS } from './sync-contracts.mjs';
 
 const fakePlugin = (dir) => {
   mkdirSync(join(dir, '.claude-plugin'), { recursive: true });
@@ -16,6 +16,18 @@ test('contracts in the repository: frontend-pack copies equal their figma-pack o
   const report = syncContracts({ check: true });
   assert.deepEqual(report.missing, []);
   assert.deepEqual(report.contracts.filter((c) => c.status !== 'same'), [], 'run: node plugins/design-engine/scripts/sync-contracts.mjs');
+});
+
+test('the only token contract is shadcn-tokens: figma-pack ds-tokens -> frontend-pack registry, then tokens-build', () => {
+  const tokenContracts = CONTRACTS.filter((c) => /token/.test(c.id));
+  assert.deepEqual(tokenContracts.map((c) => c.id), ['shadcn-tokens']);
+  const [c] = tokenContracts;
+  assert.deepEqual([c.owner, c.copy, c.after], [
+    ['figma-pack', 'skills/ds-tokens/references/shadcn-tokens.json'],
+    ['frontend-pack', 'registry/mbank/shadcn-tokens.json'],
+    ['frontend-pack', 'scripts/tokens-build.mjs'],
+  ]);
+  assert.ok(!CONTRACTS.some((x) => [x.owner[1], x.copy[1]].some((p) => /mbank-figma-patterns|tokens\.json$|platforms$/.test(p) && !p.endsWith('shadcn-tokens.json'))));
 });
 
 test('resolvePlugin finds the sibling in a checkout and the highest cached version when installed', () => {

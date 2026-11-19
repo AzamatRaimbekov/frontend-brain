@@ -19,11 +19,15 @@ test('initialize, tools/list and unknown methods follow JSON-RPC; notifications 
   assert.equal(handle({ method: 'notifications/initialized' }), null);
 });
 
-test('ds_tokens returns light/dark values and the Figma variable from the real kit', () => {
+test('ds_tokens serves the shadcn set from the kit: standard names, light/dark values, Figma variable of the same name', () => {
   const { data } = call('ds_tokens', { query: 'primary' });
   const primary = data.find((t) => t.name === 'primary');
-  assert.equal(primary.light, '#fddb2b');
-  assert.equal(primary.figma, 'accent/primary/default');
+  const source = JSON.parse(readFileSync(sources().shadcnTokens, 'utf8'));
+  assert.deepEqual([primary.light, primary.dark, primary.figma, primary.kind], [source.colors.primary.light, source.colors.primary.dark, 'primary', 'color']);
+  const all = call('ds_tokens', {}).data;
+  assert.deepEqual(all.filter((t) => t.kind === 'color').map((t) => t.name), Object.keys(source.colors));
+  assert.ok(all.some((t) => t.name === 'radius-lg') && all.some((t) => t.name === 'font-sans'));
+  assert.equal(all.filter((t) => /brand|surface|success|warning/.test(t.name)).length, 0, 'no Mbank or extra tokens');
   assert.deepEqual(parseTokens(':root {\n  --a: #fff; /* x */\n}\n.dark {\n  --a: #000;\n}'), { a: { light: '#fff', dark: '#000' } });
 });
 
@@ -38,14 +42,14 @@ test('ds_check_project finds token bypasses and an outdated tokens copy; ds_sync
   const dir = mkdtempSync(join(tmpdir(), 'ds-project-'));
   try {
     mkdirSync(join(dir, 'src', 'styles'), { recursive: true });
-    writeFileSync(join(dir, 'src', 'styles', 'mbank-tokens.css'), '@theme inline {}\n:root { --brand-ghost: #fff; }');
+    writeFileSync(join(dir, 'src', 'styles', 'tokens.css'), '@theme inline {}\n:root { --background: #fff; --sidebar-ring: #000; }');
     writeFileSync(join(dir, 'src', 'App.tsx'), 'export const A = () => <div className="bg-[#ff0000] text-gray-500 ring-[3px]" />');
     const { data } = call('ds_check_project', { path: dir });
     assert.equal(data.tokens.status, 'outdated: run ds_sync_project');
     assert.deepEqual(data.issues.map((i) => i.found), ['#ff0000', 'bg-[#ff0000]', 'text-gray-500']);
     assert.equal(call('ds_sync_project', { path: dir }).data.changed, false, 'dry run by default');
     assert.equal(call('ds_sync_project', { path: dir, write: true }).data.changed, true);
-    assert.equal(readFileSync(join(dir, 'src', 'styles', 'mbank-tokens.css'), 'utf8'), readFileSync(sources().tokensCss, 'utf8'));
+    assert.equal(readFileSync(join(dir, 'src', 'styles', 'tokens.css'), 'utf8'), readFileSync(sources().tokensCss, 'utf8'));
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

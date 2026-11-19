@@ -18,7 +18,7 @@ type ApplicationCardProps = {
   amount: string
   /** "Потребительский · 12 мес". */
   meta?: string
-  /** SLA or status badge: { label: "SLA 12 мин", tone: "info" }. */
+  /** SLA or status badge: { label: "SLA 12 мин", tone: "neutral" }. */
   status?: { label: string; tone: BadgeTone }
   href: string
   /** Router link (default: <a href>). Spread the props: data-slot is part of the contract. */
@@ -53,7 +53,7 @@ export function ApplicationCard({
     ),
     children: (
       <>
-        <span data-slot="application-card-top" className="flex items-center justify-between gap-2 text-caption text-muted-foreground">
+        <span data-slot="application-card-top" className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
           <span data-slot="application-card-id">{id}</span>
           <span data-slot="application-card-time">{time}</span>
         </span>
@@ -64,7 +64,7 @@ export function ApplicationCard({
           {amount}
         </span>
         {meta && (
-          <span data-slot="application-card-meta" className="truncate text-caption text-muted-foreground">
+          <span data-slot="application-card-meta" className="truncate text-xs text-muted-foreground">
             {meta}
           </span>
         )}

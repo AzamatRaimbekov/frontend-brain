@@ -82,7 +82,7 @@
         "Creates the app with init --preset b0 --template vite --name <app> and passes the preset code through without decoding it",
         "Installs every component with add --all and reports the component count from disk",
         "Reads the DESIGN.md Do's and Don'ts and Known Gaps before editing the theme",
-        "Maps DESIGN.md colors onto shadcn variables in the existing tailwindCssFile and registers extra tokens in @theme inline instead of creating a new CSS file",
+        "Maps DESIGN.md colors onto the standard shadcn variables in the existing tailwindCssFile (values only, no new CSS file); adds no custom variables and maps extra DESIGN.md tokens onto the nearest shadcn slot or opacity, reporting what was dropped",
         "Pins the radius scale in @theme inline and overrides the shadow scale with the documented multi-layer shadows",
         "Implements the 2px outline focus with an offset instead of keeping the default ring",
         "Changes field control heights together with the button height",
@@ -96,7 +96,7 @@
     {
       "id": 7,
       "prompt": "Create a Next.js design system app called editorial from preset b0 and apply this DESIGN.md: cream canvas #faf9f5, coral primary #cc785c that darkens only on press, licensed serif display (substitute Cormorant Garamond), Inter body, dark #181715 product surfaces, 40px buttons and inputs.",
-      "expected_output": "A Next.js app with all components, serif display type utilities, coral primary with an active-only darker state, dark bands scoped with the dark class, and a showcase page covering every component.",
+      "expected_output": "A Next.js app with all components, serif display type utilities, coral primary with an active-only darker state via opacity (active:bg-primary/80, no extra token), dark bands scoped with the dark class, and a showcase page covering every component.",
       "files": [],
       "expectations": [
         "Uses --template next with --preset b0 and --name editorial",

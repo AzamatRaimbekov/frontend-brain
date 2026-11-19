@@ -30,8 +30,8 @@ describe('ApplicationPage', () => {
     expect(within(steps).getAllByRole('listitem')).toHaveLength(5)
     expect(within(steps).getByText('Андеррайтинг').closest('li')).toHaveAttribute('aria-current', 'step')
     expect(within(region('Заёмщик')).getByText('Асанов Нурлан Бекович')).toBeInTheDocument()
-    expect(within(region('Документы')).getByText('Не загружена — нужна за 6 мес')).toHaveClass('text-destructive-text')
-    expect(within(region('Скоринг')).getByText('712')).toHaveClass('text-warning-text')
+    expect(within(region('Документы')).getByText('Не загружена — нужна за 6 мес')).toHaveClass('text-destructive')
+    expect(within(region('Скоринг')).getByText('712')).toHaveClass('text-foreground')
     expect(within(region('История заявки')).getAllByRole('listitem')).toHaveLength(4)
   })
 

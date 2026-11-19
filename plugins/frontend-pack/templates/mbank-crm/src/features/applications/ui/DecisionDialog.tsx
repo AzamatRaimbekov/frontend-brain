@@ -55,7 +55,7 @@ export function DecisionDialog({ applicationId, decision, onClose, onDone }: Dec
           <AlertDialogDescription>{copy?.text}</AlertDialogDescription>
         </AlertDialogHeader>
         {mutation.isError && (
-          <p role="alert" className="text-sm text-destructive-text">
+          <p role="alert" className="text-sm text-destructive">
             {m.decisionError}
           </p>
         )}

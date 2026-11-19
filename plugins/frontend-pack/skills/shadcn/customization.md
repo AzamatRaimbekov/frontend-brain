@@ -41,7 +41,6 @@ Every color follows the `name` / `name-foreground` convention. The base variable
 | `--ring`                                     | Focus ring color                 |
 | `--chart-1` through `--chart-5`              | Chart/data visualization         |
 | `--sidebar-*`                                | Sidebar-specific colors          |
-| `--surface` / `--surface-foreground`         | Secondary surface                |
 
 Colors use OKLCH: `--primary: oklch(0.205 0 0)` where values are lightness (0–1), chroma (0 = gray), and hue (0–360).
 
@@ -84,57 +83,20 @@ Or edit CSS variables directly in `globals.css`.
 
 ---
 
-## Adding Custom Colors
+## Custom Colors (not in Mdigital projects)
 
-Add variables to the file at `tailwindCssFile` from `npx shadcn@latest info` (typically `globals.css`). Never create a new CSS file for this.
+Mdigital projects use only the shadcn variables above; adding `--warning`, `--success`, `--brand` and the like is not allowed. Change the **values** of the existing variables in the file at `tailwindCssFile` instead, and map meanings onto them:
 
-```css
-/* 1. Define in the global CSS file. */
-:root {
-  --warning: oklch(0.84 0.16 84);
-  --warning-foreground: oklch(0.28 0.07 46);
-}
-.dark {
-  --warning: oklch(0.41 0.11 46);
-  --warning-foreground: oklch(0.99 0.02 95);
-}
-```
-
-```css
-/* 2a. Register with Tailwind v4 (@theme inline). */
-@theme inline {
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-}
-```
-
-When `tailwindVersion` is `"v3"` (check via `npx shadcn@latest info`), register in `tailwind.config.js` instead:
-
-```js
-// 2b. Register with Tailwind v3 (tailwind.config.js).
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        warning: "oklch(var(--warning) / <alpha-value>)",
-        "warning-foreground":
-          "oklch(var(--warning-foreground) / <alpha-value>)",
-      },
-    },
-  },
-}
-```
-
-```tsx
-// 3. Use in components.
-<div className="bg-warning text-warning-foreground">Warning</div>
-```
+- hover: `hover:bg-primary/90`, `hover:bg-secondary/80`, ghost/outline `hover:bg-accent`; disabled: `disabled:opacity-50`;
+- error: `destructive` (`aria-invalid:border-destructive aria-invalid:ring-destructive/20`);
+- success / warning / info: neutral Badge `default` / `secondary` / `outline` with text, never raw palette colours;
+- a truly distinct colour (charts): `chart-1..5`.
 
 ---
 
 ## Border Radius
 
-`--radius` controls border radius globally. Components derive values from it (`rounded-lg` = `var(--radius)`, `rounded-md` = `calc(var(--radius) - 2px)`).
+`--radius` controls border radius globally. Components derive values from it (`rounded-lg` = `var(--radius)`, `rounded-md` = `calc(var(--radius) * 0.8)`, up to `rounded-4xl`).
 
 When a brand spec defines its own radius scale, pin each step in `@theme inline` (`--radius-sm` … `--radius-4xl`) instead of deriving from `--radius`. See [design-system.md](./design-system.md#radius).
 
@@ -165,8 +127,8 @@ Prefer these approaches in order:
 Edit the component source to add a variant via `cva`:
 
 ```tsx
-// components/ui/button.tsx
-warning: "bg-warning text-warning-foreground hover:bg-warning/90",
+// components/ui/button.tsx — shadcn tokens only, hover = opacity
+subtle: "bg-muted text-foreground hover:bg-muted/80",
 ```
 
 ### 4. Wrapper components

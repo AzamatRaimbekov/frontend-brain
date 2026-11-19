@@ -26,17 +26,15 @@
       "border": "input",
       "bg": "background",
       "align": "center",
-      "border:hover": "input-hover",
-      "border:disabled": "input-disabled",
-      "bg:disabled": "muted",
-      "border:checked": "brand",
-      "bg:checked": "brand",
-      "focus-ring": "ring/30"
+      "border:checked": "primary",
+      "bg:checked": "primary",
+      "focus-ring": "ring/50",
+      "opacity:disabled": 50
     },
     "dot": {
       "size": 2,
       "radius": "full",
-      "bg": "brand-foreground",
+      "bg": "primary-foreground",
       "hidden": true,
       "hidden:checked": false
     }
@@ -44,7 +42,6 @@
   "variants": {},
   "states": [
     "default",
-    "hover",
     "focus",
     "disabled",
     "checked"
@@ -55,7 +52,7 @@
     "modifiers": {
       "checked": "data-[state=checked]"
     },
-    "extra": "peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50",
+    "extra": "peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed",
     "figmaOnly": [
       "dot"
     ]

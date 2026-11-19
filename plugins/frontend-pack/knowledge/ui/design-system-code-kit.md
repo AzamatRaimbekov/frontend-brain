@@ -4,7 +4,7 @@ type: decision
 stack: [react, vite, next]
 tags: [design-system, shadcn, registry, kit, cva, figma, tokens]
 author: AzamatRaimbekov
-updated: 2026-10-24
+updated: 2026-11-11
 ---
 
 ## Контекст
@@ -18,7 +18,7 @@ updated: 2026-10-24
 
 Кит дизайн-системы — отдельный источник истины в виде **namespaced shadcn-registry**:
 
-- `registry.json` + item-файлы: `registry:theme` (CSS-переменные light/dark/бренды и `@theme inline`),
+- `registry.json` + item-файлы: `registry:theme` (стандартные токены shadcn light/dark и `@theme inline`, без своих токенов и брендов),
   `registry:ui` (компоненты `shared/ui/*` на `cva`), иконки дизайн-системы как SVG-компоненты в
   `shared/ui/icons` ([react-ui](../../skills/react-ui/SKILL.md) разрешает это вместо Lucide).
 - Подключение в `components.json`:
@@ -39,7 +39,8 @@ updated: 2026-10-24
 - Имена вариантов `cva` — по [react-ui](../../skills/react-ui/SKILL.md): семантические, совместимые с shadcn.
   Перевод «значение в Figma → значение cva» живёт в одной таблице — figma-pack
   `mbank-design-system/references/code-mapping.md`, раздел Component mapping (например, `flat` → `ghost`,
-  `flat filled` → `soft`, `positive` → `success`, `negative` → `destructive`, `Size=m` → `size="md"`).
+  `negative` → `destructive`, `Size=m` → `size="md"`; варианты кнопки — только primary, secondary,
+  destructive, outline, ghost, link).
   Code Connect-шаблоны маппят props через эту таблицу; в проектах её не дублируют.
 - После публикации кита — пути компонентов в каталог дизайн-системы и связи Code Connect
   ([code-connect-template-files](../tooling/code-connect-template-files.md)).

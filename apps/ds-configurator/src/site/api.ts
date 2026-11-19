@@ -6,8 +6,8 @@ import type { TokensInput } from "../../server/validate"
 
 export type { ContrastCheck, HistoryEntry, Row, TokensDoc, TokensInput }
 export type PublicProject = Omit<Project, "writeKeyHash">
-export type ProjectSummary = PublicProject & { version: number; updatedAt: string; updatedBy: string; brand: string; overrides: number; custom: number }
-export type ProjectDetail = { project: PublicProject; tokens: TokensDoc; rows: Row[]; contrast: ContrastCheck[]; brands: string[] }
+export type ProjectSummary = PublicProject & { version: number; updatedAt: string; updatedBy: string; overrides: number }
+export type ProjectDetail = { project: PublicProject; tokens: TokensDoc; rows: Row[]; contrast: ContrastCheck[] }
 
 export class ApiError extends Error {
   constructor(public status: number, message: string, public errors: string[] = [], public current?: TokensDoc) {
@@ -37,7 +37,7 @@ export const api = {
   projects: () => request<{ projects: ProjectSummary[] }>("/api/projects").then((r) => r.projects),
   project: (id: string) => request<ProjectDetail>(`/api/projects/${encodeURIComponent(id)}`),
   history: (id: string) => request<{ history: HistoryEntry[] }>(`/api/projects/${encodeURIComponent(id)}/history`).then((r) => r.history),
-  create: (input: { name: string; id?: string; brand: string; prefix: string }) =>
+  create: (input: { name: string; id?: string }) =>
     request<{ project: PublicProject; tokens: TokensDoc; writeKey: string }>("/api/projects", { method: "POST", json: input }),
   putTokens: (id: string, key: string, version: number, tokens: TokensInput) =>
     request<{ tokens: TokensDoc }>(`/api/projects/${encodeURIComponent(id)}/tokens`, { method: "PUT", json: { ...tokens, source: "site" }, key, version }),

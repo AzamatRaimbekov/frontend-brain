@@ -103,7 +103,7 @@
 
 ### Гидратация и flash
 - Для локализованных дат: рендери на сервере, сразу после элемента вставляй inline `<script>` (`dangerouslySetInnerHTML`), правящий текст, и ставь `suppressHydrationWarning` на элемент; используй `<time dateTime>` с ISO-строкой. Вынеси это в переиспользуемый компонент с `type={typeof window === 'undefined' ? 'text/javascript' : 'text/plain'}`, чтобы при клиентской навигации скрипт не выполнялся. — [источник](https://nextjs.org/docs/app/guides/preventing-flash-before-hydration)
-- Тему применяй inline-скриптом в `<html data-theme suppressHydrationWarning>` с try/catch. — [источник](https://nextjs.org/docs/app/guides/preventing-flash-before-hydration) **Mdigital:** в localStorage/cookie допустимо хранить только настройку темы, токены авторизации там держать нельзя.
+- Тему применяй inline-скриптом, который ставит класс `.dark` на `<html suppressHydrationWarning>` (`next-themes` `attribute="class"`), с try/catch. — [источник](https://nextjs.org/docs/app/guides/preventing-flash-before-hydration) **Mdigital:** в localStorage/cookie допустимо хранить только настройку темы, токены авторизации там держать нельзя.
 - Тестируй гидрацию, запуская dev-сервер с другими `TZ` и `LANG`, чем у браузера. Не прячь мигание через `useEffect` и не читай cookies/headers только ради форматирования, если это делает маршрут динамическим без нужды. — [источник](https://nextjs.org/docs/app/guides/preventing-flash-before-hydration)
 - Inline-скрипты блокируются строгой CSP без `'unsafe-inline'`: используй nonce/hash (банковские продукты). — [источник](https://nextjs.org/docs/app/guides/preventing-flash-before-hydration)
 

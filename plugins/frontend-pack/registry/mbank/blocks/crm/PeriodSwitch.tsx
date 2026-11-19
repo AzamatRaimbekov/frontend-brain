@@ -1,9 +1,9 @@
 import { cn } from "@/shared/lib/utils"
 
 /** Figma `segment` of the `Period` row (48px): list and item looks, shared with PeriodSegment. */
-export const periodListClass = "flex w-full items-center gap-1 rounded-lg bg-surface-2 p-1 sm:w-fit"
+export const periodListClass = "flex w-full items-center gap-1 rounded-lg bg-muted p-1 sm:w-fit"
 export const periodItemClass =
-  "inline-flex h-10 flex-1 items-center justify-center rounded-md px-2 text-sm whitespace-nowrap text-soft-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 sm:flex-none sm:px-4 sm:text-base"
+  "inline-flex h-10 flex-1 items-center justify-center rounded-md px-2 text-sm whitespace-nowrap text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 sm:flex-none sm:px-4 sm:text-base"
 const activeClass = "bg-background text-foreground shadow-xs"
 
 type PeriodSwitchProps<T extends string> = {

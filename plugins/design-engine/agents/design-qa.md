@@ -34,7 +34,7 @@ Load skills with the Skill tool. If it is unavailable, locate plugin roots with 
 2. Capture ours at **1280x800**, **768x1024** and **375x812**, full page, same data. Save as `ours-<nodeId>-<width>.png`.
 3. Compare with the Figma PNG of the same form factor, in this order: section order and hierarchy -> layout (columns, alignment, spacing rhythm) -> component choice and variants -> typography scale -> colours -> icons and assets -> copy.
 4. States from the UX.md and spec section 8: open each one the page exposes (MSW toggle or query param) and check it exists and uses our state components.
-5. Code smells in the changed files (grep): hex colours, arbitrary `[..]` values, `absolute` with coordinates, fixed frame widths; for Mbank also `lucide-react` imports and default shadcn palette classes.
+5. Code smells in the changed files (grep): hex colours, arbitrary `[..]` values, `absolute` with coordinates, fixed frame widths; Tailwind palette classes and colour names outside the standard shadcn token set; for Mbank also `lucide-react` imports.
 6. Keyboard: tab through once; console: no errors.
 7. Mark each difference: **fix** (unintended) or **intentional** (our token, primitive, accessibility rule or responsive rule wins over the Figma value; name which).
 

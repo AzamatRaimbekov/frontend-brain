@@ -6,7 +6,7 @@ import { cn } from "@/shared/lib/utils"
 
 /*
  * Figma `Avatars` (15 sizes, 24-96 px; Placeholder on/off). The common web sizes are exposed;
- * use className="size-24" etc. for the rest. Fallback = initials on background/onsurface/2.
+ * use className="size-24" etc. for the rest. Fallback = initials on muted.
  */
 // @contract avatar start
 const avatarVariants = cva("relative flex shrink-0 overflow-hidden rounded-full", {
@@ -53,7 +53,7 @@ function AvatarFallback({ className, ...props }: React.ComponentProps<typeof Ava
       data-slot="avatar-fallback"
       className={cn(
         // @contract avatar.fallback start
-        "flex size-full items-center justify-center rounded-full bg-surface-2 font-medium text-soft-foreground",
+        "flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground",
         // @contract avatar.fallback end
         className,
       )}

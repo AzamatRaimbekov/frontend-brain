@@ -23,7 +23,7 @@ Load the relevant skills of this plugin before reviewing:
 - `react-forms-state` — complex forms, state placement (URL / local / store)
 - `react-performance-a11y` — lazy routes, virtualization, WCAG 2.2 AA
 - `react-security-i18n` — XSS, token storage, env secrets, i18n keys, Intl formatting
-- `mbank-ui` — in Mbank products: components from the kit, tokens only
+- `mbank-ui` — in Mbank products: components from the kit, standard shadcn tokens only
 
 Also read `rules/libraries.json` for the allowed and forbidden libraries.
 
@@ -44,7 +44,8 @@ Load each skill with the Skill tool (`frontend-pack:<skill-name>`). If the Skill
    - filler text (subtitles and descriptions under headings, «Здесь вы можете», tips blocks not in the task), two primary buttons in one area, primary not rightmost, more than two visible actions in a group
    - async views missing loading, error or empty states; forms without validation or double-submit protection
    - empty `catch`, swallowed errors, raw server messages shown to users, `console.log` left in code
-   - Mbank products: hex or palette classes instead of kit tokens, `lucide-react` or other icon sets instead of the kit icons, UI built outside `shared/ui` when the kit has the component, `data-brand`/`.dark` not on `<html>`
+   - custom tokens (`surface-*`, `brand`, `success`/`warning`/`status-*`, `*-hover`, `*-text`, `z-*`/`shadow-*` tokens) or palette colours (`green-500`) instead of the standard shadcn tokens; hover not by opacity (`hover:bg-primary/90`), disabled not `disabled:opacity-50`
+   - Mbank products: `lucide-react` or other icon sets instead of the kit icons, UI built outside `shared/ui` when the kit has the component, `.dark` not on `<html>`
    - `dangerouslySetInnerHTML` without sanitizing, tokens in `localStorage`, secrets in `VITE_`/`NEXT_PUBLIC_` env, hard-coded user-facing strings
 5. Verify each finding by quoting the exact line. Drop anything you cannot point to.
 

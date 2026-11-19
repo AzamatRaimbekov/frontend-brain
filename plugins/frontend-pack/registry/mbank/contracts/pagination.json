@@ -28,11 +28,13 @@
       "weight": "medium",
       "fg": "foreground",
       "bg:hover": "accent",
-      "fg:disabled": "disabled-foreground",
-      "bg:selected": "secondary",
-      "fg:selected": "secondary-foreground",
+      "bg:selected": "background",
+      "fg:selected": "foreground",
       "align": "center",
-      "focus-ring": "ring/30"
+      "focus-ring": "ring/50",
+      "opacity:disabled": 50,
+      "border:selected": "border",
+      "fg:hover": "accent-foreground"
     },
     "icon": {
       "size": 5,

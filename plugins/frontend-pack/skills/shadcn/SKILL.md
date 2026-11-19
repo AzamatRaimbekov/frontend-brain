@@ -17,6 +17,7 @@ Combine this skill with react-brain and react-ui. The project configuration and 
 - Follow the configured base library. Radix uses asChild; Base UI uses render and its own component APIs.
 - Keep the approved team libraries, including TanStack Query, Lucide icons, and sonner for every toast channel. This team toast policy overrides the upstream base-specific toast suggestion.
 - Keep feature layout, tokens, component limits, forms, and error handling aligned with frontend-pack.
+- Tokens: only the standard shadcn tokens ([`registry/mbank/shadcn-tokens.json`](../../registry/mbank/shadcn-tokens.json)). Never add custom CSS variables (`--warning`, `--success`, `--brand`, `--surface-*`, `--primary-active`): a project changes only the values of the shadcn names. Hover = opacity (`hover:bg-primary/90`), disabled = `disabled:opacity-50`, errors = `destructive`, other statuses = neutral Badge variants, never raw palette colours. This overrides the upstream "add a custom color" advice below.
 - Use the project's pinned shadcn CLI version when one is configured. Otherwise use the correct runner for its packageManager; do not silently switch package managers.
 - Prefer the official @shadcn registry when the request does not name a community registry. Ask about a registry only when multiple plausible sources would materially change the result.
 - Before adding or updating components, preview changes when the CLI supports it, check the configured UI path for existing components, then read and review all files the CLI changes.
@@ -210,7 +211,7 @@ When the user asks for a design system from a `DESIGN.md` (or a brand spec), wit
 
 1. `init --preset <code> --template <vite|next> --name <app> --no-monorepo -y`. Without a preset code, pick the closest style and pass `--base base --preset <style>`. Then `add --all -y`.
 2. Read the DESIGN.md frontmatter, Do's and Don'ts, and Known Gaps before editing.
-3. Map its tokens onto the shadcn variables in `tailwindCssFile`. Pin the radius scale, shadows, fonts and `type-*` utilities.
+3. Map its tokens onto the shadcn variables in `tailwindCssFile` (values only, no new variables in Mdigital projects). Pin the radius scale, shadows, fonts and `type-*` utilities.
 4. Restyle components by editing their `cva` variants. Change control heights together.
 5. Build the design system page per [design-system-page.md](./design-system-page.md): contrast-checked color roles, type specimens, pinned state matrices, edge cases, do/don't pairs, recipes. Check coverage with `scripts/showcase-coverage.mjs`.
 6. Verify in a browser: typecheck, no console errors, loads at the top, no horizontal overflow, dark mode.

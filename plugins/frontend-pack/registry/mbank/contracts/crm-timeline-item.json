@@ -68,7 +68,7 @@
     "dot": {
       "size": 3,
       "radius": "full",
-      "bg": "border-success"
+      "bg": "primary"
     },
     "content": {
       "layout": "column",
@@ -80,7 +80,7 @@
       "fg": "foreground"
     },
     "meta": {
-      "text": "caption",
+      "text": "xs",
       "fg": "muted-foreground",
       "weight": "regular"
     }

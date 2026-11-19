@@ -3,7 +3,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFigma, seedKit } from './figma-mock.mjs';
-import { COLOR_TOKENS, EXTENSION_TOKENS } from '../core/tokens.js';
 import { validateSpec, framePlan } from '../core/spec.js';
 import { validateLinks } from '../core/links.js';
 import { easySpec, screenTiles, pieceSamples, PIECES, SCREEN_INFO } from '../core/easy.js';
@@ -54,9 +53,8 @@ test('every piece alone makes a valid screen', () => {
 test('the easy spec builds in the mock file: picked screens plus the custom one', async () => {
   const m = createFigma();
   globalThis.figma = m.figma;
-  await seedKit(m.figma, COLOR_TOKENS.filter((t) => !EXTENSION_TOKENS.includes(t)));
-  const brand = await import('../plugin/src/brand.js');
-  await brand.setupBrand({ fixNames: true });
+  await seedKit(m.figma);
+  const brand = await import('../plugin/src/variables.js');
   const { vars, radius } = await brand.modeVars();
   const { buildSpec } = await import('../plugin/src/screens.js');
   const { spec, only } = easySpec(base, { screens: ['dashboard'], device: 'mobile', custom: { title: 'Платежи', pieces: ['toolbar', 'table', 'pagination'] } });
@@ -72,4 +70,25 @@ test('the built window carries the script intact (no "$`" expanded into HTML)', 
   assert.equal(html.split('<script>').length, 2, 'exactly one inline script');
   assert.ok(!js.includes('<!doctype') && !js.includes('<nav>'), 'no page markup spliced into the script');
   assert.doesNotThrow(() => new Function(js), 'the script parses');
+});
+
+test('«✨ Нарисовать» through dist/code.js on an empty file: the shadcn collection appears, screens bind to it', async () => {
+  const code = readFileSync(new URL('../plugin/dist/code.js', import.meta.url), 'utf8');
+  const m = createFigma({ missingFonts: [] });
+  globalThis.figma = m.figma;
+  const out = [];
+  m.figma.ui.postMessage = (msg) => out.push(msg);
+  new Function('figma', '__html__', code)(m.figma, '<html></html>');
+  const ask = async (msg) => { await m.figma.ui.onmessage(msg); return out.at(-1); };
+  const { spec, only } = easySpec(base, { screens: ['login', 'dashboard'], device: 'desktop', states: false });
+  const done = await ask({ type: 'build', spec, only, theme: 'dark', font: 'Inter' });
+  assert.equal(done.type, 'build:done', JSON.stringify(done));
+  assert.equal(done.result.frames.length, 2);
+  assert.equal(done.audit.ok, true, JSON.stringify(done.audit));
+  assert.deepEqual([...m.cols.values()].map((c) => c.name), ['shadcn'], 'only the shadcn collection');
+  for (const v of m.vars.values()) assert.ok(!/^(success|warning|info|brand|surface-\d)/.test(v.name), v.name);
+  const status = await ask({ type: 'init' });
+  assert.deepEqual(status.status.missing, []);
+  const css = await ask({ type: 'export-css' });
+  assert.match(css.css, /--primary: oklch\(0\.205 0 0\);/);
 });

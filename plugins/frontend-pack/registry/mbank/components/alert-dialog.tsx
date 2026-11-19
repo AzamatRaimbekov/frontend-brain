@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/utils"
 import { buttonVariants } from "./button"
 
 /*
- * Figma `dialogConfirm`, built like dialog.tsx (overlay, surface, shadow/modal, z-modal) on the
+ * Figma `dialogConfirm`, built like dialog.tsx (overlay, card surface, shadow-lg, z-50) on the
  * Radix AlertDialog primitive. Cancel gets the initial focus.
  * There is deliberately no AlertDialogAction: Radix Action closes the dialog on click, but the
  * Mdigital rule (react-ux) keeps it open while the request runs. Put a plain <Button> as the
@@ -28,12 +28,12 @@ function AlertDialogContent({
     <AlertDialogPrimitive.Portal>
       <AlertDialogPrimitive.Overlay
         data-slot="alert-dialog-overlay"
-        className="fixed inset-0 z-(--z-overlay) bg-overlay data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0"
+        className="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0"
       />
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-(--z-modal) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-lg bg-card p-6 text-card-foreground shadow-modal outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none",
+          "fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-lg bg-card p-6 text-card-foreground shadow-lg outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none",
           className,
         )}
         {...props}
@@ -92,7 +92,7 @@ function AlertDialogCancel({
   return (
     <AlertDialogPrimitive.Cancel
       data-slot="alert-dialog-cancel"
-      className={cn(buttonVariants({ variant: "soft" }), className)}
+      className={cn(buttonVariants({ variant: "outline" }), className)}
       {...props}
     />
   )

@@ -17,11 +17,11 @@ export function SideMenuSection({ section, activeId, collapsed = false, renderLi
   const [open, setOpen] = useState(true)
   const listId = useId()
   const showHeader = Boolean(section.title) && !collapsed
-  const headerText = "text-caption font-medium uppercase text-muted-foreground"
+  const headerText = "text-xs font-medium uppercase text-muted-foreground"
 
   return (
     <div data-slot="side-menu-section" className="group/section px-3">
-      <div className="border-b border-border py-2 group-last/section:border-b-0">
+      <div className="border-b border-sidebar-border py-2 group-last/section:border-b-0">
         {showHeader && (
           <div className="flex h-9 items-center justify-between gap-2 pr-1">
             {section.collapsible ? (
@@ -32,7 +32,7 @@ export function SideMenuSection({ section, activeId, collapsed = false, renderLi
                 onClick={() => setOpen((value) => !value)}
                 className={cn(
                   headerText,
-                  "flex h-9 items-center gap-3 rounded-sm px-3 outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30",
+                  "flex h-9 items-center gap-3 rounded-sm px-3 outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-sidebar-ring",
                 )}
               >
                 <ChevronDownIcon className={cn("size-5 transition-transform", !open && "-rotate-90")} />

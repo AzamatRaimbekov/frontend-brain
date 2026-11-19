@@ -32,9 +32,9 @@
 
 | Статья | Тип | Стек | Обновлено |
 |---|---|---|---|
-| [Кодовый кит дизайн-системы — свой shadcn-registry, а не новый Button в каждом проекте](ui/design-system-code-kit.md) | decision | react, vite, next | 2026-10-24 |
-| [Токены объявлены, а в разметке bg-[#F97316] — запрещай arbitrary-цвета линтером и grep в CI](ui/no-hardcoded-hex-classes.md) | rule | react, vite, next | 2026-10-24 |
-| [Токены дизайна — один JSON, сборка в CSS и @theme, маппинг из Figma генерируется скриптом](ui/tokens-single-source.md) | recipe | react, vite, next | 2026-10-24 |
+| [Кодовый кит дизайн-системы — свой shadcn-registry, а не новый Button в каждом проекте](ui/design-system-code-kit.md) | decision | react, vite, next | 2026-11-11 |
+| [Токены объявлены, а в разметке bg-[#F97316] — запрещай arbitrary-цвета линтером и grep в CI](ui/no-hardcoded-hex-classes.md) | rule | react, vite, next | 2026-11-11 |
+| [Токены дизайна — один JSON, сборка в CSS и @theme, маппинг из Figma генерируется скриптом](ui/tokens-single-source.md) | recipe | react, vite, next | 2026-11-11 |
 
 ## forms
 

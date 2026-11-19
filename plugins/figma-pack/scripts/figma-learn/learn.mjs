@@ -90,13 +90,13 @@ export function knowledgeDrafts(report, templates = {}, { author = 'figma-learn'
   const hex = report.hygiene.rawHex.filter((x) => x.token);
   if (hex.length) {
     out.push(entry({
-      area: 'ui', slug: 'figma-raw-hex-to-mbank-token', type: 'gotcha', author, tags: ['figma', 'tokens', 'hex', 'mbank'],
-      title: 'В макетах есть цвета без переменной — не копируй hex, бери токен 2.theme',
+      area: 'ui', slug: 'figma-raw-hex-to-shadcn-token', type: 'gotcha', author, tags: ['figma', 'tokens', 'hex', 'shadcn'],
+      title: 'В макетах есть цвета без переменной — не копируй hex, бери токен shadcn',
       context: `figma-learn нашёл ${report.hygiene.paints.total - report.hygiene.paints.bound} заливок и обводок без переменной (${hex.length} разных hex). Dev Mode и MCP отдают такой цвет как hex.`,
       decision: ['Ставь токен, а не hex. Самые частые:', '', '| hex | раз | токен | совпадение |', '|---|---|---|---|',
         ...hex.slice(0, 10).map((x) => `| ${x.hex} | ${x.count} | ${x.token.name} | ${x.token.exact ? 'точное' : `≈ ${x.token.distance}`} |`),
         '', 'Нет точного совпадения — спроси дизайнера и отметь в handoff.'].join('\n'),
-      why: 'Hex в коде не меняется со сменой темы и бренда (1.brand), а токен меняется. Линтер arbitrary-цветов такой hex всё равно отклонит.',
+      why: 'Hex в коде не меняется со сменой темы (light/dark) и пресета проекта, а токен меняется. Линтер arbitrary-цветов такой hex всё равно отклонит.',
       source: src,
     }));
   }
@@ -167,7 +167,7 @@ export function learnedPatterns(report, templates = {}, { tokens = null } = {}) 
     if (!samples.length) continue;
     const [pad, n] = mode(samples.map((s) => s.padding.join('/')))[0];
     const [gap, gn] = mode(samples.map((s) => s.gap))[0];
-    const tok = (v) => spacingToken(v, tokens) || `${v} (no token)`;
+    const tok = (v) => spacingToken(v) || `${v} (off the spacing scale)`;
     lines.push(`- ${role}: padding ${pad} (${pad.split('/').map(tok).join(' / ')}) in ${n} of ${samples.length}; gap ${tok(gap)} in ${gn} (${ev(samples.map((s) => s.file), samples.length)})`);
   }
   lines.push('', '## 4. States designers draw', '');

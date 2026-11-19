@@ -188,10 +188,10 @@ ${b.spec.subtitle ? '        <p className="text-sm text-muted-foreground">{t.sub
             className="flex h-48 items-end gap-1 sm:gap-2"
           >
             {data.map((point) => (
-              <div key={point.label} className="flex-1 rounded-t-sm bg-brand" style={{ height: \`\${(point.value / max) * 100}%\` }} />
+              <div key={point.label} className="flex-1 rounded-t-sm bg-primary" style={{ height: \`\${(point.value / max) * 100}%\` }} />
             ))}
           </div>
-          <div aria-hidden="true" className="mt-2 flex gap-1 text-caption text-muted-foreground sm:gap-2">
+          <div aria-hidden="true" className="mt-2 flex gap-1 text-xs text-muted-foreground sm:gap-2">
             {data.map((point) => (
               <span key={point.label} className="flex-1 truncate text-center">
                 {point.label}
@@ -221,7 +221,7 @@ ${b.spec.subtitle ? '        <p className="text-sm text-muted-foreground">{t.sub
                 </Avatar>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-sm font-medium text-foreground">{item.title}</span>
-                  {item.subtitle && <span className="truncate text-caption text-muted-foreground">{item.subtitle}</span>}
+                  {item.subtitle && <span className="truncate text-xs text-muted-foreground">{item.subtitle}</span>}
                 </div>
                 {item.status && <Badge tone={statusTone(item.status)}>{item.status}</Badge>}
               </li>
@@ -249,7 +249,7 @@ const initials = (name: string) =>
     return file(imp, b, ctx, 'Spec block "timeline": crm Timeline, newest first.', `  return (
     <Timeline title={t.title} empty={<p className="text-sm text-muted-foreground">{t.empty}</p>}>
       {data
-        ? data.map((event, i) => <TimelineItem key={event.id} title={event.title} meta={event.time} tone={i === 0 ? 'brand' : 'neutral'} />)
+        ? data.map((event, i) => <TimelineItem key={event.id} title={event.title} meta={event.time} tone={i === 0 ? 'accent' : 'neutral'} />)
         : Array.from({ length: 3 }, (_, i) => (
             <li key={i}>
               <Skeleton className="h-9 w-full" />
@@ -317,7 +317,7 @@ function seriesChart(b, ctx) {
         <div className="flex flex-col gap-1">
           <h2 className="text-base font-bold text-foreground">{t.title}</h2>
 ${b.spec.subtitle ? '          <p className="text-sm text-muted-foreground">{t.subtitle}</p>\n' : ''}        </div>
-        <ul className="flex flex-wrap gap-3 text-caption text-muted-foreground">
+        <ul className="flex flex-wrap gap-3 text-xs text-muted-foreground">
           {t.series.map((name, k) => (
             <li key={name} className="flex items-center gap-1.5">
               <span aria-hidden="true" className={\`size-2 rounded-full \${SERIES[k % SERIES.length]}\`} />
@@ -343,7 +343,7 @@ ${b.spec.subtitle ? '          <p className="text-sm text-muted-foreground">{t.s
               </div>
             ))}
           </div>
-          <div aria-hidden="true" className="mt-2 flex gap-1 text-caption text-muted-foreground sm:gap-2">
+          <div aria-hidden="true" className="mt-2 flex gap-1 text-xs text-muted-foreground sm:gap-2">
             {data.map((point) => (
               <span key={point.label} className="flex-1 truncate text-center">
                 {point.label}
@@ -354,7 +354,7 @@ ${b.spec.subtitle ? '          <p className="text-sm text-muted-foreground">{t.s
       )}
     </Card>
   )`).replace(`const t = m.blocks.${b.key}`, `const t = m.blocks.${b.key}
-const SERIES = ['bg-brand', 'bg-status-error', 'bg-supportive-6', 'bg-supportive-7']`);
+const SERIES = ['bg-chart-1', 'bg-chart-2', 'bg-chart-3', 'bg-chart-4', 'bg-chart-5']`);
 }
 
 export const emitDataBlock = (b, ctx) => EMIT[b.type](b, ctx);

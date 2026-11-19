@@ -111,7 +111,7 @@ export function EmptyState({ title, description, action, icon }: EmptyStateProps
 </div>
 ```
 
-Do not write a new card component: use `StatCard` / `StatCardLabel` / `StatCardValue` from `shared/components/StatCard/` (code in `react-ui` composition-patterns.md). Visual variants are a `cva` `tone` on the root, built on semantic tokens (`border-success/40 bg-success/5`, `border-destructive/40 bg-destructive/5`), never raw palette colors.
+Do not write a new card component: use `StatCard` / `StatCardLabel` / `StatCardValue` from `shared/components/StatCard/` (code in `react-ui` composition-patterns.md). Visual variants are a `cva` `tone` on the root, built on the standard shadcn tokens (`bg-muted`, `border-destructive/40 bg-destructive/5`), never custom tokens or raw palette colors.
 
 ```tsx
 import { StatCard } from '@/shared/components/StatCard/StatCard';

@@ -4,14 +4,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { createFigma, seedKit } from './figma-mock.mjs';
-import { COLOR_TOKENS, EXTENSION_TOKENS } from '../core/tokens.js';
 import { validateContract, partKind } from '../core/contract.js';
 import { GROUPS } from '../plugin/src/kit-sheet.js';
 
 const dir = new URL('../contracts/', import.meta.url);
 const ALL = readdirSync(dir).filter((f) => f.endsWith('.json')).sort().map((f) => JSON.parse(readFileSync(new URL(f, dir))));
 const byName = (n) => ALL.find((c) => c.name === n);
-const KIT_TOKENS = COLOR_TOKENS.filter((t) => !EXTENSION_TOKENS.includes(t));
 
 const NEW = ['nav-item', 'tabbar-item', 'breadcrumb-item', 'search-input', 'filter-chip', 'radio', 'date-picker-trigger', 'dropdown-menu-item', 'table-head', 'crm-list-item', 'stepper-step', 'empty-state', 'toast', 'tooltip', 'dialog', 'spinner', 'separator'];
 const sentence = (part) => part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' ');
@@ -19,9 +17,7 @@ const sentence = (part) => part.charAt(0).toUpperCase() + part.slice(1).replace(
 async function kit() {
   const m = createFigma();
   globalThis.figma = m.figma;
-  await seedKit(m.figma, KIT_TOKENS);
-  const brand = await import('../plugin/src/brand.js');
-  await brand.setupBrand({ fixNames: true });
+  await seedKit(m.figma);
   const { contractHandlers } = await import('../plugin/src/contracts.js');
   return { ...m, handlers: contractHandlers(ALL) };
 }

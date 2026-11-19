@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
  */
 // @contract pagination start
 const paginationItemVariants = cva(
-  "inline-flex shrink-0 items-center justify-center rounded-sm font-medium tabular-nums text-foreground transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:text-disabled-foreground aria-[current=page]:bg-secondary aria-[current=page]:text-secondary-foreground [&_svg]:size-5 [&_svg]:shrink-0",
+  "inline-flex shrink-0 items-center justify-center rounded-sm font-medium tabular-nums text-foreground transition-colors outline-none select-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none aria-[current=page]:bg-background aria-[current=page]:text-foreground [&_svg]:size-5 [&_svg]:shrink-0 disabled:opacity-50 aria-[current=page]:border-border hover:text-accent-foreground",
   {
     variants: {
       size: {

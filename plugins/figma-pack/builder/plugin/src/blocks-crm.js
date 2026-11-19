@@ -8,7 +8,8 @@ import { card } from './blocks-data.js';
 import { actionLabel as clean, isPrimaryAction as isPrimary } from '../../core/links.js';
 
 const CHART = ['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'];
-const TONE = { success: 'success', warning: 'warning', danger: 'destructive', destructive: 'destructive', info: 'info', default: 'primary' };
+// shadcn has no success / warning / info colours: positive and info read as primary, warning as muted.
+const TONE = { success: 'primary', warning: 'muted-foreground', danger: 'destructive', destructive: 'destructive', info: 'primary', default: 'primary' };
 const loading = (ctx) => ctx.state === 'loading';
 const pairOf = (it) => (Array.isArray(it) ? it : typeof it === 'string' ? it.split(':') : [it.label, it.value]);
 
@@ -29,11 +30,9 @@ function bar(ctx, width, share, token, h = 8) {
   return track;
 }
 
-const PROGRESS_TONE = { primary: 'brand', destructive: 'error', warning: 'warning', success: 'success', info: 'brand' };
-
 // Progress instance with its indicator at the share; the hand-drawn track when the set is missing.
 async function meterBar(ctx, width, share, tone) {
-  const p = await place(ctx, 'progress', { props: { tone: PROGRESS_TONE[tone] || 'brand', size: 'md', shape: 'rounded' }, w: width });
+  const p = await place(ctx, 'progress', { props: { size: 'md', shape: 'rounded' }, colors: { indicator: tone }, w: width }); // the meaning colour is an override: progress has no tone prop
   if (!p) { tally(ctx, 'progress', false); return bar(ctx, width, share, tone); }
   const ind = p.findOne((n) => n.name.toLowerCase() === 'indicator');
   if (ind) try { ind.resize(Math.max(1, Math.round(width * Math.min(1, share))), ind.height); } catch (e) { /* the set's own indicator width */ }
@@ -72,7 +71,7 @@ export async function meters(ctx, b) {
     if (loading(ctx)) { add(c, add(m, await skeleton(ctx, 160, 12), await skeleton(ctx, inner, 8, 'full'))); continue; }
     const top = box(ctx, 'Top', { dir: 'H', gap: 8, align: 'CENTER', w: 'fill' });
     const pct = Number(String(it.percent ?? 0).replace(/[^\d.]/g, '')) || 0;
-    const tone = TONE[it.tone] || (pct >= 90 ? 'destructive' : pct >= 75 ? 'warning' : 'primary');
+    const tone = TONE[it.tone] || (pct >= 90 ? 'destructive' : pct >= 75 ? 'muted-foreground' : 'primary');
     add(top, await text(ctx, it.label, { size: 'sm', weight: 'medium', w: 'fill', truncate: true }), await text(ctx, it.value ?? `${pct}%`, { size: 'sm', weight: 'semibold', color: tone === 'primary' ? 'foreground' : tone }));
     add(m, top, await meterBar(ctx, inner, pct / 100, tone), it.hint && (await text(ctx, it.hint, { size: 'xs', color: 'muted-foreground' })));
     add(c, m);
@@ -90,7 +89,7 @@ export async function score(ctx, b) {
   const top = box(ctx, 'Value', { dir: 'H', gap: 12, align: 'MAX', w: 'fill' });
   add(top, await text(ctx, String(b.value), { size: '4xl', weight: 'bold' }), await text(ctx, `из ${max}`, { size: 'sm', color: 'muted-foreground' }), box(ctx, 'Spacer', { w: 'fill', h: 1 }), b.grade && (await badge(ctx, b.grade, statusVariant(b.grade))));
   // Zones from high risk to low risk; the marker sits over the value.
-  const zones = ['destructive', 'warning', 'chart-3', 'chart-1', 'success'];
+  const zones = ['destructive', 'chart-4', 'chart-3', 'chart-2', 'primary'];
   const gap = 4;
   const zw = Math.floor((inner - gap * 4) / 5);
   const scale = box(ctx, 'Scale', { dir: 'H', gap, w: 'fill' });
@@ -108,7 +107,7 @@ export async function score(ctx, b) {
       const [label, impact] = pairOf(it);
       const good = /^[+▲]/.test(String(impact).trim());
       const row = box(ctx, `Factor / ${label}`, { dir: 'H', gap: 10, align: 'CENTER', w: 'fill' });
-      add(row, rect(ctx, 'Dot', 8, 8, good ? 'success' : 'destructive', 'full'), await text(ctx, label, { size: 'sm', w: 'fill' }), await text(ctx, impact, { size: 'sm', weight: 'semibold', color: good ? 'success' : 'destructive' }));
+      add(row, rect(ctx, 'Dot', 8, 8, good ? 'primary' : 'destructive', 'full'), await text(ctx, label, { size: 'sm', w: 'fill' }), await text(ctx, impact, { size: 'sm', weight: 'semibold', color: good ? 'primary' : 'destructive' }));
       add(list, row);
     }
     add(c, list);
@@ -159,7 +158,7 @@ export async function files(ctx, b) {
   return c;
 }
 
-const CHECK = { ok: ['check', 'success'], warn: ['info', 'warning'], fail: ['shield', 'destructive'], wait: ['history', 'muted-foreground'] };
+const CHECK = { ok: ['check', 'primary'], warn: ['info', 'muted-foreground'], fail: ['shield', 'destructive'], wait: ['history', 'muted-foreground'] };
 
 /** Checks (stop lists, credit bureau, verification): items [{ label, result, status: ok|warn|fail|wait }]. */
 export async function checks(ctx, b) {

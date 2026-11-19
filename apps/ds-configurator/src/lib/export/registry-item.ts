@@ -8,29 +8,26 @@ import type { DesignSystem } from "../types"
 export const REGISTRY_ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json"
 
 export function buildRegistryItem(ds: DesignSystem) {
-  const s = ds.state
-  const mbank = s.source === "mbank"
+  const s = ds.config
   const base = buildRegistryBase({
     name: ds.name,
     config: s,
     cssVars: { theme: ds.theme, light: ds.light, dark: ds.dark },
-    // Inter Mbank is not on Google Fonts yet: the Mbank stack goes in cssVars.theme, no font item.
-    fontRegistryDependency: !(mbank && s.font === "inter"),
+    // A project's font is a free CSS stack in cssVars.theme; /create fonts come as registry font items.
+    fontRegistryDependency: ds.googleFonts,
   })
   return {
     $schema: REGISTRY_ITEM_SCHEMA,
     ...base,
-    title: mbank ? `Mbank ${s.brand}` : `${s.baseColor} / ${s.theme}`,
-    description: mbank
-      ? `Mbank design system, brand ${s.brand}: Figma tokens (2.theme + 1.brand) for shadcn/ui + Tailwind v4`
-      : `shadcn/ui design system: base colour ${s.baseColor}, theme ${s.theme}`,
+    title: ds.googleFonts ? `${s.baseColor} / ${s.theme}` : ds.name,
+    description: ds.googleFonts
+      ? `shadcn/ui design system: base colour ${s.baseColor}, theme ${s.theme}`
+      : `${ds.name}: shadcn/ui design system (standard shadcn tokens)`,
     meta: {
       generator: "apps/ds-configurator",
-      source: s.source,
-      brand: mbank ? s.brand : undefined,
+      tokens: "shadcn/tokens@1",
       preset: encodePreset(s),
-      figma: { collection: "Brand", mode: mbank ? s.brand : ds.name },
-      extras: s.extras.map((t) => t.name),
+      figma: { collection: "shadcn", modes: ["Light", "Dark"] },
     },
   }
 }

@@ -10,7 +10,7 @@ import { StatusDot, type StatusDotTone } from "./StatusDot"
 type BadgeTone = React.ComponentProps<typeof Badge>["tone"]
 
 const scoreVariants = cva("text-3xl font-bold", {
-  variants: { tone: { success: "text-success-text", warning: "text-warning-text", error: "text-destructive-text" } },
+  variants: { tone: { success: "text-foreground", warning: "text-foreground", error: "text-destructive" } },
   defaultVariants: { tone: "warning" },
 })
 
@@ -29,7 +29,7 @@ type ScoreCardProps = {
   className?: string
 }
 
-/** Figma `Scoring` card: title + risk badge, score 32 bold in the risk colour, bullet reasons, meta. */
+/** Figma `Scoring` card: title + risk badge, score 32 bold (destructive when scoreTone="error"), bullet reasons, meta. */
 export function ScoreCard({ title = "Скоринг", score, scoreTone, scale, risk, reasons = [], meta, className }: ScoreCardProps) {
   const titleId = useId()
   return (
@@ -52,13 +52,13 @@ export function ScoreCard({ title = "Скоринг", score, scoreTone, scale, r
         <ul className="flex flex-col gap-2">
           {reasons.map((reason) => (
             <li key={reason.id} className="flex items-start gap-2 text-sm text-foreground">
-              <StatusDot size="sm" tone={reason.tone ?? "warning"} className="mt-[7px]" />
+              <StatusDot size="sm" tone={reason.tone ?? "neutral"} className="mt-[7px]" />
               {reason.text}
             </li>
           ))}
         </ul>
       )}
-      {meta && <p className="text-caption text-muted-foreground">{meta}</p>}
+      {meta && <p className="text-xs text-muted-foreground">{meta}</p>}
     </Card>
   )
 }

@@ -4,8 +4,8 @@ import { Tooltip as TooltipPrimitive } from "radix-ui"
 import { cn } from "@/shared/lib/utils"
 
 /*
- * Figma `tooltip` (Inverted on) / `Tooltip` (Dark=True): inverse surface, shadow/tooltip,
- * z-index tooltip 1800. Wrap the app (or the page) in TooltipProvider once.
+ * Figma `tooltip` (Inverted on) / `Tooltip` (Dark=True): bg-foreground / text-background as upstream,
+ * z-50. Wrap the app (or the page) in TooltipProvider once.
  */
 function TooltipProvider({
   delayDuration = 200,
@@ -35,14 +35,14 @@ function TooltipContent({
         sideOffset={sideOffset}
         className={cn(
           // @contract tooltip start
-          "z-(--z-tooltip) max-w-xs rounded-sm bg-surface-inverse px-3 py-2 text-xs text-inverse-foreground shadow-tooltip animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none",
+          "z-50 max-w-xs rounded-sm bg-foreground px-3 py-2 text-xs text-background animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none",
           // @contract tooltip end
           className,
         )}
         {...props}
       >
         {children}
-        <TooltipPrimitive.Arrow className="fill-surface-inverse" width={12} height={6} />
+        <TooltipPrimitive.Arrow className="fill-foreground" width={12} height={6} />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )

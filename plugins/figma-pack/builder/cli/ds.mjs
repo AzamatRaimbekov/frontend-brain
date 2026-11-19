@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // ds — tokens and specs from the terminal (used by Claude skills and CI).
 import { readFileSync, writeFileSync } from 'node:fs';
-import { generateTokens, validateTokens, contrastReport } from '../core/tokens.js';
+import { validateTokens, contrastReport } from '../core/tokens.js';
 import { toShadcnCss } from '../core/css.js';
 import { validateSpec, framePlan, normalizeSpec } from '../core/spec.js';
 import { resolveLinks, validateLinks } from '../core/links.js';
@@ -17,30 +17,25 @@ const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const out = (text) => (flags.o ? (writeFileSync(flags.o, text), console.error(`-> ${flags.o}`)) : process.stdout.write(text));
 const fail = (msg) => { console.error(msg); process.exit(1); };
 
-const HELP = `ds tokens new --name <project> --brand <#hex> [--neutral neutral|zinc|slate|stone|gray|tinted] [--font "Inter"] [--radius 10] [-o tokens.json]
-ds tokens css <tokens.json> [-o globals.css]
-ds tokens check <tokens.json>
+const HELP = `ds tokens css [tokens.json] [-o globals.css]   (default: the canonical shadcn-tokens.json)
+ds tokens check [tokens.json]
 ds spec check <spec.json>`;
 
+// t: a tokens file in the canonical shape (shadcn/tokens@1); undefined = the canonical file itself.
 function checkTokens(t) {
-  const errors = validateTokens(t);
+  const errors = t ? validateTokens(t) : [];
   if (errors.length) fail(`tokens invalid:\n  ${errors.join('\n  ')}`);
   const bad = contrastReport(t).filter((r) => !r.ok);
   for (const r of bad) console.error(`contrast ${r.mode}: ${r.fg} on ${r.bg} = ${r.ratio} (< ${r.min})`);
   return bad.length;
 }
 
-if (area === 'tokens' && cmd === 'new') {
-  if (!flags.brand) fail('--brand #hex is required');
-  const t = generateTokens({ name: flags.name, brand: flags.brand, neutral: flags.neutral, font: flags.font, radius: flags.radius });
-  checkTokens(t);
-  out(`${JSON.stringify(t, null, 2)}\n`);
-} else if (area === 'tokens' && cmd === 'css') {
-  const t = read(args[0]);
-  checkTokens(t);
+if (area === 'tokens' && cmd === 'css') {
+  const t = args[0] ? read(args[0]) : undefined;
+  if (t) checkTokens(t);
   out(toShadcnCss(t));
 } else if (area === 'tokens' && cmd === 'check') {
-  const bad = checkTokens(read(args[0]));
+  const bad = checkTokens(args[0] ? read(args[0]) : undefined);
   console.log(bad ? `${bad} contrast problem(s)` : 'ok: tokens valid, contrast AA in both themes');
   process.exit(bad ? 1 : 0);
 } else if (area === 'spec' && cmd === 'check') {

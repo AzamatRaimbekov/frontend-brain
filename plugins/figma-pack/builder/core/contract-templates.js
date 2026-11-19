@@ -1,5 +1,5 @@
 // Anatomy templates for «Новый компонент»: name + template + props -> a valid mbank/component@1
-// contract the designer then rebinds in «Привязки». Tokens are Mbank tokens.css names.
+// contract the designer then rebinds in «Привязки». Tokens are shadcn names (opacity as /NN).
 import { SCHEMA, validateContract } from './contract.js';
 
 const SIZES = { xs: [8, 3, 'xs'], sm: [9, 3, 'sm'], md: [11, 4, 'sm'], lg: [14, 6, 'base'], xl: [16, 8, 'lg'] };
@@ -9,7 +9,7 @@ export const TEMPLATES = {
     title: 'Кнопка: фон, подпись, иконка; hover/active/focus/disabled',
     parts: ['root', 'label', 'icon'],
     base: {
-      root: { layout: 'row', align: 'center', gap: 2, px: 4, height: 11, radius: 'md', text: 'sm', weight: 'medium', bg: 'primary', fg: 'primary-foreground', 'bg:hover': 'primary-hover', 'bg:active': 'primary-active', 'focus-ring': 'ring/50', 'opacity:disabled': 50 },
+      root: { layout: 'row', align: 'center', gap: 2, px: 4, height: 11, radius: 'md', text: 'sm', weight: 'medium', bg: 'primary', fg: 'primary-foreground', 'bg:hover': 'primary/90', 'bg:active': 'primary/80', 'focus-ring': 'ring/50', 'opacity:disabled': 50 },
       icon: { size: 5 },
     },
     states: ['default', 'hover', 'active', 'focus', 'disabled'],
@@ -18,15 +18,15 @@ export const TEMPLATES = {
     title: 'Поле: рамка, плейсхолдер; hover/focus/disabled',
     parts: ['root', 'placeholder'],
     base: {
-      root: { layout: 'row', align: 'center', px: 3, height: 11, radius: 'md', text: 'sm', bg: 'background', fg: 'foreground', border: 'input', 'border:hover': 'input-hover', 'border:focus': 'ring', 'focus-ring': 'ring/30', 'bg:disabled': 'muted', 'border:disabled': 'input-disabled' },
-      placeholder: { fg: 'muted-foreground', 'fg:disabled': 'disabled-foreground' },
+      root: { layout: 'row', align: 'center', px: 3, height: 11, radius: 'md', text: 'sm', bg: 'background', fg: 'foreground', border: 'input', 'border:hover': 'ring/50', 'border:focus': 'ring', 'focus-ring': 'ring/30', 'bg:disabled': 'muted', 'border:disabled': 'input/50' },
+      placeholder: { fg: 'muted-foreground', 'fg:disabled': 'muted-foreground/50' },
     },
     states: ['default', 'hover', 'focus', 'disabled'],
   },
   'badge-like': {
     title: 'Бейдж: заливка и подпись, без состояний',
     parts: ['root', 'label'],
-    base: { root: { layout: 'row', align: 'center', gap: 1, px: 2, height: 6, radius: 'full', text: 'xs', weight: 'medium', bg: 'status-neutral-muted', fg: 'status-neutral-foreground' } },
+    base: { root: { layout: 'row', align: 'center', gap: 1, px: 2, height: 6, radius: 'full', text: 'xs', weight: 'medium', bg: 'secondary', fg: 'secondary-foreground' } },
     states: ['default'],
   },
   'card-like': {

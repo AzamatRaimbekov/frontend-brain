@@ -95,12 +95,12 @@
       "align": "between"
     },
     "id": {
-      "text": "caption",
+      "text": "xs",
       "fg": "muted-foreground",
       "weight": "regular"
     },
     "time": {
-      "text": "caption",
+      "text": "xs",
       "fg": "muted-foreground",
       "weight": "regular"
     },
@@ -115,7 +115,7 @@
       "fg": "foreground"
     },
     "meta": {
-      "text": "caption",
+      "text": "xs",
       "fg": "muted-foreground",
       "weight": "regular"
     },

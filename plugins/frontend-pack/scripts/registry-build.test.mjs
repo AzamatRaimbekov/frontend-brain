@@ -11,11 +11,11 @@ test('tokens.css becomes cssVars plus css; at-rules inside rules use the shadcn 
   const base = tokensToBase(`@custom-variant dark (&:where(.dark, .dark *));
 :root { color-scheme: light; --primary: #fddb2b; }
 .dark { --primary: #f7c21c; }
-[data-brand="kassa"] { --brand: #2563eb; }
+[data-density="compact"] { --spacing: 0.2rem; }
 @theme inline { --color-primary: var(--primary); }
 @layer base { body { @apply bg-background; } }`);
   assert.deepEqual(base.cssVars, { theme: { 'color-primary': 'var(--primary)' }, light: { primary: '#fddb2b' }, dark: { primary: '#f7c21c' } });
-  assert.deepEqual(base.css['[data-brand="kassa"]'], { '--brand': '#2563eb' });
+  assert.deepEqual(base.css['[data-density="compact"]'], { '--spacing': '0.2rem' });
   assert.deepEqual(base.css['@layer base'], { body: { '@apply bg-background': {} } });
   assert.deepEqual(base.css[':root'], { 'color-scheme': 'light' });
   assert.ok('@custom-variant dark (&:where(.dark, .dark *))' in base.css);
@@ -25,7 +25,8 @@ test('the real kit builds: a registry:base item, inline file contents, namespace
   const { registry, items } = buildRegistry();
   const base = items.find((i) => i.name === 'mbank');
   assert.equal(base.type, 'registry:base');
-  assert.ok(Object.keys(base.cssVars.light).length > 100);
+  assert.equal(Object.keys(base.cssVars.light).length, 32); // 31 shadcn colours + radius
+  assert.equal(Object.keys(base.cssVars.dark).length, 31);
   const button = items.find((i) => i.name === 'button');
   assert.ok(button.files[0].content.includes('@/registry/mbank/lib/utils'));
   assert.ok(button.registryDependencies.every((d) => d.startsWith('@mbank/') && d !== '@mbank/tokens'));

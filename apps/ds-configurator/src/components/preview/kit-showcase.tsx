@@ -1,20 +1,22 @@
-// The real Mbank kit (copied from frontend-pack at prebuild) restyled by the selected tokens.
-import { Alert, AlertDescription, AlertTitle } from "@/generated/kit/ui/alert"
-import { Avatar, AvatarFallback } from "@/generated/kit/ui/avatar"
-import { Badge } from "@/generated/kit/ui/badge"
-import { Button } from "@/generated/kit/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/generated/kit/ui/card"
-import { Checkbox } from "@/generated/kit/ui/checkbox"
-import { Input } from "@/generated/kit/ui/input"
-import { Label } from "@/generated/kit/ui/label"
-import { Skeleton } from "@/generated/kit/ui/skeleton"
-import { Switch } from "@/generated/kit/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/generated/kit/ui/tabs"
+// Standard shadcn/ui components (src/kit) restyled by the selected tokens.
+import { Alert, AlertDescription, AlertTitle } from "@/kit/ui/alert"
+import { Avatar, AvatarFallback } from "@/kit/ui/avatar"
+import { Badge } from "@/kit/ui/badge"
+import { Button } from "@/kit/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/kit/ui/card"
+import { Checkbox } from "@/kit/ui/checkbox"
+import { InfoIcon } from "@/kit/ui/icons"
+import { Input } from "@/kit/ui/input"
+import { Label } from "@/kit/ui/label"
+import { Skeleton } from "@/kit/ui/skeleton"
+import { Switch } from "@/kit/ui/switch"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/kit/ui/tabs"
 
+import { ChartBars } from "./chart-bars"
 import { PreviewTable } from "./preview-table"
 
-const BUTTONS = ["primary", "brand", "secondary", "soft", "outline", "ghost", "destructive"] as const
-const TONES = ["neutral", "accent", "success", "warning", "error", "info"] as const
+const BUTTONS = ["default", "secondary", "outline", "ghost", "destructive", "link"] as const
+const BADGES = ["default", "secondary", "outline", "destructive"] as const
 
 export function KitShowcase() {
   return (
@@ -27,9 +29,9 @@ export function KitShowcase() {
         ))}
       </div>
       <div className="flex flex-wrap gap-2">
-        {TONES.map((t) => (
-          <Badge key={t} tone={t}>
-            {t}
+        {BADGES.map((v) => (
+          <Badge key={v} variant={v}>
+            {v}
           </Badge>
         ))}
       </div>
@@ -37,9 +39,9 @@ export function KitShowcase() {
         <Card>
           <CardHeader>
             <CardTitle>
-              <h3>Перевод по номеру</h3>
+              <h3>Новый платёж</h3>
             </CardTitle>
-            <CardDescription>Комиссия 0 сом до 15 000 в месяц</CardDescription>
+            <CardDescription>Перевод по номеру телефона</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3">
             <div className="grid gap-1.5">
@@ -52,12 +54,13 @@ export function KitShowcase() {
             </div>
           </CardContent>
           <CardFooter className="gap-2">
-            <Button variant="brand">Перевести</Button>
+            <Button>Отправить</Button>
             <Button variant="ghost">Отмена</Button>
           </CardFooter>
         </Card>
         <div className="grid content-start gap-4">
-          <Alert tone="info">
+          <Alert>
+            <InfoIcon />
             <AlertTitle>Новый тариф</AlertTitle>
             <AlertDescription>С 1 ноября переводы внутри банка бесплатные.</AlertDescription>
           </Alert>
@@ -78,6 +81,7 @@ export function KitShowcase() {
               <Switch defaultChecked aria-label="Уведомления" />
             </TabsContent>
           </Tabs>
+          <ChartBars />
         </div>
       </div>
       <PreviewTable />

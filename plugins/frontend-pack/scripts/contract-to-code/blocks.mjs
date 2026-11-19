@@ -164,7 +164,10 @@ export function contractBlocks(contract) {
         scopes[`${prop}=${value}`] = variantClasses(prop, value);
         variants[prop][value] = scopes[`${prop}=${value}`].join(' ');
       }
-      if (contract.props[prop].default !== undefined) defaults[prop] = contract.props[prop].default;
+      const def = contract.props[prop].default;
+      // a true/false variant takes a boolean default: cva types it as boolean, "false" fails tsc
+      const boolish = contract.props[prop].values.every((v) => v === 'true' || v === 'false');
+      if (def !== undefined) defaults[prop] = boolish && (def === 'true' || def === 'false') ? def === 'true' : def;
     }
     (contract.compound ?? []).forEach((c, i) => {
       const { when, ...scope } = c;
@@ -224,7 +227,7 @@ export function blockText(block) {
       }
       lines.push('    ],');
     }
-    const defaults = Object.entries(block.defaults).map(([p, v]) => `${key(p)}: ${str(v)}`);
+    const defaults = Object.entries(block.defaults).map(([p, v]) => `${key(p)}: ${typeof v === 'boolean' ? v : str(v)}`);
     if (defaults.length) lines.push(`    defaultVariants: { ${defaults.join(', ')} },`);
     lines.push('  },');
   }

@@ -85,7 +85,7 @@ When the screens are described as a spec (the JSON the figma-pack builder plugin
 - G03: the Inter Mbank font is not distributed; text renders in Inter / system-ui and is a little wider than in Figma (long breadcrumbs truncate earlier).
 - G12 (figma-pack `mbank-design-system` gaps.md): the CRM UI KIT has no KPI card, key-value row, timeline item, kanban card, stage stepper, toolbar above a table, filters panel, pagination, drawer, empty state, skeleton, toast, login page. The blocks reproduce the local components of the CRM drafts; filters, pagination, drawer, login are not blocks yet.
 - Icons and the logo are placeholders (`crm-icons.tsx`, the «M» square in `AppSideMenu`) until the Mbank Icons SVGs and the logo are exported.
-- «Запросить документы» uses `soft` + `bg-secondary-muted text-link`: the Figma colour pair has no button variant in the kit yet.
+- «Запросить документы» is `variant="secondary"`: the old `soft` / `bg-secondary-muted text-link` look was removed with the Mbank token layer (2026-11-11).
 - Figma has no states for the CRM blocks (hover, focus, loading, empty, mobile); the blocks add them from `react-ux` rules.
 
 ## Checklist
@@ -93,6 +93,6 @@ When the screens are described as a spec (the JSON the figma-pack builder plugin
 - [ ] Started with `new-crm.mjs` (or blocks added with `add-ui.mjs <block>` into an existing Mbank project)
 - [ ] Every page has UX.md, tests for loading / empty / error / data / actions
 - [ ] Menu from `navigation.ts`, current item from `staticData.header.navId`, no dead links
-- [ ] Only blocks, kit components and tokens; no hex, palette classes, Lucide
+- [ ] Only blocks, kit components and standard shadcn tokens; no custom tokens, hex, palette classes, Lucide
 - [ ] Screens compared with the Figma frame at 1440, checked at 375 and 768
 - [ ] `tsc`, `npm run lint`, `npm test`, `npm run build` pass

@@ -31,7 +31,7 @@ export function OptionPicker({ label, value, options, disabled, onChange, onPrev
   return (
     <Picker onOpenChange={(open) => !open && onPreview(null)}>
       <PickerTrigger disabled={disabled}>
-        <span className="block text-caption text-muted-foreground">{label}</span>
+        <span className="block text-xs text-muted-foreground">{label}</span>
         <span className="flex items-center gap-2 text-sm font-medium text-foreground">
           <Swatch color={current?.swatch} />
           <span className="truncate">{current?.label ?? value}</span>
@@ -46,7 +46,7 @@ export function OptionPicker({ label, value, options, disabled, onChange, onPrev
                 <Swatch color={o.swatch} />
                 <span className="flex min-w-0 flex-col">
                   <span className="truncate">{o.label}</span>
-                  {o.description ? <span className="truncate text-caption text-disabled-foreground">{o.description}</span> : null}
+                  {o.description ? <span className="truncate text-xs text-muted-foreground">{o.description}</span> : null}
                 </span>
               </PickerRadioItem>
             ))}

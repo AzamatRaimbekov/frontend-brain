@@ -16,7 +16,7 @@ export function BoardSkeleton({ columns = 5, cards = 3, label = "Загружа�
           <Skeleton className="h-6 w-28" />
           <Skeleton className="mb-1 h-4 w-20" />
           {Array.from({ length: cards }, (_, card) => (
-            <Skeleton key={card} className="h-35 rounded-md bg-surface-0" />
+            <Skeleton key={card} className="h-35 rounded-md bg-card" />
           ))}
         </div>
       ))}

@@ -18,14 +18,14 @@ export function checkSpec(spec) {
   return { errors: all.filter((e) => !unknown(e)), warnings: all.filter(unknown).map((e) => e.replace(/ \(use .*\)$/, '')) };
 }
 
+/** Kit Badge tone of a status label: done/positive = accent, problem = error, pending/attention = clear (outline), rest neutral. */
 export function toneOf(label) {
   const s = String(label).toLowerCase();
-  if (/низк\S* риск|проверен|пройден/.test(s)) return 'success';
+  if (/низк\S* риск|проверен|пройден/.test(s)) return 'accent';
   if (/высок\S* риск/.test(s)) return 'error';
   if (/отказ|отклон|просроч|ошиб|блок/.test(s)) return 'error';
-  if (/одобр|выдан|готов|успеш|заверш|активн|оплач/.test(s)) return 'success';
-  if (/риск|провер|скоринг|андеррайт|ожид|жд[её]т|работе|важно/.test(s)) return 'warning';
-  if (/нов|sla|ежеднев|еженед/.test(s)) return 'info';
+  if (/одобр|выдан|готов|успеш|заверш|активн|оплач/.test(s)) return 'accent';
+  if (/риск|провер|скоринг|андеррайт|ожид|жд[её]т|работе|важно/.test(s)) return 'clear';
   return 'neutral';
 }
 

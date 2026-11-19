@@ -160,12 +160,14 @@ export async function stepper(ctx, b) {
   return s;
 }
 
-const ALERT = { destructive: ['destructive', 'destructive'], warning: ['warning', 'foreground'], info: ['info', 'foreground'], success: ['success', 'foreground'] };
+// shadcn Alert: default (border, foreground) and destructive; other tones draw as default.
+const ALERT = { destructive: ['destructive', 'destructive'], warning: ['border', 'foreground'], info: ['border', 'foreground'], success: ['border', 'foreground'] };
 
-const ALERT_TONE = { destructive: 'error', warning: 'warning', info: 'info', success: 'success' };
+// alert contract tones: clear (shadcn default) and error (shadcn destructive).
+const ALERT_TONE = { destructive: 'error' };
 
 export async function alert(ctx, b) {
-  const inst = await place(ctx, 'alert', { props: { tone: ALERT_TONE[b.variant] || 'info' }, texts: { Title: b.title || null, Description: b.text }, w: 'fill' });
+  const inst = await place(ctx, 'alert', { props: { tone: ALERT_TONE[b.variant] || 'clear' }, texts: { Title: b.title || null, Description: b.text }, w: 'fill' });
   if (inst) {
     inst.name = `Alert / ${b.variant || 'info'}`;
     if (!b.action) return inst;

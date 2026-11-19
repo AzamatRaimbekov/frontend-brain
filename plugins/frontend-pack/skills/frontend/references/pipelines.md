@@ -21,6 +21,19 @@
 | Вердикт ревью | агент `frontend-reviewer`: 0 Blocker, итог «ready» |
 | Сверка с макетом | агент `design-qa`: в таблице нет строк «исправить» |
 
+## vibe
+
+По умолчанию для страницы, экрана, формы, компонента, фичи и API, если пользователь не просил процесс и в проекте нет `.frontend/mode` = `team`. Файла задачи нет, агентов нет, человек нужен только на итоге.
+
+| Этап | Кто | Вход | Выход | Ворота |
+|---|---|---|---|---|
+| `brief` | сессия: [react-page-ux](../../react-page-ux/SKILL.md), коротко | запрос | `UX.md` на 5 строк: цель, главное действие, блоки, состояния, мобильная раскладка | файл есть; ответа не ждёшь |
+| `code` | сессия: скиллы из маршрутизации | `UX.md` | код и моки MSW, если нет API | хуки UX.md, 150 строк, ESLint, ui-copy молчат |
+| `checks` | сессия | изменённые файлы | вывод команд | `tsc --noEmit` и линтер зелёные; тесты, если они есть |
+| `look` | сессия | адрес страницы | скриншот 1280 и 375 | страница открылась без ошибок в консоли; браузера нет — так и скажи |
+
+Выросло в большую фичу (3+ экрана, ~10+ файлов, общая логика) — предложи `feature` одной фразой, но не переключай без согласия.
+
 ## small-edit
 
 Отступ, текст, цвет, одна пропса, правка одного-двух файлов без новой страницы. Файл задачи не обязателен.
@@ -80,7 +93,7 @@
 |---|---|---|---|---|
 | `brief` | сессия: `figma-pack:figma-brief` | ТЗ, запрос | роли, сущности, экраны, платформа | **человек** ответил «да» |
 | `spec` | сессия: `figma-pack:figma-spec` | бриф | `specs/<project>.spec.json` | `node <figma-pack>/builder/cli/ds.mjs spec check <файл>` без ошибок |
-| `tokens` | сессия: Mbank — `mbank-ui` «Updating tokens from Figma» (`tokens-build.mjs --check`); другой бренд — `figma-pack:ds-tokens` | бренд продукта | токены для Figma и CSS из одного источника | `--check` или `ds.mjs tokens check` с кодом 0 |
+| `tokens` | сессия: значения стандартных токенов shadcn — `figma-pack:ds-tokens` (`shadcn-tokens.json`), CSS — `mbank-ui` «Updating token values» (`tokens-build.mjs --check`) | пресет значений продукта | те же имена shadcn в Figma и CSS, свои токены не добавляются | `--check` или `ds.mjs tokens check` с кодом 0 |
 | `draft` | **человек-дизайнер** запускает плагин DS Builder («Экраны» → «Собрать»); агент `figma-designer` — только для того, чего нет в каталоге блоков | спека | фреймы `[draft]` по экранам и состояниям | фреймы на месте (ссылки в «Артефакты»); нужен Full seat |
 | `approve-design` | **человек-дизайнер**; проверяет агент `design-lead` | ссылки на фреймы | фреймы без `[draft]` | ворота A design-to-code; правки дизайнера, меняющие структуру, вносятся в спеку |
 | `scaffold` | сессия: [mbank-crm](../../mbank-crm/SKILL.md) `new-crm.mjs` | папка проекта | проект | `npm run build` проходит; проект уже есть — пропуск через `task.mjs skip` |
@@ -116,8 +129,8 @@
 
 | Этап | Кто | Вход | Выход | Ворота |
 |---|---|---|---|---|
-| `requirements` | сессия | запрос | стек (Vite или Next.js), продукт (Mbank или нет), папка | **человек** подтвердил стек, если он не был назван |
-| `scaffold` | сессия: [react-new-project](../../react-new-project/SKILL.md), для CRM/админки на Mbank — [mbank-crm](../../mbank-crm/SKILL.md) `new-crm.mjs` | требования | проект, `AGENTS.md` / `CLAUDE.md`, ESLint | `npm run build` проходит |
+| `requirements` | сессия | запрос | тип проекта, стек (Vite или Next.js), продукт (Mbank или нет), папка | тип не назван → **человек** выбрал его на странице `project-picker.mjs` (WebView или CRM); иначе подтвердил стек, если он не был назван |
+| `scaffold` | сессия: [react-new-project](../../react-new-project/SKILL.md), для WebView-микросервиса Мбанка — [mbank-webview](../../mbank-webview/SKILL.md) `new-webview.mjs`, для CRM/админки на Mbank — [mbank-crm](../../mbank-crm/SKILL.md) `new-crm.mjs` | требования | проект, `AGENTS.md` / `CLAUDE.md`, ESLint | `npm run build` проходит |
 | `shell` | сессия или агент `frontend-engineer` | проект | экран падения, 404, баннер «нет сети» ([app-shell](../../react-error-handling/references/app-shell.md)) | три экрана есть |
 | `checks` | сессия | проект | вывод команд | проверки проекта зелёные |
 | `review` | агент `frontend-reviewer` | весь `src/` | замечания | вердикт ревью |

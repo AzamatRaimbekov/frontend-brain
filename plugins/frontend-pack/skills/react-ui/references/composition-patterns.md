@@ -32,7 +32,7 @@ const statCardVariants = cva("grid gap-1 rounded-xl border bg-card p-4 text-card
   variants: {
     tone: {
       default: "",
-      positive: "border-success/40 bg-success/5",
+      muted: "bg-muted",
       negative: "border-destructive/40 bg-destructive/5",
     },
   },

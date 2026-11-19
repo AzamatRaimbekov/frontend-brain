@@ -14,10 +14,10 @@
   },
   "variants": {
     "variant": {
-      "primary": { "root": { "bg": "primary", "fg": "primary-foreground", "bg:hover": "primary-hover", "bg:active": "primary-active" } },
-      "secondary": { "root": { "bg": "secondary", "fg": "secondary-foreground", "bg:hover": "secondary-hover", "bg:active": "secondary-active" } },
-      "outline": { "root": { "bg": "background", "fg": "outline-foreground", "border": "outline", "border:hover": "outline-hover", "bg:hover": "muted" } },
-      "ghost": { "root": { "bg": "ghost", "fg": "ghost-foreground", "bg:hover": "ghost-hover" } }
+      "primary": { "root": { "bg": "primary", "fg": "primary-foreground", "bg:hover": "primary/90", "bg:active": "primary/80" } },
+      "secondary": { "root": { "bg": "secondary", "fg": "secondary-foreground", "bg:hover": "secondary/80", "bg:active": "secondary/70" } },
+      "outline": { "root": { "bg": "background", "fg": "foreground", "border": "border", "border:hover": "input", "bg:hover": "accent" } },
+      "ghost": { "root": { "fg": "foreground", "bg:hover": "accent", "fg:hover": "accent-foreground" } }
     },
     "size": {
       "sm": { "root": { "height": 9, "px": 3, "text": "sm" }, "icon": { "size": 4 } },

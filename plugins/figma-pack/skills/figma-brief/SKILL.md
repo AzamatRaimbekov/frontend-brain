@@ -36,7 +36,7 @@ Write every known answer down as a fact; it does not become a question.
 | 3 | Какие экраны входят в первый заход? | the 2-4 screens you infer (list, detail, dashboard, form) / только главный экран / весь флоу | the user listed screens |
 | 4 | Какие состояния рисуем? (multiSelect) | Default + Empty + Error + Loading (Рекомендую) / только Default / + Нет доступа / + Валидация формы | the user named states |
 | 5 | Плотность данных? | Плотная таблица 40-44 px строки (Рекомендую для CRM) / Карточки / Смешанно | not a data screen |
-| 6 | Бренд и тема? | бренд из каталога (bank, kassa, ...) / светлая (Рекомендую) / светлая + тёмная | one brand, no dark mode |
+| 6 | Тема? | светлая (Рекомендую) / светлая + тёмная | no dark mode needed |
 | 7 | Главное действие экрана? | the verb you infer ("Одобрить перевод") / нет главного действия / другое | obvious from the request |
 | 8 | Куда положить в файле? | новая страница "<Продукт> / <Флоу>" (Рекомендую) / существующая страница X / новый файл | file has no pages yet or the user said where |
 | 9 | Чего нет в ките - как быть? | локальный компонент на странице Components + предложение дизайнерам (Рекомендую) / заглушка "Missing: ..." / ждать дизайнеров | catalog covers everything |

@@ -58,7 +58,7 @@ const strip = ({ example, ...c }) => c;
 
 /**
  * Renders the bundled contracts the spec needs that have no set in the file yet.
- * opts: { font, create (missing colour tokens -> Brand placeholders; default false) }.
+ * opts: { font, create (a missing shadcn colour creates the shadcn collection; default false) }.
  * Returns { built: [names], failed: [names], present: [names], sets } — sets is the fresh registry.
  */
 export async function ensureContracts(spec, bundled, opts = {}) {

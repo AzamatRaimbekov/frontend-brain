@@ -34,20 +34,14 @@
         "square"
       ],
       "default": "rounded"
-    },
-    "tone": {
-      "values": [
-        "brand",
-        "success",
-        "error",
-        "warning"
-      ],
-      "default": "brand"
     }
   },
   "base": {
     "root": {
-      "bg": "surface-2"
+      "bg": "primary/20"
+    },
+    "indicator": {
+      "bg": "primary"
     }
   },
   "variants": {
@@ -85,28 +79,6 @@
           "radius": "none"
         }
       }
-    },
-    "tone": {
-      "brand": {
-        "indicator": {
-          "bg": "brand"
-        }
-      },
-      "success": {
-        "indicator": {
-          "bg": "status-success"
-        }
-      },
-      "error": {
-        "indicator": {
-          "bg": "status-error"
-        }
-      },
-      "warning": {
-        "indicator": {
-          "bg": "status-warning"
-        }
-      }
     }
   },
   "states": [
@@ -116,12 +88,6 @@
     "file": "progress.tsx",
     "export": "progressVariants",
     "template": "card-like",
-    "maps": {
-      "tone": {
-        "const": "indicatorTones",
-        "part": "indicator"
-      }
-    },
     "extra": "relative w-full overflow-hidden",
     "figmaOnly": [
       "indicator"

@@ -1,7 +1,7 @@
-// Left panel: the pickers of upstream create/components/customizer.tsx plus Source and Brand.
+// Left panel: the pickers of upstream create/components/customizer.tsx (standard shadcn options only).
 import { Fragment } from "react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/generated/kit/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/kit/ui/card"
 import { pickerPatch, pickerSpecs, pickerValue } from "@/lib/options"
 import type { ConfiguratorState } from "@/lib/types"
 

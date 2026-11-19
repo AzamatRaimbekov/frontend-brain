@@ -21,7 +21,7 @@ description: End-to-end team process from a Figma design to merged React code at
 | View / Collab | 6 чтений в месяц | стоп: назови оценку вызовов и попроси Dev или Full |
 
    На файл нужен доступ **can edit**: с can view MCP отказывает даже в чтении (`figma-core`, раздел 2).
-3. **Продукт.** Mbank / MDigital (киты Mbank Tokens; Mbank, kassa, travel, artwin, koko) — в коде `figma-pack:mbank-design-system` и кодовый кит `frontend-pack:mbank-ui`, если он есть в установленном плагине (иначе code-mapping §7 и пометка в отчёте); иначе каталог проекта `.figma/design-system.json`.
+3. **Продукт.** Mbank / MDigital (киты Mdigital на shadcn/ui, токены только стандартные shadcn) — в коде `figma-pack:mbank-design-system` и кодовый кит `frontend-pack:mbank-ui`, если он есть в установленном плагине (иначе code-mapping §7 и пометка в отчёте); иначе каталог проекта `.figma/design-system.json`.
 4. **Шрифт (G03).** Web components, Hero Section и CRM UI KIT используют Inter Mbank. Пока админ не загрузил его как шрифт организации, агент рисует web/CRM только черновик `[draft]` на Inter и только с согласия пользователя (`mbank-figma-patterns`, `references/crm-screen.md`). Mobile KIT (Nunito) рисуется полностью.
 
 ## 1. Этапы

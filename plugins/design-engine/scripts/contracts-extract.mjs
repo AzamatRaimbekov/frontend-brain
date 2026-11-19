@@ -57,7 +57,7 @@ export const COMPONENTS = [
     name: 'pagination', title: 'Pagination item', file: 'pagination.tsx', figma: 'item/pagintaion / buttons', template: 'button-like',
     parts: { icon: '[&_svg]' }, modifiers: { selected: 'aria-[current=page]' },
   },
-  { name: 'progress', title: 'Progress', file: 'progress.tsx', figma: 'Progress bar / Determinate', template: 'card-like', maps: { tone: { const: 'indicatorTones', part: 'indicator', default: 'brand' } } },
+  { name: 'progress', title: 'Progress', file: 'progress.tsx', figma: 'Progress bar / Determinate', template: 'card-like' },
 ];
 
 const compact = (obj) => Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined && !(typeof v === 'object' && !Array.isArray(v) && !Object.keys(v).length) && !(Array.isArray(v) && !v.length) && v !== ''));

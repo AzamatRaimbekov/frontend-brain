@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/utils"
 import { getPayloadConfig, useChart } from "./chart"
 
 /*
- * Figma `Chart-tooltip`: card surface, shadow/dropdown, a colour mark per series.
+ * Figma `Chart-tooltip`: popover surface, shadow-md, a colour mark per series.
  * <ChartTooltip content={<ChartTooltipContent />} />, <ChartLegend content={<ChartLegendContent />} />.
  * recharts injects active / payload / label into the content element.
  */
@@ -52,7 +52,7 @@ function ChartTooltipContent({
   return (
     <div
       data-slot="chart-tooltip"
-      className={cn("grid min-w-32 gap-1.5 rounded-md border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-dropdown", className)}
+      className={cn("grid min-w-32 gap-1.5 rounded-md border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md", className)}
     >
       {!hideLabel && label != null && <div className="font-medium">{labelFormatter ? labelFormatter(label) : label}</div>}
       {payload.map((item, index) => {

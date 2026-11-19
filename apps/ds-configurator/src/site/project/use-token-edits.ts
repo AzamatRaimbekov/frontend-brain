@@ -1,38 +1,26 @@
 // Edits of the token table as whole-document writes: each edit is one PUT from the loaded version.
-// A value equal to the base drops the override, so "reset" and "type the old value" are the same.
-import type { ExtraToken } from "@/lib/types"
-
+// A value equal to the shadcn default drops the override, so "reset" and "type the old value" match.
 import type { ProjectDetail, Row, TokensInput } from "../api"
 import { inputOf, useSaveTokens } from "../queries"
 import { useWriteKey } from "../write-keys"
 
 export type Mode = "light" | "dark"
-export type TokenEdit =
-  | { type: "set"; row: Row; mode: Mode; value: string }
-  | { type: "reset"; name: string }
-  | { type: "add"; token: ExtraToken }
-  | { type: "remove"; name: string }
+export type TokenEdit = { type: "set"; row: Row; mode: Mode; value: string } | { type: "reset"; name: string }
 
 export function applyEdit(input: TokensInput, edit: TokenEdit): TokensInput {
   const overrides = { ...input.overrides }
-  let custom = input.custom
-  if (edit.type === "set" && edit.row.custom) {
-    custom = custom.map((t) => (t.name === edit.row.name ? { ...t, [edit.mode]: edit.value.trim() } : t))
-  } else if (edit.type === "set" && edit.row.base) {
-    const entry = { ...overrides[edit.row.name] }
-    const v = edit.value.trim()
-    if (!v || v === edit.row.base[edit.mode]) delete entry[edit.mode]
-    else entry[edit.mode] = v
-    if (entry.light === undefined && entry.dark === undefined) delete overrides[edit.row.name]
-    else overrides[edit.row.name] = entry
-  } else if (edit.type === "reset") {
+  if (edit.type === "reset") {
     delete overrides[edit.name]
-  } else if (edit.type === "add") {
-    custom = [...custom, edit.token]
-  } else if (edit.type === "remove") {
-    custom = custom.filter((t) => t.name !== edit.name)
+    return { overrides }
   }
-  return { ...input, overrides, custom }
+  const { row, mode } = edit
+  const entry = { ...overrides[row.name] }
+  const v = edit.value.trim()
+  if (!v || v === row.base[mode].css) delete entry[mode]
+  else entry[mode] = v
+  if (entry.light === undefined && entry.dark === undefined) delete overrides[row.name]
+  else overrides[row.name] = entry
+  return { overrides }
 }
 
 export function useTokenEdits(detail: ProjectDetail) {

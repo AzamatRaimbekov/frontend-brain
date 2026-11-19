@@ -155,7 +155,7 @@ function layers(c, props) {
 }
 
 /**
- * Resolved style of every part for one variant: { root: { bg: 'primary-hover', ... }, label: {...} }.
+ * Resolved style of every part for one variant: { root: { bg: 'primary', 'bg:hover': 'primary/90', ... }, label: {...} }.
  * State keys win over plain ones; focus-ring only shows in the focus state; disabled without
  * any explicit disabled style falls back to 50% opacity (shadcn convention).
  */

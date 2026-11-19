@@ -26,9 +26,9 @@ test('library files are known from the catalog, so their docs are not product sc
 });
 
 test('a colour far from every token is off-palette, not a near miss', () => {
-  const tokens = { theme: { vars: [{ name: 'text/default', light: '#0e0f11' }, { name: 'brand/bank/on-accent', light: '#ffffff' }] } };
+  const tokens = { colors: { foreground: { light: '#0e0f11' }, background: { light: 'oklch(1 0 0)' } } };
   assert.equal(nearestToken('#ffffff', tokens).exact, true);
-  assert.equal(nearestToken('#000000', tokens).name, 'text/default', 'the hint still names the nearest token');
+  assert.equal(nearestToken('#000000', tokens).name, 'foreground', 'the hint still names the nearest token');
   assert.equal(nearestToken('#000000', tokens).far, true, 'pure black is ≈27 from #0e0f11: off-palette');
   const far = nearestToken('#445371', tokens);
   assert.ok(far.distance > FAR && far.far);

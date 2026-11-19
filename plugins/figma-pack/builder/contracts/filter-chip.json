@@ -32,15 +32,15 @@
       "height": 9,
       "radius": "sm",
       "border-width": 1,
-      "border": "outline",
+      "border": "border",
       "bg": "background",
       "text": "sm",
       "weight": "medium",
       "fg": "foreground",
-      "border:hover": "border-secondary",
-      "bg:selected": "secondary",
-      "border:selected": "secondary",
-      "fg:selected": "inverse-foreground"
+      "bg:selected": "primary",
+      "border:selected": "primary",
+      "fg:selected": "primary-foreground",
+      "bg:hover": "accent"
     },
     "icon": {
       "size": 5
@@ -61,7 +61,7 @@
     "parts": {
       "icon": "[&_svg]"
     },
-    "extra": "inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:shrink-0",
+    "extra": "inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:shrink-0",
     "figmaOnly": [
       "label"
     ]

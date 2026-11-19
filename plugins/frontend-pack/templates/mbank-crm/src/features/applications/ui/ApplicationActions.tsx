@@ -30,9 +30,8 @@ export function ApplicationActions({ applicationId, canDecide, onDone, onMessage
         {m.reject}
       </Button>
       <Button
-        variant="soft"
+        variant="secondary"
         size="sm"
-        className="bg-secondary-muted text-link hover:bg-accent"
         loading={requestDocs.isPending}
         onClick={() =>
           requestDocs.mutate(undefined, {
@@ -47,7 +46,7 @@ export function ApplicationActions({ applicationId, canDecide, onDone, onMessage
         {m.approve}
       </Button>
       {requestDocs.isError && (
-        <p role="alert" className="basis-full text-sm text-destructive-text sm:order-last">
+        <p role="alert" className="basis-full text-sm text-destructive sm:order-last">
           {m.docsError}
         </p>
       )}

@@ -58,7 +58,7 @@ test('learn: knowledge drafts carry valid frontmatter and evidence', async () =>
   const { templates } = buildTemplates(report);
   const drafts = knowledgeDrafts(report, templates, { author: 'tester', min: 1 });
   const slugs = drafts.map((d) => `${d.area}/${d.slug}`);
-  for (const s of ['ui/mbank-list-screen-structure', 'ui/figma-raw-hex-to-mbank-token', 'ui/figma-components-not-in-code-kit']) assert.ok(slugs.includes(s), s);
+  for (const s of ['ui/mbank-list-screen-structure', 'ui/figma-raw-hex-to-shadcn-token', 'ui/figma-components-not-in-code-kit']) assert.ok(slugs.includes(s), s);
   assert.ok(!slugs.includes('ui/mbank-board-screen-structure'), 'example-only templates are not knowledge');
   for (const d of drafts) {
     assert.deepEqual(d.errors, [], d.slug);
@@ -84,7 +84,7 @@ test('learn: learned-patterns.md states rules with evidence and writeLearn write
   const { report } = await crawled();
   const { templates } = buildTemplates(report);
   const md = learnedPatterns(report, templates, { tokens: loadTokens() });
-  for (const s of ['## 1. Screen structure by archetype', '`header>tabs>toolbar>table>pagination`', 'Side menu width: 280 in 5 of 5', 'card: padding 20/20/20/20 (spacing/m-1', '## 5. Naming and handoff']) assert.ok(md.includes(s), s);
+  for (const s of ['## 1. Screen structure by archetype', '`header>tabs>toolbar>table>pagination`', 'Side menu width: 280 in 5 of 5', 'card: padding 20/20/20/20 (spacing*5', '## 5. Naming and handoff']) assert.ok(md.includes(s), s);
   assert.ok(md.split('\n').filter((l) => l.startsWith('- ')).every((l) => /файлы:|frames|Bound|No pair/.test(l)), 'every claim has evidence');
   const out = tempRoot();
   const files = writeLearn(out, knowledgeDrafts(report, templates, { min: 1 }), md);

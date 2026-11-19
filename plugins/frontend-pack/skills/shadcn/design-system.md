@@ -133,7 +133,7 @@ Edit only `tailwindCssFile`. Keep hex values when the DESIGN.md gives hex. Don't
 | canvas / surface / page floor                | `--background`                                              |
 | ink / headline text                          | `--foreground`, `--card-foreground`, `--popover-foreground` |
 | primary CTA fill / on-primary                | `--primary` / `--primary-foreground`                        |
-| primary hover, pressed or active fill        | new `--primary-active` (or `--primary-pressed`)             |
+| primary hover, pressed or active fill        | no variable: `hover:bg-primary/90`, `active:bg-primary/80`   |
 | secondary button fill / text                 | `--secondary` / `--secondary-foreground`                    |
 | soft band, alternating section               | `--muted`                                                   |
 | secondary or descriptive text                | `--muted-foreground`                                        |
@@ -146,19 +146,7 @@ Edit only `tailwindCssFile`. Keep hex values when the DESIGN.md gives hex. Don't
 | illustration accents                         | `--chart-1` … `--chart-5`, plus named tokens                |
 | sidebar or nav rail surface                  | `--sidebar-*`                                               |
 
-Every token without a shadcn slot gets a variable in `:root` (and `.dark` when it changes) and a registration in `@theme inline`:
-
-```css
-:root {
-  --primary-active: #a9583e;
-  --surface-card: #efe9de;
-}
-
-@theme inline {
-  --color-primary-active: var(--primary-active);
-  --color-surface-card: var(--surface-card);
-}
-```
+A token without a shadcn slot does **not** get a new variable (Mdigital rule: only shadcn tokens). Map it onto the nearest slot (`--muted`, `--accent`, `--secondary`, `--card`, `--chart-1..5`) or express it with opacity, and list the dropped tokens for the user.
 
 ### Radius
 

@@ -12,7 +12,7 @@ import { SearchIcon } from "./icons"
  */
 // @contract search-input start
 const searchInputVariants = cva(
-  "gap-2 rounded-md border border-input bg-background px-3 text-sm text-foreground hover:border-input-hover focus-within:border-ring has-disabled:border-input-disabled has-disabled:bg-muted has-disabled:text-disabled-foreground flex items-center focus-within:ring-[3px] focus-within:ring-ring/30 [&_svg]:size-5 [&_svg]:text-muted-foreground w-full transition-colors has-disabled:pointer-events-none [&_svg]:shrink-0",
+  "gap-2 rounded-md border border-input bg-background px-3 text-sm text-foreground focus-within:border-ring flex items-center focus-within:ring-[3px] focus-within:ring-ring/50 [&_svg]:size-5 [&_svg]:text-muted-foreground w-full transition-colors has-disabled:pointer-events-none [&_svg]:shrink-0 has-disabled:opacity-50",
   {
     variants: {
       size: {

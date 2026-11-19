@@ -1,6 +1,6 @@
 {
   "name": "design-engine",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mdigital design-to-code engine: spec drives Figma and React code, design QA, Figma-to-code component map and token sync. Needs figma-pack and frontend-pack.",
   "author": {
     "name": "Mdigital"

@@ -4,9 +4,9 @@ import { StatusDot, type StatusDotTone } from "./StatusDot"
 export type StageState = "done" | "current" | "upcoming" | "failed"
 
 const dotTone: Record<StageState, StatusDotTone> = {
-  done: "success",
-  current: "warning",
-  upcoming: "neutral",
+  done: "accent",
+  current: "neutral",
+  upcoming: "clear",
   failed: "error",
 }
 
@@ -41,7 +41,7 @@ export function StageStep({ title, state, meta }: StageStepProps) {
         </span>
         <span className="sr-only">, {stateText[state]}</span>
       </span>
-      {meta && <span className="truncate pl-5 text-caption text-muted-foreground sm:pl-0">{meta}</span>}
+      {meta && <span className="truncate pl-5 text-xs text-muted-foreground sm:pl-0">{meta}</span>}
     </li>
   )
 }

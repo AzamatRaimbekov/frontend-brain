@@ -82,7 +82,7 @@ test('data blocks: schemas, fixtures from the spec items, status tones', () => {
   const { model, file } = generate(SPEC);
   const by = Object.fromEntries(model.screens[0].flat.map((b) => [b.type, b]));
   assert.deepEqual(by.funnel.fixture.map((x) => x.share), [1, 0.378]);
-  assert.deepEqual(by.meters.fixture.map((x) => [x.tone, x.value]), [['success', '98%'], ['error', '71%']]);
+  assert.deepEqual(by.meters.fixture.map((x) => [x.tone, x.value]), [['default', '98%'], ['error', '71%']]);
   assert.deepEqual(by.score.fixture.factors.map((x) => x.good), [true, false]);
   assert.equal(by.files.fixture[1].name, 'Договор залога');
   assert.deepEqual(by.checks.fixture.map((x) => x.status), ['ok', 'wait']);
@@ -95,7 +95,7 @@ test('data blocks: schemas, fixtures from the spec items, status tones', () => {
   assert.match(schemas, /chart: z\.array\(z\.object\(\{ label: z\.string\(\), values: z\.array\(z\.number\(\)\) \}\)\)/);
   assert.doesNotMatch(schemas, /decision|profile/, 'decision and profile are static copy, not payload');
   const status = file('src/features/app/lib/status.ts');
-  for (const [label, tone] of [['Низкий риск', 'success'], ['Проверен', 'success'], ['Активный', 'success']]) assert.match(status, new RegExp(`'${label}': '${tone}'`));
+  for (const [label, tone] of [['Низкий риск', 'accent'], ['Проверен', 'accent'], ['Активный', 'accent']]) assert.match(status, new RegExp(`'${label}': '${tone}'`));
 });
 
 test('each CRM block renders sensible markup', () => {
@@ -106,13 +106,13 @@ test('each CRM block renders sensible markup', () => {
   assert.match(funnel, /<ol aria-label=\{t\.label\}/);
   assert.match(funnel, /style=\{\{ width: `\$\{stage\.share \* 100\}%` \}\}/);
   assert.match(funnel, /<Link to="\/reports"[^>]*>\n\s*\{t\.more\}/);
-  assert.match(ui('Meters'), /<Progress value=\{meter\.percent\} tone=\{meter\.tone\} aria-label=\{meter\.label\} \/>/);
+  assert.match(ui('Meters'), /<Progress value=\{meter\.percent\} aria-label=\{meter\.label\} \/>/);
   const score = ui('Score');
   assert.match(score, /role="img" aria-label=\{`\$\{t\.scale\}/);
   assert.match(score, /const ZONES = \[/);
   assert.match(score, /<Badge tone=\{statusTone\(data\.grade\)\}/);
   const decision = ui('Decision');
-  assert.match(decision, /<dt className="text-caption text-muted-foreground">\{term\.label\}<\/dt>/);
+  assert.match(decision, /<dt className="text-xs text-muted-foreground">\{term\.label\}<\/dt>/);
   assert.match(decision, /variant="primary">\n\s*\{t\.actions\[0\]\.label\}/);
   assert.match(decision, /variant="destructive">\n\s*\{t\.actions\[2\]\.label\}/, 'default actions: Одобрить, На доработку, Отказать');
   assert.match(decision, /\{t\.note\}/);
@@ -142,4 +142,12 @@ test('each CRM block renders sensible markup', () => {
   assert.match(page, /findAllByRole\('region', \{ name: m\.blocks\.funnel\.title \}\)/);
   assert.match(page, /within\(score\)\.findAllByText\('712'\)/);
   assert.match(file('src/app/navigation.ts'), /badge: badge && createElement\(Badge, \{ size: 'sm', tone: 'neutral' \}, badge\)/);
+});
+
+test('generated code uses only shadcn tokens and the current kit API (no Mbank token layer)', () => {
+  const OLD = /\b(?:surface-\d|bg-brand|text-brand|supportive-|status-(?:success|warning|error|info)|(?:success|warning|destructive|brand)-text|disabled-foreground|soft-foreground|bg-soft|static-light|text-caption|text-2xs|text-md|z-(?:modal|overlay|dropdown|tooltip)|shadow-(?:dropdown|modal|tooltip|notification)|border-(?:secondary|success|warning)|bg-overlay)\b|tone="(?:success|warning|info|brand)"|variant="(?:soft|brand|success|static)"|<Progress[^>]*tone=/;
+  for (const spec of [SPEC, CREDIT]) {
+    const { files } = generate(spec);
+    for (const [path, content] of files) if (/\.tsx?$/.test(path)) assert.doesNotMatch(content, OLD, path);
+  }
 });

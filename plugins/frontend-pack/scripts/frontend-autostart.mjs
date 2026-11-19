@@ -17,7 +17,7 @@ try {
 const prompt = String(payload?.prompt ?? '').toLowerCase();
 if (!prompt || /\$frontend|frontend-pack:|\/frontend\b/.test(prompt)) process.exit(0);
 
-const TASK = /(страниц|экран|компонент|сверста|вёрст|верст|форм[аыу]|кнопк|модалк|таблиц|дашборд|личн\w* кабинет|фронт|интерфейс|ui\b|ux\b|стил|адаптив|тёмн\w* тем|темн\w* тем|макет|фигм|figma|react|next\.?js|vite|tanstack|shadcn|tailwind|tsx|page|screen|component|layout|frontend)/;
+const TASK = /(страниц|сайт|лендинг|веб-?|web|website|landing|калькулятор|виджет|экран|компонент|сверста|вёрст|верст|форм[аыу]|кнопк|модалк|таблиц|дашборд|личн\w* кабинет|фронт|интерфейс|ui\b|ux\b|стил|адаптив|тёмн\w* тем|темн\w* тем|макет|фигм|figma|react|next\.?js|vite|tanstack|shadcn|tailwind|tsx|page|screen|component|layout|frontend|вебвью|webview|мини-?приложен|нов[а-яё]* проект|new project|создай проект|заведи проект|срм|црм|crm|админк)/;
 const STACK = /(react|next\.?js|vite|tanstack|shadcn|tailwind|tsx|фронт|frontend)/;
 if (!TASK.test(prompt)) process.exit(0);
 
@@ -33,11 +33,43 @@ function isFrontendProject(dir) {
   }
 }
 const cwd = payload?.cwd ?? process.cwd();
-if (!isFrontendProject(cwd) && !STACK.test(prompt)) process.exit(0);
+// Backend-only projects (no React/Next/Vite) stay quiet unless the prompt names the stack; everywhere else
+// (a frontend project or a folder with no package.json yet) a UI task goes through the brain.
+const NOT_FRONTEND = /(бэкенд|backend|сервер|server|api endpoint|миграци|sql|docker|1с|1c)/;
+const hasPackage = existsSync(join(cwd, 'package.json'));
+if (hasPackage && !isFrontendProject(cwd) && !STACK.test(prompt)) process.exit(0);
+if (!hasPackage && NOT_FRONTEND.test(prompt) && !STACK.test(prompt)) process.exit(0);
+
+// Mode: vibe (default, fast) or team (full pipelines). Project file .frontend/mode or MDIGITAL_FRONTEND_MODE.
+function readMode(dir) {
+  const env = String(process.env.MDIGITAL_FRONTEND_MODE ?? '').trim().toLowerCase();
+  if (env) return env === 'team' ? 'team' : 'vibe';
+  try {
+    return /\bteam\b/i.test(readFileSync(join(dir, '.frontend', 'mode'), 'utf8')) ? 'team' : 'vibe';
+  } catch {
+    return 'vibe';
+  }
+}
+const PROCESS = /(до mr|до мр|merge request|по процессу|с ревью|возьми задачу|как для прода|jira|тикет)/;
+const mode = readMode(cwd) === 'team' || PROCESS.test(prompt) ? 'team' : 'vibe';
+// A new project of an unnamed kind: the picker page, not a question in chat (skill mbank-webview).
+const NEW_PROJECT = /(нов[а-яё]* проект|new project|с нуля|from scratch|заведи проект|создай проект)/;
+const NAMED_KIND = /(вебвью|webview|мини-?приложен|срм|црм|crm|админк|лендинг|landing|next\.?js)/;
+const picker = NEW_PROJECT.test(prompt) && !NAMED_KIND.test(prompt)
+  ? 'New project of an unnamed kind: open the picker page (scripts/project-picker.mjs, WebView microservice or CRM) and wait for the click instead of asking in chat; then create, start and open the project. '
+  : '';
+const route =
+  mode === 'vibe'
+    ? 'Mode vibe (default): pages, forms, components and features go by pipeline `vibe` - a 5-line UX.md without waiting, ' +
+      'code in this session, no task file, no agents, no plan approval; then tsc + lint, a browser look and a 3-5 line report. '
+    : 'Mode team: use the full pipelines (feature, refactor, review, handoff) with the task file and agents. ';
 
 // Exit 0 with plain stdout: Claude Code adds it to the context of this prompt.
 process.stdout.write(
-  'Frontend task detected (frontend-pack). Start with the `frontend` skill (frontend-pack:frontend): ' +
+  'Frontend task detected (frontend-pack). Your FIRST tool call is the Skill tool with skill "frontend-pack:frontend" - ' +
+    'before Bash, create-vite or any file: a hook blocks writing frontend code until that skill is loaded. ' +
     'announce the route line it defines, load only the skills it routes to, and finish with its checks. ' +
+    route +
+    picker +
     'Interface text follows ui-copy: only blocks from the task, no subtitles or descriptions without data, one primary button on the right.\n',
 );

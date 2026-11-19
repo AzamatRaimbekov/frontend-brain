@@ -1,9 +1,9 @@
 // Forked from shadcn-ui/ui apps/v4/registry/config.ts (MIT), see NOTICE.md.
 // Kept: RADII, MENU_ACCENTS, MENU_COLORS, POINTER_CURSOR_SELECTOR, getThemesForBaseColor,
 // buildRegistryTheme and buildRegistryBase. Changes: no zod schema / Next fonts; the theme
-// transforms (menu accent, radius) are split out so the Mbank preset goes through the same code;
+// transforms (menu accent, radius) are split out;
 // buildRegistryBase takes the already merged cssVars and a name, and always uses the Radix base
-// (the Mbank kit is built on radix-ui).
+// (the preview kit in src/kit is built on radix-ui).
 import { BASE_COLORS } from "./base-colors"
 import { FONT_DEFINITIONS } from "./font-definitions"
 import { iconLibraries, type IconLibraryName } from "./icon-libraries"

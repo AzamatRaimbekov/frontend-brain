@@ -1,8 +1,8 @@
+// The configurator (#/configurator): fork of shadcn/ui /create on the standard shadcn token set.
 import { useMemo, useState } from "react"
 
-import { Button } from "@/generated/kit/ui/button"
-import { Card, CardContent } from "@/generated/kit/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/generated/kit/ui/tabs"
+import { Button } from "@/kit/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/kit/ui/card"
 import { buildDesignSystem } from "@/lib/design-system"
 import { copyText } from "@/lib/download"
 import { normalizeState } from "@/lib/share"
@@ -11,7 +11,6 @@ import { encodePreset } from "@/upstream/preset"
 
 import { Customizer } from "./components/customizer"
 import { ExportPanel } from "./components/export/export-panel"
-import { ExtraTokensPanel } from "./components/extra-tokens/extra-tokens-panel"
 import { KitShowcase } from "./components/preview/kit-showcase"
 import { PreviewFrame } from "./components/preview/preview-frame"
 import { useConfigurator } from "./hooks/use-configurator"
@@ -27,11 +26,11 @@ export function App() {
   )
 
   return (
-    <div className="min-h-svh bg-surface-1 text-foreground">
+    <div className="min-h-svh bg-muted/40 text-foreground">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background px-4 py-3 md:px-6">
         <div className="min-w-0">
-          <h1 className="text-lg font-semibold">DS Configurator</h1>
-          <p className="text-caption text-muted-foreground">
+          <h1 className="text-lg font-semibold">Конфигуратор shadcn</h1>
+          <p className="text-xs text-muted-foreground">
             {designSystem.name} · preset <code>{encodePreset(state)}</code> · форк shadcn/ui /create
           </p>
         </div>
@@ -50,19 +49,11 @@ export function App() {
           <KitShowcase />
         </PreviewFrame>
         <Card className="self-start py-4 lg:col-span-2 2xl:col-span-1">
+          <CardHeader className="px-4">
+            <CardTitle>Экспорт</CardTitle>
+          </CardHeader>
           <CardContent className="px-4">
-            <Tabs defaultValue="export">
-              <TabsList className="w-full">
-                <TabsTrigger value="export" className="flex-1">Экспорт</TabsTrigger>
-                <TabsTrigger value="extras" className="flex-1">Свои токены ({state.extras.length})</TabsTrigger>
-              </TabsList>
-              <TabsContent value="export" className="pt-4">
-                <ExportPanel designSystem={designSystem} />
-              </TabsContent>
-              <TabsContent value="extras" className="pt-4">
-                <ExtraTokensPanel state={state} designSystem={designSystem} onChange={update} />
-              </TabsContent>
-            </Tabs>
+            <ExportPanel designSystem={designSystem} />
           </CardContent>
         </Card>
       </main>

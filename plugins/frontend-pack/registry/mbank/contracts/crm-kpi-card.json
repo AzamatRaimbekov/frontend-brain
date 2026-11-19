@@ -80,10 +80,10 @@
     "delta-value": {
       "text": "sm",
       "weight": "medium",
-      "fg": "success-text"
+      "fg": "foreground"
     },
     "delta-label": {
-      "text": "caption",
+      "text": "xs",
       "fg": "muted-foreground",
       "weight": "regular"
     }

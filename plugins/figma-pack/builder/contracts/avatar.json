@@ -40,9 +40,9 @@
     },
     "fallback": {
       "radius": "full",
-      "bg": "surface-2",
+      "bg": "muted",
       "weight": "medium",
-      "fg": "soft-foreground",
+      "fg": "muted-foreground",
       "layout": "row",
       "align": "center"
     },

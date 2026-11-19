@@ -188,7 +188,7 @@ ${names.map((n) => `        <${n} values={values} errors={errors} onChange={chan
           </Alert>
         )}
         {mutation.isSuccess && (
-          <Alert tone="success">
+          <Alert tone="clear">
             <AlertDescription>{t.success}</AlertDescription>
           </Alert>
         )}
@@ -332,7 +332,7 @@ export function FormField({ id, label, required, hint, error, inline, children }
     'aria-required': required && !inline ? true : undefined,
   })
   const labelNode = (
-    <Label htmlFor={id} className={required ? "after:text-destructive-text after:content-['*']" : undefined}>
+    <Label htmlFor={id} className={required ? "after:text-destructive after:content-['*']" : undefined}>
       {label}
     </Label>
   )
@@ -350,12 +350,12 @@ export function FormField({ id, label, required, hint, error, inline, children }
         </>
       )}
       {hint && (
-        <p id={hintId} className="text-caption text-muted-foreground">
+        <p id={hintId} className="text-xs text-muted-foreground">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-caption text-destructive-text">
+        <p id={errorId} className="text-xs text-destructive">
           {error}
         </p>
       )}

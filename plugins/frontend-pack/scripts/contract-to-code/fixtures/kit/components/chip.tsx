@@ -6,12 +6,12 @@ import { cn } from "@/shared/lib/utils"
 /* Fixture for contract-to-code.test.mjs: a cva block, a part block and a const map. */
 // @contract chip start
 const chipVariants = cva(
-  "flex items-center gap-1 rounded-full font-medium whitespace-nowrap hover:bg-surface-3 [&>svg]:size-4",
+  "flex items-center gap-1 rounded-full font-medium whitespace-nowrap hover:bg-accent [&>svg]:size-4",
   {
     variants: {
       tone: {
-        neutral: "bg-surface-2 text-foreground",
-        brand: "bg-brand text-brand-foreground",
+        neutral: "bg-muted text-foreground",
+        accent: "bg-primary text-primary-foreground",
       },
     },
     defaultVariants: { tone: "neutral" },

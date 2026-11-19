@@ -57,11 +57,11 @@
       "bg": "card",
       "fg": "foreground",
       "text": "sm",
-      "shadow": "notification"
+      "shadow": "lg"
     },
     "icon": {
       "size": 5,
-      "fg": "soft-foreground"
+      "fg": "foreground"
     },
     "title": {
       "text": "base",
@@ -74,20 +74,13 @@
   "variants": {
     "type": {
       "default": {},
-      "success": {
-        "icon": {
-          "fg": "success-text"
-        },
-        "title": {
-          "fg": "success-text"
-        }
-      },
+      "success": {},
       "error": {
         "icon": {
-          "fg": "destructive-text"
+          "fg": "destructive"
         },
         "title": {
-          "fg": "destructive-text"
+          "fg": "destructive"
         }
       }
     }

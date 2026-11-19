@@ -29,7 +29,7 @@ function DataTableColumnHeader<TData, TValue>({
       <button
         type="button"
         onClick={column.getToggleSortingHandler()}
-        className="-mx-1.5 inline-flex h-8 items-center gap-1 rounded-sm px-1.5 font-medium transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 data-[sorted=true]:text-foreground"
+        className="-mx-1.5 inline-flex h-8 items-center gap-1 rounded-sm px-1.5 font-medium transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[sorted=true]:text-foreground"
         data-sorted={Boolean(sorted)}
       >
         {title}

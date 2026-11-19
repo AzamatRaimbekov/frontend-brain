@@ -19,25 +19,25 @@ export const periodOptions: { value: Period; label: string }[] = [
   { value: 'quarter', label: 'Квартал' },
 ]
 
-type BadgeTone = 'info' | 'warning' | 'success' | 'error' | 'neutral'
+type BadgeTone = 'neutral' | 'accent' | 'error' | 'clear'
 
 export function applicationStatus(app: Pick<Application, 'stage' | 'outcome'>): { label: string; tone: BadgeTone } {
-  if (app.outcome === 'approved') return { label: 'Одобрена', tone: 'success' }
+  if (app.outcome === 'approved') return { label: 'Одобрена', tone: 'accent' }
   if (app.outcome === 'rejected') return { label: 'Отказ', tone: 'error' }
-  if (app.stage === 'underwriting') return { label: 'Андеррайтинг', tone: 'warning' }
-  return { label: stageTitles[app.stage], tone: 'info' }
+  if (app.stage === 'underwriting') return { label: 'Андеррайтинг', tone: 'clear' }
+  return { label: stageTitles[app.stage], tone: 'neutral' }
 }
 
-export const historyTone: Record<HistoryEntry['kind'], 'warning' | 'success' | 'error' | 'info'> = {
-  progress: 'warning',
-  done: 'success',
+export const historyTone: Record<HistoryEntry['kind'], BadgeTone> = {
+  progress: 'neutral',
+  done: 'accent',
   rejected: 'error',
-  info: 'info',
+  info: 'clear',
 }
 
 export const riskBadge = {
-  low: { label: 'Риск: низкий', tone: 'success' },
-  medium: { label: 'Риск: средний', tone: 'warning' },
+  low: { label: 'Риск: низкий', tone: 'accent' },
+  medium: { label: 'Риск: средний', tone: 'clear' },
   high: { label: 'Риск: высокий', tone: 'error' },
 } as const
 

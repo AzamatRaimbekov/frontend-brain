@@ -10,21 +10,21 @@ import { cn } from "@/shared/lib/utils"
 const toastClassNames = {
   toast: cn(
     // @contract toast start
-    "group/toast flex w-full items-start gap-3 rounded-md border border-border bg-card text-sm text-foreground shadow-notification [&_[data-icon]]:mt-0.5 [&_[data-icon]]:size-5 [&_[data-icon]]:shrink-0 px-4 py-4",
+    "group/toast flex w-full items-start gap-3 rounded-md border border-border bg-card text-sm text-foreground shadow-lg [&_[data-icon]]:mt-0.5 [&_[data-icon]]:size-5 [&_[data-icon]]:shrink-0 px-4 py-4",
     // @contract toast end
   ),
   content: "flex flex-1 flex-col gap-1",
   title: "font-medium",
   description: "text-muted-foreground",
   actionButton:
-    "inline-flex h-8 shrink-0 items-center rounded-sm bg-secondary px-3 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary-hover",
+    "inline-flex h-8 shrink-0 items-center rounded-sm bg-secondary px-3 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/80",
   cancelButton:
-    "inline-flex h-8 shrink-0 items-center rounded-sm bg-soft px-3 text-xs font-medium text-soft-foreground-strong transition-colors hover:bg-soft-hover",
+    "inline-flex h-8 shrink-0 items-center rounded-sm bg-transparent px-3 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
   closeButton: "border-border bg-card text-muted-foreground hover:text-foreground",
-  success: "[&_[data-icon]]:text-status-success",
-  error: "[&_[data-icon]]:text-status-error",
-  warning: "[&_[data-icon]]:text-status-warning",
-  info: "[&_[data-icon]]:text-status-info",
+  success: "[&_[data-icon]]:text-foreground",
+  error: "[&_[data-icon]]:text-destructive",
+  warning: "[&_[data-icon]]:text-foreground",
+  info: "[&_[data-icon]]:text-foreground",
   loading: "[&_[data-icon]]:text-muted-foreground",
 } satisfies NonNullable<ToasterProps["toastOptions"]>["classNames"]
 

@@ -73,6 +73,13 @@ export function contrast(fg: string, bg: string) {
 
 // ---- added for the configurator ----
 
+/** oklch -> #hex clipping each sRGB channel, as browsers render out-of-gamut colours (and as
+ *  Tailwind publishes its hex values, e.g. red-600 = #e7000b). Used for every exported value. */
+export function oklchToHexClipped({ l, c, h, a = 1 }: { l: number; c: number; h: number; a?: number }) {
+  const [r, g, b] = oklchToLinear({ l, c, h }).map((v) => toGamma(Math.min(1, Math.max(0, v))))
+  return rgbToHex({ r, g, b, a })
+}
+
 const num = (s: string, scale = 1) => (s.endsWith("%") ? parseFloat(s) / 100 : parseFloat(s) / scale)
 
 /** A CSS colour (hex, oklch(), rgb()/rgba()) -> #rrggbb[aa], or null when it is not a colour. */
@@ -93,7 +100,7 @@ export function parseCssColor(value: string): string | null {
   const a = alpha ?? rest ? num((alpha ?? rest) as string) : 1
   if (parts.length !== 3 || parts.some((p) => Number.isNaN(parseFloat(p)))) return null
   if (fn[1] === "oklch") {
-    return oklchToHex({ l: num(parts[0]), c: parseFloat(parts[1]), h: parseFloat(parts[2]), a })
+    return oklchToHexClipped({ l: num(parts[0]), c: parseFloat(parts[1]), h: parseFloat(parts[2]), a })
   }
   return rgbToHex({ r: num(parts[0], 255), g: num(parts[1], 255), b: num(parts[2], 255), a })
 }

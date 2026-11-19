@@ -88,13 +88,14 @@ async function instance(ctx, role, want, label) {
 const BTN = {
   default: ['primary', 'primary-foreground', null], secondary: ['secondary', 'secondary-foreground', null],
   outline: ['background', 'foreground', 'border'], ghost: [null, 'foreground', null],
-  destructive: ['destructive', 'destructive-foreground', null],
+  destructive: ['destructive', 'primary-foreground', null],
 };
 
-// Screen words -> the Mbank kit's variant names (contracts/button.json, badge.json).
+// Screen words -> the contracts' variant values (contracts/button.json, badge.json).
 const BTN_VARIANT = { default: 'primary', secondary: 'secondary', outline: 'outline', ghost: 'ghost', destructive: 'destructive', link: 'link' };
 const BTN_SIZE = { default: 'md', sm: 'sm', lg: 'lg', icon: 'icon' };
-const BADGE_TONE = { default: 'accent', secondary: 'neutral', outline: 'clear', destructive: 'error', success: 'success', warning: 'warning', info: 'info' };
+// badge tones: neutral (secondary), accent (default), error (destructive), clear (outline); statuses map onto them.
+const BADGE_TONE = { default: 'accent', secondary: 'neutral', outline: 'clear', destructive: 'error', success: 'accent', warning: 'clear', info: 'neutral' };
 
 export async function button(ctx, label, variant = 'default', sz = 'default') {
   const props = { variant: BTN_VARIANT[variant] || variant, size: BTN_SIZE[sz] || sz, state: 'default' };
@@ -108,12 +109,13 @@ export async function button(ctx, label, variant = 'default', sz = 'default') {
 
 const BADGE = {
   default: ['primary', 'primary-foreground'], secondary: ['secondary', 'secondary-foreground'],
-  outline: [null, 'foreground'], destructive: ['destructive', 'destructive-foreground'],
-  success: ['success', 'success-foreground'], warning: ['warning', 'warning-foreground'], info: ['info', 'info-foreground'],
+  outline: [null, 'foreground'], destructive: ['destructive', 'primary-foreground'],
+  // shadcn Badge has default / secondary / outline / destructive; statuses map onto them.
+  success: ['primary', 'primary-foreground'], warning: ['secondary', 'secondary-foreground'], info: [null, 'foreground'],
 };
 
 export async function badge(ctx, label, variant = 'secondary') {
-  const props = { tone: BADGE_TONE[variant] || 'neutral', fill: 'ghost', shape: 'rounded', size: 'md' };
+  const props = { tone: BADGE_TONE[variant] || 'neutral', shape: 'rounded', size: 'md' };
   const inst = (await place(ctx, 'badge', { props, label })) || (await instance(ctx, 'badge', { ...props, variant, type: variant }, label));
   if (inst) return inst;
   count(ctx, 'badge', false);

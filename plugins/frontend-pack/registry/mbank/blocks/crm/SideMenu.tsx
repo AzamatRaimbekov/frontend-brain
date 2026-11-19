@@ -23,7 +23,7 @@ type SideMenuProps = {
   className?: string
 }
 
-/** Figma `sideMenu` (280px, background/onsurface/1): logo, menu groups, help group, user. */
+/** Figma `sideMenu` (280px, bg-sidebar): logo, menu groups, help group, user. */
 export function SideMenu({
   brand,
   sections,
@@ -42,7 +42,7 @@ export function SideMenu({
       aria-label={label}
       data-slot="side-menu"
       data-collapsed={collapsed || undefined}
-      className={cn("flex h-full min-h-0 flex-col bg-surface-1 text-foreground", className)}
+      className={cn("flex h-full min-h-0 flex-col bg-sidebar text-sidebar-foreground", className)}
     >
       <div className={cn("flex h-19 shrink-0 items-center justify-between gap-2 px-5", collapsed && "justify-center px-2")}>
         {!collapsed && brand}
@@ -66,7 +66,7 @@ export function SideMenu({
       </div>
       {(footerSections.length > 0 || user) && (
         <div className="shrink-0">
-          <div className="mx-3 border-t border-border" />
+          <div className="mx-3 border-t border-sidebar-border" />
           <div>
             {footerSections.map((section) => (
               <SideMenuSection key={section.id} section={section} {...sectionProps} />

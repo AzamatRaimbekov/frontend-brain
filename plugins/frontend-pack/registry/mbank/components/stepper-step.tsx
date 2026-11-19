@@ -15,9 +15,9 @@ const stepperStepVariants = cva(
   {
     variants: {
       status: {
-        done: "*:data-[slot=stepper-step-marker]:bg-status-success-muted **:data-[slot=stepper-step-number]:text-status-success",
-        current: "font-medium *:data-[slot=stepper-step-marker]:bg-status-success **:data-[slot=stepper-step-number]:text-static-light",
-        upcoming: "text-muted-foreground *:data-[slot=stepper-step-marker]:bg-soft **:data-[slot=stepper-step-number]:text-muted-foreground",
+        done: "*:data-[slot=stepper-step-marker]:bg-primary/10 **:data-[slot=stepper-step-number]:text-primary",
+        current: "font-medium *:data-[slot=stepper-step-marker]:bg-primary **:data-[slot=stepper-step-number]:text-primary-foreground",
+        upcoming: "text-muted-foreground *:data-[slot=stepper-step-marker]:bg-muted **:data-[slot=stepper-step-number]:text-muted-foreground",
       },
     },
     defaultVariants: { status: "upcoming" },
@@ -51,7 +51,7 @@ function StepperStep({ className, status = "upcoming", number, label, descriptio
         <span className="sr-only">, {statusText[status ?? "upcoming"]}</span>
       </span>
       {description && (
-        <span data-slot="stepper-step-description" className="truncate text-caption text-muted-foreground">
+        <span data-slot="stepper-step-description" className="truncate text-xs text-muted-foreground">
           {description}
         </span>
       )}

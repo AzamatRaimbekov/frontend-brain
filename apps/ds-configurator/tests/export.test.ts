@@ -1,73 +1,70 @@
 import Ajv from "ajv"
 import { describe, expect, it } from "vitest"
 
-import { buildDesignSystem } from "@/lib/design-system"
+import { buildDesignSystem, projectDesignSystem } from "@/lib/design-system"
 import { buildRegistryItem } from "@/lib/export/registry-item"
 import { buildTokensCss } from "@/lib/export/tokens-css"
-import { DEFAULT_STATE, type ConfiguratorState } from "@/lib/types"
+import { applyOverrides, COLOR_NAMES, SHADCN_TOKENS } from "@/lib/tokens"
+import { DEFAULT_STATE } from "@/lib/types"
 import schema from "@/upstream/registry-item.schema.json"
 
 // Vendored copy of https://ui.shadcn.com/schema/registry-item.json (upstream apps/v4/public/schema).
 const ajv = new Ajv({ strict: false, allErrors: true, validateSchema: false }) // its $schema is the https draft-07 URL
 const validate = ajv.compile(schema)
 
-const extras: ConfiguratorState["extras"] = [
-  { name: "mb-promo", kind: "color", light: "#16a34a", dark: "#189547" },
-  { name: "mb-card", kind: "radius", light: "20px", dark: "20px" },
-  { name: "mb-gutter", kind: "size", light: "1.5rem", dark: "1.5rem" },
-]
-
 describe("registry:base export", () => {
   it("the vendored schema validator rejects invalid items", () => {
     expect(validate({ name: "x" })).toBe(false)
     expect(validate({ name: "x", type: "registry:ui", style: "nova" })).toBe(false)
-    expect(validate({ name: "x", type: "registry:base", cssVars: { light: { a: 1 } } })).toBe(false)
   })
 
-  for (const over of [{}, { brand: "koko", extras }, { source: "shadcn" as const, baseColor: "stone" as const, theme: "rose" as const }]) {
-    it(`is valid against the shadcn registry-item schema (${JSON.stringify(over).slice(0, 40)})`, () => {
-      const item = buildRegistryItem(buildDesignSystem({ ...DEFAULT_STATE, ...over }))
-      const ok = validate(JSON.parse(JSON.stringify(item)))
+  const systems = [
+    buildDesignSystem(DEFAULT_STATE),
+    buildDesignSystem({ ...DEFAULT_STATE, baseColor: "stone", theme: "rose", font: "inter", fontHeading: "lora" }),
+    projectDesignSystem("credit", applyOverrides(SHADCN_TOKENS, { primary: { light: "#7c3aed" }, "font-sans": { light: "'Inter', sans-serif" } })),
+  ]
+  for (const ds of systems) {
+    it(`is valid against the shadcn registry-item schema (${ds.name})`, () => {
+      const ok = validate(JSON.parse(JSON.stringify(buildRegistryItem(ds))))
       expect(validate.errors ?? []).toEqual([])
       expect(ok).toBe(true)
     })
   }
 
-  it("has the registry:base shape the shadcn CLI reads", () => {
-    const item = buildRegistryItem(buildDesignSystem({ ...DEFAULT_STATE, extras }))
+  it("has the registry:base shape the shadcn CLI reads, only shadcn names", () => {
+    const item = buildRegistryItem(buildDesignSystem(DEFAULT_STATE))
     expect(item).toMatchObject({
       $schema: "https://ui.shadcn.com/schema/registry-item.json",
-      name: "mbank-bank",
+      name: "neutral-neutral",
       type: "registry:base",
       extends: "none",
-      config: { style: "radix-nova", iconLibrary: "lucide", menuAccent: "subtle", menuColor: "default" },
-      registryDependencies: ["utils"],
+      config: { style: "radix-nova", iconLibrary: "lucide", menuAccent: "subtle", menuColor: "default", tailwind: { baseColor: "neutral" } },
+      registryDependencies: ["utils", "font-geist"],
+      meta: { figma: { collection: "shadcn", modes: ["Light", "Dark"] } },
     })
-    expect(item.dependencies).toContain("radix-ui")
-    expect(item.cssVars.light.primary).toBe("#fddb2b")
-    expect(item.cssVars.dark.brand).toBe("#189547")
-    expect(item.cssVars.light["mb-promo"]).toBe("#16a34a")
-    expect(item.cssVars.theme["radius-card"]).toBe("var(--mb-card)")
-    expect(item.cssVars.theme["spacing-gutter"]).toBe("var(--mb-gutter)")
-    expect(item.css["@layer base"]).toBeDefined()
-    expect(item.meta.preset).toMatch(/^b[0-9A-Za-z]+$/)
+    expect(item.cssVars.light.primary).toBe("oklch(0.205 0 0)")
+    expect(item.cssVars.dark.border).toBe("oklch(1 0 0 / 10%)")
+    expect(Object.keys(item.cssVars.dark)).toEqual(COLOR_NAMES)
+    expect(item.cssVars.theme["radius-xl"]).toBe("calc(var(--radius) * 1.4)")
   })
 
-  it("adds the upstream font registry item for Google fonts", () => {
-    const item = buildRegistryItem(buildDesignSystem({ ...DEFAULT_STATE, font: "geist", fontHeading: "lora" }))
-    expect(item.registryDependencies).toEqual(["utils", "font-geist", "font-heading-lora"])
+  it("a project's free font stack goes to cssVars.theme, no font registry item", () => {
+    const item = buildRegistryItem(systems[2])
+    expect(item.registryDependencies).toEqual(["utils"])
+    expect(item.cssVars.theme["font-sans"]).toBe("'Inter', sans-serif")
+    expect(item.cssVars.light.primary).toBe("#7c3aed")
   })
 })
 
 describe("tokens.css export", () => {
-  it("has :root, .dark, @theme inline mappings and the same values", () => {
-    const css = buildTokensCss(buildDesignSystem({ ...DEFAULT_STATE, extras }))
-    expect(css).toMatch(/:root \{\n {2}--background: #ffffff;/)
-    expect(css).toMatch(/\.dark \{[^}]*--primary: #f7c21c;/)
-    expect(css).toContain("--color-mb-promo: var(--mb-promo);")
-    expect(css).toContain("--color-ring: var(--ring);")
-    expect(css).toContain("--radius-card: var(--mb-card);")
+  it("has :root, .dark, @theme inline mappings for the shadcn names only", () => {
+    const css = buildTokensCss(buildDesignSystem(DEFAULT_STATE))
+    expect(css).toMatch(/:root \{\n {2}--radius: 0.625rem;\n {2}--background: oklch\(1 0 0\);/)
+    expect(css).toMatch(/\.dark \{[^}]*--primary: oklch\(0.922 0 0\);/)
+    expect(css).toContain("--color-sidebar-ring: var(--sidebar-ring);")
+    expect(css).toContain("--radius-sm: calc(var(--radius) * 0.6);")
+    expect(css).toContain("--font-heading: var(--font-sans);")
     expect(css).not.toContain("--color-radius:")
-    expect(css).not.toContain("--color-z-modal:")
+    expect(css.match(/--color-[\w-]+:/g)).toHaveLength(31)
   })
 })

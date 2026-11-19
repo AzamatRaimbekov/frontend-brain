@@ -1,12 +1,12 @@
 # Mbank web: build from the coded kit
 
-Applies when the mockup uses the Mbank Tokens kits (Web components, Hero Section, CRM UI KIT) or the project is an Mbank / MDigital product (Mbank, kassa, travel, artwin, koko). It replaces the generic shadcn branch of `../SKILL.md` section 2 for components, tokens, fonts and icons. Everything else (flow, brief, 150 lines, data layer, review) stays as in `../SKILL.md`.
+Applies when the mockup uses the Mdigital kits (Web components, Hero Section, CRM UI KIT) or the project is an Mbank / MDigital product. It replaces the generic shadcn branch of `../SKILL.md` section 2 for components and icons; tokens are the standard shadcn/ui set (section 4). Everything else (flow, brief, 150 lines, data layer, review) stays as in `../SKILL.md`.
 
 ## 1. Load
 
-1. `figma-pack:mbank-design-system` - kit choice, token names, rules (`../../mbank-design-system/SKILL.md`).
+1. `figma-pack:mbank-design-system` - kit choice, component catalog, rules (`../../mbank-design-system/SKILL.md`).
 2. `frontend-pack:mbank-ui` - the coded Mbank UI kit: its install command, component list, props and theme file. File in the frontend-brain repository: `plugins/frontend-pack/skills/mbank-ui/SKILL.md`. If the Skill tool is unavailable, locate the plugin root with `find ~/.claude/plugins . -path '*frontend-pack/.claude-plugin/plugin.json' 2>/dev/null | head -1` and read `skills/mbank-ui/SKILL.md`.
-3. `../../mbank-design-system/references/code-mapping.md` - Figma token -> CSS variable / class, fonts, icons, component mapping. Values: `../../mbank-figma-patterns/references/tokens.md` wins over any `?` left in code-mapping.
+3. `../../mbank-design-system/references/code-mapping.md` - icons and component mapping. Tokens: `figma-pack:ds-tokens` (the 31 shadcn colours, radius scale, fonts in `skills/ds-tokens/references/shadcn-tokens.json`; the design-engine MCP `ds_tokens` serves the same set).
 
 `mbank-ui` or `scripts/add-ui.mjs` not installed or not found (check: `ls <frontend-pack>/skills/mbank-ui/SKILL.md <frontend-pack>/scripts/add-ui.mjs`) -> say so in the plan and the final report, skip section 2, build with the code-mapping tables (section 7 for components), and do not invent a parallel kit in the project.
 
@@ -31,12 +31,12 @@ For every Figma instance in the spec (section "components"):
 
 A Figma variant that has no prop in code is a mismatch row (spec section 9): ask, do not add a one-off class.
 
-## 4. Tokens, brand, font
+## 4. Tokens and font
 
-- Mbank token names replace shadcn's defaults: `primary` = signature yellow, `secondary` = near-black, `brand`, `muted`, `surface-*`, `status-*` (`code-mapping.md` sections 1-3). Use the classes, never hex.
-- Product brand: one switch on the app root as `mbank-ui` sets it up (planned as `data-brand="kassa|travel|artwin|koko"`; `bank` is the default); components never take brand colours directly (`mbank-design-system` rule 3).
-- Font: Inter Mbank through `--font-sans` (`code-mapping.md` section 4). Font files and licence are pending (gap G03): until they exist the fallback in the stack renders; report it, do not replace it with Google Fonts Inter in production.
-- Focus ring, missing disabled/pressed states: in code from tokens (`focus-visible:ring-ring`, `disabled-foreground`), gap G10.
+- Tokens are the standard shadcn/ui names only (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1..5`, `sidebar-*`, each with `-foreground` where shadcn has it) and the shadcn radius scale. Use the Tailwind classes (`bg-primary`, `text-muted-foreground`, `rounded-lg`), never hex. A project changes token values (preset on the ds-configurator site), never adds names.
+- A Figma colour that has no standard name is a mismatch row (spec section 9): map it to the closest shadcn token and ask the designer; never add a custom variable or a one-off class.
+- Font: through `--font-sans` / `--font-heading` from the kit theme; do not hard-code a family in components.
+- Focus ring, disabled states: in code from tokens (`focus-visible:ring-ring`, `disabled:opacity-50`).
 
 ## 5. Icons
 
@@ -46,5 +46,5 @@ Mbank Icons, not `lucide-react` (overrides `translation-rules.md` section 6 and 
 
 - [ ] `mbank-ui` loaded and kit components installed with `add-ui.mjs`, none hand-built - or their absence reported and code-mapping section 7 used
 - [ ] Props taken by the lookup order of section 3; unmapped variants asked as mismatch rows
-- [ ] No hex, no default shadcn palette, no `lucide-react`; brand via `data-brand`
-- [ ] Font through `--font-sans`; missing Inter Mbank files reported (G03)
+- [ ] No hex, no Tailwind palette classes, no `lucide-react`; only standard shadcn token classes
+- [ ] Font through `--font-sans` / `--font-heading`

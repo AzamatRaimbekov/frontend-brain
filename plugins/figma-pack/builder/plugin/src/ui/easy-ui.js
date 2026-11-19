@@ -67,12 +67,11 @@ export function initEasy({ $, esc, send, getStatus }) {
 
   function build(kind, pick) {
     const { spec, only } = easySpec(EXAMPLE, { ...pick, device: choice.device, states: $('eStates').checked, product: $('eProduct').value });
-    const s = getStatus();
     running = kind;
     lock(true);
     $('eBar').style.width = '0';
     say('⏳ Рисую… Не закрывай окно, это займёт до минуты.');
-    send('build', { spec, only, brand: s?.brands[0] || 'bank', style: s?.styles[0], theme: choice.theme, font: 'Inter' });
+    send('build', { spec, only, theme: choice.theme, font: 'Inter' });
   }
   function lock(on) {
     for (const id of ['eGo', 'eMine', 'eKit']) $(id).disabled = on;
@@ -85,7 +84,7 @@ export function initEasy({ $, esc, send, getStatus }) {
     running = 'kit';
     lock(true);
     say('⏳ Собираю все компоненты на одну страницу…');
-    send('contract-render-all', { create: false });
+    send('contract-render-all', { create: true }); // a file without the shadcn variables gets them (canonical values)
   };
 
   const handlers = {

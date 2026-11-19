@@ -1,7 +1,7 @@
 // Tools of the design-system MCP server (server.mjs): one source for every frontend agent —
-// tokens (values light/dark + Figma variable), kit components (registry, contract, Figma mapping),
-// and a project check/sync against the current tokens. Data comes from installed frontend-pack
-// (tokens.css, tokens.map.json, registry/mbank, contracts) and the engine's components-map.json.
+// tokens (the standard shadcn/ui set: name, light/dark value, Figma variable), kit components (registry, contract,
+// Figma mapping), and a project check/sync against the current tokens. Data comes from installed frontend-pack
+// (registry/mbank/shadcn-tokens.json, tokens.css, registry, contracts) and the engine's components-map.json.
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,15 +15,15 @@ export function sources(frontend = resolvePlugin('frontend-pack')) {
   const kit = join(frontend, 'registry', 'mbank');
   return {
     kit,
+    shadcnTokens: join(kit, 'shadcn-tokens.json'),
     tokensCss: join(kit, 'tokens.css'),
-    tokensMap: join(kit, 'tokens.map.json'),
     registry: join(kit, 'r'),
     contracts: join(kit, 'contracts'),
     componentsMap: join(ENGINE, 'references', 'components-map.json'),
   };
 }
 
-// :root / .dark custom properties of tokens.css -> { name: { light, dark } }.
+// :root / .dark custom properties of a CSS file -> { name: { light, dark } }.
 export function parseTokens(css) {
   const out = {};
   const block = (selector) => {
@@ -36,28 +36,28 @@ export function parseTokens(css) {
   return out;
 }
 
-// tokens.map.json entries -> { cssVar: figma variable name } (best effort over the map's shapes).
-function figmaNames(map) {
-  const names = {};
-  const visit = (node) => {
-    if (Array.isArray(node)) return node.forEach(visit);
-    if (!node || typeof node !== 'object') return;
-    const css = node.css ?? node.var ?? node.name;
-    const figma = node.figma ?? node.light?.figma ?? node.source;
-    if (typeof css === 'string' && typeof figma === 'string') names[css.replace(/^--/, '')] = figma;
-    Object.values(node).forEach(visit);
-  };
-  visit(map);
-  return names;
+// shadcn-tokens.json (shadcn/tokens@1) -> flat list. Only standard shadcn names exist: a project changes values,
+// never adds names. The Figma variable has the token's own name (no alias layer).
+export function shadcnTokenList(data) {
+  const colors = Object.entries(data.colors ?? {}).map(([name, v]) => ({
+    name, kind: 'color', light: v.light ?? null, dark: v.dark ?? v.light ?? null, figma: name,
+    tailwind: `bg-${name} / text-${name} / border-${name}`,
+  }));
+  const radius = [
+    { name: 'radius', kind: 'radius', light: data.radius ?? null, dark: data.radius ?? null, figma: 'radius', tailwind: 'rounded-lg' },
+    ...Object.entries(data.radiusScale ?? {}).map(([step, value]) => ({
+      name: `radius-${step}`, kind: 'radius', light: value, dark: value, figma: `radius-${step}`, tailwind: `rounded-${step}`,
+    })),
+  ];
+  const fonts = Object.entries(data.font ?? {}).map(([role, value]) => ({
+    name: `font-${role}`, kind: 'font', light: value, dark: value, figma: `font-${role}`, tailwind: `font-${role}`,
+  }));
+  return [...colors, ...radius, ...fonts];
 }
 
 export function tokens({ query = '', src = sources() } = {}) {
-  const values = parseTokens(readFileSync(src.tokensCss, 'utf8'));
-  const figma = existsSync(src.tokensMap) ? figmaNames(readJson(src.tokensMap)) : {};
   const q = query.toLowerCase();
-  return Object.entries(values)
-    .filter(([name]) => !q || name.includes(q) || (figma[name] ?? '').toLowerCase().includes(q))
-    .map(([name, v]) => ({ name, light: v.light ?? null, dark: v.dark ?? v.light ?? null, figma: figma[name] ?? null, tailwind: `bg-${name} / text-${name} / border-${name}` }));
+  return shadcnTokenList(readJson(src.shadcnTokens)).filter((t) => !q || t.name.includes(q) || t.kind === q);
 }
 
 export function components({ src = sources() } = {}) {
@@ -99,7 +99,7 @@ export function component({ name, src = sources() }) {
 const RULES = [
   [/#[0-9a-fA-F]{3,8}\b/g, 'hex colour: use a token class (ds_tokens)'],
   [/\b(?:bg|text|border|ring|fill|stroke|from|to|via)-\[(?:#|rgb|hsl|oklch|color-mix)[^\]]*\]/g, 'arbitrary colour: use a token'],
-  [/\b(?:bg|text|border|ring)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b/g, 'Tailwind palette colour: not an Mbank token'],
+  [/\b(?:bg|text|border|ring)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b/g, 'Tailwind palette colour: not a design-system token'],
   [/style=\{\{[^}]*(?:color|background)[^}]*\}\}/g, 'inline colour style'],
 ];
 const CODE = /\.(tsx|ts|jsx|js|css)$/;
@@ -114,7 +114,10 @@ function walk(dir, out = []) {
   return out;
 }
 
-// Finds the project's copy of the Mbank tokens (copy mode) and the files that bypass tokens.
+// Finds the project's copy of the design-system tokens.css (copy mode) and the files that bypass tokens.
+// A copy of tokens.css: Tailwind v4 @theme inline plus the shadcn :root set (first and last standard variable).
+const isTokensCopy = (text) => text.includes('@theme inline') && /--background:/.test(text) && /--sidebar-ring:/.test(text);
+
 export function checkProject({ path, src = sources() }) {
   const root = join(path, 'src');
   if (!existsSync(root)) throw new Error(`${path} has no src/ folder`);
@@ -124,7 +127,7 @@ export function checkProject({ path, src = sources() }) {
   for (const file of walk(root)) {
     const text = readFileSync(file, 'utf8');
     const rel = relative(path, file);
-    if (file.endsWith('.css') && text.includes('--brand-ghost') && text.includes('@theme inline')) {
+    if (file.endsWith('.css') && isTokensCopy(text)) {
       tokensFile = rel;
       continue; // the tokens file itself is checked by comparison below
     }

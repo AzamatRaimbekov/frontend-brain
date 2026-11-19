@@ -15,13 +15,13 @@ type CrmLayoutProps = {
   className?: string
 }
 
-/** Figma CRM frame 1440: sideMenu 280 + content (topHeader 68, Body on background/onsurface/1). */
+/** Figma CRM frame 1440: sideMenu 280 + content (topHeader 68, Body on bg-muted). */
 export function CrmLayout({ sideMenu, header, banner, collapsed = false, children, className }: CrmLayoutProps) {
   return (
     <div
       data-slot="crm-layout"
       className={cn(
-        "min-h-dvh bg-surface-1 text-foreground lg:grid",
+        "min-h-dvh bg-muted text-foreground lg:grid",
         collapsed ? "lg:grid-cols-[72px_minmax(0,1fr)]" : "lg:grid-cols-[280px_minmax(0,1fr)]",
         className,
       )}

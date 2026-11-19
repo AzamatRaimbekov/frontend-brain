@@ -11,7 +11,7 @@ import { cn } from "@/shared/lib/utils"
  */
 // @contract tabbar-item start
 const tabbarItemVariants = cva(
-  "flex flex-col items-center gap-1 px-2 py-2 text-2xs font-medium text-muted-foreground aria-[current=page]:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:size-6 min-w-0 flex-1 justify-center transition-colors outline-none [&_svg]:shrink-0",
+  "flex flex-col items-center gap-1 px-2 py-2 text-xs font-medium text-muted-foreground aria-[current=page]:text-primary focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-6 min-w-0 flex-1 justify-center transition-colors outline-none [&_svg]:shrink-0",
 )
 // @contract tabbar-item end
 

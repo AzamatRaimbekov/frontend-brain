@@ -23,7 +23,7 @@
   "base": {
     "root": {
       "radius": "md",
-      "bg": "surface-2"
+      "bg": "accent"
     }
   },
   "variants": {

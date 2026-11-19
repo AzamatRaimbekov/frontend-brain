@@ -3,34 +3,20 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { createFigma, seedKit } from './figma-mock.mjs';
-import { COLOR_TOKENS, EXTENSION_TOKENS } from '../core/tokens.js';
 import { setBinding } from '../core/contract.js';
 
-const KIT_TOKENS = COLOR_TOKENS.filter((t) => !EXTENSION_TOKENS.includes(t));
 const dir = new URL('./fixtures/contracts/', import.meta.url);
 const FIXTURES = readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => JSON.parse(readFileSync(new URL(f, dir))));
 const fixture = (n) => FIXTURES.find((c) => c.name === n);
 
-// shadcn kit + Brand layer + Tailwind spacing + a slice of the Mbank Foundation file (2.theme).
+// A file with the «shadcn» variable collection (canonical values).
 async function fresh() {
   const m = createFigma();
   globalThis.figma = m.figma;
-  await seedKit(m.figma, KIT_TOKENS);
-  const brand = await import('../plugin/src/brand.js');
-  await brand.setupBrand({ fixNames: true });
-  const v = m.figma.variables;
-  const tw = [...m.cols.values()].find((c) => c.name === 'Tailwind');
-  const spacing = {};
-  for (const step of [1, 2, 3, 4, 6, 9, 11, 14]) {
-    spacing[step] = v.createVariable(`spacing/${step}`, tw, 'FLOAT');
-    spacing[step].setValueForMode(tw.defaultModeId, step * 4);
-  }
-  const theme = v.createVariableCollection('2.theme');
-  const hover = v.createVariable('accent/primary/hover', theme, 'COLOR');
-  hover.setValueForMode(theme.defaultModeId, { r: 1, g: 0.7, b: 0, a: 1 });
+  await seedKit(m.figma);
   const { renderContract } = await import('../plugin/src/components.js');
   const { contractHandlers } = await import('../plugin/src/contracts.js');
-  return { ...m, brand, spacing, hover, renderContract, handlers: contractHandlers(FIXTURES) };
+  return { ...m, renderContract, handlers: contractHandlers(FIXTURES) };
 }
 
 const variant = (set, name) => set.children.find((n) => n.name === name);
@@ -51,13 +37,13 @@ test('button contract -> component set with every token bound', async () => {
   assert.deepEqual(defs.state.variantOptions, ['default', 'hover', 'active', 'focus', 'disabled']);
 
   const md = variant(set, 'variant=primary, size=md, state=default');
-  assert.equal(fillVar(m, md).name, 'primary', 'kit token: Mode/primary');
+  assert.equal(fillVar(m, md).name, 'primary', 'shadcn/primary');
   assert.equal(md.layoutMode, 'HORIZONTAL');
   assert.equal(md.height, 44);
-  assert.equal(md.boundVariables.height.id, m.spacing[11].id);
-  assert.equal(md.boundVariables.paddingLeft.id, m.spacing[4].id);
-  assert.equal(md.boundVariables.itemSpacing.id, m.spacing[2].id);
-  assert.equal(m.vars.get(md.boundVariables.topLeftRadius.id).name, 'radius/md');
+  assert.equal(md.paddingLeft, 16, 'spacing stays a number: shadcn has no spacing tokens');
+  assert.equal(md.itemSpacing, 8);
+  assert.equal(md.boundVariables.height, undefined);
+  assert.equal(m.vars.get(md.boundVariables.topLeftRadius.id).name, 'radius-md');
   const label = md.children.find((n) => n.name === 'label');
   assert.equal(label.characters, 'Кнопка');
   assert.ok(label.textStyleId, 'label has a text style');
@@ -65,20 +51,18 @@ test('button contract -> component set with every token bound', async () => {
   assert.deepEqual(md.children.map((n) => n.name), ['label', 'icon']);
 
   const hover = variant(set, 'variant=primary, size=md, state=hover');
-  assert.equal(fillVar(m, hover).id, m.hover.id, 'primary-hover found through the baked Mbank map (2.theme accent/primary/hover)');
+  assert.equal(fillVar(m, hover).name, 'primary', 'primary/90: the same variable at 90 %');
+  assert.equal(hover.fills[0].opacity, 0.9);
   const focus = variant(set, 'variant=primary, size=md, state=focus');
   assert.equal(m.vars.get(focus.effects[0].boundVariables.color.id).name, 'ring');
   assert.equal(focus.effects[0].color.a, 0.5);
   assert.equal(variant(set, 'variant=primary, size=md, state=disabled').opacity, 0.5);
 
   const outline = variant(set, 'variant=outline, size=sm, state=hover');
-  assert.equal(m.vars.get(outline.strokes[0].boundVariables.color.id).name, 'outline-hover', 'missing token created in Mode');
-  const created = report.createdTokens.map((t) => t.token);
-  assert.ok(created.includes('outline') && created.includes('ghost-hover'));
-  assert.deepEqual(report.createdTokens.find((t) => t.token === 'ghost-hover').like, 'ghost', 'hover placeholder follows its base token');
-  const outlineVar = [...m.vars.values()].find((v) => v.name === 'outline');
-  assert.equal(outlineVar.getPluginData('ds'), 'contract-placeholder');
-  assert.equal(outlineVar.codeSyntax.WEB, 'var(--outline)');
+  assert.equal(m.vars.get(outline.strokes[0].boundVariables.color.id).name, 'input');
+  assert.equal(fillVar(m, outline).name, 'accent');
+  assert.deepEqual(report.createdTokens, [], 'the collection was there: nothing created');
+  for (const v of m.vars.values()) assert.equal(m.cols.get(v.variableCollectionId).name, 'shadcn', `${v.name}: only shadcn variables`);
   assert.equal(report.unbound, 0, JSON.stringify(report.missing));
   assert.deepEqual(report.missing, []);
 });
@@ -119,26 +103,34 @@ test('badge (compound, no states) and input (border states) render', async () =>
   const set = m.figma.root.findOne((n) => n.id === b.report.setId);
   assert.equal(set.children.length, 12);
   const solid = variant(set, 'tone=success, fill=solid, size=sm');
-  assert.equal(fillVar(m, solid).name, 'status-success');
+  assert.equal(fillVar(m, solid).name, 'primary');
   assert.equal(solid.cornerRadius, 9999, 'radius full without a variable');
   const i = await m.renderContract(fixture('input'));
   const iset = m.figma.root.findOne((n) => n.id === i.report.setId);
   const focus = variant(iset, 'size=md, state=focus');
   assert.equal(m.vars.get(focus.strokes[0].boundVariables.color.id).name, 'ring');
   const dis = variant(iset, 'size=md, state=disabled');
-  assert.equal(fillVar(m, dis.children[0]).name, 'disabled-foreground');
+  assert.equal(fillVar(m, dis.children[0]).name, 'muted-foreground');
   assert.equal(fillVar(m, dis).name, 'muted');
 });
 
-test('without the Brand layer missing tokens are reported, not invented', async () => {
+test('an empty file gets the shadcn collection; a name that is not a shadcn token is reported, not invented', async () => {
   const m = createFigma();
   globalThis.figma = m.figma;
-  await seedKit(m.figma, KIT_TOKENS);
   const { renderContract } = await import('../plugin/src/components.js');
+  const { COLOR_TOKENS } = await import('../core/tokens.js');
+  const off = await renderContract(fixture('badge'), { create: false });
+  assert.ok(off.report.missing.some((x) => x.kind === 'color' && x.token === 'secondary'), 'create: false touches nothing');
+  assert.equal(m.cols.size, 0);
   const { report } = await renderContract(fixture('badge'));
-  assert.ok(report.missing.some((x) => x.kind === 'color' && x.token === 'status-success'));
-  assert.equal(report.createdTokens.length, 0);
-  assert.ok(report.unbound > 0);
+  assert.deepEqual(report.createdTokens.map((x) => x.token).sort(), [...COLOR_TOKENS].sort());
+  assert.equal(report.unbound, 0, JSON.stringify(report.missing));
+  const foreign = JSON.parse(JSON.stringify(fixture('badge')));
+  foreign.variants.tone.success.root.bg = 'status-success';
+  const res = await renderContract(foreign);
+  assert.ok(res.report.missing.some((x) => x.kind === 'color' && x.token === 'status-success'));
+  assert.ok(![...m.vars.values()].some((v) => v.name === 'status-success'), 'no variable invented');
+  assert.ok(res.report.unbound > 0);
   const bad = await renderContract({ ...fixture('badge'), $schema: 'x' });
   assert.ok(bad.errors.length);
 });
@@ -155,8 +147,8 @@ test('handlers: list, import, bind (rebinds in Figma), new component, export, re
 
   await h['contract-render']({ name: 'button', states: ['default', 'hover'] });
   const rows = await h['contract-rows']({ name: 'button' });
-  assert.ok(rows.vars.some((v) => v.token === 'primary' && v.collection === 'Mode'));
-  assert.ok(rows.vars.some((v) => v.token === 'primary-hover' && v.collection === '2.theme'), 'Foundation names map back to tokens');
+  assert.ok(rows.vars.some((v) => v.token === 'primary' && v.collection === 'shadcn'));
+  assert.ok(rows.vars.some((v) => v.token === 'md' && v.name === 'radius-md' && v.type === 'FLOAT'), 'radius-md maps back to the md key');
   const row = rows.rows.find((r) => r.source === 'variant=primary' && r.key === 'bg');
   const bound = await h['contract-bind']({ name: 'button', path: row.path, key: row.key, value: 'destructive' });
   assert.equal(bound.contract.variants.variant.primary.root.bg, 'destructive');

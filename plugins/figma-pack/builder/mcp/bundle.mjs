@@ -27,18 +27,7 @@ const contractsPlugin = {
   },
 };
 
-// Library keys of tokens.json are not needed in the file the engine writes to: fewer chars to send.
-const lean = {
-  name: 'lean-tokens',
-  setup(b) {
-    b.onLoad({ filter: /tokens\.json$/ }, async (a) => {
-      const strip = (v) => (Array.isArray(v) ? v.map(strip) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).filter(([k]) => k !== 'key').map(([k, x]) => [k, strip(x)])) : v);
-      return { contents: JSON.stringify(strip(JSON.parse(await readFile(a.path, 'utf8')))), loader: 'json' };
-    });
-  },
-};
-
-const res = await build({ entryPoints: [here('entry.js').pathname], bundle: true, write: false, target: 'es2017', format: 'iife', minify: process.env.MCP_MINIFY === '1', charset: 'ascii', plugins: [contractsPlugin, lean], loader: { '.json': 'json' } });
+const res = await build({ entryPoints: [here('entry.js').pathname], bundle: true, write: false, target: 'es2017', format: 'iife', minify: process.env.MCP_MINIFY === '1', charset: 'ascii', plugins: [contractsPlugin], loader: { '.json': 'json' } });
 let js = res.outputFiles[0].text
   .replace(/\.setPluginData\(/g, '.setSharedPluginData("mbank.local",')
   .replace(/\.getPluginData\(/g, '.getSharedPluginData("mbank.local",')

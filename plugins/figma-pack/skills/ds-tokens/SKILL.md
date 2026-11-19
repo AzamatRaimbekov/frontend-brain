@@ -1,62 +1,46 @@
 ---
 name: ds-tokens
-description: Creates and changes design tokens for a project on the shadcn/ui kit the Mdigital way - one Brand mode per project between the kit's Style and Mode collections, colors generated from a brand color in OKLCH and snapped to Tailwind primitives, WCAG AA contrast checked in light and dark, project-only tokens named custom/<project>/<role>, and the same tokens exported to globals.css for shadcn/Tailwind v4. Works through the DS Builder Figma plugin and the `ds` CLI. Triggers - "токены для проекта", "новый бренд", "цвета проекта", "добавь токен", "настрой тему", "дизайн-система под проект", "globals.css из фигмы", "brand tokens", "add a token", "theme for project", "shadcn theme".
+description: The design tokens of the Mdigital design system - the standard shadcn/ui set only (31 colours light/dark in OKLCH, radius and its scale, fonts), one file shared by Figma and code. A project changes token values (its preset on the ds-configurator site), never names; no custom, brand, surface, status, spacing or typography tokens exist. Use when choosing a colour, radius or font for a screen or component, when a project needs its own colours, when a Figma colour has no token, or when token values must reach Figma variables and tokens.css. Triggers - "токены", "токены для проекта", "цвета проекта", "новый бренд", "добавь токен", "настрой тему", "тёмная тема", "globals.css", "tokens.css", "shadcn theme", "brand colours", "add a token", "theme for project".
 ---
 
-# Project tokens on the shadcn kit (Mdigital)
+# Design tokens = standard shadcn/ui
 
-Architecture and the reasoning behind it: [builder/docs/architecture.md](../../builder/docs/architecture.md). Short version:
+Source of truth: [references/shadcn-tokens.json](references/shadcn-tokens.json) (schema `shadcn/tokens@1`, values from `shadcn init`, baseColor neutral). Decision of 2026-11-11: the design system has **only** these names. There is no Mbank token layer.
 
-```
-Tailwind (primitives) → Style (Vega…Lyra, kit-owned) → Brand (one mode per project) → Mode (Light/Dark, components bind here)
-```
+| Group | Names |
+|---|---|
+| Colours (light + dark, `oklch(...)`) | `background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `muted`, `muted-foreground`, `accent`, `accent-foreground`, `destructive`, `border`, `input`, `ring`, `chart-1` … `chart-5`, `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-primary-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring` |
+| Radius | `radius` (base) and the scale `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl` derived from it |
+| Fonts | `font-sans`, `font-heading` |
 
-Code: [figma-pack/builder](../../builder/README.md) (`BUILDER` below = path to `plugins/figma-pack/builder`). Plugin: `$BUILDER/plugin/manifest.json` → Figma desktop → Plugins → Development → Import plugin from manifest.
+Spacing and type sizes are not tokens: use the Tailwind scale (`--spacing` = 4 px steps, `text-sm`, `font-medium`).
 
 ## Rules
 
-1. **Never edit Style or Tailwind.** They belong to the kit; an update overwrites them. A project changes only its `Brand` mode.
-2. **Never alias Mode straight to Tailwind.** Every Mode token goes `Mode → Brand → (Style | Tailwind | hex)`. The plugin's «Включить слой Brand» migrates legacy tokens once and can roll back.
-3. **A brand overrides only what differs.** Default overrides: primary (+foreground), ring, sidebar-primary (+foreground), sidebar-ring, chart-1..5, success / warning / info (+foreground). Neutrals (background, card, border…) stay inherited from the style unless the project really needs its own grey.
-4. **Prefer Tailwind steps over hex.** Generated colors within ΔE 2.5 of a Tailwind primitive become an alias (`primary → amber/400`). Raw hex only for a real brand color with no close step.
-5. **Contrast AA (4.5) in both themes** for every text/fill pair. `ds tokens check` fails otherwise; fix the token, do not lower the bar.
-6. **Project-only tokens:** `custom/<project>/<role>`, latin kebab-case, no spaces, no repeated project name (`custom/mmarket/badge-bg-orange`, CSS `--mmarket-badge-bg-orange`). Create a custom token only when no shadcn or status token fits; say which one you checked.
-7. **Statuses are shared, not per project:** `success`, `warning`, `info` and their `-foreground` exist for every brand.
-8. **Fonts:** `Brand/font/sans` and `font/heading` per brand. If the brand font is not installed (Inter Mbank is not shared in the org), the plugin falls back to Inter and reports it — tell the user, never silently.
+1. **Names never change and never grow.** No `custom/*`, no product brands, no `surface-*`, `success` / `warning` / `info`, `*-hover` / `*-active`, no spacing or typography tokens. A need that no name covers is a question to the designer, answered with the closest standard name.
+2. **A project changes values only.** Its preset (on the ds-configurator site, `apps/ds-configurator`) overrides values of the standard names, for example `primary` to the brand colour. Everything it does not override stays at the shadcn default.
+3. **Colours in OKLCH**, light and dark both set. A value without a dark pair is incomplete.
+4. **Contrast AA (4.5) in both themes** for every `X` / `X-foreground` pair and for `foreground` on `background`, `card`, `popover`, `muted`. Fix the value, do not lower the bar.
+5. **Hover / active / disabled come from code,** not from tokens: `hover:bg-primary/90`, `disabled:opacity-50`, `focus-visible:ring-ring/50` (shadcn defaults).
+6. **Figma variables have the token's own name** (`primary`, `muted-foreground`, light/dark modes). Never bind a Figma layer to another library's variables or to a raw hex.
+7. **Code uses the Tailwind classes** (`bg-primary`, `text-muted-foreground`, `border-border`, `rounded-lg`), never hex or arbitrary colour values.
 
-## New project brand
+## Change values for a project
 
-1. Ask (or take from the brief): brand color (hex), neutral palette (neutral / zinc / slate / stone / gray / tinted), font, light + dark needed.
-2. Generate and check:
-   ```bash
-   node $BUILDER/cli/ds.mjs tokens new --name <project> --brand "#fabf00" --neutral zinc --font "Inter Mbank" -o tokens/<project>.json
-   node $BUILDER/cli/ds.mjs tokens check tokens/<project>.json
-   ```
-3. In Figma: plugin → «Бренд» → add brand `<Project>` → «Токены» → same color → «Сгенерировать» → review the contrast line → «Применить к бренду».
-4. Code: plugin «Получить globals.css» (or `ds tokens css tokens/<project>.json -o src/app/globals.css`). Same source for Figma and code.
-
-## Add a project token
-
-Plugin «Токены» → «Новый проектный токен»: project, role, light value, dark value (`orange/200` or `#hex`). Scopes are set from the role (`*-foreground`/`*-text` → text, `*-border`/`*-ring` → stroke, else fill).
+1. Take the brand colour and the neutral palette from the brief.
+2. Set the values on the ds-configurator site (project preset) or, for the system default, in `references/shadcn-tokens.json`. Check rule 4 for every pair you touched.
+3. Code: `node plugins/design-engine/scripts/sync-contracts.mjs` copies the file to frontend-pack and rebuilds `tokens.css`; a project takes the new `tokens.css` (design-engine MCP `ds_sync_project`).
+4. Figma: write the values into the variables of the same names through the Figma widget shadcn Tokens (`plugins/figma-pack/widget`), dry run first.
 
 ## Bind tokens to components
 
-Components are generated from contracts, not drawn: plugin tab «Компоненты» renders `builder/contracts/<name>.json` into a component set with every fill, stroke, radius, padding, gap and height bound to a variable, and «Привязки» rebinds a token in Figma and in the contract at once. How bindings work and what to do with tokens the plugin had to create: [references/component-bindings.md](references/component-bindings.md).
-
-## Виджет Mbank Tokens
-
-For Mbank (2.theme + 1.brand, brands bank / kassa / travel / artwin / koko) the team configures tokens in the Figma **widget** Mbank Tokens, not in a separate app: [widget/README.md](../../widget/README.md). Import: Figma Desktop → Widgets → Development → Import widget from manifest → `plugins/figma-pack/widget/manifest.json`, then drop it on the canvas from Resources → Widgets → Development.
-
-- The board on the canvas is shared by everyone in the file: brand switcher, light/dark swatches, CSS name ↔ Figma variable, status against the file (`✓ в файле` / `≠ файл` / `нет в файле`), counters of edits, project tokens and AA contrast problems.
-- Property menu → «Редактировать»: edit a value, add a project token `<prefix>-<role>`, generate a brand from one colour, rebind a component contract. «Применить в Figma» writes `2.theme` / `1.brand` variables (dry run first; every created variable and raw hex is in the report). «Синхронизация с кодом» downloads `tokens.json`, the raw `read-tokens.js` dump, `registry:base` and `tokens.css`, and shows the commands (`sync-contracts.mjs`, `tokens-build.mjs --from`).
-- When the user asks to change Mbank tokens, point them to the widget first; after they export, run the commands it shows and `npm test`.
+Components are generated from contracts, not drawn: [references/component-bindings.md](references/component-bindings.md).
 
 ## Report
 
 ```
-Бренд: <name> (стиль <Style>)
-Переопределено: <n> токенов, из них к Tailwind привязано <m>
+Проект: <name>
+Изменены значения: <токены> (имена стандартные, новых нет)
 Контраст: AA ок | проблемы: <пары>
-Проектные токены: <список>
-Шрифт: <font> | запасной Inter (шрифт не установлен)
+Шрифт: <font-sans>
 ```

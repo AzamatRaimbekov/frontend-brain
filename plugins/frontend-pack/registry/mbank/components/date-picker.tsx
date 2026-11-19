@@ -45,7 +45,7 @@ function PickerShell({ size = "md", placeholder, text, open, onOpenChange, calen
           data-placeholder={text ? undefined : ""}
           className={cn(
             // @contract date-picker-trigger start
-            "gap-2 rounded-md border border-input bg-background px-3 text-sm text-foreground hover:border-input-hover focus-visible:border-ring disabled:border-input-disabled disabled:bg-muted disabled:text-disabled-foreground flex items-center justify-between focus-visible:ring-[3px] focus-visible:ring-ring/30 aria-invalid:border-border-destructive data-[placeholder]:text-muted-foreground w-full text-left whitespace-nowrap transition-colors outline-none disabled:pointer-events-none",
+            "gap-2 rounded-md border border-input bg-background px-3 text-sm text-foreground focus-visible:border-ring flex items-center justify-between focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive data-[placeholder]:text-muted-foreground w-full text-left whitespace-nowrap transition-colors outline-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
             // @contract date-picker-trigger end
             pickerSizes[size], className,
           )}

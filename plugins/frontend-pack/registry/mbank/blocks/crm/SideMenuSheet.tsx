@@ -32,7 +32,7 @@ export function SideMenuSheet({ children, label = "Главное меню" }: S
       <DialogContent
         aria-describedby={undefined}
         onClick={closeOnLink}
-        className="top-0 left-0 h-dvh max-h-dvh w-70 max-w-[85vw] translate-x-0 translate-y-0 gap-0 rounded-none bg-surface-1 p-0 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
+        className="top-0 left-0 h-dvh max-h-dvh w-70 max-w-[85vw] translate-x-0 translate-y-0 gap-0 rounded-none bg-sidebar p-0 data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left"
       >
         <DialogTitle className="sr-only">{label}</DialogTitle>
         {children}

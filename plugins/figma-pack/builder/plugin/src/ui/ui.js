@@ -1,5 +1,5 @@
 // Plugin window. Pure DOM; talks to code.js through postMessage.
-import { generateTokens, contrastReport, BRAND_KEYS, COLOR_TOKENS } from '../../../core/tokens.js';
+import { contrastReport } from '../../../core/tokens.js';
 import { validateSpec, framePlan } from '../../../core/spec.js';
 import { initComponents } from './components-ui.js';
 import { initEasy } from './easy-ui.js';
@@ -8,7 +8,6 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const send = (type, data = {}) => parent.postMessage({ pluginMessage: { type, ...data } }, '*');
 let status = null;
-let generated = null;
 let kitMap = null;
 
 function toast(text, bad) {
@@ -39,75 +38,25 @@ document.querySelectorAll('nav button[data-tab]').forEach((b) => b.addEventListe
   $(b.dataset.tab).classList.add('on');
 }));
 
-const fillSelect = (sel, items, keep) => {
-  const prev = keep ? sel.value : null;
-  sel.innerHTML = items.map((x) => `<option>${esc(x)}</option>`).join('');
-  if (prev && items.includes(prev)) sel.value = prev;
-};
-
 function renderStatus(s) {
   status = s;
-  const on = s.brands.length > 0;
-  $('status').innerHTML = !s.kit
-    ? '<b class="err">shadcn-кит не найден.</b> Нужны коллекции Style и Mode: откройте копию файла shadcn_ui-kit.'
-    : `<b>Кит найден</b> · стилей: ${s.styles.length} · коллекции: ${esc(s.collections.join(', '))}<br>
-       Слой Brand: ${on ? `<span class="ok">включён</span>, связано ${s.migrated}/${s.total} токенов, брендов: ${s.brands.length}` : '<span class="err">не включён</span>'}<br>
-       ${s.legacyNames.length ? `Имена с пробелами: ${s.legacyNames.length}<br>` : ''}
-       ${s.missingExtensions.length ? `Нет статусов: ${esc(s.missingExtensions.join(', '))}` : 'Статусы success / warning / info есть'}`;
-  $('setup').textContent = on ? 'Обновить слой Brand' : 'Включить слой Brand';
-  $('rollback').disabled = !on;
-  for (const id of ['brandSel', 'bBrand']) fillSelect($(id), s.brands, true);
-  for (const id of ['styleSel', 'bStyle']) fillSelect($(id), s.styles, true);
-  if (on) send('read-brand', { brand: $('brandSel').value, style: $('styleSel').value });
-  send('list-custom');
+  $('status').innerHTML = s.collection
+    ? `<b>Коллекция shadcn</b> · режимы: ${esc(s.modes.join(', '))} · цветов ${s.colors}/${s.total}${s.missing.length ? ` · <span class="err">нет: ${esc(s.missing.join(', '))}</span>` : ' · <span class="ok">все переменные на месте</span>'}`
+    : '<b class="err">Коллекции shadcn нет.</b> Нажмите «Создать / обновить переменные» — или просто рисуйте: плагин создаст её сам.';
+  if (s.collection) send('tokens-read');
 }
 
-function renderTable(t) {
-  const by = {};
-  for (const r of t.rows) (by[r.token] = by[r.token] || {})[r.theme] = r;
-  const cell = (r) => (r ? `<span class="sw" style="background:${esc(r.hex)}"></span>${esc(r.value)}${r.inherited ? ' <span class="tag">из стиля</span>' : ''}` : '—');
-  $('brandTable').innerHTML = `<p>Бренд <b>${esc(t.brand)}</b> · стиль ${esc(t.style)} · шрифт ${esc(t.font || '—')}</p>
-    <table><tr><th>Токен</th><th>Light</th><th>Dark</th></tr>${Object.entries(by).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${cell(v.light)}</td><td>${cell(v.dark)}</td></tr>`).join('')}</table>`;
-}
-
-function keysToApply() {
-  return $('withNeutrals').checked ? COLOR_TOKENS : BRAND_KEYS;
-}
-
-function renderPreview() {
-  const keys = keysToApply();
-  const report = contrastReport(generated).filter((r) => keys.includes(r.fg) || keys.includes(r.bg));
-  const bad = report.filter((r) => !r.ok);
-  $('preview').innerHTML = `<table><tr><th>Токен</th><th>Light</th><th>Dark</th></tr>${keys.map((k) => `<tr><td>${esc(k)}</td>
-    <td><span class="sw" style="background:${generated.colors.light[k]}"></span>${generated.colors.light[k]}</td>
-    <td><span class="sw" style="background:${generated.colors.dark[k]}"></span>${generated.colors.dark[k]}</td></tr>`).join('')}</table>
+// Values as the window shows them: oklch() is rendered by the iframe browser itself.
+function renderTokens(t) {
+  const bad = contrastReport(t).filter((r) => !r.ok);
+  const cell = (v) => `<span class="sw" style="background:${esc(v)}"></span>${esc(v)}`;
+  $('tTable').innerHTML = `<table><tr><th>Токен</th><th>Light</th><th>Dark</th></tr>${Object.entries(t.colors).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${cell(v.light)}</td><td>${cell(v.dark)}</td></tr>`).join('')}</table>
+    <p>radius ${esc(t.radius)}</p>
     <p class="${bad.length ? 'err' : 'ok'}">${bad.length ? `Контраст ниже нормы: ${bad.map((r) => `${r.fg} на ${r.bg} (${r.mode}) ${r.ratio}`).join('; ')}` : 'Контраст всех пар в норме (WCAG AA)'}</p>`;
 }
 
-$('brandColor').addEventListener('input', (e) => { $('brandHex').value = e.target.value; });
-$('brandHex').addEventListener('change', (e) => { if (/^#[0-9a-f]{6}$/i.test(e.target.value)) $('brandColor').value = e.target.value; });
-$('generate').onclick = () => {
-  try {
-    generated = generateTokens({ name: $('brandSel').value, brand: $('brandHex').value, neutral: $('neutral').value, font: $('font').value || undefined });
-    if ($('font').value) generated.font.heading = $('font').value;
-    renderPreview();
-    $('apply').disabled = !status?.brands.length;
-  } catch (e) { toast(e.message, true); }
-};
-$('withNeutrals').onchange = () => generated && renderPreview();
-$('apply').onclick = () => {
-  busy($('apply'), true);
-  send('apply-brand', { brand: $('brandSel').value, style: $('styleSel').value, tokens: generated, keys: keysToApply(), reset: true, snap: $('snap').checked });
-};
-
-$('setup').onclick = () => { busy($('setup'), true); send('setup', { fixScopes: $('fixScopes').checked, fixNames: $('fixNames').checked }); };
-confirmClick($('rollback'), 'Точно откатить? Нажмите ещё раз', () => send('rollback'));
-$('addBrand').onclick = () => { const name = $('newBrand').value.trim(); if (name) send('add-brand', { name }); };
-confirmClick($('removeBrand'), 'Точно удалить? Ещё раз', () => send('remove-brand', { name: $('brandSel').value }));
-for (const id of ['brandSel', 'styleSel']) $(id).onchange = () => send('read-brand', { brand: $('brandSel').value, style: $('styleSel').value });
-
-$('addToken').onclick = () => send('add-token', { token: { project: $('tProject').value, role: $('tRole').value, light: $('tLight').value.trim(), dark: $('tDark').value.trim() || undefined } });
-$('exportCss').onclick = () => send('export-css', { brand: $('brandSel').value, style: $('styleSel').value });
+$('tApply').onclick = () => { busy($('tApply'), true); send('tokens-apply', { reset: $('tReset').checked }); };
+$('exportCss').onclick = () => send('export-css');
 $('copyCss').onclick = () => { $('cssOut').select(); document.execCommand('copy'); toast('CSS скопирован'); };
 
 function checkSpec() {
@@ -129,7 +78,7 @@ $('build').onclick = () => {
   if (!spec) return;
   busy($('build'), true);
   $('progress').style.width = '0';
-  send('build', { spec, brand: $('bBrand').value, style: $('bStyle').value, theme: $('bTheme').value, font: $('bFont').value || 'Inter' });
+  send('build', { spec, theme: $('bTheme').value, font: $('bFont').value || 'Inter' });
 };
 
 $('scanKit').onclick = () => { busy($('scanKit'), true); $('kitOut').textContent = 'Сканирую все страницы…'; send('scan-kit'); };
@@ -142,19 +91,13 @@ $('saveKit').onclick = () => {
 
 const on = {
   'init:done': (m) => renderStatus(m.status),
-  'setup:done': (m) => { busy($('setup'), false); renderStatus(m.status); toast(`Готово: связано ${m.report.linked}, создано ${m.report.created}, переименовано ${m.report.renamed}`); },
-  'rollback:done': (m) => { renderStatus(m.status); toast(`Откат: восстановлено ${m.report.restored} ссылок`); },
-  'add-brand:done': (m) => { $('newBrand').value = ''; renderStatus(m.status); toast('Бренд добавлен'); },
-  'remove-brand:done': (m) => renderStatus(m.status),
-  'read-brand:done': (m) => renderTable(m.table),
-  'apply-brand:done': (m) => {
-    busy($('apply'), false);
-    renderTable(m.table);
-    const snapped = m.rows.filter((r) => r.alias).length;
-    toast(`Применено ${m.rows.length} значений, ${snapped} привязаны к Tailwind`);
+  'tokens-apply:done': (m) => {
+    busy($('tApply'), false);
+    renderStatus(m.status);
+    renderTokens(m.tokens);
+    toast(`Готово: создано ${m.report.created.length}, сброшено ${m.report.reset}`);
   },
-  'add-token:done': (m) => { on['list-custom:done'](m); toast(`Создан ${m.token.name} → ${m.token.css}`); },
-  'list-custom:done': (m) => { $('customList').innerHTML = m.custom.length ? `Проектные токены (${m.custom.length}):<br>${m.custom.map(esc).join('<br>')}` : 'Проектных токенов пока нет'; },
+  'tokens-read:done': (m) => renderTokens(m.tokens),
   'export-css:done': (m) => {
     $('cssOut').value = m.css;
     $('copyCss').disabled = false;
@@ -180,7 +123,7 @@ const on = {
     $('kitOut').innerHTML = `Компонентов в файле: ${m.count}<br>${roles.length ? roles.map(([r, c]) => `<b>${esc(r)}</b> → ${esc(c.name)}`).join('<br>') : 'Совпадений по ролям нет'}`;
   },
   error: (m) => {
-    for (const id of ['setup', 'apply', 'build', 'scanKit']) busy($(id), false);
+    for (const id of ['tApply', 'build', 'scanKit']) busy($(id), false);
     components.onError(m);
     if (m.for === 'build') checkSpec();
     toast(`Ошибка (${m.for}): ${m.message}`, true);
@@ -198,7 +141,7 @@ for (const k of Object.keys(easy.handlers)) {
 }
 const proError = on.error;
 on.error = (m) => (easy.busy ? easy.onError(m) : proError(m));
-// Pro tabs (brand layer, JSON spec, contracts) stay hidden until asked for.
+// Pro tabs (tokens, JSON spec, contracts) stay hidden until asked for.
 function setPro(v) {
   document.body.classList.toggle('pro', v);
   $('proToggle').textContent = v ? '✕ Скрыть настройки' : '⚙️ Для профи';

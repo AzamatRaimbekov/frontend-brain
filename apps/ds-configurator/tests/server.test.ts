@@ -1,25 +1,38 @@
 // The site API on a temp data folder: create, read, PUT with optimistic version (409), write key,
-// Figma link, outputs (tokens.css from tokens-build, registry:base, figma.json) and validation.
+// Figma link, outputs (tokens.css, registry:base, figma.json), validation and the migration of
+// documents stored before the switch to the plain shadcn token set.
 import Ajv from "ajv"
-import { mkdtempSync, readFileSync, rmSync } from "node:fs"
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { createServer, type Server } from "node:http"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
+import { COLOR_NAMES } from "@/lib/tokens"
 import schema from "@/upstream/registry-item.schema.json"
 
 import { createApp } from "../server/app"
 
-const APP = join(__dirname, "..")
-const FRONTEND_PACK = join(APP, "..", "..", "plugins", "frontend-pack")
 let server: Server
 let url = ""
 let data = ""
 
+// A project stored by the previous version of the site (brand base, prefix, custom tokens).
+function seedLegacy(dir: string) {
+  const p = join(dir, "projects", "legacy")
+  mkdirSync(p, { recursive: true })
+  writeFileSync(join(p, "project.json"), JSON.stringify({ id: "legacy", name: "Legacy", base: "old", createdAt: "2026-11-01T00:00:00.000Z", writeKeyHash: "0".repeat(64), figma: null }))
+  writeFileSync(join(p, "tokens.json"), JSON.stringify({
+    version: 4, updatedAt: "2026-11-02T00:00:00.000Z", updatedBy: "figma", brand: "x", prefix: "lg",
+    overrides: { primary: { light: "#7c3aed", dark: "var(--brand)" }, "status-ok": { light: "#fff" }, radius: { light: "12px", dark: "12px" }, "radius-lg": { light: "20px" } },
+    custom: [{ name: "lg-promo", kind: "color", light: "#fff", dark: "#000" }],
+  }))
+}
+
 beforeAll(async () => {
   data = mkdtempSync(join(tmpdir(), "ds-site-"))
-  const handle = await createApp({ dataDir: data, frontendPackDir: FRONTEND_PACK, staticDir: join(data, "no-dist") })
+  seedLegacy(data)
+  const handle = await createApp({ dataDir: data, staticDir: join(data, "no-dist") })
   server = createServer(handle)
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r))
   const addr = server.address()
@@ -43,16 +56,25 @@ const api = async (path: string, init: RequestInit & { json?: unknown } = {}) =>
 describe("site API", () => {
   let key = ""
 
-  it("creates a project on the mbank base and returns the write key once", async () => {
-    const r = await api("/api/projects", { method: "POST", json: { name: "Кредитный конвейер", id: "credit", brand: "bank", prefix: "cr" } })
+  it("migrates stored projects: unknown tokens and invalid values dropped, valid values kept", async () => {
+    const tokens = JSON.parse(readFileSync(join(data, "projects", "legacy", "tokens.json"), "utf8"))
+    expect(tokens).toEqual({ version: 4, updatedAt: "2026-11-02T00:00:00.000Z", updatedBy: "figma", overrides: { radius: { light: "12px" } } })
+    expect(JSON.parse(readFileSync(join(data, "projects", "legacy", "project.json"), "utf8")).base).toBe("shadcn")
+  })
+
+  it("creates a project on the shadcn defaults and returns the write key once", async () => {
+    const r = await api("/api/projects", { method: "POST", json: { name: "Кредитный конвейер", id: "credit" } })
     expect(r.status).toBe(201)
     expect(r.body.writeKey).toMatch(/^dsk_/)
+    expect(r.body.project).toMatchObject({ id: "credit", base: "shadcn" })
     expect(r.body.project.writeKeyHash).toBeUndefined()
-    expect(r.body.tokens).toMatchObject({ version: 1, brand: "bank", prefix: "cr", overrides: {}, custom: [] })
+    expect(r.body.tokens).toMatchObject({ version: 1, overrides: {} })
+    expect(Object.keys(r.body.tokens).sort()).toEqual(["overrides", "updatedAt", "updatedBy", "version"])
     key = r.body.writeKey
     expect((await api("/api/projects", { method: "POST", json: { name: "x", id: "credit" } })).status).toBe(409)
     const list = await api("/api/projects")
-    expect(list.body.projects.map((p: { id: string }) => p.id)).toEqual(["credit"])
+    expect(list.body.projects.map((p: { id: string }) => p.id)).toEqual(["credit", "legacy"])
+    expect(list.body.projects[0]).toMatchObject({ id: "credit", version: 1, overrides: 0 })
     const stored = JSON.parse(readFileSync(join(data, "projects", "credit", "project.json"), "utf8"))
     expect(stored.writeKeyHash).toHaveLength(64)
     expect(JSON.stringify(stored)).not.toContain(key)
@@ -60,6 +82,7 @@ describe("site API", () => {
 
   it("rejects bad input at the boundary", async () => {
     expect((await api("/api/projects", { method: "POST", json: { name: "", id: "Bad Id" } })).body.errors.length).toBeGreaterThan(0)
+    expect((await api("/api/projects", { method: "POST", json: { name: "x", id: "xx", brand: "bank" } })).body.errors.join()).toContain("brand")
     expect((await api("/api/projects", { method: "POST", body: "{}", headers: { "Content-Type": "text/plain" } })).status).toBe(415)
     expect((await api("/api/projects", { method: "POST", body: "{", headers: { "Content-Type": "application/json" } })).status).toBe(400)
     expect((await api("/api/projects/..%2Fetc")).status).toBe(404)
@@ -67,29 +90,22 @@ describe("site API", () => {
     expect((await api("/api/projects", { method: "POST", json: { name: big } })).status).toBe(413)
   })
 
-  it("project rows: shadcn tokens with Foundation aliases", async () => {
+  it("project rows: the figma.json variables, contrast checks", async () => {
     const r = await api("/api/projects/credit")
     expect(r.status).toBe(200)
     expect(r.headers.get("etag")).toBe('"1"')
+    const names = r.body.rows.map((x: { name: string }) => x.name)
+    expect(names.slice(0, 31)).toEqual(COLOR_NAMES)
+    expect(names.slice(31)).toEqual(["radius", "radius-sm", "radius-md", "radius-lg", "radius-xl", "radius-2xl", "radius-3xl", "radius-4xl", "font-sans", "font-heading"])
     const row = (n: string) => r.body.rows.find((x: { name: string }) => x.name === n)
-    for (const n of ["background", "foreground", "primary", "primary-foreground", "muted-foreground", "border", "input", "ring", "radius"]) expect(row(n), n).toBeTruthy()
-    expect(row("primary").base.source.light.alias).toMatchObject({ collection: "2.theme", name: "accent/primary/default" })
-    expect(row("primary").base.source.light.alias.key).toMatch(/^[0-9a-f]{40}$/)
-    expect(row("brand").base.source.light.alias).toMatchObject({ collection: "1.brand", name: "brand/default", mode: "bank" })
-    expect(row("brand").base.source.dark.alias).toMatchObject({ collection: "2.theme", name: "brand/bank/default" })
-    expect(row("ring").base.source.light).toEqual({ ref: "brand" })
-    expect(row("radius")).toMatchObject({ kind: "radius", light: "12px" })
-    expect(row("radius").base.source.light.alias).toMatchObject({ collection: "1.brand", name: "radius/m" })
-    expect(row("radius-lg").scope).toBe("theme")
+    expect(row("primary")).toMatchObject({ kind: "color", editable: true, overridden: false, values: { light: { value: "#171717", css: "oklch(0.205 0 0)" } } })
     expect(r.body.contrast.some((c: { fg: string; bg: string }) => c.fg === "primary-foreground" && c.bg === "primary")).toBe(true)
+    // Stock shadcn neutral: muted-foreground on muted is 4.35:1 in light, the only pair below AA.
+    expect(r.body.contrast.filter((c: { ok: boolean }) => !c.ok)).toEqual([{ fg: "muted-foreground", bg: "muted", mode: "light", ratio: 4.35, ok: false }])
   })
 
   it("PUT tokens needs the key and If-Match; a stale version is a 409 conflict", async () => {
-    const body = {
-      brand: "bank", prefix: "cr",
-      overrides: { primary: { light: "#7c3aed", dark: "#8b5cf6" }, ring: { light: "var(--primary)" }, "radius-lg": { light: "20px" } },
-      custom: [{ name: "cr-promo", kind: "color", light: "#fef3c7", dark: "#451a03" }, { name: "cr-promo-foreground", kind: "color", light: "#451a03", dark: "#fef3c7" }, { name: "cr-card", kind: "radius", light: "20px", dark: "20px" }],
-    }
+    const body = { overrides: { primary: { light: "#7c3aed", dark: "oklch(0.7 0.2 290)" }, ring: { light: "var(--primary)" }, radius: { light: "0.5rem" }, "font-sans": { light: "'Inter', sans-serif" }, muted: { light: "oklch(0.97 0 0)" } } }
     expect((await api("/api/projects/credit/tokens", { method: "PUT", json: body, headers: { "If-Match": '"1"' } })).status).toBe(401)
     expect((await api("/api/projects/credit/tokens", { method: "PUT", json: body, headers: { "If-Match": '"1"', "X-Write-Key": "dsk_wrong" } })).status).toBe(403)
     expect((await api("/api/projects/credit/tokens", { method: "PUT", json: body, headers: { "X-Write-Key": key } })).status).toBe(428)
@@ -97,56 +113,67 @@ describe("site API", () => {
     expect(ok.status).toBe(200)
     expect(ok.body.tokens.version).toBe(2)
     expect(ok.headers.get("etag")).toBe('"2"')
-    expect(ok.body.diff.added).toEqual(["cr-promo", "cr-promo-foreground", "cr-card"])
-    // Someone else still edits from version 1: conflict with the current document.
-    const stale = await api("/api/projects/credit/tokens", { method: "PUT", json: { ...body, overrides: {} }, headers: { "If-Match": "1", "X-Write-Key": key } })
+    expect(ok.body.tokens.overrides.muted).toBeUndefined() // same as the default: dropped
+    expect(ok.body.diff.changed.sort()).toEqual(["font-sans", "primary", "radius", "ring"])
+    const stale = await api("/api/projects/credit/tokens", { method: "PUT", json: { overrides: {} }, headers: { "If-Match": "1", "X-Write-Key": key } })
     expect(stale.status).toBe(409)
     expect(stale.body.current.version).toBe(2)
     const history = await api("/api/projects/credit/history")
     expect(history.body.history.map((h: { version: number }) => h.version)).toEqual([2, 1])
   })
 
-  it("validates token documents", async () => {
+  it("validates token documents: only shadcn names, safe values, no custom tokens", async () => {
     const bad = await api("/api/projects/credit/tokens", {
       method: "PUT", headers: { "If-Match": "2", "X-Write-Key": key },
-      json: { brand: "nope", prefix: "cr", overrides: { primary: { light: "red-ish" }, unknown: { light: "#fff" }, radius: { light: "12" } }, custom: [{ name: "promo", kind: "color", light: "#fff" }, { name: "cr-x", kind: "color", light: "var(--missing)" }] },
+      json: {
+        brand: "bank", prefix: "cr", custom: [{ name: "cr-x", kind: "color", light: "#fff" }],
+        overrides: {
+          primary: { light: "red-ish" }, "status-ok": { light: "#fff" }, "radius-lg": { light: "20px" }, radius: { light: "12", dark: "8px" },
+          secondary: { light: "var(--brand)" }, accent: { light: "oklch(0.5 0.1 20;} body{x:1)" }, "font-sans": { light: "Inter; } body { color: red" },
+          "font-heading": { light: "var(--primary)" }, border: { light: "var(--input)" }, input: { light: "var(--border)" },
+        },
+      },
     })
     expect(bad.status).toBe(400)
     const text = bad.body.errors.join("\n")
-    for (const part of ["brand", "overrides.primary.light", "overrides.unknown", "overrides.radius.light", "custom promo", "var(--missing)"]) expect(text).toContain(part)
+    for (const part of ["brand:", "prefix:", "custom:", "overrides.primary.light", "overrides.status-ok", "overrides.radius-lg", "overrides.radius.light", "overrides.radius.dark", "overrides.secondary.light", "overrides.accent.light", "overrides.font-sans.light", "overrides.font-heading.light"]) {
+      expect(text, part).toContain(part)
+    }
+    const cycle = await api("/api/projects/credit/tokens", { method: "PUT", headers: { "If-Match": "2", "X-Write-Key": key }, json: { overrides: { border: { light: "var(--input)" }, input: { light: "var(--border)" } } } })
+    expect(cycle.status).toBe(400)
+    expect(cycle.body.errors.join()).toContain("цикл")
   })
 
-  it("outputs: tokens.css from tokens-build, registry:base, figma.json", async () => {
+  it("outputs: tokens.css, registry:base, figma.json with shadcn names only", async () => {
     const css = await api("/api/projects/credit/tokens.css")
     expect(css.headers.get("content-type")).toContain("text/css")
-    expect(css.body).toContain('Project "Кредитный конвейер" (credit), version 2')
-    expect(css.body).toMatch(/--primary: #7c3aed;\s+\/\* project override \*\//)
-    expect(css.body).toContain("--cr-promo: #fef3c7;")
-    expect(css.body).toContain("--color-cr-promo: var(--cr-promo);")
-    expect(css.body).toContain("--radius-card: var(--cr-card);")
-    expect(css.body).toContain("--radius-lg: 20px;")
-    expect(css.body).toContain("--color-ring: var(--ring);")
-    expect(css.body).toContain("@layer base") // the frontend-pack layout, same generator
+    expect(css.body).toContain('Project "Кредитный конвейер" (credit), version 2.')
+    expect(css.body).toContain("--primary: #7c3aed;")
+    expect(css.body).toContain("--ring: var(--primary);")
+    expect(css.body).toContain("--radius: 0.5rem;")
+    expect(css.body).toContain("--font-sans: 'Inter', sans-serif;")
+    expect(css.body.match(/--color-[\w-]+:/g)).toHaveLength(31)
+    expect(css.body).toContain("@layer base")
 
     const item = await api("/r/credit.json")
     const validate = new Ajv({ strict: false, allErrors: true, validateSchema: false }).compile(schema)
     expect(validate(item.body)).toBe(true)
     expect(item.body).toMatchObject({ name: "credit", type: "registry:base", title: "Кредитный конвейер", meta: { project: "credit", version: 2 } })
     expect(item.body.cssVars.light.primary).toBe("#7c3aed")
-    expect(item.body.cssVars.light["cr-promo"]).toBe("#fef3c7")
-    expect(item.body.cssVars.theme["radius-lg"]).toBe("20px")
+    expect(item.body.cssVars.dark.primary).toBe("oklch(0.7 0.2 290)")
+    expect(Object.keys(item.body.cssVars.dark)).toEqual(COLOR_NAMES)
 
     const plan = await api("/api/projects/credit/figma.json")
-    expect(plan.body).toMatchObject({ collection: "shadcn", modes: ["light", "dark"], version: 2, project: "credit" })
+    expect(plan.body).toMatchObject({ $schema: "ds-configurator/figma-plan@2", collection: "shadcn", modes: ["Light", "Dark"], version: 2, project: "credit", name: "Кредитный конвейер" })
+    expect(plan.body.brand).toBeUndefined()
+    expect(plan.body.prefix).toBeUndefined()
     const v = (n: string) => plan.body.variables.find((x: { name: string }) => x.name === n)
-    expect(v("background").values.light.alias).toMatchObject({ collection: "2.theme", name: "background/surface/light" })
-    expect(v("primary").values.light).toEqual({ value: "#7c3aed" })
-    expect(v("primary").base.light.alias.name).toBe("accent/primary/default")
-    expect(v("ring").values.light).toMatchObject({ ref: "primary", value: "#7c3aed" })
-    expect(v("radius")).toMatchObject({ type: "FLOAT", scopes: ["CORNER_RADIUS"] })
-    expect(v("radius").values.light.value).toBe(12)
-    expect(v("cr-promo")).toMatchObject({ custom: true, type: "COLOR", codeSyntax: "var(--cr-promo)", values: { light: { value: "#fef3c7" }, dark: { value: "#451a03" } } })
-    expect(v("cr-promo-foreground").scopes).toContain("TEXT_FILL")
+    expect(v("primary")).toMatchObject({ overridden: true, values: { light: { value: "#7c3aed", css: "#7c3aed" } }, base: { light: { css: "oklch(0.205 0 0)" } } })
+    expect(v("ring").values.light).toEqual({ value: "#7c3aed", css: "var(--primary)", ref: "primary" })
+    expect(v("radius").values.light.value).toBe(8)
+    expect(v("radius-lg").values.light.value).toBe(8)
+    expect(v("font-sans").values.light.value).toBe("Inter")
+    expect(JSON.stringify(plan.body)).not.toContain("alias")
   })
 
   it("links a Figma file and records a sync", async () => {
@@ -156,10 +183,19 @@ describe("site API", () => {
     expect((await api("/api/projects/credit/figma", { method: "PUT", headers: { "X-Write-Key": key }, json: { fileKey: "bad key!" } })).status).toBe(400)
     const sync = await api("/api/projects/credit/figma/sync", { method: "POST", headers: { "X-Write-Key": key }, json: { from: "site", version: 2 } })
     expect(sync.body.project.figma.lastSync).toMatchObject({ from: "site", version: 2 })
-    // A push from the widget is marked as from figma.
-    const put = await api("/api/projects/credit/tokens", { method: "PUT", headers: { "If-Match": "2", "X-Write-Key": key }, json: { brand: "bank", prefix: "cr", overrides: {}, custom: [], source: "figma" } })
+    const put = await api("/api/projects/credit/tokens", { method: "PUT", headers: { "If-Match": "2", "X-Write-Key": key }, json: { overrides: {}, source: "figma" } })
     expect(put.body.tokens.updatedBy).toBe("figma")
     expect((await api("/api/projects/credit")).body.project.figma.lastSync).toMatchObject({ from: "figma", version: 3 })
+  })
+
+  it("accepts the widget push shape (oklch, px radius with equal dark, font stack, var refs)", async () => {
+    const body = { source: "figma", overrides: {
+      primary: { light: "oklch(0.5 0.2 290)", dark: "oklch(1 0 0 / 10%)" }, ring: { light: "var(--primary)", dark: "var(--primary)" },
+      radius: { light: "8px", dark: "8px" }, "font-sans": { light: "'Inter', sans-serif" }, "font-heading": { light: "var(--font-sans)" },
+    } }
+    const r = await api("/api/projects/credit/tokens", { method: "PUT", json: body, headers: { "If-Match": "3", "X-Write-Key": key } })
+    expect(r.status, JSON.stringify(r.body)).toBe(200)
+    expect(r.body.tokens.overrides).toEqual({ primary: body.overrides.primary, ring: body.overrides.ring, radius: { light: "8px" }, "font-sans": { light: "'Inter', sans-serif" } })
   })
 
   it("rotates the write key; CORS for the widget", async () => {

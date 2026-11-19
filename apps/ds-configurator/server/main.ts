@@ -1,5 +1,5 @@
 // Entry of the design-system site: API + built client on one port (default 8797).
-// Usage: npm run build && npm start   (env: PORT, HOST, DATA_DIR, FRONTEND_PACK_DIR)
+// Usage: npm run build && npm start   (env: PORT, HOST, DATA_DIR)
 import { createServer } from "node:http"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
@@ -13,7 +13,6 @@ const host = process.env.HOST ?? "127.0.0.1"
 
 const handle = await createApp({
   dataDir: resolve(process.env.DATA_DIR ?? join(APP, "data")),
-  frontendPackDir: resolve(process.env.FRONTEND_PACK_DIR ?? join(APP, "..", "..", "plugins", "frontend-pack")),
   staticDir: join(APP, "dist"),
 })
 

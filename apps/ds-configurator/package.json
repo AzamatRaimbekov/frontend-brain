@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Design-system site: projects with shadcn tokens (Mbank base + overrides + custom tokens), API for the Figma widget, outputs tokens.css / shadcn registry:base / figma.json; plus the fork of the shadcn/ui /create generator",
+  "description": "Design-system site: projects on the standard shadcn tokens (value overrides only), API for the Figma widget, outputs tokens.css / shadcn registry:base / figma.json; plus the fork of the shadcn/ui /create generator",
   "license": "MIT",
   "scripts": {
     "prebuild": "node scripts/prebuild.mjs",

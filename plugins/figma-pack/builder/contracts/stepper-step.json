@@ -64,7 +64,7 @@
       "weight": "medium"
     },
     "description": {
-      "text": "caption",
+      "text": "xs",
       "fg": "muted-foreground"
     }
   },
@@ -72,10 +72,10 @@
     "status": {
       "done": {
         "marker": {
-          "bg": "status-success-muted"
+          "bg": "primary/10"
         },
         "number": {
-          "fg": "status-success"
+          "fg": "primary"
         }
       },
       "current": {
@@ -83,10 +83,10 @@
           "weight": "medium"
         },
         "marker": {
-          "bg": "status-success"
+          "bg": "primary"
         },
         "number": {
-          "fg": "static-light"
+          "fg": "primary-foreground"
         }
       },
       "upcoming": {
@@ -94,7 +94,7 @@
           "fg": "muted-foreground"
         },
         "marker": {
-          "bg": "soft"
+          "bg": "muted"
         },
         "number": {
           "fg": "muted-foreground"

@@ -32,11 +32,11 @@
       "gap": 1,
       "px": 2,
       "py": 2,
-      "text": "2xs",
+      "text": "xs",
       "weight": "medium",
       "fg": "muted-foreground",
-      "fg:selected": "brand-text",
-      "focus-ring": "ring/30"
+      "fg:selected": "primary",
+      "focus-ring": "ring/50"
     },
     "icon": {
       "size": 6

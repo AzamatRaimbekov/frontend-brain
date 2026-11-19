@@ -35,6 +35,152 @@
       __defProp(target, name, { get: all[name], enumerable: true });
   };
 
+  // ../skills/ds-tokens/references/shadcn-tokens.json
+  var shadcn_tokens_default = {
+    $schema: "shadcn/tokens@1",
+    $comment: "\u0415\u0434\u0438\u043D\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439 \u043D\u0430\u0431\u043E\u0440 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u0434\u0438\u0437\u0430\u0439\u043D-\u0441\u0438\u0441\u0442\u0435\u043C\u044B: \u0447\u0438\u0441\u0442\u044B\u0439 shadcn/ui (Tailwind v4, oklch). \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441\u043D\u044F\u0442\u044B \u0441 shadcn init (style radix-nova, baseColor neutral) 2026-11-11. \u0412\u043B\u0430\u0434\u0435\u043B\u0435\u0446: figma-pack skills/ds-tokens/references/shadcn-tokens.json; \u043A\u043E\u043F\u0438\u044E \u0443 frontend-pack \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442 design-engine sync-contracts. \u0421\u0432\u043E\u0438 \u0442\u043E\u043A\u0435\u043D\u044B \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u044F\u044E\u0442\u0441\u044F: \u043F\u0440\u043E\u0435\u043A\u0442 \u043C\u0435\u043D\u044F\u0435\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u044D\u0442\u0438\u0445 \u0438\u043C\u0451\u043D (\u043F\u0440\u0435\u0441\u0435\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 ds-configurator).",
+    radius: "0.625rem",
+    radiusScale: {
+      sm: "calc(var(--radius) * 0.6)",
+      md: "calc(var(--radius) * 0.8)",
+      lg: "var(--radius)",
+      xl: "calc(var(--radius) * 1.4)",
+      "2xl": "calc(var(--radius) * 1.8)",
+      "3xl": "calc(var(--radius) * 2.2)",
+      "4xl": "calc(var(--radius) * 2.6)"
+    },
+    font: {
+      sans: "'Geist Variable', sans-serif",
+      heading: "var(--font-sans)"
+    },
+    colors: {
+      background: {
+        light: "oklch(1 0 0)",
+        dark: "oklch(0.145 0 0)"
+      },
+      foreground: {
+        light: "oklch(0.145 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      card: {
+        light: "oklch(1 0 0)",
+        dark: "oklch(0.205 0 0)"
+      },
+      "card-foreground": {
+        light: "oklch(0.145 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      popover: {
+        light: "oklch(1 0 0)",
+        dark: "oklch(0.205 0 0)"
+      },
+      "popover-foreground": {
+        light: "oklch(0.145 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      primary: {
+        light: "oklch(0.205 0 0)",
+        dark: "oklch(0.922 0 0)"
+      },
+      "primary-foreground": {
+        light: "oklch(0.985 0 0)",
+        dark: "oklch(0.205 0 0)"
+      },
+      secondary: {
+        light: "oklch(0.97 0 0)",
+        dark: "oklch(0.269 0 0)"
+      },
+      "secondary-foreground": {
+        light: "oklch(0.205 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      muted: {
+        light: "oklch(0.97 0 0)",
+        dark: "oklch(0.269 0 0)"
+      },
+      "muted-foreground": {
+        light: "oklch(0.556 0 0)",
+        dark: "oklch(0.708 0 0)"
+      },
+      accent: {
+        light: "oklch(0.97 0 0)",
+        dark: "oklch(0.269 0 0)"
+      },
+      "accent-foreground": {
+        light: "oklch(0.205 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      destructive: {
+        light: "oklch(0.577 0.245 27.325)",
+        dark: "oklch(0.704 0.191 22.216)"
+      },
+      border: {
+        light: "oklch(0.922 0 0)",
+        dark: "oklch(1 0 0 / 10%)"
+      },
+      input: {
+        light: "oklch(0.922 0 0)",
+        dark: "oklch(1 0 0 / 15%)"
+      },
+      ring: {
+        light: "oklch(0.708 0 0)",
+        dark: "oklch(0.556 0 0)"
+      },
+      "chart-1": {
+        light: "oklch(0.87 0 0)",
+        dark: "oklch(0.87 0 0)"
+      },
+      "chart-2": {
+        light: "oklch(0.556 0 0)",
+        dark: "oklch(0.556 0 0)"
+      },
+      "chart-3": {
+        light: "oklch(0.439 0 0)",
+        dark: "oklch(0.439 0 0)"
+      },
+      "chart-4": {
+        light: "oklch(0.371 0 0)",
+        dark: "oklch(0.371 0 0)"
+      },
+      "chart-5": {
+        light: "oklch(0.269 0 0)",
+        dark: "oklch(0.269 0 0)"
+      },
+      sidebar: {
+        light: "oklch(0.985 0 0)",
+        dark: "oklch(0.205 0 0)"
+      },
+      "sidebar-foreground": {
+        light: "oklch(0.145 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      "sidebar-primary": {
+        light: "oklch(0.205 0 0)",
+        dark: "oklch(0.488 0.243 264.376)"
+      },
+      "sidebar-primary-foreground": {
+        light: "oklch(0.985 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      "sidebar-accent": {
+        light: "oklch(0.97 0 0)",
+        dark: "oklch(0.269 0 0)"
+      },
+      "sidebar-accent-foreground": {
+        light: "oklch(0.205 0 0)",
+        dark: "oklch(0.985 0 0)"
+      },
+      "sidebar-border": {
+        light: "oklch(0.922 0 0)",
+        dark: "oklch(1 0 0 / 10%)"
+      },
+      "sidebar-ring": {
+        light: "oklch(0.708 0 0)",
+        dark: "oklch(0.556 0 0)"
+      }
+    }
+  };
+
   // core/color.js
   function hexToRgb(hex) {
     let h = String(hex).trim().replace(/^#/, "");
@@ -48,6 +194,7 @@
     return `#${c(r)}${c(g)}${c(b)}${a < 1 ? c(a) : ""}`;
   }
   var toLinear = (v) => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  var toGamma = (v) => v <= 31308e-7 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
   function hexToOklch(hex) {
     const { r, g, b } = hexToRgb(hex);
     const [lr, lg, lb] = [toLinear(r), toLinear(g), toLinear(b)];
@@ -57,64 +204,71 @@
     const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
     const A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
     const B = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
-    const C2 = Math.sqrt(A * A + B * B);
-    const H = C2 < 1e-4 ? 0 : (Math.atan2(B, A) * 180 / Math.PI + 360) % 360;
-    return { l: L, c: C2, h: H };
+    const C = Math.sqrt(A * A + B * B);
+    const H = C < 1e-4 ? 0 : (Math.atan2(B, A) * 180 / Math.PI + 360) % 360;
+    return { l: L, c: C, h: H };
+  }
+  function oklchToLinear({ l, c, h }) {
+    const a = c * Math.cos(h * Math.PI / 180);
+    const b = c * Math.sin(h * Math.PI / 180);
+    const l_ = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+    const m_ = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+    const s_ = (l - 0.0894841775 * a - 1.291485548 * b) ** 3;
+    return [
+      4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_,
+      -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_,
+      -0.0041960863 * l_ - 0.7034186147 * m_ + 1.707614701 * s_
+    ];
+  }
+  function parseOklch(css) {
+    const m = /^\s*oklch\(\s*([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:deg)?\s*(?:\/\s*([\d.]+%?)\s*)?\)\s*$/i.exec(String(css));
+    if (!m) throw new Error(`Bad oklch color: ${css}`);
+    const num = (s, scale) => s.endsWith("%") ? parseFloat(s) / 100 : parseFloat(s) * scale;
+    return { l: num(m[1], 1), c: parseFloat(m[2]), h: parseFloat(m[3]), a: m[4] == null ? 1 : num(m[4], 1) };
+  }
+  function oklchToRgba(css) {
+    const { l, c, h, a } = parseOklch(css);
+    const [r, g, b] = oklchToLinear({ l, c, h }).map((v) => toGamma(Math.min(1, Math.max(0, v))));
+    return { r, g, b, a };
+  }
+  var round3 = (x) => Math.round(x * 1e3) / 1e3;
+  function rgbaToOklch({ r, g, b, a = 1 }) {
+    const o = hexToOklch(rgbToHex({ r, g, b }));
+    const c = o.c < 5e-4 ? 0 : round3(o.c);
+    const h = c === 0 ? 0 : round3(o.h);
+    const alpha = a < 1 ? ` / ${Math.round(a * 100)}%` : "";
+    return `oklch(${round3(o.l)} ${c} ${h}${alpha})`;
   }
 
   // core/tokens.js
-  var COLOR_TOKENS = [
-    "background",
-    "foreground",
-    "card",
-    "card-foreground",
-    "popover",
-    "popover-foreground",
-    "primary",
-    "primary-foreground",
-    "secondary",
-    "secondary-foreground",
-    "muted",
-    "muted-foreground",
-    "accent",
-    "accent-foreground",
-    "destructive",
-    "destructive-foreground",
-    "border",
-    "input",
-    "ring",
-    "chart-1",
-    "chart-2",
-    "chart-3",
-    "chart-4",
-    "chart-5",
-    "sidebar",
-    "sidebar-foreground",
-    "sidebar-primary",
-    "sidebar-primary-foreground",
-    "sidebar-accent",
-    "sidebar-accent-foreground",
-    "sidebar-border",
-    "sidebar-ring",
-    // Team extension: statuses every CRM needs, shadcn has no slot for them.
-    "success",
-    "success-foreground",
-    "warning",
-    "warning-foreground",
-    "info",
-    "info-foreground"
-  ];
-  var EXTENSION_TOKENS = ["destructive-foreground", "success", "success-foreground", "warning", "warning-foreground", "info", "info-foreground"];
-  function scopesFor(token) {
-    const t = token.split("/").pop();
-    if (/(^|-)foreground$/.test(t) || /(^|-)(txt|text)(-|$)/.test(t)) return ["TEXT_FILL", "SHAPE_FILL", "STROKE_COLOR"];
-    if (/^(border|input|ring|ring-offset)$|-(border|ring)$|(^|-)border-/.test(t)) return ["STROKE_COLOR", "FRAME_FILL", "SHAPE_FILL"];
-    if (/^chart-/.test(t)) return ["SHAPE_FILL", "FRAME_FILL", "STROKE_COLOR"];
-    return ["FRAME_FILL", "SHAPE_FILL"];
-  }
-  function radiusScale(radius) {
+  var SHADCN_TOKENS = shadcn_tokens_default;
+  var COLLECTION = "shadcn";
+  var THEMES = ["light", "dark"];
+  var COLOR_TOKENS = Object.keys(shadcn_tokens_default.colors);
+  var REM = 16;
+  var remToPx = (s) => String(s).endsWith("rem") ? parseFloat(s) * REM : parseFloat(s);
+  var RADIUS = remToPx(shadcn_tokens_default.radius);
+  var factor = (expr) => {
+    const m = /\*\s*([\d.]+)/.exec(expr);
+    return m ? parseFloat(m[1]) : 1;
+  };
+  function radiusScale(radius = RADIUS) {
     const r = Number(radius);
-    return { sm: Math.max(0, r - 4), md: Math.max(0, r - 2), lg: r, xl: r + 4 };
+    const out = {};
+    for (const [k, expr] of Object.entries(shadcn_tokens_default.radiusScale)) out[k] = Math.round(r * factor(expr) * 100) / 100;
+    return out;
+  }
+  var RADIUS_KEYS = Object.keys(shadcn_tokens_default.radiusScale);
+  var RADIUS_TOKENS = ["radius", ...RADIUS_KEYS.map((k) => `radius-${k}`)];
+  var rgbaOf = (token, theme) => oklchToRgba(shadcn_tokens_default.colors[token][theme]);
+  var FILLS = ["FRAME_FILL", "SHAPE_FILL"];
+  function scopesFor(token) {
+    if (/-foreground$/.test(token)) return ["TEXT_FILL"];
+    if (/^(sidebar-)?(border|ring)$/.test(token)) return ["STROKE_COLOR"];
+    if (token === "input") return ["STROKE_COLOR", ...FILLS];
+    if (token === "destructive") return [...FILLS, "TEXT_FILL", "STROKE_COLOR"];
+    if (/^chart-/.test(token)) return [...FILLS, "STROKE_COLOR"];
+    return [...FILLS];
   }
   var TYPE_SCALE = {
     xs: [12, 16],
@@ -127,69 +281,8 @@
     "4xl": [36, 40]
   };
 
-  // core/palette.js
-  function lab(hex) {
-    const { l, c, h } = hexToOklch(hex);
-    const r = h * Math.PI / 180;
-    return [l, c * Math.cos(r), c * Math.sin(r)];
-  }
-  function deltaE(a, b) {
-    const [l1, a1, b1] = lab(a);
-    const [l2, a2, b2] = lab(b);
-    return Math.hypot(l1 - l2, a1 - a2, b1 - b2) * 100;
-  }
-  function snap(hex, palette, maxDE = 2.5) {
-    if (hexToRgb(hex).a < 1) return null;
-    let best = null;
-    for (const [name, value] of Object.entries(palette)) {
-      if (hexToRgb(value).a < 1) continue;
-      const de = deltaE(hex, value);
-      if (!best || de < best.de) best = { name, hex: value, de };
-    }
-    return best && best.de <= maxDE ? best : null;
-  }
-
-  // core/naming.js
-  var kebab = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9а-яё]+/gi, "-").replace(/^-+|-+$/g, "");
-  function customName(project, role) {
-    const p = kebab(project);
-    let r = kebab(role);
-    if (r.startsWith(`${p}-`)) r = r.slice(p.length + 1);
-    if (!/^[a-z]/.test(p) || !/^[a-z0-9]/.test(r)) throw new Error(`Bad token name: project "${project}", role "${role}" (latin, kebab-case)`);
-    return `custom/${p}/${r}`;
-  }
-  function cssVar(name) {
-    const parts = name.split("/");
-    return parts[0] === "custom" ? `--${parts.slice(1).join("-")}` : `--${parts[parts.length - 1]}`;
-  }
-  function fixLegacyName(name) {
-    const parts = name.split("/");
-    if (parts[0] !== "custom" || parts.length < 3) return name;
-    try {
-      return customName(parts[1], parts.slice(2).join("-"));
-    } catch (e) {
-      return name;
-    }
-  }
-
-  // plugin/src/brand.js
-  var C = { tailwind: "Tailwind", style: "Style", mode: "Mode", brand: "Brand" };
-  var THEMES = ["light", "dark"];
-  var EXT_DEFAULTS = {
-    "destructive-foreground": ["white", "white"],
-    success: ["green/600", "green/500"],
-    "success-foreground": ["white", "green/950"],
-    warning: ["amber/500", "amber/400"],
-    "warning-foreground": ["amber/950", "amber/950"],
-    info: ["blue/600", "blue/500"],
-    "info-foreground": ["white", "white"]
-  };
-  var alias = (v) => figma.variables.createVariableAlias(v);
+  // plugin/src/variables.js
   var isAlias = (x) => x && typeof x === "object" && x.type === "VARIABLE_ALIAS";
-  var rgba = (hex) => {
-    const { r, g, b, a } = hexToRgb(hex);
-    return { r, g, b, a };
-  };
   async function loadIndex() {
     const cols2 = await figma.variables.getLocalVariableCollectionsAsync();
     const vars = await figma.variables.getLocalVariablesAsync();
@@ -202,302 +295,117 @@
       const c = cols2.find((x) => x.id === v.variableCollectionId);
       if (c) named[c.name].set(v.name, v);
     }
-    const palette = {};
-    for (const [name, v] of named[C.tailwind] || []) {
-      if (v.resolvedType !== "COLOR" || !name.startsWith("colors/")) continue;
-      const val = v.valuesByMode[col[C.tailwind].defaultModeId];
-      if (!isAlias(val)) palette[name.slice(7)] = rgbToHex(val);
-    }
-    return { col, named, byId, palette };
+    return { col, named, byId };
   }
-  var themeMode = (c, theme) => (c.modes.find((m) => (theme === "dark" ? /dark/i : /light/i).test(m.name)) || c.modes[theme === "dark" ? 1 : 0]).modeId;
+  var themeMode = (c, theme) => (c.modes.find((m) => (theme === "dark" ? /dark/i : /light/i).test(m.name)) || c.modes[theme === "dark" ? 1 : 0] || c.modes[0]).modeId;
   async function inspect() {
-    var _a;
     const ix = await loadIndex();
-    const mode = ix.col[C.mode];
-    const brand = ix.col[C.brand];
-    const out = {
-      kit: !!(ix.col[C.style] && mode),
-      collections: Object.keys(ix.col),
-      brands: brand ? brand.modes.map((m) => m.name) : [],
-      styles: ix.col[C.style] ? ix.col[C.style].modes.map((m) => m.name) : [],
-      migrated: 0,
-      total: 0,
-      legacyNames: [],
-      missingExtensions: []
+    const c = ix.col[COLLECTION];
+    const have = ix.named[COLLECTION] || /* @__PURE__ */ new Map();
+    return {
+      collection: !!c,
+      modes: c ? c.modes.map((m) => m.name) : [],
+      colors: COLOR_TOKENS.filter((t) => have.has(t)).length,
+      total: COLOR_TOKENS.length,
+      missing: [...COLOR_TOKENS, "radius"].filter((t) => !have.has(t)),
+      collections: Object.keys(ix.col)
     };
-    if (!mode) return out;
-    for (const [name, v] of ix.named[C.mode]) {
-      if (v.resolvedType !== "COLOR") continue;
-      out.total++;
-      const val = v.valuesByMode[themeMode(mode, "light")];
-      if (isAlias(val) && brand && ((_a = ix.byId.get(val.id)) == null ? void 0 : _a.variableCollectionId) === brand.id) out.migrated++;
-      if (fixLegacyName(name) !== name) out.legacyNames.push(name);
-    }
-    out.missingExtensions = EXTENSION_TOKENS.filter((t) => !ix.named[C.mode].has(t));
-    return out;
   }
-  async function ensureBrandVar(ix, name, type = "COLOR") {
-    let v = ix.named[C.brand].get(name);
-    if (!v) {
-      v = figma.variables.createVariable(name, ix.col[C.brand], type);
-      v.scopes = [];
-      ix.named[C.brand].set(name, v);
-      ix.byId.set(v.id, v);
-    }
-    return v;
-  }
-  var setAllModes = (ix, v, value) => {
-    for (const m of ix.col[C.brand].modes) v.setValueForMode(m.modeId, value);
+  var radiusValues = () => {
+    const s = radiusScale(RADIUS);
+    return [["radius", RADIUS], ...Object.entries(s).map(([k, v]) => [`radius-${k}`, v])];
   };
-  function twAlias(ix, ref) {
-    var _a;
-    const v = (_a = ix.named[C.tailwind]) == null ? void 0 : _a.get(`colors/${ref}`);
-    return v ? alias(v) : rgba(ref === "white" ? "#ffffff" : "#000000");
-  }
-  async function setupBrand(opts = {}) {
+  async function ensureShadcn(opts = {}) {
     const ix = await loadIndex();
-    const mode = ix.col[C.mode];
-    if (!mode || !ix.col[C.style]) throw new Error("\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D shadcn-\u043A\u0438\u0442: \u043D\u0443\u0436\u043D\u044B \u043A\u043E\u043B\u043B\u0435\u043A\u0446\u0438\u0438 Style \u0438 Mode");
-    if (!ix.col[C.brand]) {
-      const b = figma.variables.createVariableCollection(C.brand);
-      b.renameMode(b.modes[0].modeId, "Base");
-      ix.col[C.brand] = b;
-      ix.named[C.brand] = /* @__PURE__ */ new Map();
-    }
-    const brand = ix.col[C.brand];
-    const report2 = { linked: 0, created: 0, renamed: 0, scoped: 0, extensions: [] };
-    for (const [name, mv] of [...ix.named[C.mode]]) {
-      if (mv.resolvedType !== "COLOR") continue;
-      const clean = opts.fixNames ? fixLegacyName(name) : name;
-      if (clean !== name) {
-        mv.name = clean;
-        report2.renamed++;
-      }
-      for (const theme of THEMES) {
-        const mId = themeMode(mode, theme);
-        const val = mv.valuesByMode[mId];
-        const target = isAlias(val) ? ix.byId.get(val.id) : null;
-        if (target && target.variableCollectionId === brand.id) continue;
-        if (target && target.variableCollectionId === mode.id) continue;
-        const fromStyle = target && target.variableCollectionId === ix.col[C.style].id && target.name.startsWith(`color/${theme}/`);
-        const bName = fromStyle ? target.name : `color/${theme}/${clean}`;
-        const isNew = !ix.named[C.brand].has(bName);
-        const bv = await ensureBrandVar(ix, bName);
-        if (isNew) {
-          setAllModes(ix, bv, val);
-          report2.created++;
-        }
-        mv.setValueForMode(mId, alias(bv));
-        report2.linked++;
-      }
-      mv.setVariableCodeSyntax("WEB", `var(${cssVar(clean)})`);
-      if (opts.fixScopes) {
-        mv.scopes = scopesFor(clean);
-        report2.scoped++;
+    let c = ix.col[COLLECTION];
+    const report2 = { created: [], reset: 0, collection: false };
+    if (!c) {
+      c = figma.variables.createVariableCollection(COLLECTION);
+      c.renameMode(c.modes[0].modeId, "Light");
+      c.addMode("Dark");
+      ix.col[COLLECTION] = c;
+      ix.named[COLLECTION] = /* @__PURE__ */ new Map();
+      report2.collection = true;
+    } else if (c.modes.length < 2) c.addMode("Dark");
+    const named = ix.named[COLLECTION];
+    const make = (name, type) => {
+      const v = figma.variables.createVariable(name, c, type);
+      v.setVariableCodeSyntax("WEB", `var(--${name})`);
+      named.set(name, v);
+      ix.byId.set(v.id, v);
+      report2.created.push(name);
+      return v;
+    };
+    for (const token of COLOR_TOKENS) {
+      const fresh = !named.has(token);
+      const v = named.get(token) || make(token, "COLOR");
+      if (fresh) v.scopes = scopesFor(token);
+      if (fresh || opts.reset) {
+        for (const theme of THEMES) v.setValueForMode(themeMode(c, theme), rgbaOf(token, theme));
+        if (!fresh) report2.reset++;
       }
     }
-    for (const t of EXTENSION_TOKENS) {
-      if (ix.named[C.mode].has(t)) continue;
-      const mv = figma.variables.createVariable(t, mode, "COLOR");
-      mv.setPluginData("ds", "extension");
-      for (const [i, theme] of THEMES.entries()) {
-        const bv = await ensureBrandVar(ix, `color/${theme}/${t}`);
-        setAllModes(ix, bv, twAlias(ix, EXT_DEFAULTS[t][i]));
-        mv.setValueForMode(themeMode(mode, theme), alias(bv));
-      }
-      mv.scopes = scopesFor(t);
-      mv.setVariableCodeSyntax("WEB", `var(--${t})`);
-      ix.named[C.mode].set(t, mv);
-      report2.extensions.push(t);
-    }
-    for (const key of ["sans", "heading"]) {
-      const name = `font/${key}`;
-      if (ix.named[C.brand].has(name)) continue;
-      const sv = ix.named[C.style].get(`font/family/${key}`);
-      const fv = await ensureBrandVar(ix, name, "STRING");
-      setAllModes(ix, fv, sv ? alias(sv) : "Inter");
+    for (const [name, px] of radiusValues()) {
+      const fresh = !named.has(name);
+      const v = named.get(name) || make(name, "FLOAT");
+      if (fresh) v.scopes = ["CORNER_RADIUS"];
+      if (fresh || opts.reset) for (const m of c.modes) v.setValueForMode(m.modeId, px);
     }
     return report2;
   }
-  async function rollbackBrand() {
-    const ix = await loadIndex();
-    const brand = ix.col[C.brand];
-    const mode = ix.col[C.mode];
-    if (!brand) return { restored: 0 };
-    let restored = 0;
-    for (const [, mv] of ix.named[C.mode]) {
-      if (mv.getPluginData("ds") === "extension") {
-        mv.remove();
-        continue;
-      }
-      for (const theme of THEMES) {
-        const mId = themeMode(mode, theme);
-        const val = mv.valuesByMode[mId];
-        const bv = isAlias(val) && ix.byId.get(val.id);
-        if (bv && bv.variableCollectionId === brand.id) {
-          mv.setValueForMode(mId, bv.valuesByMode[brand.defaultModeId]);
-          restored++;
-        }
-      }
-    }
-    brand.remove();
-    return { restored };
-  }
-  async function addBrand(name) {
-    const ix = await loadIndex();
-    const b = ix.col[C.brand];
-    if (!b) throw new Error("\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u0441\u043B\u043E\u0439 Brand");
-    if (b.modes.some((m) => m.name === name)) throw new Error(`\u0411\u0440\u0435\u043D\u0434 \xAB${name}\xBB \u0443\u0436\u0435 \u0435\u0441\u0442\u044C`);
-    const id = b.addMode(name);
-    for (const [, v] of ix.named[C.brand]) v.setValueForMode(id, v.valuesByMode[b.defaultModeId]);
-    return { modeId: id };
-  }
-  async function removeBrand(name) {
-    const ix = await loadIndex();
-    const b = ix.col[C.brand];
-    const m = b && b.modes.find((x) => x.name === name);
-    if (!m || m.modeId === b.defaultModeId) throw new Error("\u041D\u0435\u043B\u044C\u0437\u044F \u0443\u0434\u0430\u043B\u0438\u0442\u044C Base \u0438\u043B\u0438 \u043D\u0435\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0439 \u0431\u0440\u0435\u043D\u0434");
-    b.removeMode(m.modeId);
-  }
-  function resolve(ix, v, modes, depth = 0) {
+  function resolve(ix, v, theme, depth = 0) {
     const c = Object.values(ix.col).find((x) => x.id === v.variableCollectionId);
-    const val = v.valuesByMode[modes[c.id] || c.defaultModeId];
-    if (isAlias(val) && depth < 10) {
-      const next = ix.byId.get(val.id);
-      return next ? resolve(ix, next, modes, depth + 1) : null;
+    const val = c && v.valuesByMode[themeMode(c, theme)];
+    if (isAlias(val)) {
+      const next = depth < 10 && ix.byId.get(val.id);
+      return next ? resolve(ix, next, theme, depth + 1) : null;
     }
-    return val;
+    return val == null ? null : val;
   }
-  var describe = (ix, val) => {
-    if (!isAlias(val)) return typeof val === "object" ? rgbToHex(val) : val;
-    const t = ix.byId.get(val.id);
-    return t ? `\u2192 ${t.name.replace(/^colors\//, "")}` : "\u2192 ?";
-  };
-  async function readBrand(brandName, styleName) {
-    var _a;
+  async function readShadcn() {
     const ix = await loadIndex();
-    const b = ix.col[C.brand];
-    const bm = b.modes.find((m) => m.name === brandName) || b.modes[0];
-    const sm = ix.col[C.style].modes.find((m) => m.name === styleName) || ix.col[C.style].modes[0];
-    const modes = { [b.id]: bm.modeId, [ix.col[C.style].id]: sm.modeId };
-    const rows = [];
-    for (const token of COLOR_TOKENS) for (const theme of THEMES) {
-      const bv = ix.named[C.brand].get(`color/${theme}/${token}`);
-      if (!bv) continue;
-      const raw = bv.valuesByMode[bm.modeId];
-      const inherited2 = isAlias(raw) && ((_a = ix.byId.get(raw.id)) == null ? void 0 : _a.variableCollectionId) === ix.col[C.style].id;
-      const res = resolve(ix, bv, modes);
-      rows.push({ token, theme, value: describe(ix, raw), hex: res && typeof res === "object" ? rgbToHex(res) : null, inherited: inherited2 });
-    }
-    const font = ix.named[C.brand].get("font/sans");
-    return { brand: bm.name, style: sm.name, rows, font: font ? resolve(ix, font, modes) : null, palette: ix.palette };
-  }
-  async function applyBrand(brandName, tokens, keys, opts = {}) {
-    var _a, _b, _c;
-    const ix = await loadIndex();
-    const b = ix.col[C.brand];
-    const bm = b.modes.find((m) => m.name === brandName);
-    if (!bm) throw new Error(`\u041D\u0435\u0442 \u0431\u0440\u0435\u043D\u0434\u0430 \xAB${brandName}\xBB`);
-    const out = [];
-    for (const token of COLOR_TOKENS) for (const theme of THEMES) {
-      const bv = ix.named[C.brand].get(`color/${theme}/${token}`);
-      if (!bv) continue;
-      const sv = ix.named[C.style].get(`color/${theme}/${token}`);
-      if (!keys.includes(token)) {
-        if (opts.reset && sv) bv.setValueForMode(bm.modeId, alias(sv));
-        continue;
-      }
-      const hex = tokens.colors[theme][token];
-      const hit = opts.snap === false ? null : snap(hex, ix.palette, (_a = opts.maxDE) != null ? _a : 2.5);
-      const tw = hit && ix.named[C.tailwind].get(`colors/${hit.name}`);
-      bv.setValueForMode(bm.modeId, tw ? alias(tw) : rgba(hex));
-      out.push({ token, theme, hex, alias: tw ? hit.name : null });
-    }
-    for (const [key, val] of [["sans", (_b = tokens.font) == null ? void 0 : _b.sans], ["heading", (_c = tokens.font) == null ? void 0 : _c.heading]]) {
-      const fv = ix.named[C.brand].get(`font/${key}`);
-      if (fv && val) fv.setValueForMode(bm.modeId, val);
-    }
-    return out;
-  }
-  async function addCustomToken({ project, role, light, dark, scopes }) {
-    const ix = await loadIndex();
-    if (!ix.col[C.brand]) throw new Error("\u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u0441\u043B\u043E\u0439 Brand");
-    const name = customName(project, role);
-    const mode = ix.col[C.mode];
-    const mv = ix.named[C.mode].get(name) || figma.variables.createVariable(name, mode, "COLOR");
-    for (const [theme, value] of [["light", light], ["dark", dark || light]]) {
-      const bv = await ensureBrandVar(ix, `color/${theme}/${name}`);
-      const tw = !String(value).startsWith("#") && ix.named[C.tailwind].get(`colors/${value}`);
-      if (!tw && !String(value).startsWith("#")) throw new Error(`\u041D\u0435\u0442 \u0446\u0432\u0435\u0442\u0430 Tailwind \xAB${value}\xBB`);
-      setAllModes(ix, bv, tw ? alias(tw) : rgba(value));
-      mv.setValueForMode(themeMode(mode, theme), alias(bv));
-    }
-    mv.scopes = (scopes == null ? void 0 : scopes.length) ? scopes : scopesFor(name);
-    mv.setVariableCodeSyntax("WEB", `var(${cssVar(name)})`);
-    return { name, css: cssVar(name) };
-  }
-  async function ensureModeColor(name, like) {
-    const ix = await loadIndex();
-    if (!ix.col[C.brand] || !ix.col[C.mode]) return null;
-    const mode = ix.col[C.mode];
-    const mv = figma.variables.createVariable(name, mode, "COLOR");
-    const base = like && ix.named[C.mode].get(like);
-    for (const theme of THEMES) {
-      const bv = await ensureBrandVar(ix, `color/${theme}/${name}`);
-      const src = base && ix.named[C.brand].get(`color/${theme}/${like}`);
-      setAllModes(ix, bv, src ? alias(src) : rgba("#ff00ff"));
-      mv.setValueForMode(themeMode(mode, theme), alias(bv));
-    }
-    mv.setPluginData("ds", "contract-placeholder");
-    mv.scopes = scopesFor(name);
-    mv.setVariableCodeSyntax("WEB", `var(${cssVar(name)})`);
-    return mv;
-  }
-  async function resolveCustom(brandName, styleName) {
-    const ix = await loadIndex();
-    const b = ix.col[C.brand];
-    const s = ix.col[C.style];
-    const modes = {
-      [b.id]: (b.modes.find((m) => m.name === brandName) || b.modes[0]).modeId,
-      [s.id]: (s.modes.find((m) => m.name === styleName) || s.modes[0]).modeId
-    };
-    const out = {};
-    for (const name of [...ix.named[C.mode].keys()].filter((n) => n.startsWith("custom/"))) {
+    const named = ix.named[COLLECTION] || /* @__PURE__ */ new Map();
+    const colors = {};
+    const missing = [];
+    for (const token of COLOR_TOKENS) {
+      const v = named.get(token);
       const entry = {};
       for (const theme of THEMES) {
-        const bv = ix.named[C.brand].get(`color/${theme}/${name}`);
-        const val = bv && resolve(ix, bv, modes);
-        if (val && typeof val === "object" && "r" in val) entry[theme] = rgbToHex(val);
+        const val = v && resolve(ix, v, theme);
+        if (val && typeof val === "object" && "r" in val) entry[theme] = rgbaToOklch(val);
       }
-      out[cssVar(name).slice(2)] = entry;
+      if (entry.light && entry.dark) colors[token] = entry;
+      else {
+        colors[token] = __spreadValues(__spreadValues({}, SHADCN_TOKENS.colors[token]), entry);
+        missing.push(token);
+      }
     }
-    return out;
-  }
-  async function listCustom() {
-    const ix = await loadIndex();
-    return [...(ix.named[C.mode] || /* @__PURE__ */ new Map()).keys()].filter((n) => n.startsWith("custom/")).sort();
+    const r = named.get("radius");
+    const px = r ? resolve(ix, r, "light") : RADIUS;
+    return {
+      $schema: SHADCN_TOKENS.$schema,
+      radius: `${Math.round(Number(px) / 16 * 1e3) / 1e3}rem`,
+      radiusScale: SHADCN_TOKENS.radiusScale,
+      font: SHADCN_TOKENS.font,
+      colors,
+      missing
+    };
   }
   async function modeVars() {
-    var _a, _b;
     const ix = await loadIndex();
+    const named = ix.named[COLLECTION] || /* @__PURE__ */ new Map();
     const vars = {};
-    for (const t of COLOR_TOKENS) vars[t] = ((_a = ix.named[C.mode]) == null ? void 0 : _a.get(t)) || null;
+    for (const t of COLOR_TOKENS) vars[t] = named.get(t) || null;
     const radius = {};
-    for (const r of ["sm", "md", "lg", "xl"]) radius[r] = ((_b = ix.named[C.style]) == null ? void 0 : _b.get(`radius/${r}`)) || null;
+    for (const k of ["sm", "md", "lg", "xl"]) radius[k] = named.get(`radius-${k}`) || null;
     radius.full = 999;
     return { vars, radius, ix };
   }
-  async function setFrameModes(frame, { brand, style, theme }) {
+  async function setFrameModes(frame, { theme } = {}) {
+    if (!theme) return;
     const ix = await loadIndex();
-    const pin = (name, test) => {
-      const c = ix.col[name];
-      const m = c && c.modes.find(test);
-      if (m) frame.setExplicitVariableModeForCollection(c, m.modeId);
-    };
-    if (brand) pin(C.brand, (m) => m.name === brand);
-    if (style) pin(C.style, (m) => m.name === style);
-    if (theme) pin(C.mode, (m) => (theme === "dark" ? /dark/i : /light/i).test(m.name));
+    const c = ix.col[COLLECTION];
+    if (c) frame.setExplicitVariableModeForCollection(c, themeMode(c, theme));
   }
 
   // plugin/src/draw.js
@@ -916,368 +824,6 @@
     return { keep, create, stale: [...byName.values()] };
   }
 
-  // core/token-map.js
-  var TOKEN_MAP = {
-    colors: {
-      "background": { "figma": "background/surface/light", "collection": "2.theme" },
-      "foreground": { "figma": "text/default", "collection": "2.theme" },
-      "muted": { "figma": "background/surface/soft", "collection": "2.theme" },
-      "muted-foreground": { "figma": "text/muted", "collection": "2.theme" },
-      "soft-foreground": { "figma": "text/soft", "collection": "2.theme" },
-      "disabled-foreground": { "figma": "text/disabled", "collection": "2.theme" },
-      "inverse-foreground": { "figma": "text/inverse", "collection": "2.theme" },
-      "card": { "figma": "background/onsurface/0", "collection": "2.theme" },
-      "surface-0": { "figma": "background/onsurface/0", "collection": "2.theme" },
-      "surface-1": { "figma": "background/onsurface/1", "collection": "2.theme" },
-      "surface-2": { "figma": "background/onsurface/2", "collection": "2.theme" },
-      "surface-3": { "figma": "background/onsurface/3", "collection": "2.theme" },
-      "surface-4": { "figma": "background/onsurface/4", "collection": "2.theme" },
-      "surface-5": { "figma": "background/onsurface/5", "collection": "2.theme" },
-      "surface-6": { "figma": "background/onsurface/6", "collection": "2.theme" },
-      "surface-inverse": { "figma": "background/onsurface/0-inverse", "collection": "2.theme" },
-      "accent": { "figma": "background/global/soft/hover", "collection": "2.theme" },
-      "accent-active": { "figma": "background/global/soft/active", "collection": "2.theme" },
-      "border": { "figma": "border/divider/primary", "collection": "2.theme" },
-      "border-secondary": { "figma": "border/divider/secondary", "collection": "2.theme" },
-      "border-subtle": { "figma": "border/divider/tetriary", "collection": "2.theme" },
-      "input": { "figma": "border/global/soft/default", "collection": "2.theme" },
-      "input-hover": { "figma": "border/global/soft/hover", "collection": "2.theme" },
-      "input-active": { "figma": "border/global/soft/active", "collection": "2.theme" },
-      "input-disabled": { "figma": "border/global/soft/disabled", "collection": "2.theme" },
-      "border-destructive": { "figma": "border/accent/danger", "collection": "2.theme" },
-      "border-warning": { "figma": "border/accent/warning", "collection": "2.theme" },
-      "border-success": { "figma": "border/accent/positive", "collection": "2.theme" },
-      "primary": { "figma": "accent/primary/default", "collection": "2.theme" },
-      "primary-hover": { "figma": "accent/primary/hover", "collection": "2.theme" },
-      "primary-active": { "figma": "accent/primary/active", "collection": "2.theme" },
-      "primary-foreground": { "figma": "accent/primary/on-accent", "collection": "2.theme" },
-      "primary-foreground-muted": { "figma": "accent/primary/on-accent-muted", "collection": "2.theme" },
-      "primary-muted": { "figma": "accent/primary/container-muted", "collection": "2.theme" },
-      "secondary": { "figma": "neutral/primary/default", "collection": "2.theme" },
-      "secondary-hover": { "figma": "neutral/primary/hover", "collection": "2.theme" },
-      "secondary-active": { "figma": "neutral/primary/active", "collection": "2.theme" },
-      "secondary-foreground": { "alias": "static-light" },
-      "secondary-muted": { "figma": "neutral/primary/container-muted", "collection": "2.theme" },
-      "soft": { "figma": "neutral/secondary/flat filled/default", "collection": "2.theme" },
-      "soft-hover": { "figma": "neutral/secondary/flat filled/hover", "collection": "2.theme" },
-      "soft-foreground-strong": { "figma": "neutral/secondary/flat filled/on-accent", "collection": "2.theme" },
-      "ghost": { "figma": "neutral/secondary/flat/default", "collection": "2.theme" },
-      "ghost-hover": { "figma": "neutral/secondary/flat/hover", "collection": "2.theme" },
-      "ghost-foreground": { "figma": "neutral/secondary/flat/on-accent", "collection": "2.theme" },
-      "outline": { "figma": "neutral/secondary/outline/default", "collection": "2.theme" },
-      "outline-hover": { "figma": "neutral/secondary/outline/hover", "collection": "2.theme" },
-      "outline-foreground": { "figma": "neutral/secondary/outline/on-accent", "collection": "2.theme" },
-      "neutral-flat": { "figma": "neutral/secondary/flat default/default", "collection": "2.theme" },
-      "neutral-flat-hover": { "figma": "neutral/secondary/flat default/hover", "collection": "2.theme" },
-      "static": { "figma": "accent/static/default", "collection": "2.theme" },
-      "static-hover": { "figma": "accent/static/hover", "collection": "2.theme" },
-      "static-active": { "figma": "accent/static/active", "collection": "2.theme" },
-      "static-foreground": { "figma": "accent/static/on-accent", "collection": "2.theme" },
-      "static-muted": { "figma": "neutral/static/container-muted", "collection": "2.theme" },
-      "static-light": { "figma": "static/light", "collection": "2.theme" },
-      "static-dark": { "figma": "static/dark", "collection": "2.theme" },
-      "success": { "figma": "accent/positive/default", "collection": "2.theme" },
-      "success-hover": { "figma": "accent/positive/hover", "collection": "2.theme" },
-      "success-active": { "figma": "accent/positive/active", "collection": "2.theme" },
-      "success-foreground": { "figma": "accent/positive/on-accent", "collection": "2.theme" },
-      "destructive": { "figma": "accent/negative/default", "collection": "2.theme" },
-      "destructive-hover": { "figma": "accent/negative/hover", "collection": "2.theme" },
-      "destructive-active": { "figma": "accent/negative/active", "collection": "2.theme" },
-      "destructive-foreground": { "figma": "accent/negative/on-accent", "collection": "2.theme" },
-      "destructive-soft": { "figma": "neutral/negative/default", "collection": "2.theme" },
-      "destructive-soft-hover": { "figma": "neutral/negative/hover", "collection": "2.theme" },
-      "destructive-soft-foreground": { "figma": "neutral/negative/on-accent", "collection": "2.theme" },
-      "link": { "figma": "text/link", "collection": "2.theme" },
-      "destructive-text": { "figma": "text/danger", "collection": "2.theme" },
-      "warning-text": { "figma": "text/warning", "collection": "2.theme" },
-      "success-text": { "figma": "text/positive", "collection": "2.theme" },
-      "status-neutral": { "figma": "status/filled/bg/default", "collection": "2.theme" },
-      "status-neutral-muted": { "figma": "status/ghost/bg/default", "collection": "2.theme" },
-      "status-neutral-foreground": { "figma": "status/ghost/text/default", "collection": "2.theme" },
-      "status-accent": { "figma": "status/filled/bg/accent", "collection": "2.theme" },
-      "status-accent-muted": { "figma": "status/ghost/bg/accent", "collection": "2.theme" },
-      "status-accent-foreground": { "figma": "status/ghost/text/accent", "collection": "2.theme" },
-      "status-success": { "figma": "status/filled/bg/success", "collection": "2.theme" },
-      "status-success-muted": { "figma": "status/ghost/bg/success", "collection": "2.theme" },
-      "status-success-foreground": { "figma": "status/ghost/text/success", "collection": "2.theme" },
-      "status-warning": { "figma": "status/filled/bg/warning", "collection": "2.theme" },
-      "status-warning-muted": { "figma": "status/ghost/bg/warning", "collection": "2.theme" },
-      "status-warning-foreground": { "figma": "status/ghost/text/warning", "collection": "2.theme" },
-      "status-error": { "figma": "status/filled/bg/error", "collection": "2.theme" },
-      "status-error-muted": { "figma": "status/ghost/bg/error", "collection": "2.theme" },
-      "status-error-foreground": { "figma": "status/ghost/text/error", "collection": "2.theme" },
-      "status-info": { "figma": "status/filled/bg/info", "collection": "2.theme" },
-      "status-info-muted": { "figma": "status/ghost/bg/info", "collection": "2.theme" },
-      "status-info-foreground": { "figma": "status/ghost/text/info", "collection": "2.theme" },
-      "status-clear": { "figma": "status/filled/bg/clear", "collection": "2.theme" },
-      "status-clear-muted": { "figma": "status/ghost/bg/clear", "collection": "2.theme" },
-      "status-clear-foreground": { "figma": "status/ghost/text/clear", "collection": "2.theme" },
-      "status-filled-foreground": { "figma": "status/filled/text/default", "collection": "2.theme" },
-      "status-filled-foreground-inverse": { "figma": "status/filled/text/default-inverse", "collection": "2.theme" },
-      "supportive-1": { "figma": "supportive/filled/1", "collection": "2.theme" },
-      "supportive-2": { "figma": "supportive/filled/2", "collection": "2.theme" },
-      "supportive-3": { "figma": "supportive/filled/3", "collection": "2.theme" },
-      "supportive-4": { "figma": "supportive/filled/4", "collection": "2.theme" },
-      "supportive-5": { "figma": "supportive/filled/5", "collection": "2.theme" },
-      "supportive-6": { "figma": "supportive/filled/6", "collection": "2.theme" },
-      "supportive-7": { "figma": "supportive/filled/7", "collection": "2.theme" },
-      "supportive-8": { "figma": "supportive/filled/8", "collection": "2.theme" },
-      "supportive-9": { "figma": "supportive/filled/9", "collection": "2.theme" },
-      "supportive-10": { "figma": "supportive/filled/10", "collection": "2.theme" },
-      "supportive-ghost-1": { "figma": "supportive/ghost/1", "collection": "2.theme" },
-      "supportive-ghost-2": { "figma": "supportive/ghost/2", "collection": "2.theme" },
-      "supportive-ghost-3": { "figma": "supportive/ghost/3", "collection": "2.theme" },
-      "supportive-ghost-4": { "figma": "supportive/ghost/4", "collection": "2.theme" },
-      "supportive-ghost-5": { "figma": "supportive/ghost/5", "collection": "2.theme" },
-      "supportive-ghost-6": { "figma": "supportive/ghost/6", "collection": "2.theme" },
-      "supportive-ghost-7": { "figma": "supportive/ghost/7", "collection": "2.theme" },
-      "supportive-ghost-8": { "figma": "supportive/ghost/8", "collection": "2.theme" },
-      "supportive-ghost-9": { "figma": "supportive/ghost/9", "collection": "2.theme" },
-      "supportive-ghost-10": { "figma": "supportive/ghost/10", "collection": "2.theme" },
-      "overlay": { "figma": "misc/overlay/default", "collection": "2.theme" },
-      "brand-bank": { "figma": "brand/bank/default", "collection": "2.theme" },
-      "brand-kassa": { "figma": "brand/kassa/default", "collection": "2.theme" },
-      "brand-travel": { "figma": "brand/travel/default", "collection": "2.theme" },
-      "brand-artwin": { "figma": "brand/artwin/default", "collection": "2.theme" },
-      "brand": { "figma": "default", "collection": "1.brand" },
-      "brand-hover": { "figma": "hover", "collection": "1.brand" },
-      "brand-active": { "figma": "active", "collection": "1.brand" },
-      "brand-foreground": { "figma": "on-accent", "collection": "1.brand" },
-      "brand-foreground-muted": { "figma": "on-accent-muted", "collection": "1.brand" },
-      "brand-container-muted": { "figma": "container-muted", "collection": "1.brand" },
-      "brand-ghost": { "figma": "ghost-default", "collection": "1.brand" },
-      "brand-ghost-hover": { "figma": "ghost-hover", "collection": "1.brand" },
-      "brand-ghost-active": { "figma": "ghost-active", "collection": "1.brand" },
-      "brand-ghost-foreground": { "figma": "ghost-on-accent", "collection": "1.brand" },
-      "brand-ghost-foreground-muted": { "figma": "ghost-on-accent-muted", "collection": "1.brand" },
-      "brand-muted": { "figma": "ghost-container-muted", "collection": "1.brand" },
-      "card-foreground": { "alias": "foreground" },
-      "popover": { "alias": "card" },
-      "popover-foreground": { "alias": "foreground" },
-      "accent-foreground": { "alias": "foreground" },
-      "brand-text": { "figma": "text/brand", "collection": "2.theme" },
-      "ring": { "figma": "border/accent/brand", "collection": "2.theme" }
-    },
-    radius: {
-      "2xs": "radius/xss",
-      "xs": "radius/xs",
-      "sm": "radius/s",
-      "md": "radius/m",
-      "lg": "radius/l",
-      "xl": "radius/xl",
-      "2xl": "radius/xl-2",
-      "3xl": "radius/xl-3",
-      "4xl": "radius/xl-4"
-    },
-    text: {
-      "2xs": "font/Label/s",
-      "caption": "font/Label/m",
-      "xs": "font/Body/xs",
-      "sm": "font/Body/s",
-      "md": "font/Body/m",
-      "base": "font/Body/l",
-      "lg": "font/Body/xl",
-      "xl": "font/Heading/h5",
-      "2xl": "font/Heading/h4",
-      "3xl": "font/Heading/h3",
-      "4xl": "font/Heading/h1",
-      "5xl": "font/Display/s",
-      "6xl": "font/Display/m",
-      "7xl": "font/Display/l"
-    },
-    spacing: {
-      "0": "spacing/none",
-      "4": "spacing/xs",
-      "8": "spacing/s-3",
-      "10": "spacing/s-2",
-      "12": "spacing/s-1",
-      "16": "spacing/m-2-base",
-      "20": "spacing/m-1",
-      "24": "spacing/l-2",
-      "28": "spacing/l-1",
-      "32": "spacing/xl-2",
-      "36": "spacing/xl-1",
-      "40": "spacing/xxl-2",
-      "48": "spacing/xxl-1"
-    },
-    keys: {
-      "accent/negative/active": "a666254f7ddcc865dc06649724a798da5aaab422",
-      "accent/negative/default": "3717327211c6b7f0a3f533f2f0c79f865b529f30",
-      "accent/negative/hover": "746a41958228054bd386b27501bf85a033dc4891",
-      "accent/negative/on-accent": "bc02a16da8fc10b5c20d8700fd21cc782d4af51d",
-      "accent/positive/active": "9b091443a860ecd5a32379af21a579ffe59c5855",
-      "accent/positive/default": "454762e6ceaea6431078b001351ace25d4e7e9dd",
-      "accent/positive/hover": "6b9599885cefa8bc7cdf2a19f7a9f5629fda1ce4",
-      "accent/positive/on-accent": "01b82dea3e963da6e01f4ca08923b0c14511705d",
-      "accent/primary/active": "7dad401d284a0665062ccdb2af0f89b898fa911a",
-      "accent/primary/container-muted": "f51910b07f47fce154594921a4fc339d6347ab13",
-      "accent/primary/default": "2547333051bd1cffc8f9f2aba391bee960d750c9",
-      "accent/primary/hover": "6b557bc7821bb9fc5b0d2b2fe933bbc9d9ed23c8",
-      "accent/primary/on-accent": "5e755c94dc67c5dea2ec450f7eb50c4223859c47",
-      "accent/primary/on-accent-muted": "cdd021e79fa64da6e795f524c455208a5dad21f8",
-      "accent/static/active": "292a0dc7347bb1be5b4943ae40cc9e9a0d909ac4",
-      "accent/static/default": "cc0476ada5bec7d0deac8b51f9ecf77183407a22",
-      "accent/static/hover": "94226beb537849177b9556669e1ad5153bc192c2",
-      "accent/static/on-accent": "c94073320949e77be47c3ce53eb51d104b5da43c",
-      "background/global/soft/active": "a8a0895f496f7ceab6151e4663df72324cfadabc",
-      "background/global/soft/hover": "da113c8a57297ff4ccc92c908b9e2e2c0407cad4",
-      "background/onsurface/0": "597e34eb4635ee8b4625923be7f8b6496f987f1c",
-      "background/onsurface/0-inverse": "b07141d92666bb6469056965114ce8385823763b",
-      "background/onsurface/1": "6ff51ba6d871c88f2ab26ab3d74b76f72bfe63f1",
-      "background/onsurface/2": "fbe8e32317aa0b95304841f2881d7d01c810fa33",
-      "background/onsurface/3": "79215f526cdbdc48db8837e6d61048e072896d9f",
-      "background/onsurface/4": "57ddc4d21ad7814cd9e5a04f2fb5505359e28ec9",
-      "background/onsurface/5": "fce09485d8065467a5abed1c4f9854c683f69988",
-      "background/onsurface/6": "6fa2c477f4797f975d8b37e89c55f35836b382f1",
-      "background/surface/light": "6b620b0494f77db47571a4133623011b8f0fe3b5",
-      "background/surface/soft": "9937a9232afab99fdc4fa020576aae016c3d7630",
-      "border/accent/brand": "dc946628c987112c7727236e341ca1bc72acd278",
-      "border/accent/danger": "a725b5229c21f98c37ffdbbd676b50ffd49c24be",
-      "border/accent/positive": "41b2aaa3f8ca573a86354875fbbc2a681ff96979",
-      "border/accent/warning": "6176d3a6b84d308ca2af1e0f3fa5db0c1e456e4e",
-      "border/divider/primary": "51813af7717630a119a3ea6291e05b540359c8c5",
-      "border/divider/secondary": "9da710ec28de3b2bcbdecc9da0d8e6a84ebd2710",
-      "border/divider/tetriary": "a8277d111f27e8a58ff96ab381ad246898660068",
-      "border/global/soft/active": "ae82d51efbabd022f3d5fb769cafb5693538676f",
-      "border/global/soft/default": "2633ff7c179a75b585932d697e2c9c0967f7005e",
-      "border/global/soft/disabled": "60b115ea0f2bea5f926325412bef066624af1020",
-      "border/global/soft/hover": "0011f441b8c33d89cd6610c2325f3cf599248f34",
-      "brand/artwin/default": "206601d34fec5059fc773cf49ce0338ac328c1ec",
-      "brand/bank/default": "12e4e4596b58af08ecfc0c67c3075266c235e6d8",
-      "brand/kassa/default": "5dd34baabc8a192769410ef7b2102a257b71892e",
-      "brand/travel/default": "5e8ca0af3975d72bf9f2861a0aba97ff90dfe723",
-      "misc/overlay/default": "7cbaa01f8f8a3416948ec7a58834a562dc379155",
-      "neutral/negative/default": "7c507104d0f9c48829ed82d10239cee95eedc293",
-      "neutral/negative/hover": "da22c2b67af546c841c5c3560105c00886474bb6",
-      "neutral/negative/on-accent": "804f284adcaa6af59e8169642d3e5703cecf3dd3",
-      "neutral/primary/active": "847bd8512d6dc19207b6b80674e053dd867f3df1",
-      "neutral/primary/container-muted": "c1195d122ebce15eca2981b918e9fcbbaeca9f22",
-      "neutral/primary/default": "082d1082b3a083bb57b8f0a9e7f2646e1285beed",
-      "neutral/primary/hover": "2cb95313acd7575d217d9885f6a3ba0292e9fdd8",
-      "neutral/secondary/flat default/default": "e964071fb5ae6d4ff91c17ec0bdc777265006f83",
-      "neutral/secondary/flat default/hover": "17c06fabfe9e30851abdf22a9adecd9286d7eefc",
-      "neutral/secondary/flat filled/default": "8807556f95b98cd30cac23158e361dbbabe046ee",
-      "neutral/secondary/flat filled/hover": "8ab173cead104575db05fe41799b8ed78dba3db3",
-      "neutral/secondary/flat filled/on-accent": "e42d34d9f287b5a0a54ec77db20ba1b24e39ec42",
-      "neutral/secondary/flat/default": "3003ad655612547f33197428ae0b4f9442a02caa",
-      "neutral/secondary/flat/hover": "2a4fa1126c90e06b620dabe023ab5b2844c58d80",
-      "neutral/secondary/flat/on-accent": "9a09df272e93597bd204c33cbad9cb9c27ce75c8",
-      "neutral/secondary/outline/default": "2461f38b7d19f180954432c22346812630cf0a0d",
-      "neutral/secondary/outline/hover": "02e23e7b06ace1f4d2a0bc450cb5de50589f9ce0",
-      "neutral/secondary/outline/on-accent": "02385f1e3d8489893bc403b83af0b3dc8b8859be",
-      "neutral/static/container-muted": "97d53b3d31d05155981ddb40fc88581dba8812a4",
-      "radius/l": "215a81ed22f0545e5c4e4bacdaba3f52506fc65e",
-      "radius/m": "cff2d86748887ff2a64d9de8911be6e9c7c48f3e",
-      "radius/s": "9d4b1d6c55e145f473e312025829306854a3a023",
-      "radius/xl": "46ff3d87efcea0e8e529e8dbaa14ee9c81faafb2",
-      "radius/xl-2": "5c0fd5fb1f56125215d6330cdee12086f32a53f7",
-      "radius/xl-3": "b60fc0f5852bc96ca2f6c0cf1711f36f033d788d",
-      "radius/xl-4": "0552e3addd4a74430e7c53b6718479b9aa6d60e6",
-      "radius/xs": "e5e218dc0552b718be2cdcf3992ae8475ee3f492",
-      "radius/xss": "243485996c0d982afbccdfdfc18c58ead796485b",
-      "spacing/l-1": "139bc110af5978890090115e3686b93fa86dbef0",
-      "spacing/l-2": "c25e02637c18d4b74c20014d98a2ee237c50749a",
-      "spacing/m-1": "945c102a9deead688072a884e69d5b10932b013e",
-      "spacing/m-2-base": "06f234ad59d196f83831e10bcb2ba0dda48564a8",
-      "spacing/none": "469eae815f2cdfa1596c9cdb6701618e0030a899",
-      "spacing/s-1": "b7f3190a4d32d94e37e2349ac0035f2b7a28ddf7",
-      "spacing/s-2": "bd33cdc1be90ca2ac5f3d0beb7e6cd3dcbe826e9",
-      "spacing/s-3": "25548a2aee9592223ee300340cc03b54847db6b8",
-      "spacing/xl-1": "afc59ca2bae3e2c7b18935a7f518fe9a12aa6fcd",
-      "spacing/xl-2": "d80486a8ad621a92eefd5fa6500a3ce339f6dd76",
-      "spacing/xs": "49fe1d2a4517444f7f637ea69fad54c17decba64",
-      "spacing/xxl-1": "f68a450bfa5d2d835a3493982430608b136b0692",
-      "spacing/xxl-2": "5112dc6b296ab4e9d858030023ca5db8790524d2",
-      "static/dark": "fbd4bfe877400ffe7e3af5a2572847c03e587e80",
-      "static/light": "5c4810c36d8078c5314d391514845b5c5828b8df",
-      "status/filled/bg/accent": "9cebb5a355608795a767ac9853404fbb43db5206",
-      "status/filled/bg/clear": "93d33d613eab2d1b4d31a8e619b64b381d72a4e3",
-      "status/filled/bg/default": "8e125a92ece57b864b1c321a805d389c15508618",
-      "status/filled/bg/error": "27dee2b70f6e109a4b3a2ac5966cb8bfc42024eb",
-      "status/filled/bg/info": "3ad196a6d3a682b186c23de842f6471b83370b08",
-      "status/filled/bg/success": "fc1939007674cf3c93b1c94017470f8c6a87573a",
-      "status/filled/bg/warning": "d2001fcbd94fb99277f5761d0d4f66072c415c5d",
-      "status/filled/text/default": "5019f6f5b7ba914f887b62c93d5edb2e06fd69b2",
-      "status/filled/text/default-inverse": "0949f04c7ab8b91faaa35136172c7e0557957d5e",
-      "status/ghost/bg/accent": "3a9c3243f8607e33721507cd402401fbef257e79",
-      "status/ghost/bg/clear": "4521c8dfedc48ebecfaf00b393f14950b2c93347",
-      "status/ghost/bg/default": "a015840d61d7555752a6d553bfd5a27debbe72d4",
-      "status/ghost/bg/error": "d6976782df00d03acc38f85fc707a23691a6e849",
-      "status/ghost/bg/info": "4f0694156bf507c9d8489ac865d0958d83f3c3f0",
-      "status/ghost/bg/success": "30ca12f279cfc6d8b82695c4b9449bbc9f03df41",
-      "status/ghost/bg/warning": "8600b871f9331691b62a6251c38876f768dfd97b",
-      "status/ghost/text/accent": "22f5b1784478aaac7409799c7e04470e54eca5c6",
-      "status/ghost/text/clear": "3f7b0a622f408f0da56d95bdc81cd7d204db0cc2",
-      "status/ghost/text/default": "f051b5799e28331ef340deb471b46ee61886739f",
-      "status/ghost/text/error": "b0cd6e709e506da9ec9be38f3ba06fd0aab8a793",
-      "status/ghost/text/info": "c82074870b69f984cc5be9a4928ef53f3d8e962c",
-      "status/ghost/text/success": "d4e0020199320ae0b6795793a8624f31181dcb6f",
-      "status/ghost/text/warning": "87c8cde7b5048a85bc5f7adecb3450c55e2be986",
-      "supportive/filled/1": "ad6e033b05a95ceef888b7df75bf1060ff1cb587",
-      "supportive/filled/10": "13c034aa449bbd2c49096178a31ed94b7ac94785",
-      "supportive/filled/2": "b4b05bb60a566b12e934113a031100ce7cb0416b",
-      "supportive/filled/3": "e8cf9a531d8f5ce6f31f0914dc0cc0f8a1a0ea62",
-      "supportive/filled/4": "a3cd7b5cfd146e94e58f58b0b75aa6539347c05d",
-      "supportive/filled/5": "20332c1546b7dae1ff61a602bc9df5a0a7cd44ee",
-      "supportive/filled/6": "9e455d107e271b9181ad892fae1bb3ad5a291820",
-      "supportive/filled/7": "5c42d1ac83e5e05827bce398e0859b61853b9bee",
-      "supportive/filled/8": "6fee4e3e1523a572be5ffa0f28f66bafe20fe15e",
-      "supportive/filled/9": "3a799ae89d05ac0f207c536b4409df418b15bb86",
-      "supportive/ghost/1": "3792dad1e6dec20e68675dcbe5da9eabb675ef92",
-      "supportive/ghost/10": "02facbf6f327fd1d3b542b2f4ccaf7a305e3af8b",
-      "supportive/ghost/2": "6c8168b02aa970f7b6b94981412622aae4ac4395",
-      "supportive/ghost/3": "2fe70ff7cd20a95af7a5993310eab993ec943a6f",
-      "supportive/ghost/4": "82604b98cf358d6f5c4c008c66a0f0c0b464a3bf",
-      "supportive/ghost/5": "fde585df00890604093b1d6af4b11932096f05f5",
-      "supportive/ghost/6": "5575400919f04f4c4c36efb38492fc1dc8bf68d3",
-      "supportive/ghost/7": "0d61b8f8b0fe06f7338815bafc12eb9204a7bdef",
-      "supportive/ghost/8": "930d0154ef61f47c09b1b8aac9e1d53af3591d78",
-      "supportive/ghost/9": "66481078c006617a3eba056480773f8ff20537ec",
-      "text/brand": "9182775236adb96970d21e01ce9fbee25834e230",
-      "text/danger": "c71864d1c0dbe42e85d945e45b2e8b2e07f2873b",
-      "text/default": "8af86f380514faeacdc79b7a232d03723fab0bde",
-      "text/disabled": "667c29a1ebfcefbc7be637b6c421c1f6fba79b51",
-      "text/inverse": "f85ccfae4cfb11d0d3436726babf269a22afdd7e",
-      "text/link": "3019aa5c09a3caaa6ef5a60a0aea282d659084ea",
-      "text/muted": "8bb44dbea94883e123e8c8999072b7e40886ca68",
-      "text/positive": "38f2afee24740dccbb19d9f5bd8488b50973c359",
-      "text/soft": "f729c62f2c73030dcb2f5a7b78984146b05aea2b",
-      "text/warning": "863eb2737166b081d843174d16b1842c62eea90c"
-    },
-    styleKeys: {
-      "font/Label/s": "8fc90fb03d6fad3a47f660345698efd4b84e9c0d",
-      "font/Label/m": "5ce2601a5d83c46550be0cc8999693e275c7c5f5",
-      "font/Body/xs": "8850f7044628d2c0d22dd32323557ea8baa5e178",
-      "font/Body/xs-md": "aa171a29710200f383227c5de81e8ac07bd72ed0",
-      "font/Body/xs-strong": "fe0bc48b745d27ee08208ae8f35afda3e8206bd5",
-      "font/Body/s": "476f8d56a3c3bcaa804a33fd3658f73dbbb06fa3",
-      "font/Body/s-md": "6ebb3dab78e706c0f2ee21bd5fd79999aecc4862",
-      "font/Body/s-strong": "8f1f4e2617b460a9982399f453c4d9baa952dc45",
-      "font/Body/m": "4d1b7e47cbc9fc3531246736359f2c9325535de6",
-      "font/Body/m-md": "a52537e7e015a8c7a857ad4c3c1527c811d582d1",
-      "font/Body/m-strong": "473c82346b61cca42405ac66ec8888a5ceaa5112",
-      "font/Body/l": "98dc7c792e61f09be4d5f519634aada8b52cfcd3",
-      "font/Body/l-md": "a7b3a781c611400a807bdee354a39c3736df09bd",
-      "font/Body/l-strong": "cac77d0fc4391374fa731efc663cc720e5049da4",
-      "font/Body/xl": "aa8b7fbaa97839c3510a2fe501e42b210d3a872e",
-      "font/Body/xl-md": "07863401d95c6f432ee9a03758fa0fc226d159ab",
-      "font/Body/xl-strong": "9be63943b5c7f6b88df6340c47e73a3d6d2728fe",
-      "font/Heading/h5": "d42185ecec5526dbd0305063826a760364c56df0",
-      "font/Heading/h4": "3c1db2e1820e70adce82a63dc504382b52ee759a",
-      "font/Heading/h3": "23dc9ab4ba71b905aa555d4aa563e364598fa40c",
-      "font/Heading/h1": "e08e01dab2c6eb1e477b5e7bc9fd8bb7de4fd8a3",
-      "font/Display/s": "6b7f650ff27b4c6c9d69163260725f86cfd4fca2",
-      "font/Display/s-md": "e06696cc2138f91849ecab3b1db9f94381d41b82",
-      "font/Display/s-strong": "c249d0bd029a93d6d6923dbf531dde2d3e4e11fe",
-      "font/Display/m": "3e023dd0da2e1e176c3187b68196a6586d802b8a",
-      "font/Display/m-md": "6fd5a97d91cc9a9de866ac0f36f7ad642b2d2b05",
-      "font/Display/m-strong": "a95b07a2b43f24aa401f1ef8c1b32b489149392f",
-      "font/Display/l": "e316e5b34dae81e60cc2ab97a1ab8cdef4563a98",
-      "font/Display/l-md": "5ab7b80c54c4507d649b6306dd3e61b8f1721230",
-      "font/Display/l-strong": "9b0ca8f78c395d4698e06d129e87dee3e6ead2b5"
-    }
-  };
-
   // plugin/src/icons.js
   var P = {
     home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
@@ -1352,8 +898,8 @@
   async function importByKey(load) {
     if (unreachable) return null;
     let timer;
-    const timeout = new Promise((resolve3) => {
-      timer = setTimeout(() => resolve3("timeout"), TIMEOUT);
+    const timeout = new Promise((resolve2) => {
+      timer = setTimeout(() => resolve2("timeout"), TIMEOUT);
     });
     try {
       const res = await Promise.race([Promise.resolve().then(load).catch(() => null), timeout]);
@@ -1370,146 +916,61 @@
   // plugin/src/tokens-resolve.js
   async function tokenIndex() {
     const ix = await loadIndex();
-    const cols2 = await figma.variables.getLocalVariableCollectionsAsync();
-    const colName = new Map(cols2.map((c) => [c.id, c.name]));
-    const all = [...ix.byId.values()];
-    const byName = /* @__PURE__ */ new Map();
-    for (const v of all) {
-      const list2 = byName.get(v.name) || [];
-      list2.push(v);
-      byName.set(v.name, list2);
-    }
-    const shadcn = /* @__PURE__ */ new Map();
-    for (const v of all) if (colName.get(v.variableCollectionId) === SHADCN) shadcn.set(v.name, v);
-    return { ix, all, byName, colName, shadcn, cache: /* @__PURE__ */ new Map(), created: [], missing: [], imported: [] };
+    return { ix, shadcn: ix.named[COLLECTION] || /* @__PURE__ */ new Map(), cache: /* @__PURE__ */ new Map(), created: [], missing: [], imported: [] };
   }
-  var SHADCN = "shadcn";
   var fromShadcn = (t, name, type) => {
-    const v = t.shadcn && t.shadcn.get(name);
+    const v = t.shadcn.get(name);
     return v && v.resolvedType === type ? v : null;
   };
-  async function libraryVar(t, name) {
-    const key = name && TOKEN_MAP.keys && TOKEN_MAP.keys[name];
-    if (!key || !figma.variables.importVariableByKeyAsync) return null;
-    const v = await importByKey(() => figma.variables.importVariableByKeyAsync(key));
-    if (v && !t.imported.includes(name)) t.imported.push(name);
-    return v;
-  }
-  function colorName(token, depth = 0) {
-    const m = TOKEN_MAP.colors[token];
-    if (m && m.alias && depth < 4) return colorName(m.alias, depth + 1);
-    return m && m.figma;
-  }
-  function pick(t, name, type, collection) {
-    const list2 = (t.byName.get(name) || []).filter((v) => v.resolvedType === type);
-    if (!list2.length) return null;
-    return collection && list2.find((v) => (t.colName.get(v.variableCollectionId) || "").startsWith(collection)) || list2[0];
-  }
-  var projectVar = (token) => {
-    const i = String(token).indexOf("-");
-    return i > 0 ? `custom/${token.slice(0, i)}/${token.slice(i + 1)}` : null;
-  };
-  function findColor(t, token, depth = 0) {
-    var _a;
-    const site = fromShadcn(t, token, "COLOR");
-    if (site) return site;
-    const mode = (_a = t.ix.named[C.mode]) == null ? void 0 : _a.get(token);
-    if (mode && mode.resolvedType === "COLOR") return mode;
-    const m = TOKEN_MAP.colors[token];
-    if (m && m.alias && depth < 4) return findColor(t, m.alias, depth + 1);
-    if (m && m.figma) {
-      const v = pick(t, m.figma, "COLOR", m.collection) || m.collection === "1.brand" && pick(t, `brand/${m.figma}`, "COLOR", m.collection);
-      if (v) return v;
-    }
-    return pick(t, token, "COLOR") || pick(t, `color/${token}`, "COLOR") || pick(t, projectVar(token), "COLOR");
-  }
-  function findRadius(t, key) {
-    var _a;
-    const site = fromShadcn(t, `radius-${key}`, "FLOAT") || key === "default" && fromShadcn(t, "radius", "FLOAT");
-    if (site) return site;
-    const style = (_a = t.ix.named[C.style]) == null ? void 0 : _a.get(`radius/${key}`);
-    if (style) return style;
-    return TOKEN_MAP.radius[key] && pick(t, TOKEN_MAP.radius[key], "FLOAT") || pick(t, `radius/${key}`, "FLOAT") || pick(t, `rounded/${key}`, "FLOAT") || pick(t, projectVar(key), "FLOAT");
-  }
-  function findSpace(t, step) {
-    const s = String(step).replace(".", "-");
-    const mbank = TOKEN_MAP.spacing && TOKEN_MAP.spacing[String(step * STEP)];
-    return pick(t, `spacing/${step}`, "FLOAT") || pick(t, `spacing/${s}`, "FLOAT") || pick(t, `spacing/${step * STEP}`, "FLOAT") || mbank && pick(t, mbank, "FLOAT");
-  }
-  var libraryName = (kind, value) => kind === "radius" ? TOKEN_MAP.radius[value] : TOKEN_MAP.spacing && TOKEN_MAP.spacing[String(value * STEP)];
+  var findColor = (t, token) => fromShadcn(t, token, "COLOR");
+  var findRadius = (t, key) => fromShadcn(t, key === "default" ? "radius" : `radius-${key}`, "FLOAT");
   var report = (t, kind, token) => {
     if (!t.missing.some((m) => m.kind === kind && m.token === token)) t.missing.push({ kind, token });
   };
+  async function fillCollection(t) {
+    if (t.filled) return;
+    t.filled = true;
+    const r = await ensureShadcn();
+    if (!r.created.length) return;
+    t.created.push(...r.created.filter((n) => COLOR_TOKENS.includes(n)).map((token) => ({ token, like: null })));
+    t.shadcn = (await loadIndex()).named[COLLECTION];
+  }
   async function colorVar(t, token, { create = true } = {}) {
-    var _a;
     if (t.cache.has(`c:${token}`)) return t.cache.get(`c:${token}`);
-    let v = findColor(t, token) || await libraryVar(t, colorName(token));
-    if (!v && create) {
-      const like = token.replace(/-(hover|active|disabled|muted)$/, "");
-      v = await ensureModeColor(token, like !== token ? like : null);
-      if (v) {
-        t.created.push({ token, like: like !== token && ((_a = t.ix.named[C.mode]) == null ? void 0 : _a.has(like)) ? like : null });
-        t.ix.named[C.mode].set(token, v);
-        t.byName.set(token, [v]);
-      }
+    let v = findColor(t, token);
+    if (!v && create && COLOR_TOKENS.includes(token)) {
+      await fillCollection(t);
+      v = findColor(t, token);
     }
     if (!v) report(t, "color", token);
-    t.cache.set(`c:${token}`, v || null);
+    if (v || create) t.cache.set(`c:${token}`, v || null);
+    if (v) t.missing = t.missing.filter((x) => !(x.kind === "color" && x.token === token));
     return v || null;
   }
   async function floatVar(t, kind, value) {
+    if (kind !== "radius") return null;
     const key = `${kind}:${value}`;
     if (t.cache.has(key)) return t.cache.get(key);
-    const v = (kind === "radius" ? findRadius(t, value) : findSpace(t, value)) || await libraryVar(t, libraryName(kind, value));
-    if (!v && !(kind === "radius" && (value === "full" || value === "none"))) report(t, kind, String(value));
+    let v = findRadius(t, value);
+    if (!v && RADIUS_KEYS.includes(String(value))) {
+      await fillCollection(t);
+      v = findRadius(t, value);
+    }
+    if (!v && !(value === "full" || value === "none")) report(t, kind, String(value));
     t.cache.set(key, v || null);
     return v || null;
   }
-  function tokenForVariable(v, collectionName) {
-    if (collectionName === SHADCN) return v.resolvedType === "FLOAT" && /^radius-/.test(v.name) ? v.name.slice(7) : v.name;
-    if (collectionName === C.mode) return v.name.startsWith("custom/") ? cssVar(v.name).slice(2) : v.name;
-    for (const [token, m] of Object.entries(TOKEN_MAP.colors)) if (m.figma === v.name && (!m.collection || collectionName.startsWith(m.collection))) return token;
-    for (const [key, name] of Object.entries(TOKEN_MAP.radius)) if (name === v.name) return key;
-    const r = /^(?:radius|rounded)\/(.+)$/.exec(v.name);
-    if (r) return r[1];
-    const s = /^spacing\/([\d.-]+)$/.exec(v.name);
-    if (s) return Number(s[1].replace("-", "."));
-    for (const [px, name] of Object.entries(TOKEN_MAP.spacing || {})) if (name === v.name) return Number(px) / STEP;
-    return v.name.replace(/^color\//, "").replace(/\//g, "-");
+  function tokenForVariable(v) {
+    return v.resolvedType === "FLOAT" && /^radius-/.test(v.name) ? v.name.slice(7) : v.name;
   }
   async function listVariables() {
     const t = await tokenIndex();
-    return t.all.filter((v) => v.resolvedType === "COLOR" || v.resolvedType === "FLOAT").filter((v) => t.colName.get(v.variableCollectionId) !== C.brand).map((v) => {
-      var _a;
-      const collection = t.colName.get(v.variableCollectionId) || "";
-      return { id: v.id, name: v.name, collection, type: v.resolvedType, token: tokenForVariable(v, collection), placeholder: ((_a = v.getPluginData) == null ? void 0 : _a.call(v, "ds")) === "contract-placeholder" };
-    });
+    return [...t.shadcn.values()].filter((v) => v.resolvedType === "COLOR" || v.resolvedType === "FLOAT").map((v) => ({ id: v.id, name: v.name, collection: COLLECTION, type: v.resolvedType, token: tokenForVariable(v) }));
   }
-  var SCREEN_ALIAS = {
-    sidebar: "background",
-    "sidebar-foreground": "foreground",
-    "sidebar-primary": "primary",
-    "sidebar-primary-foreground": "primary-foreground",
-    "sidebar-accent": "accent",
-    "sidebar-accent-foreground": "foreground",
-    "sidebar-border": "border",
-    "sidebar-ring": "ring",
-    warning: "status-warning",
-    "warning-foreground": "foreground",
-    info: "status-info",
-    "info-foreground": "foreground",
-    // Charts take Mbank's supportive palette (five distinct hues); a file without it keeps the role colours.
-    "chart-1": ["supportive-3", "success"],
-    "chart-2": ["supportive-6", "primary"],
-    "chart-3": ["supportive-2", "status-accent"],
-    "chart-4": ["supportive-7", "secondary"],
-    "chart-5": ["supportive-4", "muted-foreground"]
-  };
   async function screenVars(base) {
     const t = await tokenIndex();
     const vars = __spreadValues({}, base.vars);
-    const alias2 = (k) => [].concat(SCREEN_ALIAS[k] || []).reduce((v, a) => v || findColor(t, a), null);
-    for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || alias2(k) || null;
+    for (const k of Object.keys(vars)) if (!vars[k]) vars[k] = findColor(t, k) || null;
     const radius = __spreadValues({}, base.radius);
     for (const k of Object.keys(radius)) if (!radius[k]) radius[k] = findRadius(t, k) || null;
     return { vars, radius };
@@ -1519,9 +980,8 @@
   var PAGE = "Components";
   var KEY = "mbank-contract";
   var GAP = 24;
-  var RADIUS_PX = { none: 0, "2xs": 2, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, "2xl": 20, "3xl": 24, "4xl": 32, full: 9999 };
+  var RADIUS_PX = __spreadProps(__spreadValues({ none: 0 }, radiusScale()), { full: 9999 });
   var MAGENTA = { r: 1, g: 0, b: 1 };
-  var WEIGHT_SUFFIX = { medium: "-md", semibold: "-strong", bold: "-strong" };
   async function componentsPage(name = PAGE) {
     await figma.loadAllPagesAsync();
     const page = figma.root.children.find((p2) => p2.name === name);
@@ -1560,6 +1020,7 @@
     return figma.variables.setBoundVariableForEffect(effect, "color", v);
   }
   async function bindFloat(r, node, fields, kind, value) {
+    if (kind === "space") return;
     const v = await floatVar(r.t, kind, value);
     if (!v) {
       r.unbound++;
@@ -1608,7 +1069,7 @@
       if (v) {
         for (const f of ["topLeftRadius", "topRightRadius", "bottomLeftRadius", "bottomRightRadius"]) node.setBoundVariable(f, v);
         r.bound++;
-      } else node.cornerRadius = (_b = RADIUS_PX[s.radius]) != null ? _b : 8;
+      } else node.cornerRadius = (_b = RADIUS_PX[s.radius]) != null ? _b : RADIUS_PX.md;
     } else node.cornerRadius = 0;
     node.opacity = s.opacity !== void 0 ? s.opacity / 100 : 1;
     node.effects = s["focus-ring"] ? [await ringFor(r, s["focus-ring"])] : [];
@@ -1616,30 +1077,10 @@
   async function pickTextStyle(r, size3, weight) {
     const key = `${size3}/${weight}`;
     if (r.textStyles.has(key)) return r.textStyles.get(key);
-    const local = new Map((await figma.getLocalTextStylesAsync()).map((s) => [s.name, s]));
-    const mapped = TOKEN_MAP.text[size3];
-    let st = null;
-    for (const name of mapped ? [`${mapped}${WEIGHT_SUFFIX[weight] || ""}`, mapped] : []) {
-      const hit = local.get(name) || await libraryStyle(name);
-      if (!hit) continue;
-      try {
-        await figma.loadFontAsync(hit.fontName);
-        st = hit;
-        break;
-      } catch (e) {
-      }
-    }
-    if (!st) {
-      const sz = TYPE_SCALE[size3] ? size3 : { "2xs": "xs", caption: "xs", md: "sm", "5xl": "4xl", "6xl": "4xl", "7xl": "4xl" }[size3] || "sm";
-      st = await textStyle(r.ctx, sz, weight);
-    }
+    const sz = TYPE_SCALE[size3] ? size3 : { "2xs": "xs", caption: "xs", md: "sm", "5xl": "4xl", "6xl": "4xl", "7xl": "4xl" }[size3] || "sm";
+    const st = await textStyle(r.ctx, sz, weight);
     r.textStyles.set(key, st);
     return st;
-  }
-  async function libraryStyle(name) {
-    const key = TOKEN_MAP.styleKeys && TOKEN_MAP.styleKeys[name];
-    if (!key || !figma.importStyleByKeyAsync) return null;
-    return importByKey(() => figma.importStyleByKeyAsync(key));
   }
   var LABELS = { button: "\u041A\u043D\u043E\u043F\u043A\u0430", badge: "\u0421\u0442\u0430\u0442\u0443\u0441", pagination: "1", "tabs-trigger": "\u0412\u043A\u043B\u0430\u0434\u043A\u0430", avatar: "\u0410\u0422" };
   var defaultText = (part, c) => ({ placeholder: "Placeholder", description: "\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435", value: "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435", hint: "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430" })[part] || LABELS[c.name] || c.title || c.name;
@@ -2114,11 +1555,11 @@
     secondary: ["secondary", "secondary-foreground", null],
     outline: ["background", "foreground", "border"],
     ghost: [null, "foreground", null],
-    destructive: ["destructive", "destructive-foreground", null]
+    destructive: ["destructive", "primary-foreground", null]
   };
   var BTN_VARIANT = { default: "primary", secondary: "secondary", outline: "outline", ghost: "ghost", destructive: "destructive", link: "link" };
   var BTN_SIZE = { default: "md", sm: "sm", lg: "lg", icon: "icon" };
-  var BADGE_TONE = { default: "accent", secondary: "neutral", outline: "clear", destructive: "error", success: "success", warning: "warning", info: "info" };
+  var BADGE_TONE = { default: "accent", secondary: "neutral", outline: "clear", destructive: "error", success: "accent", warning: "clear", info: "neutral" };
   async function button(ctx, label2, variant = "default", sz = "default") {
     const props = { variant: BTN_VARIANT[variant] || variant, size: BTN_SIZE[sz] || sz, state: "default" };
     const inst = await place(ctx, "button", { props, label: label2 }) || await instance(ctx, "button", __spreadProps(__spreadValues({}, props), { type: variant, style: variant }), label2);
@@ -2132,13 +1573,14 @@
     default: ["primary", "primary-foreground"],
     secondary: ["secondary", "secondary-foreground"],
     outline: [null, "foreground"],
-    destructive: ["destructive", "destructive-foreground"],
-    success: ["success", "success-foreground"],
-    warning: ["warning", "warning-foreground"],
-    info: ["info", "info-foreground"]
+    destructive: ["destructive", "primary-foreground"],
+    // shadcn Badge has default / secondary / outline / destructive; statuses map onto them.
+    success: ["primary", "primary-foreground"],
+    warning: ["secondary", "secondary-foreground"],
+    info: [null, "foreground"]
   };
   async function badge(ctx, label2, variant = "secondary") {
-    const props = { tone: BADGE_TONE[variant] || "neutral", fill: "ghost", shape: "rounded", size: "md" };
+    const props = { tone: BADGE_TONE[variant] || "neutral", shape: "rounded", size: "md" };
     const inst = await place(ctx, "badge", { props, label: label2 }) || await instance(ctx, "badge", __spreadProps(__spreadValues({}, props), { variant, type: variant }), label2);
     if (inst) return inst;
     count(ctx, "badge", false);
@@ -2230,7 +1672,7 @@
     let s = seed >>> 0 || 1;
     return () => (s = s * 1664525 + 1013904223 >>> 0) / 2 ** 32;
   }
-  var pick2 = (r, list2) => list2[Math.floor(r() * list2.length)];
+  var pick = (r, list2) => list2[Math.floor(r() * list2.length)];
   var groups = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\xA0");
   var money = (r) => `${groups(Math.round(r() * 2400 + 50) * 1e3)} \u0441`;
   var date = (r, time) => {
@@ -2241,18 +1683,18 @@
   };
   var GEN = {
     id: (r, i) => `CL-${240100 + i * 7 + Math.floor(r() * 5)}`,
-    person: (r) => `${pick2(r, FIRST)} ${pick2(r, LAST)}`,
-    company: (r) => pick2(r, COMPANIES),
+    person: (r) => `${pick(r, FIRST)} ${pick(r, LAST)}`,
+    company: (r) => pick(r, COMPANIES),
     phone: (r) => `+996 ${700 + Math.floor(r() * 99)} ${String(Math.floor(r() * 999)).padStart(3, "0")} ${String(Math.floor(r() * 999)).padStart(3, "0")}`,
-    email: (r) => `${pick2(r, ["a", "b", "n", "t", "d"])}.${pick2(r, ["asanov", "isakova", "bekov", "alieva"])}@mail.kg`,
+    email: (r) => `${pick(r, ["a", "b", "n", "t", "d"])}.${pick(r, ["asanov", "isakova", "bekov", "alieva"])}@mail.kg`,
     money,
     date: (r) => date(r, false),
     datetime: (r) => date(r, true),
     number: (r) => String(Math.floor(r() * 990 + 10)),
     percent: (r) => `${(r() * 40 + 55).toFixed(1)}%`,
-    product: (r) => pick2(r, PRODUCTS),
-    city: (r) => pick2(r, CITIES),
-    text: (r) => pick2(r, WORDS)
+    product: (r) => pick(r, PRODUCTS),
+    city: (r) => pick(r, CITIES),
+    text: (r) => pick(r, WORDS)
   };
   var FIELD_TYPES = [...Object.keys(GEN), "status", "actions"];
   function parseColumn(col) {
@@ -2532,7 +1974,7 @@
     return add(h, await text(ctx, title, { size: "base", weight: "semibold", w: "fill" }), sub && await text(ctx, sub, { size: "sm", color: "muted-foreground", w: "fill" }));
   }
   var cols = (ctx, desktop) => ctx.vp === "mobile" ? Math.min(desktop, 1) : ctx.vp === "tablet" ? Math.min(desktop, 2) : desktop;
-  var DELTA_TONE = { positive: "success", negative: "destructive", neutral: "muted-foreground" };
+  var DELTA_TONE = { positive: "primary", negative: "destructive", neutral: "muted-foreground" };
   async function kpiCard(ctx, it, w) {
     const d = ctx.state !== "empty" ? statDelta(it) : null;
     const note = d ? ctx.vp !== "mobile" && d.label || null : it.hint || null;
@@ -2559,7 +2001,7 @@
       else {
         const value = ctx.state === "empty" ? "0" : it.value;
         const d = ctx.state !== "empty" ? statDelta(it) : null;
-        const tone = { positive: "success", negative: "destructive", neutral: "muted-foreground" };
+        const tone = { positive: "primary", negative: "destructive", neutral: "muted-foreground" };
         const delta = d ? add(
           box(ctx, "Delta", { dir: "H", gap: 4, align: "CENTER" }),
           await text(ctx, d.value, { size: "xs", weight: "medium", color: tone[d.tone] }),
@@ -2742,7 +2184,7 @@
     }
     return add(c, plot);
   }
-  var STATUS_TONE = { success: "success", destructive: "destructive", warning: "warning", info: "info", secondary: "muted-foreground" };
+  var STATUS_TONE = { success: "primary", destructive: "destructive", warning: "muted-foreground", info: "primary", secondary: "muted-foreground" };
   var initials = (name) => String(name).split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   async function list(ctx, b) {
     const c = card(ctx, b.title || "List", { gap: 0, pad: 0 });
@@ -3111,10 +2553,10 @@
     }
     return s;
   }
-  var ALERT = { destructive: ["destructive", "destructive"], warning: ["warning", "foreground"], info: ["info", "foreground"], success: ["success", "foreground"] };
-  var ALERT_TONE = { destructive: "error", warning: "warning", info: "info", success: "success" };
+  var ALERT = { destructive: ["destructive", "destructive"], warning: ["border", "foreground"], info: ["border", "foreground"], success: ["border", "foreground"] };
+  var ALERT_TONE = { destructive: "error" };
   async function alert(ctx, b) {
-    const inst = await place(ctx, "alert", { props: { tone: ALERT_TONE[b.variant] || "info" }, texts: { Title: b.title || null, Description: b.text }, w: "fill" });
+    const inst = await place(ctx, "alert", { props: { tone: ALERT_TONE[b.variant] || "clear" }, texts: { Title: b.title || null, Description: b.text }, w: "fill" });
     if (inst) {
       inst.name = `Alert / ${b.variant || "info"}`;
       if (!b.action) return inst;
@@ -3187,7 +2629,7 @@
     score: () => score
   });
   var CHART = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"];
-  var TONE = { success: "success", warning: "warning", danger: "destructive", destructive: "destructive", info: "info", default: "primary" };
+  var TONE = { success: "primary", warning: "muted-foreground", danger: "destructive", destructive: "destructive", info: "primary", default: "primary" };
   var loading = (ctx) => ctx.state === "loading";
   var pairOf = (it) => Array.isArray(it) ? it : typeof it === "string" ? it.split(":") : [it.label, it.value];
   async function cardHead(ctx, b) {
@@ -3203,9 +2645,8 @@
     add(track, rect(ctx, "Fill", Math.max(h, Math.round(width * Math.min(1, share))), h, token, "full"));
     return track;
   }
-  var PROGRESS_TONE = { primary: "brand", destructive: "error", warning: "warning", success: "success", info: "brand" };
   async function meterBar(ctx, width, share, tone) {
-    const p = await place(ctx, "progress", { props: { tone: PROGRESS_TONE[tone] || "brand", size: "md", shape: "rounded" }, w: width });
+    const p = await place(ctx, "progress", { props: { size: "md", shape: "rounded" }, colors: { indicator: tone }, w: width });
     if (!p) {
       count(ctx, "progress", false);
       return bar(ctx, width, share, tone);
@@ -3253,7 +2694,7 @@
       }
       const top = box(ctx, "Top", { dir: "H", gap: 8, align: "CENTER", w: "fill" });
       const pct = Number(String((_a = it.percent) != null ? _a : 0).replace(/[^\d.]/g, "")) || 0;
-      const tone = TONE[it.tone] || (pct >= 90 ? "destructive" : pct >= 75 ? "warning" : "primary");
+      const tone = TONE[it.tone] || (pct >= 90 ? "destructive" : pct >= 75 ? "muted-foreground" : "primary");
       add(top, await text(ctx, it.label, { size: "sm", weight: "medium", w: "fill", truncate: true }), await text(ctx, (_b = it.value) != null ? _b : `${pct}%`, { size: "sm", weight: "semibold", color: tone === "primary" ? "foreground" : tone }));
       add(m, top, await meterBar(ctx, inner, pct / 100, tone), it.hint && await text(ctx, it.hint, { size: "xs", color: "muted-foreground" }));
       add(c, m);
@@ -3269,7 +2710,7 @@
     const max = b.max || 850;
     const top = box(ctx, "Value", { dir: "H", gap: 12, align: "MAX", w: "fill" });
     add(top, await text(ctx, String(b.value), { size: "4xl", weight: "bold" }), await text(ctx, `\u0438\u0437 ${max}`, { size: "sm", color: "muted-foreground" }), box(ctx, "Spacer", { w: "fill", h: 1 }), b.grade && await badge(ctx, b.grade, statusVariant(b.grade)));
-    const zones = ["destructive", "warning", "chart-3", "chart-1", "success"];
+    const zones = ["destructive", "chart-4", "chart-3", "chart-2", "primary"];
     const gap = 4;
     const zw = Math.floor((inner - gap * 4) / 5);
     const scale = box(ctx, "Scale", { dir: "H", gap, w: "fill" });
@@ -3287,7 +2728,7 @@
         const [label2, impact] = pairOf(it);
         const good = /^[+▲]/.test(String(impact).trim());
         const row = box(ctx, `Factor / ${label2}`, { dir: "H", gap: 10, align: "CENTER", w: "fill" });
-        add(row, rect(ctx, "Dot", 8, 8, good ? "success" : "destructive", "full"), await text(ctx, label2, { size: "sm", w: "fill" }), await text(ctx, impact, { size: "sm", weight: "semibold", color: good ? "success" : "destructive" }));
+        add(row, rect(ctx, "Dot", 8, 8, good ? "primary" : "destructive", "full"), await text(ctx, label2, { size: "sm", w: "fill" }), await text(ctx, impact, { size: "sm", weight: "semibold", color: good ? "primary" : "destructive" }));
         add(list2, row);
       }
       add(c, list2);
@@ -3333,7 +2774,7 @@
     }
     return c;
   }
-  var CHECK = { ok: ["check", "success"], warn: ["info", "warning"], fail: ["shield", "destructive"], wait: ["history", "muted-foreground"] };
+  var CHECK = { ok: ["check", "primary"], warn: ["info", "muted-foreground"], fail: ["shield", "destructive"], wait: ["history", "muted-foreground"] };
   async function checks(ctx, b) {
     const c = card(ctx, b.title || "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438", { gap: 0 });
     add(c, add(box(ctx, "Head", { pad: [0, 0, 12, 0], w: "fill" }), await cardHead(ctx, { title: b.title || "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0438", subtitle: b.subtitle, more: b.more })));
@@ -3701,7 +3142,7 @@
           section.appendChild(f);
           f.x = x;
           f.y = y;
-          await setFrameModes(f, { brand: opts.brand, style: opts.style, theme: opts.theme || "light" });
+          await setFrameModes(f, { theme: opts.theme || "light" });
           x += f.width + GAP3;
           rowH = Math.max(rowH, f.height);
           result.frames.push({ id: f.id, name: f.name, page: page.name });
@@ -3722,7 +3163,7 @@
       for (const page of touched.values()) await wirePage(page, spec, links);
       result.prototype = await buildPrototype(spec, links, base, async (screen, state, vp) => {
         const f = await buildFrame(base, spec, screen, state, vp, spec.screens.indexOf(screen) * 13);
-        await setFrameModes(f, { brand: opts.brand, style: opts.style, theme: opts.theme || "light" });
+        await setFrameModes(f, { theme: opts.theme || "light" });
         return f;
       });
       result.links = links.length;
@@ -3773,32 +3214,28 @@
   }
 
   // core/css.js
-  var customLines = (t, theme) => Object.entries(t.custom || {}).filter(([, v]) => v[theme]).map(([k, v]) => `  --${k}: ${v[theme]};`);
-  var block = (selector, colors, extra = []) => [`${selector} {`, ...extra, ...COLOR_TOKENS.filter((k) => colors[k]).map((k) => `  --${k}: ${colors[k]};`), "}"].join("\n");
-  function toShadcnCss(t) {
-    const r = radiusScale(t.radius);
+  var block = (selector, t, theme, extra = []) => [`${selector} {`, ...extra, ...COLOR_TOKENS.filter((k) => t.colors[k]).map((k) => `  --${k}: ${t.colors[k][theme]};`), "}"].join("\n");
+  function toShadcnCss(t = SHADCN_TOKENS, name = "shadcn") {
+    const scale = t.radiusScale || SHADCN_TOKENS.radiusScale;
+    const font = t.font || SHADCN_TOKENS.font;
     const theme = [
       "@theme inline {",
-      `  --font-sans: "${t.font.sans}", ui-sans-serif, system-ui, sans-serif;`,
-      `  --font-mono: "${t.font.mono}", ui-monospace, monospace;`,
+      `  --font-sans: ${font.sans};`,
+      `  --font-heading: ${font.heading};`,
       ...COLOR_TOKENS.map((k) => `  --color-${k}: var(--${k});`),
-      ...Object.keys(t.custom || {}).map((k) => `  --color-${k}: var(--${k});`),
-      `  --radius-sm: ${r.sm}px;`,
-      `  --radius-md: ${r.md}px;`,
-      `  --radius-lg: ${r.lg}px;`,
-      `  --radius-xl: ${r.xl}px;`,
+      ...Object.entries(scale).map(([k, v]) => `  --radius-${k}: ${v};`),
       "}"
     ].join("\n");
     return [
-      `/* ${t.name}: generated by ds-builder from tokens.json, do not edit by hand */`,
+      `/* ${name}: shadcn/ui tokens generated by ds-builder, do not edit by hand */`,
       '@import "tailwindcss";',
       '@import "tw-animate-css";',
       "",
       "@custom-variant dark (&:is(.dark *));",
       "",
-      block(":root", t.colors.light, [`  --radius: ${t.radius}px;`, ...customLines(t, "light")]),
+      block(":root", t, "light", [`  --radius: ${t.radius || SHADCN_TOKENS.radius};`]),
       "",
-      block(".dark", t.colors.dark, customLines(t, "dark")),
+      block(".dark", t, "dark"),
       "",
       theme,
       "",
@@ -3817,7 +3254,7 @@
       title: "\u041A\u043D\u043E\u043F\u043A\u0430: \u0444\u043E\u043D, \u043F\u043E\u0434\u043F\u0438\u0441\u044C, \u0438\u043A\u043E\u043D\u043A\u0430; hover/active/focus/disabled",
       parts: ["root", "label", "icon"],
       base: {
-        root: { layout: "row", align: "center", gap: 2, px: 4, height: 11, radius: "md", text: "sm", weight: "medium", bg: "primary", fg: "primary-foreground", "bg:hover": "primary-hover", "bg:active": "primary-active", "focus-ring": "ring/50", "opacity:disabled": 50 },
+        root: { layout: "row", align: "center", gap: 2, px: 4, height: 11, radius: "md", text: "sm", weight: "medium", bg: "primary", fg: "primary-foreground", "bg:hover": "primary/90", "bg:active": "primary/80", "focus-ring": "ring/50", "opacity:disabled": 50 },
         icon: { size: 5 }
       },
       states: ["default", "hover", "active", "focus", "disabled"]
@@ -3826,15 +3263,15 @@
       title: "\u041F\u043E\u043B\u0435: \u0440\u0430\u043C\u043A\u0430, \u043F\u043B\u0435\u0439\u0441\u0445\u043E\u043B\u0434\u0435\u0440; hover/focus/disabled",
       parts: ["root", "placeholder"],
       base: {
-        root: { layout: "row", align: "center", px: 3, height: 11, radius: "md", text: "sm", bg: "background", fg: "foreground", border: "input", "border:hover": "input-hover", "border:focus": "ring", "focus-ring": "ring/30", "bg:disabled": "muted", "border:disabled": "input-disabled" },
-        placeholder: { fg: "muted-foreground", "fg:disabled": "disabled-foreground" }
+        root: { layout: "row", align: "center", px: 3, height: 11, radius: "md", text: "sm", bg: "background", fg: "foreground", border: "input", "border:hover": "ring/50", "border:focus": "ring", "focus-ring": "ring/30", "bg:disabled": "muted", "border:disabled": "input/50" },
+        placeholder: { fg: "muted-foreground", "fg:disabled": "muted-foreground/50" }
       },
       states: ["default", "hover", "focus", "disabled"]
     },
     "badge-like": {
       title: "\u0411\u0435\u0439\u0434\u0436: \u0437\u0430\u043B\u0438\u0432\u043A\u0430 \u0438 \u043F\u043E\u0434\u043F\u0438\u0441\u044C, \u0431\u0435\u0437 \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0439",
       parts: ["root", "label"],
-      base: { root: { layout: "row", align: "center", gap: 1, px: 2, height: 6, radius: "full", text: "xs", weight: "medium", bg: "status-neutral-muted", fg: "status-neutral-foreground" } },
+      base: { root: { layout: "row", align: "center", gap: 1, px: 2, height: 6, radius: "full", text: "xs", weight: "medium", bg: "secondary", fg: "secondary-foreground" } },
       states: ["default"]
     },
     "card-like": {
@@ -3849,22 +3286,22 @@
       states: ["default"]
     }
   };
-  var kebab2 = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  var kebab = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   function parseProps(input2) {
     if (typeof input2 !== "string") return input2 || {};
     const out = {};
     for (const chunk of input2.split(/[;\n]/)) {
       const [k, v] = chunk.split("=");
       if (!k || !v) continue;
-      const values = v.split(",").map((x) => kebab2(x)).filter(Boolean);
-      if (values.length) out[kebab2(k)] = values;
+      const values = v.split(",").map((x) => kebab(x)).filter(Boolean);
+      if (values.length) out[kebab(k)] = values;
     }
     return out;
   }
   function newContract({ name, title, template = "button-like", props = {} }) {
     const t = TEMPLATES[template];
     if (!t) throw new Error(`\u041D\u0435\u0442 \u0448\u0430\u0431\u043B\u043E\u043D\u0430 \xAB${template}\xBB: ${Object.keys(TEMPLATES).join(", ")}`);
-    const id = kebab2(name);
+    const id = kebab(name);
     const c = {
       $schema: SCHEMA,
       name: id,
@@ -4202,7 +3639,7 @@
   }
 
   // ds:contracts
-  var contracts_default = [{ "$schema": "mbank/component@1", "name": "alert", "title": "Alert", "figma": { "name": "alert-text", "key": "862527fc2fc9aad902f137eb72e3d82620897a9d", "nodeId": "3012:33" }, "parts": ["root", "icon", "body", "title", "description"], "anatomy": { "root": { "width": 360 }, "icon": { "icon": "info" }, "body": { "fill": true }, "title": { "parent": "body", "sample": "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F", "fill": true }, "description": { "parent": "body", "sample": "\u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439 \u0442\u0435\u043A\u0441\u0442: \u0447\u0442\u043E \u0441\u043B\u0443\u0447\u0438\u043B\u043E\u0441\u044C \u0438 \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435.", "fill": true } }, "props": { "tone": { "values": ["clear", "accent", "info", "success", "warning", "error"], "default": "clear" } }, "base": { "root": { "radius": "md", "px": 4, "py": 3, "text": "sm", "align": "start", "gap": 3 }, "icon": { "size": 5 }, "title": { "weight": "bold" }, "body": { "layout": "column", "gap": 1 }, "description": { "weight": "regular" } }, "variants": { "tone": { "clear": { "root": { "bg": "status-clear-muted", "fg": "status-clear-foreground" } }, "accent": { "root": { "bg": "status-accent-muted", "fg": "status-accent-foreground" } }, "info": { "root": { "bg": "status-info-muted", "fg": "status-info-foreground" } }, "success": { "root": { "bg": "status-success-muted", "fg": "status-success-foreground" } }, "warning": { "root": { "bg": "status-warning-muted", "fg": "status-warning-foreground" } }, "error": { "root": { "bg": "status-error-muted", "fg": "status-error-foreground" } } } }, "states": ["default"], "code": { "file": "alert.tsx", "export": "alertVariants", "template": "card-like", "parts": { "icon": "[&>svg]" }, "blocks": ["title"], "extra": "relative grid w-full grid-cols-[0_1fr] gap-y-0.5 has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] has-[>svg]:gap-x-3 [&>svg]:translate-y-0.5 [&>svg]:text-current", "extras": { "title": "col-start-2" }, "figmaOnly": ["body", "description"], "overrides": { "root": { "gap": null } } } }, { "$schema": "mbank/component@1", "name": "avatar", "title": "Avatar", "figma": { "name": "Avatars", "key": "a3d5e7947473b09bf719839c62a18d751927d7a8", "nodeId": "3174:1503" }, "parts": ["root", "fallback", "text"], "anatomy": { "fallback": { "fill": true }, "text": { "parent": "fallback", "sample": "\u0410\u0422" } }, "props": { "size": { "values": ["xs", "sm", "md", "lg", "xl"], "default": "md" } }, "base": { "root": { "radius": "full", "layout": "row" }, "fallback": { "radius": "full", "bg": "surface-2", "weight": "medium", "fg": "soft-foreground", "layout": "row", "align": "center" }, "text": { "fg": "muted-foreground", "weight": "medium" } }, "variants": { "size": { "xs": { "root": { "size": 6, "text": "xs" } }, "sm": { "root": { "size": 8, "text": "xs" } }, "md": { "root": { "size": 10, "text": "sm" } }, "lg": { "root": { "size": 14, "text": "base" } }, "xl": { "root": { "size": 18, "text": "xl" } } } }, "states": ["default"], "code": { "file": "avatar.tsx", "export": "avatarVariants", "template": "badge-like", "blocks": ["fallback"], "extra": "relative shrink-0 overflow-hidden", "extras": { "fallback": "size-full justify-center" }, "figmaOnly": ["text"] } }, { "$schema": "mbank/component@1", "name": "badge", "title": "Badge", "figma": { "name": "Badge-status", "key": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd", "nodeId": "2348:2631" }, "parts": ["root", "icon", "label"], "props": { "tone": { "values": ["neutral", "accent", "success", "warning", "error", "info", "clear"], "default": "neutral" }, "fill": { "values": ["ghost", "solid"], "default": "ghost" }, "shape": { "values": ["rounded", "square"], "default": "rounded" }, "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 1, "weight": "medium", "align": "center" }, "icon": { "size": 3, "hidden": true } }, "variants": { "tone": { "neutral": { "root": { "bg": "status-neutral-muted", "fg": "status-neutral-foreground" } }, "accent": { "root": { "bg": "status-accent-muted", "fg": "status-accent-foreground" } }, "success": { "root": { "bg": "status-success-muted", "fg": "status-success-foreground" } }, "warning": { "root": { "bg": "status-warning-muted", "fg": "status-warning-foreground" } }, "error": { "root": { "bg": "status-error-muted", "fg": "status-error-foreground" } }, "info": { "root": { "bg": "status-info-muted", "fg": "status-info-foreground" } }, "clear": { "root": { "bg": "status-clear-muted", "fg": "status-clear-foreground" } } }, "fill": { "ghost": {}, "solid": { "root": { "fg": "status-filled-foreground" } } }, "shape": { "rounded": { "root": { "radius": "full" } }, "square": { "root": { "radius": "xs" } } }, "size": { "sm": { "root": { "height": 5, "px": 1.5, "text": "xs" } }, "md": { "root": { "height": 6, "px": 2, "text": "xs" } }, "lg": { "root": { "height": 7, "px": 2.5, "text": "sm" } } } }, "compound": [{ "when": { "fill": "solid", "tone": "neutral" }, "root": { "bg": "status-neutral" } }, { "when": { "fill": "solid", "tone": "accent" }, "root": { "bg": "status-accent" } }, { "when": { "fill": "solid", "tone": "success" }, "root": { "bg": "status-success" } }, { "when": { "fill": "solid", "tone": "warning" }, "root": { "bg": "status-warning" } }, { "when": { "fill": "solid", "tone": "error" }, "root": { "bg": "status-error" } }, { "when": { "fill": "solid", "tone": "info" }, "root": { "bg": "status-info" } }, { "when": { "fill": "solid", "tone": "clear" }, "root": { "bg": "status-clear" } }], "states": ["default"], "code": { "file": "badge.tsx", "export": "badgeVariants", "template": "badge-like", "parts": { "icon": "[&>svg]" }, "extra": "inline-flex w-fit shrink-0 justify-center overflow-hidden whitespace-nowrap [&>svg]:pointer-events-none", "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "breadcrumb-item", "title": "Breadcrumb item", "figma": { "name": "Breadcrumb", "key": "385c08c28fbb4a95a06b073d1fc99963af0c26c8", "nodeId": "4240:4717" }, "parts": ["root", "label", "separator"], "anatomy": { "label": { "kind": "text", "layer": "Label", "sample": "\u0417\u0430\u044F\u0432\u043A\u0438" }, "separator": { "kind": "text", "layer": "Separator", "sample": "/" } }, "props": { "current": { "values": ["false", "true"], "default": "false" } }, "base": { "root": { "align": "center", "gap": 2, "text": "sm", "fg": "muted-foreground" } }, "variants": { "current": { "false": {}, "true": { "root": { "fg": "foreground", "weight": "medium" }, "separator": { "hidden": true } } } }, "states": ["default"], "code": { "file": "breadcrumb-item.tsx", "template": "badge-like", "extra": "inline-flex min-w-0 whitespace-nowrap", "figmaOnly": ["label", "separator"] } }, { "$schema": "mbank/component@1", "name": "button", "title": "Button", "figma": { "name": "button/default", "key": "713c90401df3b5d7ddf00e3af4d7ea5870c4c120", "nodeId": "2077:341" }, "parts": ["root", "icon", "label"], "props": { "variant": { "values": ["primary", "brand", "secondary", "destructive", "success", "soft", "ghost", "outline", "static", "link"], "default": "primary" }, "size": { "values": ["xs", "sm", "md", "lg", "icon-sm", "icon", "icon-lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "weight": "medium", "opacity:disabled": 50, "align": "center", "focus-ring": "ring/50" }, "icon": { "size": 5, "hidden": true } }, "variants": { "variant": { "primary": { "root": { "bg": "primary", "fg": "primary-foreground", "bg:hover": "primary-hover", "bg:active": "primary-active" } }, "brand": { "root": { "bg": "brand", "fg": "brand-foreground", "bg:hover": "brand-hover", "bg:active": "brand-active" } }, "secondary": { "root": { "bg": "secondary", "fg": "secondary-foreground", "bg:hover": "secondary-hover", "bg:active": "secondary-active" } }, "destructive": { "root": { "bg": "destructive", "fg": "destructive-foreground", "bg:hover": "destructive-hover", "bg:active": "destructive-active" } }, "success": { "root": { "bg": "success", "fg": "success-foreground", "bg:hover": "success-hover", "bg:active": "success-active" } }, "soft": { "root": { "bg": "soft", "fg": "soft-foreground-strong", "bg:hover": "soft-hover" } }, "ghost": { "root": { "bg": "ghost", "fg": "ghost-foreground", "bg:hover": "ghost-hover" } }, "outline": { "root": { "border-width": 1, "border": "outline", "bg": "background", "fg": "outline-foreground", "border:hover": "outline-hover", "bg:hover": "muted" } }, "static": { "root": { "bg": "static", "fg": "static-foreground", "bg:hover": "static-hover", "bg:active": "static-active" } }, "link": { "root": { "px": 0, "fg": "link" } } }, "size": { "xs": { "root": { "height": 8, "px": 3, "text": "xs" }, "icon": { "size": 4 } }, "sm": { "root": { "height": 9, "px": 3, "text": "sm" }, "icon": { "size": 4 } }, "md": { "root": { "height": 11, "px": 4, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 6, "text": "base" } }, "icon-sm": { "root": { "size": 9 }, "label": { "hidden": true }, "icon": { "hidden": false } }, "icon": { "root": { "size": 11 }, "label": { "hidden": true }, "icon": { "hidden": false } }, "icon-lg": { "root": { "size": 14 }, "label": { "hidden": true }, "icon": { "hidden": false } } } }, "states": ["default", "hover", "active", "focus", "disabled"], "code": { "file": "button.tsx", "export": "buttonVariants", "template": "button-like", "parts": { "icon": "[&_svg:not([class*='size-'])]" }, "extra": "inline-flex shrink-0 justify-center whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30", "extras": { "variant=link": "h-auto underline-offset-4 hover:underline" }, "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "card", "title": "Card", "parts": ["root", "header", "title", "description", "content", "body", "footer", "action"], "anatomy": { "root": { "width": 320 }, "header": { "fill": true }, "title": { "parent": "header", "sample": "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0438" }, "description": { "parent": "header", "sample": "\u041A\u043E\u0440\u043E\u0442\u043A\u043E\u0435 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0433\u043E" }, "content": { "fill": true }, "footer": { "fill": true }, "body": { "parent": "content", "kind": "text", "sample": "\u0417\u0434\u0435\u0441\u044C \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0438: \u0442\u0435\u043A\u0441\u0442, \u0441\u043F\u0438\u0441\u043E\u043A \u0438\u043B\u0438 \u0442\u0430\u0431\u043B\u0438\u0446\u0430.", "fill": true }, "action": { "parent": "footer", "kind": "instance", "component": { "name": "Button" }, "sample": "\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u0435\u0435" } }, "props": {}, "base": { "root": { "gap": 4, "radius": "lg", "border-width": 1, "border": "border", "bg": "card", "py": 5, "fg": "card-foreground", "layout": "column" }, "header": { "gap": 1, "px": 5, "align": "start", "layout": "column" }, "title": { "text": "base", "weight": "bold" }, "description": { "text": "sm", "fg": "muted-foreground" }, "content": { "px": 5, "layout": "column" }, "footer": { "gap": 2, "px": 5, "layout": "row", "align": "start" }, "body": { "text": "sm", "fg": "muted-foreground" } }, "variants": {}, "states": ["default"], "code": { "file": "card.tsx", "shape": "classes", "template": "card-like", "blocks": ["header", "title", "description", "content", "footer"], "extras": { "header": "grid auto-rows-min grid-rows-[auto_auto] has-data-[slot=card-action]:grid-cols-[1fr_auto]", "footer": "[.border-t]:pt-4" }, "figmaOnly": ["body", "action"], "overrides": { "header": { "layout": null }, "content": { "layout": null }, "footer": { "align": "center" } } } }, { "$schema": "mbank/component@1", "name": "checkbox", "title": "Checkbox", "figma": { "name": "Switchers - Check", "key": "be053b3924b63e289a38bfd661b7180deb83236e", "nodeId": "2280:9729" }, "parts": ["root", "icon", "icon-minus"], "anatomy": { "icon": { "icon": "check" }, "icon-minus": { "icon": "minus" } }, "props": {}, "base": { "root": { "size": 5, "radius": "xs", "border-width": 1, "border": "input", "bg": "background", "border:hover": "input-hover", "border:disabled": "input-disabled", "bg:disabled": "muted", "border:invalid": "border-destructive", "border:checked": "brand", "bg:checked": "brand", "fg:checked": "brand-foreground", "border:indeterminate": "brand", "bg:indeterminate": "brand", "fg:indeterminate": "brand-foreground", "focus-ring": "ring/30", "align": "center" }, "icon": { "size": 4, "hidden": true, "hidden:checked": false }, "icon-minus": { "size": 4, "hidden": true, "hidden:indeterminate": false } }, "variants": {}, "states": ["default", "hover", "focus", "disabled", "invalid", "checked", "indeterminate"], "code": { "file": "checkbox.tsx", "shape": "classes", "template": "button-like", "modifiers": { "checked": "data-[state=checked]", "indeterminate": "data-[state=indeterminate]" }, "extra": "peer shrink-0 transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50", "figmaOnly": ["icon", "icon-minus"], "overrides": { "root": { "align": null, "layout": null } } } }, { "$schema": "mbank/component@1", "name": "crm-application-card", "title": "CRM / Application card", "figma": { "name": "CRM / Application card", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "33:28", "uses": 15 } }, "parts": ["root", "top", "id", "time", "name", "amount", "meta", "footer", "badge"], "anatomy": { "root": { "width": 200 }, "top": { "kind": "frame", "layer": "Top", "fill": true }, "id": { "kind": "text", "layer": "ID", "parent": "top", "sample": "CL-240118" }, "time": { "kind": "text", "layer": "Time", "parent": "top", "sample": "09:14" }, "name": { "kind": "text", "layer": "Name", "fill": true, "sample": "\u0410\u0441\u0430\u043D\u043E\u0432 \u041D\u0443\u0440\u043B\u0430\u043D" }, "amount": { "kind": "text", "layer": "Amount", "sample": "450 000 KGS" }, "meta": { "kind": "text", "layer": "Meta", "fill": true, "sample": "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \xB7 24 \u043C\u0435\u0441" }, "footer": { "kind": "frame", "layer": "Footer", "fill": true }, "badge": { "kind": "instance", "layer": "Badge-status", "parent": "footer", "sample": "SLA 25 \u043C\u0438\u043D", "component": { "name": "Badge-status", "set": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd", "key": "b68afd3e0714ecefd38ee21793292c14ae240015", "variant": "Size=S, Form=rounded, Appearance=Info, Status=Off, Icon=Off, Solid=off" } } }, "props": {}, "base": { "root": { "layout": "column", "gap": 1, "px": 3, "py": 3, "radius": "md", "bg": "card", "fg": "foreground" }, "top": { "layout": "row", "align": "between" }, "id": { "text": "caption", "fg": "muted-foreground", "weight": "regular" }, "time": { "text": "caption", "fg": "muted-foreground", "weight": "regular" }, "name": { "text": "sm", "weight": "medium", "fg": "foreground" }, "amount": { "text": "base", "weight": "bold", "fg": "foreground" }, "meta": { "text": "caption", "fg": "muted-foreground", "weight": "regular" }, "footer": { "layout": "row", "align": "start", "pt": 1 } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/ApplicationCard.tsx", "slot": "application-card" } }, { "$schema": "mbank/component@1", "name": "crm-key-value-row", "title": "CRM / Key-value row", "figma": { "name": "CRM / Key-value row", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "24:6539", "uses": 26 } }, "parts": ["root", "label", "value"], "anatomy": { "root": { "width": 480 }, "label": { "kind": "text", "layer": "Label", "width": 180, "sample": "\u041A\u043B\u044E\u0447" }, "value": { "kind": "text", "layer": "Value", "fill": true, "sample": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435" } }, "props": {}, "base": { "root": { "layout": "row", "align": "start", "gap": 4, "px": 0, "py": 2, "text": "sm" }, "label": { "text": "sm", "fg": "muted-foreground", "weight": "regular" }, "value": { "text": "sm", "weight": "medium", "fg": "foreground" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/KeyValueRow.tsx", "slot": "key-value-row" } }, { "$schema": "mbank/component@1", "name": "crm-kpi-card", "title": "CRM / KPI card", "figma": { "name": "CRM / KPI card", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "21:1819", "uses": 8 } }, "parts": ["root", "label", "value", "delta", "delta-value", "delta-label"], "anatomy": { "root": { "width": 260 }, "label": { "kind": "text", "layer": "Label", "sample": "\u041F\u0435\u0440\u0435\u0432\u043E\u0434\u043E\u0432 \u0441\u0435\u0433\u043E\u0434\u043D\u044F" }, "value": { "kind": "text", "layer": "Value", "sample": "12 480" }, "delta": { "kind": "frame", "layer": "Delta" }, "delta-value": { "kind": "text", "layer": "Delta value", "parent": "delta", "sample": "+8,2%" }, "delta-label": { "kind": "text", "layer": "Delta label", "parent": "delta", "sample": "\u043A \u0432\u0447\u0435\u0440\u0430" } }, "props": {}, "base": { "root": { "layout": "column", "gap": 2, "px": 5, "py": 5, "radius": "lg", "bg": "card", "fg": "foreground" }, "label": { "text": "sm", "fg": "muted-foreground", "weight": "regular" }, "value": { "text": "2xl", "weight": "bold", "fg": "foreground" }, "delta": { "layout": "row", "align": "center", "gap": 1 }, "delta-value": { "text": "sm", "weight": "medium", "fg": "success-text" }, "delta-label": { "text": "caption", "fg": "muted-foreground", "weight": "regular" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/KpiCard.tsx", "slot": "kpi-card" } }, { "$schema": "mbank/component@1", "name": "crm-list-item", "title": "CRM / List item", "figma": { "name": "CRM / List item", "page": "\u2630 CRM blocks" }, "parts": ["root", "avatar", "content", "title", "subtitle", "meta"], "anatomy": { "root": { "width": 360, "sides": ["bottom"] }, "avatar": { "kind": "instance", "layer": "Avatar", "sample": "\u0410\u041D", "component": { "name": "Avatar", "set": "a3d5e7947473b09bf719839c62a18d751927d7a8", "key": "2c3fca6917c56c5d664a8c1a8159dedb38cc26ac", "variant": "Size=40 px, Placeholder=False, Upload=False, Name=False" } }, "content": { "kind": "frame", "layer": "Content", "fill": true }, "title": { "kind": "text", "layer": "Title", "sample": "\u0410\u0441\u0430\u043D\u043E\u0432 \u041D\u0443\u0440\u043B\u0430\u043D", "parent": "content", "fill": true }, "subtitle": { "kind": "text", "layer": "Subtitle", "sample": "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \xB7 450 000 KGS", "parent": "content", "fill": true }, "meta": { "kind": "text", "layer": "Meta", "sample": "09:14" } }, "props": {}, "base": { "root": { "layout": "row", "align": "center", "gap": 3, "px": 4, "py": 3, "bg": "card", "border-width": 1, "border": "border" }, "content": { "layout": "column", "gap": 1 }, "title": { "text": "sm", "weight": "medium", "fg": "foreground" }, "subtitle": { "text": "caption", "weight": "regular", "fg": "muted-foreground" }, "meta": { "text": "caption", "weight": "regular", "fg": "muted-foreground" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/ListItem.tsx", "slot": "crm-list-item" } }, { "$schema": "mbank/component@1", "name": "crm-timeline-item", "title": "CRM / Timeline item", "figma": { "name": "CRM / Timeline item", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "24:6542", "uses": 8 } }, "parts": ["root", "marker", "dot", "content", "title", "meta"], "anatomy": { "root": { "width": 320 }, "marker": { "kind": "frame", "layer": "Marker" }, "dot": { "kind": "frame", "layer": "Dot", "parent": "marker" }, "content": { "kind": "frame", "layer": "Content", "fill": true }, "title": { "kind": "text", "layer": "Title", "parent": "content", "fill": true, "sample": "\u0421\u043E\u0431\u044B\u0442\u0438\u0435" }, "meta": { "kind": "text", "layer": "Meta", "parent": "content", "sample": "12.10.2026, 14:32 \xB7 \u0421\u0438\u0441\u0442\u0435\u043C\u0430" } }, "props": {}, "base": { "root": { "layout": "row", "align": "start", "gap": 3 }, "marker": { "layout": "column", "px": 0, "pt": 1, "pb": 0 }, "dot": { "size": 3, "radius": "full", "bg": "border-success" }, "content": { "layout": "column", "gap": 1 }, "title": { "text": "sm", "weight": "medium", "fg": "foreground" }, "meta": { "text": "caption", "fg": "muted-foreground", "weight": "regular" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/TimelineItem.tsx", "slot": "timeline-item" } }, { "$schema": "mbank/component@1", "name": "crm-transfer-row", "title": "CRM / Transfer row", "figma": { "name": "CRM / Transfer row", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "23:10079", "uses": 10 } }, "parts": ["root", "id-cell", "id-content", "id", "date-cell", "date-content", "date", "sender-cell", "sender-content", "sender", "recipient-cell", "recipient-content", "recipient", "country-cell", "country-content", "country", "amount-cell", "amount-content", "amount", "channel-cell", "channel-content", "channel", "status-cell", "status"], "anatomy": { "root": { "sides": ["bottom"] }, "id-cell": { "kind": "frame", "layer": "TableCell 1", "width": 124, "sides": ["right"] }, "id-content": { "kind": "frame", "layer": "TextContent", "parent": "id-cell", "fill": true }, "id": { "kind": "text", "layer": "Label", "parent": "id-content", "fill": true, "sample": "TR-80421951" }, "date-cell": { "kind": "frame", "layer": "TableCell 2", "width": 156, "sides": ["right"] }, "date-content": { "kind": "frame", "layer": "TextContent", "parent": "date-cell", "fill": true }, "date": { "kind": "text", "layer": "Label", "parent": "date-content", "fill": true, "sample": "12.10.2026, 14:32" }, "sender-cell": { "kind": "frame", "layer": "TableCell 3", "width": 160, "sides": ["right"] }, "sender-content": { "kind": "frame", "layer": "TextContent", "parent": "sender-cell", "fill": true }, "sender": { "kind": "text", "layer": "Label", "parent": "sender-content", "fill": true, "sample": "\u0411\u0430\u043A\u044B\u0442 \u0422\u043E\u043A\u0442\u043E\u0433\u0443\u043B\u043E\u0432" }, "recipient-cell": { "kind": "frame", "layer": "TableCell 4", "width": 170, "sides": ["right"] }, "recipient-content": { "kind": "frame", "layer": "TextContent", "parent": "recipient-cell", "fill": true }, "recipient": { "kind": "text", "layer": "Label", "parent": "recipient-content", "fill": true, "sample": "\u0418\u0432\u0430\u043D \u041F\u0435\u0442\u0440\u043E\u0432" }, "country-cell": { "kind": "frame", "layer": "TableCell 5", "width": 116, "sides": ["right"] }, "country-content": { "kind": "frame", "layer": "TextContent", "parent": "country-cell", "fill": true }, "country": { "kind": "text", "layer": "Label", "parent": "country-content", "fill": true, "sample": "\u0420\u043E\u0441\u0441\u0438\u044F" }, "amount-cell": { "kind": "frame", "layer": "TableCell 6", "width": 124, "sides": ["right"] }, "amount-content": { "kind": "frame", "layer": "TextContent", "parent": "amount-cell", "fill": true }, "amount": { "kind": "text", "layer": "Label", "parent": "amount-content", "fill": true, "sample": "185 000 KGS" }, "channel-cell": { "kind": "frame", "layer": "TableCell 7", "width": 128, "sides": ["right"] }, "channel-content": { "kind": "frame", "layer": "TextContent", "parent": "channel-cell", "fill": true }, "channel": { "kind": "text", "layer": "Label", "parent": "channel-content", "fill": true, "sample": "\u041F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435" }, "status-cell": { "kind": "frame", "layer": "TableCell 8", "width": 138, "sides": ["right"] }, "status": { "kind": "instance", "layer": "Badge-status", "parent": "status-cell", "sample": "\u0423\u0441\u043F\u0435\u0448\u043D\u043E", "component": { "name": "Badge-status", "set": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd", "key": "4c16cc198bc2c10f229898b330166c1db17200b6", "variant": "Size=S, Form=rounded, Appearance=Success, Status=Off, Icon=Off, Solid=off" } } }, "props": {}, "base": { "root": { "layout": "row", "align": "center", "bg": "background", "border": "border", "border-width": 1, "text": "sm" }, "id-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "id-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "id": { "text": "sm", "weight": "regular", "fg": "foreground" }, "date-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "date-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "date": { "text": "sm", "weight": "regular", "fg": "foreground" }, "sender-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "sender-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "sender": { "text": "sm", "weight": "regular", "fg": "foreground" }, "recipient-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "recipient-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "recipient": { "text": "sm", "weight": "regular", "fg": "foreground" }, "country-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "country-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "country": { "text": "sm", "weight": "regular", "fg": "foreground" }, "amount-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "amount-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "amount": { "text": "sm", "weight": "regular", "fg": "foreground" }, "channel-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "channel-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "channel": { "text": "sm", "weight": "regular", "fg": "foreground" }, "status-cell": { "layout": "row", "align": "center", "gap": 2, "px": 3, "border": "border", "border-width": 1, "py": 3 } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/TransferRow.tsx", "slot": "transfer-row", "inline": ["id-content", "id", "date-content", "date", "sender-content", "sender", "recipient-content", "recipient", "country-content", "country", "amount-content", "amount", "channel-content", "channel"] } }, { "$schema": "mbank/component@1", "name": "date-picker-trigger", "title": "Date picker trigger", "figma": { "name": "input/calendar-single", "key": "9015ffe0c43d059151c3c414323b4e24e9140985", "nodeId": "2250:4032" }, "parts": ["root", "placeholder", "icon"], "anatomy": { "root": { "width": 240 }, "placeholder": { "kind": "text", "layer": "Placeholder", "sample": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0430\u0442\u0443", "fill": true }, "icon": { "kind": "icon", "icon": "calendar" } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "text": "sm", "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "layout": "row", "align": "between", "focus-ring": "ring/30", "border:invalid": "border-destructive" }, "placeholder": { "fg": "muted-foreground" }, "icon": { "size": 5, "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9 } }, "md": { "root": { "height": 11 } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "hover", "focus", "disabled", "invalid"], "code": { "file": "date-picker.tsx", "shape": "classes", "template": "button-like", "parts": { "placeholder": "data-[placeholder]" }, "maps": { "size": { "const": "pickerSizes", "part": "root" } }, "extra": "w-full text-left whitespace-nowrap transition-colors outline-none disabled:pointer-events-none", "figmaOnly": ["icon"] } }, { "$schema": "mbank/component@1", "name": "dialog", "title": "Dialog", "figma": { "name": "dialogInfo", "key": "12ed29cbe7be8badd626f5b83ad2a37ab905ebd8", "nodeId": "2405:4807" }, "parts": ["root", "header", "title", "description", "content", "footer", "cancel", "confirm"], "anatomy": { "root": { "width": 480 }, "header": { "kind": "frame", "layer": "Header", "fill": true }, "title": { "kind": "text", "layer": "Title", "sample": "\u041E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443?", "parent": "header", "fill": true }, "description": { "kind": "text", "layer": "Description", "sample": "\u041A\u043B\u0438\u0435\u043D\u0442 \u043F\u043E\u043B\u0443\u0447\u0438\u0442 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u0441 \u043F\u0440\u0438\u0447\u0438\u043D\u043E\u0439 \u043E\u0442\u043A\u0430\u0437\u0430", "parent": "header", "fill": true }, "content": { "kind": "frame", "layer": "Content", "fill": true }, "footer": { "kind": "frame", "layer": "Footer", "fill": true }, "cancel": { "kind": "instance", "layer": "Cancel", "parent": "footer", "sample": "\u041E\u0442\u043C\u0435\u043D\u0430", "component": { "name": "Button" } }, "confirm": { "kind": "instance", "layer": "Confirm", "parent": "footer", "sample": "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C", "component": { "name": "Button" } } }, "props": {}, "base": { "root": { "layout": "column", "gap": 4, "px": 6, "py": 6, "radius": "lg", "bg": "card", "fg": "foreground", "shadow": "modal" }, "header": { "layout": "column", "gap": 2 }, "title": { "text": "xl", "weight": "bold" }, "description": { "text": "sm", "fg": "muted-foreground" }, "content": { "layout": "column", "gap": 2, "min-height": 16 }, "footer": { "layout": "row", "align": "end", "gap": 2 } }, "variants": {}, "states": ["default"], "code": { "file": "dialog.tsx", "shape": "classes", "template": "card-like", "blocks": ["header", "title", "description", "footer"], "extra": "fixed top-1/2 left-1/2 z-(--z-modal) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none", "extras": { "header": "pr-8", "footer": "flex flex-col-reverse sm:flex-row sm:justify-end" }, "figmaOnly": ["content", "cancel", "confirm"], "overrides": { "root": { "layout": null }, "footer": { "layout": null, "align": null } } } }, { "$schema": "mbank/component@1", "name": "dropdown-menu-item", "title": "Dropdown menu item", "figma": { "name": "Item / dropdown / simple", "key": "79cec158925db00a687b7dc969846592cf4cb98f", "nodeId": "5020:11626" }, "parts": ["root", "icon", "label", "shortcut"], "anatomy": { "root": { "width": 220 }, "icon": { "kind": "icon", "icon": "file" }, "label": { "kind": "text", "layer": "Label", "sample": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C", "fill": true }, "shortcut": { "kind": "text", "layer": "Shortcut", "sample": "\u2318O" } }, "props": { "variant": { "values": ["default", "destructive"], "default": "default" } }, "base": { "root": { "align": "center", "gap": 2, "px": 2, "height": 8, "radius": "xs", "text": "sm", "fg": "foreground", "bg:hover": "accent", "fg:disabled": "disabled-foreground" }, "icon": { "size": 4, "fg": "muted-foreground" }, "shortcut": { "text": "xs", "fg": "muted-foreground" } }, "variants": { "variant": { "default": {}, "destructive": { "root": { "fg": "destructive-text", "bg:hover": "destructive-soft" }, "icon": { "fg": "destructive-text" } } } }, "states": ["default", "hover", "disabled"], "code": { "file": "dropdown-menu.tsx", "shape": "classes", "template": "button-like", "modifiers": { "hover": "data-[highlighted]", "disabled": "data-[disabled]" }, "parts": { "icon": "[&_svg]" }, "prefix": { "variant": "data-[variant={value}]" }, "extra": "relative flex cursor-default outline-none select-none data-[disabled]:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0", "figmaOnly": ["label", "shortcut"] } }, { "$schema": "mbank/component@1", "name": "empty-state", "title": "Empty state", "figma": { "name": "Empty state" }, "parts": ["root", "icon", "title", "description", "action"], "anatomy": { "root": { "width": 400 }, "icon": { "kind": "icon", "icon": "inbox" }, "title": { "kind": "text", "layer": "Title", "sample": "\u0417\u0430\u044F\u0432\u043E\u043A \u043F\u043E\u043A\u0430 \u043D\u0435\u0442" }, "description": { "kind": "text", "layer": "Description", "sample": "\u041D\u043E\u0432\u044B\u0435 \u0437\u0430\u044F\u0432\u043A\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C" }, "action": { "kind": "instance", "layer": "Action", "sample": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443", "component": { "name": "Button" } } }, "props": {}, "base": { "root": { "layout": "column", "align": "center", "gap": 3, "px": 6, "py": 16, "radius": "lg", "border-width": 1, "border": "border-secondary" }, "icon": { "size": 7, "fg": "muted-foreground" }, "title": { "text": "base", "weight": "bold", "fg": "foreground" }, "description": { "text": "sm", "fg": "muted-foreground" } }, "variants": {}, "states": ["default"], "code": { "file": "EmptyState.tsx", "shape": "classes", "template": "card-like", "extra": "border-dashed text-center", "figmaOnly": ["icon", "title", "description", "action"] } }, { "$schema": "mbank/component@1", "name": "filter-chip", "title": "Filter chip", "figma": { "name": "Item / chipsButton", "key": "a2f7f17786d9e319cebd76c4fe36b067d6f7654f", "nodeId": "2426:13606" }, "parts": ["root", "label", "icon"], "anatomy": { "label": { "kind": "text", "layer": "Label", "sample": "\u0421\u0442\u0430\u0442\u0443\u0441" }, "icon": { "kind": "icon", "icon": "chevron" } }, "props": {}, "base": { "root": { "align": "center", "gap": 1, "px": 3, "height": 9, "radius": "sm", "border-width": 1, "border": "outline", "bg": "background", "text": "sm", "weight": "medium", "fg": "foreground", "border:hover": "border-secondary", "bg:selected": "secondary", "border:selected": "secondary", "fg:selected": "inverse-foreground" }, "icon": { "size": 5 } }, "variants": {}, "states": ["default", "hover", "selected"], "code": { "file": "filter-chip.tsx", "template": "button-like", "modifiers": { "selected": "aria-pressed" }, "parts": { "icon": "[&_svg]" }, "extra": "inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:shrink-0", "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "input", "title": "Input", "figma": { "name": "input/default", "key": "9b99d128100afd0ac499d5fc2cfdedf0ae6aa44b", "nodeId": "2184:1939" }, "parts": ["root", "placeholder"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "border:invalid": "border-destructive", "layout": "row", "focus-ring": "ring/30" }, "placeholder": { "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9, "text": "sm" } }, "md": { "root": { "height": 11, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "hover", "focus", "disabled", "invalid"], "code": { "file": "input.tsx", "export": "inputVariants", "template": "input-like", "parts": { "placeholder": "placeholder" }, "extra": "w-full min-w-0 transition-colors outline-none disabled:pointer-events-none file:border-0 file:bg-transparent file:text-sm file:font-medium aria-invalid:ring-border-destructive/20" } }, { "$schema": "mbank/component@1", "name": "nav-item", "title": "Nav item", "figma": { "name": "item-sidemenu-menu-tree-1", "key": "9789323b5edf20b5384e1623e5d2f75cf7df0c57", "nodeId": "410:11518" }, "parts": ["root", "icon", "label", "count"], "anatomy": { "root": { "width": 256 }, "icon": { "kind": "icon", "icon": "home" }, "label": { "kind": "text", "layer": "Label", "sample": "\u0417\u0430\u044F\u0432\u043A\u0438", "fill": true }, "count": { "kind": "text", "layer": "Count", "sample": "12" } }, "props": {}, "base": { "root": { "gap": 3, "px": 3, "height": 11, "radius": "md", "text": "sm", "weight": "medium", "fg": "soft-foreground", "align": "center", "bg:hover": "accent", "bg:selected": "muted", "fg:selected": "foreground", "fg:disabled": "disabled-foreground", "focus-ring": "ring/30" }, "icon": { "size": 5, "fg": "muted-foreground", "fg:selected": "foreground", "fg:disabled": "disabled-foreground" }, "count": { "text": "caption", "weight": "medium", "fg": "muted-foreground" } }, "variants": {}, "states": ["default", "hover", "selected", "disabled"], "code": { "file": "nav-item.tsx", "template": "button-like", "modifiers": { "selected": "aria-[current=page]", "disabled": "aria-disabled" }, "parts": { "icon": "[&_svg]" }, "extra": "flex w-full min-w-0 transition-colors outline-none aria-disabled:pointer-events-none [&_svg]:shrink-0", "figmaOnly": ["label", "count"] } }, { "$schema": "mbank/component@1", "name": "pagination", "title": "Pagination item", "figma": { "name": "item/pagintaion / buttons", "key": "2255ec920c853b652f1389adbc4bd30779ee35d7", "nodeId": "4141:5990" }, "parts": ["root", "icon", "label"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "radius": "sm", "weight": "medium", "fg": "foreground", "bg:hover": "accent", "fg:disabled": "disabled-foreground", "bg:selected": "secondary", "fg:selected": "secondary-foreground", "align": "center", "focus-ring": "ring/30" }, "icon": { "size": 5, "hidden": true } }, "variants": { "size": { "sm": { "root": { "height": 8, "px": 1.5, "text": "xs" } }, "md": { "root": { "height": 9, "px": 2, "text": "sm" } }, "lg": { "root": { "height": 10, "px": 2.5, "text": "sm" } } } }, "states": ["default", "hover", "focus", "disabled", "selected"], "code": { "file": "pagination.tsx", "export": "paginationItemVariants", "template": "button-like", "parts": { "icon": "[&_svg]" }, "modifiers": { "selected": "aria-[current=page]" }, "extra": "inline-flex shrink-0 justify-center tabular-nums transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:shrink-0", "extras": { "size=sm": "min-w-8", "size=md": "min-w-9", "size=lg": "min-w-10" }, "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "progress", "title": "Progress", "figma": { "name": "Progress bar / Determinate", "key": "cf47478133f9b8625225affab7ae57b7b022c9bd", "nodeId": "4823:334" }, "parts": ["root", "indicator"], "anatomy": { "root": { "width": 240 }, "indicator": { "width": 144 } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" }, "shape": { "values": ["rounded", "square"], "default": "rounded" }, "tone": { "values": ["brand", "success", "error", "warning"], "default": "brand" } }, "base": { "root": { "bg": "surface-2" } }, "variants": { "size": { "sm": { "root": { "height": 1 } }, "md": { "root": { "height": 2 } }, "lg": { "root": { "height": 3 } } }, "shape": { "rounded": { "root": { "radius": "full" }, "indicator": { "radius": "full" } }, "square": { "root": { "radius": "none" }, "indicator": { "radius": "none" } } }, "tone": { "brand": { "indicator": { "bg": "brand" } }, "success": { "indicator": { "bg": "status-success" } }, "error": { "indicator": { "bg": "status-error" } }, "warning": { "indicator": { "bg": "status-warning" } } } }, "states": ["default"], "code": { "file": "progress.tsx", "export": "progressVariants", "template": "card-like", "maps": { "tone": { "const": "indicatorTones", "part": "indicator" } }, "extra": "relative w-full overflow-hidden", "figmaOnly": ["indicator"] } }, { "$schema": "mbank/component@1", "name": "radio", "title": "Radio", "figma": { "name": "Switchers - Check", "key": "be053b3924b63e289a38bfd661b7180deb83236e", "nodeId": "2280:9729" }, "parts": ["root", "dot"], "anatomy": { "dot": { "kind": "frame", "layer": "Dot" } }, "props": {}, "base": { "root": { "size": 5, "radius": "full", "border-width": 1, "border": "input", "bg": "background", "align": "center", "border:hover": "input-hover", "border:disabled": "input-disabled", "bg:disabled": "muted", "border:checked": "brand", "bg:checked": "brand", "focus-ring": "ring/30" }, "dot": { "size": 2, "radius": "full", "bg": "brand-foreground", "hidden": true, "hidden:checked": false } }, "variants": {}, "states": ["default", "hover", "focus", "disabled", "checked"], "code": { "file": "radio.tsx", "template": "button-like", "modifiers": { "checked": "data-[state=checked]" }, "extra": "peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:opacity-50", "figmaOnly": ["dot"] } }, { "$schema": "mbank/component@1", "name": "search-input", "title": "Search input", "figma": { "name": "input/search", "key": "bdc52ccb245ef127e0ce609859f7b0347207a94b", "nodeId": "4001:1384" }, "parts": ["root", "icon", "placeholder"], "anatomy": { "root": { "width": 272 }, "icon": { "kind": "icon", "icon": "search" }, "placeholder": { "kind": "text", "layer": "Placeholder", "sample": "\u041F\u043E\u0438\u0441\u043A", "fill": true } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "text": "sm", "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "layout": "row", "align": "center", "focus-ring": "ring/30" }, "placeholder": { "fg": "muted-foreground" }, "icon": { "size": 5, "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9, "radius": "sm" } }, "md": { "root": { "height": 11 } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "hover", "focus", "disabled"], "code": { "file": "search-input.tsx", "template": "card-like", "modifiers": { "focus": "focus-within", "disabled": "has-disabled" }, "parts": { "icon": "[&_svg]" }, "extra": "w-full transition-colors has-disabled:pointer-events-none [&_svg]:shrink-0", "figmaOnly": ["placeholder"] } }, { "$schema": "mbank/component@1", "name": "select-trigger", "title": "Select trigger", "figma": { "name": "input/dropdown", "key": "a51f7990a9914a36e511d08aeb2684c412634c09", "nodeId": "2431:11731" }, "parts": ["root", "placeholder", "icon"], "anatomy": { "root": { "width": 240 }, "icon": { "icon": "chevron" } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "text": "sm", "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "border:invalid": "border-destructive", "layout": "row", "align": "between", "focus-ring": "ring/30" }, "placeholder": { "fg": "muted-foreground" }, "icon": { "size": 4, "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9 } }, "md": { "root": { "height": 11 } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "hover", "focus", "disabled", "invalid"], "code": { "file": "select.tsx", "shape": "classes", "template": "button-like", "parts": { "placeholder": "data-[placeholder]" }, "maps": { "size": { "const": "triggerSizes", "part": "root" } }, "extra": "w-full whitespace-nowrap transition-colors outline-none disabled:pointer-events-none *:data-[slot=select-value]:truncate", "figmaOnly": ["icon"] } }, { "$schema": "mbank/component@1", "name": "separator", "title": "Separator", "figma": { "name": "Separator" }, "parts": ["root"], "props": { "orientation": { "values": ["horizontal", "vertical"], "default": "horizontal" } }, "base": { "root": { "bg": "border" } }, "variants": { "orientation": { "horizontal": { "root": { "layout": "row", "height": 0.25, "px": 30 } }, "vertical": { "root": { "layout": "row", "height": 6, "px": 0.125 } } } }, "states": ["default"], "code": { "file": "separator.tsx", "template": "card-like", "extra": "shrink-0", "extras": { "orientation=horizontal": "h-px w-full", "orientation=vertical": "h-full w-px" }, "overrides": { "root": { "layout": null, "height": null, "px": null } } } }, { "$schema": "mbank/component@1", "name": "skeleton", "title": "Skeleton", "parts": ["root"], "anatomy": { "root": { "width": 240 } }, "props": { "shape": { "values": ["line", "circle", "block"], "default": "line" } }, "base": { "root": { "radius": "md", "bg": "surface-2" } }, "variants": { "shape": { "line": { "root": { "height": 4, "radius": "sm" } }, "circle": { "root": { "size": 10, "radius": "full" } }, "block": { "root": { "height": 24, "radius": "lg" } } } }, "states": ["default"], "code": { "file": "skeleton.tsx", "shape": "classes", "template": "card-like", "extra": "animate-pulse motion-reduce:animate-none" } }, { "$schema": "mbank/component@1", "name": "spinner", "title": "Spinner", "figma": { "name": "spinner", "key": "03ca97e314c9e429cb882a5f42b978718bc3070d", "nodeId": "2153:1584" }, "parts": ["root"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "sm" } }, "base": { "root": { "radius": "full", "border-width": 2, "border": "brand" } }, "variants": { "size": { "sm": { "root": { "size": 4 } }, "md": { "root": { "size": 5 } }, "lg": { "root": { "size": 6 } } } }, "states": ["default"], "code": { "file": "spinner.tsx", "template": "card-like", "extra": "shrink-0 animate-spin motion-reduce:animate-none", "overrides": { "root": { "radius": null, "border-width": null, "border": null } } } }, { "$schema": "mbank/component@1", "name": "stepper-step", "title": "Stepper step", "figma": { "name": "item-stepper-basic", "key": "954b3a3b55fce287426091c632d9f1e6e84b1a13", "nodeId": "3098:7661" }, "parts": ["root", "marker", "number", "label", "description"], "anatomy": { "marker": { "kind": "frame", "layer": "Marker" }, "number": { "kind": "text", "layer": "Number", "sample": "2", "parent": "marker" }, "label": { "kind": "text", "layer": "Label", "sample": "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430" }, "description": { "kind": "text", "layer": "Description", "sample": "\u0434\u043E 2 \u0434\u043D\u0435\u0439" } }, "props": { "status": { "values": ["done", "current", "upcoming"], "default": "upcoming" } }, "base": { "root": { "align": "center", "gap": 2, "py": 2, "text": "base", "fg": "foreground" }, "marker": { "size": 8, "radius": "full", "align": "center" }, "number": { "text": "sm", "weight": "medium" }, "description": { "text": "caption", "fg": "muted-foreground" } }, "variants": { "status": { "done": { "marker": { "bg": "status-success-muted" }, "number": { "fg": "status-success" } }, "current": { "root": { "weight": "medium" }, "marker": { "bg": "status-success" }, "number": { "fg": "static-light" } }, "upcoming": { "root": { "fg": "muted-foreground" }, "marker": { "bg": "soft" }, "number": { "fg": "muted-foreground" } } } }, "states": ["default"], "code": { "file": "stepper-step.tsx", "template": "card-like", "parts": { "marker": "*:data-[slot=stepper-step-marker]", "number": "**:data-[slot=stepper-step-number]" }, "extra": "inline-flex min-w-0 *:data-[slot=stepper-step-marker]:inline-flex *:data-[slot=stepper-step-marker]:shrink-0 *:data-[slot=stepper-step-marker]:justify-center", "figmaOnly": ["label", "description"] } }, { "$schema": "mbank/component@1", "name": "switch", "title": "Switch", "parts": ["root", "thumb"], "anatomy": { "root": { "width": 44 } }, "props": {}, "base": { "root": { "border-width": 2, "height": 6, "radius": "full", "opacity:disabled": 50, "bg:checked": "brand", "bg:unchecked": "surface-3", "align": "start", "focus-ring": "ring/30", "bg": "surface-3", "px": 0.5, "align:checked": "end" }, "thumb": { "size": 5, "radius": "full", "bg": "background" } }, "variants": {}, "states": ["default", "focus", "disabled", "checked", "unchecked"], "code": { "file": "switch.tsx", "shape": "classes", "template": "button-like", "modifiers": { "checked": "data-[state=checked]", "unchecked": "data-[state=unchecked]" }, "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30", "figmaOnly": ["thumb"], "overrides": { "root": { "align": "center", "align:checked": null, "bg": null, "px": null } } } }, { "$schema": "mbank/component@1", "name": "tabbar-item", "title": "Tabbar item", "figma": { "name": "Tabbar item" }, "parts": ["root", "icon", "label"], "anatomy": { "root": { "width": 80 }, "icon": { "kind": "icon", "icon": "home" }, "label": { "kind": "text", "layer": "Label", "sample": "\u0413\u043B\u0430\u0432\u043D\u0430\u044F" } }, "props": {}, "base": { "root": { "layout": "column", "align": "center", "gap": 1, "px": 2, "py": 2, "text": "2xs", "weight": "medium", "fg": "muted-foreground", "fg:selected": "brand-text", "focus-ring": "ring/30" }, "icon": { "size": 6 } }, "variants": {}, "states": ["default", "selected"], "code": { "file": "tabbar-item.tsx", "template": "button-like", "modifiers": { "selected": "aria-[current=page]" }, "parts": { "icon": "[&_svg]" }, "extra": "min-w-0 flex-1 justify-center transition-colors outline-none [&_svg]:shrink-0", "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "table-cell", "title": "Table cell", "figma": { "name": "TableCell", "key": "75d931d4c1075a08c944e2a7ba1b34b1c4e787d0", "nodeId": "1309:22504" }, "parts": ["root", "text"], "anatomy": { "root": { "width": 160 }, "text": { "sample": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435" } }, "props": {}, "base": { "root": { "height": 11, "px": 3, "py": 3, "text": "sm" } }, "variants": {}, "states": ["default"], "code": { "file": "table.tsx", "shape": "classes", "template": "card-like", "extra": "align-middle leading-5 whitespace-nowrap tabular-nums [&:has([role=checkbox])]:pr-0" } }, { "$schema": "mbank/component@1", "name": "table-head", "title": "Table head", "figma": { "name": "item/cell/header", "key": "e28abae96eaece6a3a3ca39eb048b04f138c2c0c", "nodeId": "1113:46703" }, "parts": ["root", "text", "icon"], "anatomy": { "root": { "width": 160, "sides": ["bottom"] }, "text": { "kind": "text", "layer": "Text", "sample": "\u041A\u043B\u0438\u0435\u043D\u0442" }, "icon": { "kind": "icon", "icon": "chevron" } }, "props": { "sort": { "values": ["none", "asc", "desc"], "default": "none" } }, "base": { "root": { "gap": 1, "height": 11, "px": 3, "text": "sm", "weight": "medium", "fg": "muted-foreground", "border-width": 1, "border": "border" }, "icon": { "size": 4, "fg": "muted-foreground" } }, "variants": { "sort": { "none": { "icon": { "hidden": true } }, "asc": { "root": { "fg": "foreground" }, "icon": { "fg": "foreground" } }, "desc": { "root": { "fg": "foreground" }, "icon": { "fg": "foreground" } } } }, "states": ["default"], "code": { "file": "table.tsx", "shape": "classes", "template": "card-like", "extra": "text-left align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0", "figmaOnly": ["icon"], "overrides": { "root": { "align": null, "border": null, "border-width": null } } } }, { "$schema": "mbank/component@1", "name": "tabs-list", "title": "Tabs list", "figma": { "name": "segment", "key": "f28915a7224a6ba85128b9cbab0b9d706c9285a8", "nodeId": "2371:564" }, "parts": ["root", "tab-1", "tab-2", "tab-3"], "anatomy": { "tab-1": { "kind": "instance", "component": { "name": "Tabs trigger" }, "sample": "\u0412\u0441\u0435" }, "tab-2": { "kind": "instance", "component": { "name": "Tabs trigger" }, "sample": "\u041C\u043E\u0438" }, "tab-3": { "kind": "instance", "component": { "name": "Tabs trigger" }, "sample": "\u0410\u0440\u0445\u0438\u0432" } }, "props": { "variant": { "values": ["segment", "outline", "line"], "default": "segment" } }, "base": { "root": { "align": "center", "px": 1, "py": 1 } }, "variants": { "variant": { "segment": { "root": { "gap": 1, "radius": "md", "bg": "muted" } }, "outline": { "root": { "gap": 2 } }, "line": { "root": { "gap": 6, "border": "border" } } } }, "states": ["default"], "code": { "file": "tabs.tsx", "export": "tabsListVariants", "template": "card-like", "extra": "group/tabs-list inline-flex w-fit", "extras": { "variant=segment": "p-1", "variant=line": "border-b" }, "overrides": { "root": { "px": null, "py": null } } } }, { "$schema": "mbank/component@1", "name": "tabs-trigger", "title": "Tabs trigger", "figma": { "name": "Item / segmentButtons", "key": "d3dce4a16063872d9bd8a43a3a4901ca546452a5", "nodeId": "2370:4860" }, "parts": ["root", "icon", "label"], "props": { "variant": { "values": ["segment", "outline", "line"], "default": "segment" } }, "base": { "root": { "height": 9, "gap": 2, "px": 3, "text": "sm", "weight": "medium", "fg": "muted-foreground", "fg:hover": "foreground", "fg:disabled": "disabled-foreground", "align": "center", "focus-ring": "ring/30" }, "icon": { "size": 4, "hidden": true } }, "variants": { "variant": { "segment": { "root": { "radius": "sm", "bg:selected": "background", "fg:selected": "foreground", "shadow:selected": "xs" } }, "outline": { "root": { "radius": "md", "border-width": 1, "border": "border", "border:selected": "secondary", "bg:selected": "secondary", "fg:selected": "secondary-foreground" } }, "line": { "root": { "px": 0, "border:selected": "brand", "fg:selected": "foreground" } } } }, "states": ["default", "hover", "focus", "disabled", "selected"], "code": { "file": "tabs.tsx", "shape": "classes", "template": "button-like", "parts": { "icon": "[&_svg]" }, "modifiers": { "selected": "data-[state=active]" }, "prefix": { "variant": "group-data-[variant={value}]/tabs-list" }, "extra": "inline-flex justify-center whitespace-nowrap transition-colors outline-none disabled:pointer-events-none [&_svg]:shrink-0", "extras": { "variant=line": "-mb-px border-b-2 border-transparent" }, "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "textarea", "title": "Textarea", "figma": { "name": "TextArea", "key": "f5e8ed2faaef70b5702fa5e0f70d9c65a370a8ed", "nodeId": "3069:1804" }, "parts": ["root", "placeholder"], "props": {}, "base": { "root": { "min-height": 24, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "py": 2.5, "text": "sm", "fg": "foreground", "border:hover": "input-hover", "border:focus": "ring", "border:disabled": "input-disabled", "bg:disabled": "muted", "fg:disabled": "disabled-foreground", "border:invalid": "border-destructive", "layout": "row", "focus-ring": "ring/30" }, "placeholder": { "fg": "muted-foreground" } }, "variants": {}, "states": ["default", "hover", "focus", "disabled", "invalid"], "code": { "file": "textarea.tsx", "shape": "classes", "template": "input-like", "parts": { "placeholder": "placeholder" }, "extra": "field-sizing-content w-full min-w-0 transition-colors outline-none disabled:pointer-events-none aria-invalid:ring-border-destructive/20" } }, { "$schema": "mbank/component@1", "name": "toast", "title": "Toast", "figma": { "name": "toast", "key": "17ef4420d2a9d9159bfc9f5668936bd87fdb216a", "nodeId": "4316:3805" }, "parts": ["root", "icon", "title", "description"], "anatomy": { "root": { "width": 400 }, "icon": { "kind": "icon", "icon": "info" }, "title": { "kind": "text", "layer": "Title", "sample": "\u0417\u0430\u044F\u0432\u043A\u0430 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430", "fill": true }, "description": { "kind": "text", "layer": "Description", "sample": "\u0421\u0442\u0430\u0442\u0443\u0441 \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u0447\u0435\u0440\u0435\u0437 \u043C\u0438\u043D\u0443\u0442\u0443", "fill": true } }, "props": { "type": { "values": ["default", "success", "error"], "default": "default" } }, "base": { "root": { "layout": "column", "align": "start", "gap": 1, "px": 4, "py": 4, "radius": "md", "border-width": 1, "border": "border", "bg": "card", "fg": "foreground", "text": "sm", "shadow": "notification" }, "icon": { "size": 5, "fg": "soft-foreground" }, "title": { "text": "base", "weight": "bold" }, "description": { "fg": "muted-foreground" } }, "variants": { "type": { "default": {}, "success": { "icon": { "fg": "success-text" }, "title": { "fg": "success-text" } }, "error": { "icon": { "fg": "destructive-text" }, "title": { "fg": "destructive-text" } } } }, "states": ["default"], "code": { "file": "sonner.tsx", "shape": "classes", "template": "card-like", "extra": "group/toast w-full [&_[data-icon]]:mt-0.5 [&_[data-icon]]:size-5 [&_[data-icon]]:shrink-0", "figmaOnly": ["icon", "title", "description"], "overrides": { "root": { "layout": "row", "gap": 3 } } } }, { "$schema": "mbank/component@1", "name": "tooltip", "title": "Tooltip", "figma": { "name": "tooltip", "key": "cb5b8f83bc82080cd014efcd0b3778415b083b36", "nodeId": "2266:2623" }, "parts": ["root", "label"], "anatomy": { "label": { "kind": "text", "layer": "Label", "sample": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430" } }, "props": {}, "base": { "root": { "align": "center", "px": 3, "py": 2, "radius": "sm", "bg": "surface-inverse", "fg": "inverse-foreground", "text": "xs", "shadow": "tooltip" } }, "variants": {}, "states": ["default"], "code": { "file": "tooltip.tsx", "shape": "classes", "template": "card-like", "extra": "z-(--z-tooltip) max-w-xs animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none", "overrides": { "root": { "align": null } } } }];
+  var contracts_default = [{ "$schema": "mbank/component@1", "name": "alert", "title": "Alert", "figma": { "name": "alert-text", "key": "862527fc2fc9aad902f137eb72e3d82620897a9d", "nodeId": "3012:33" }, "parts": ["root", "icon", "body", "title", "description"], "anatomy": { "root": { "width": 360 }, "icon": { "icon": "info" }, "body": { "fill": true }, "title": { "parent": "body", "sample": "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u044F", "fill": true }, "description": { "parent": "body", "sample": "\u041A\u043E\u0440\u043E\u0442\u043A\u0438\u0439 \u0442\u0435\u043A\u0441\u0442: \u0447\u0442\u043E \u0441\u043B\u0443\u0447\u0438\u043B\u043E\u0441\u044C \u0438 \u0447\u0442\u043E \u0434\u0435\u043B\u0430\u0442\u044C \u0434\u0430\u043B\u044C\u0448\u0435.", "fill": true } }, "props": { "tone": { "values": ["clear", "error"], "default": "clear" } }, "base": { "root": { "radius": "lg", "px": 4, "py": 3, "text": "sm", "align": "start", "gap": 3, "border-width": 1, "border": "border" }, "icon": { "size": 5 }, "title": { "weight": "bold" }, "body": { "layout": "column", "gap": 1 }, "description": { "weight": "regular" } }, "variants": { "tone": { "clear": { "root": { "bg": "card", "fg": "card-foreground" } }, "error": { "root": { "bg": "card", "fg": "destructive" } } } }, "states": ["default"], "code": { "file": "alert.tsx", "export": "alertVariants", "template": "card-like", "parts": { "icon": "[&>svg]" }, "blocks": ["title"], "extra": "relative grid w-full grid-cols-[0_1fr] gap-y-0.5 has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] has-[>svg]:gap-x-3 [&>svg]:translate-y-0.5 [&>svg]:text-current", "extras": { "title": "col-start-2" }, "figmaOnly": ["body", "description"], "overrides": { "root": { "gap": null } } } }, { "$schema": "mbank/component@1", "name": "avatar", "title": "Avatar", "figma": { "name": "Avatars", "key": "a3d5e7947473b09bf719839c62a18d751927d7a8", "nodeId": "3174:1503" }, "parts": ["root", "fallback", "text"], "anatomy": { "fallback": { "fill": true }, "text": { "parent": "fallback", "sample": "\u0410\u0422" } }, "props": { "size": { "values": ["xs", "sm", "md", "lg", "xl"], "default": "md" } }, "base": { "root": { "radius": "full", "layout": "row" }, "fallback": { "radius": "full", "bg": "muted", "weight": "medium", "fg": "muted-foreground", "layout": "row", "align": "center" }, "text": { "fg": "muted-foreground", "weight": "medium" } }, "variants": { "size": { "xs": { "root": { "size": 6, "text": "xs" } }, "sm": { "root": { "size": 8, "text": "xs" } }, "md": { "root": { "size": 10, "text": "sm" } }, "lg": { "root": { "size": 14, "text": "base" } }, "xl": { "root": { "size": 18, "text": "xl" } } } }, "states": ["default"], "code": { "file": "avatar.tsx", "export": "avatarVariants", "template": "badge-like", "blocks": ["fallback"], "extra": "relative shrink-0 overflow-hidden", "extras": { "fallback": "size-full justify-center" }, "figmaOnly": ["text"] } }, { "$schema": "mbank/component@1", "name": "badge", "title": "Badge", "figma": { "name": "Badge-status", "key": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd", "nodeId": "2348:2631" }, "parts": ["root", "icon", "label"], "props": { "tone": { "values": ["neutral", "accent", "error", "clear"], "default": "neutral" }, "shape": { "values": ["rounded", "square"], "default": "rounded" }, "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 1, "weight": "medium", "align": "center" }, "icon": { "size": 3, "hidden": true } }, "variants": { "tone": { "neutral": { "root": { "bg": "secondary", "fg": "secondary-foreground" } }, "accent": { "root": { "bg": "primary", "fg": "primary-foreground" } }, "error": { "root": { "bg": "destructive/10", "fg": "destructive" } }, "clear": { "root": { "border-width": 1, "border": "border", "fg": "foreground" } } }, "shape": { "rounded": { "root": { "radius": "full" } }, "square": { "root": { "radius": "sm" } } }, "size": { "sm": { "root": { "height": 5, "px": 1.5, "text": "xs" } }, "md": { "root": { "height": 6, "px": 2, "text": "xs" } }, "lg": { "root": { "height": 7, "px": 2.5, "text": "sm" } } } }, "states": ["default"], "code": { "file": "badge.tsx", "export": "badgeVariants", "template": "badge-like", "parts": { "icon": "[&>svg]" }, "extra": "inline-flex w-fit shrink-0 justify-center overflow-hidden whitespace-nowrap [&>svg]:pointer-events-none", "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "breadcrumb-item", "title": "Breadcrumb item", "figma": { "name": "Breadcrumb", "key": "385c08c28fbb4a95a06b073d1fc99963af0c26c8", "nodeId": "4240:4717" }, "parts": ["root", "label", "separator"], "anatomy": { "label": { "kind": "text", "layer": "Label", "sample": "\u0417\u0430\u044F\u0432\u043A\u0438" }, "separator": { "kind": "text", "layer": "Separator", "sample": "/" } }, "props": { "current": { "values": ["false", "true"], "default": "false" } }, "base": { "root": { "align": "center", "gap": 2, "text": "sm", "fg": "muted-foreground" } }, "variants": { "current": { "false": {}, "true": { "root": { "fg": "foreground", "weight": "medium" }, "separator": { "hidden": true } } } }, "states": ["default"], "code": { "file": "breadcrumb-item.tsx", "template": "badge-like", "extra": "inline-flex min-w-0 whitespace-nowrap", "figmaOnly": ["label", "separator"] } }, { "$schema": "mbank/component@1", "name": "button", "title": "Button", "figma": { "name": "button/default", "key": "713c90401df3b5d7ddf00e3af4d7ea5870c4c120", "nodeId": "2077:341" }, "parts": ["root", "icon", "label"], "props": { "variant": { "values": ["primary", "secondary", "destructive", "outline", "ghost", "link"], "default": "primary" }, "size": { "values": ["xs", "sm", "md", "lg", "icon-sm", "icon", "icon-lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "weight": "medium", "opacity:disabled": 50, "align": "center", "focus-ring": "ring/50" }, "icon": { "size": 5, "hidden": true } }, "variants": { "variant": { "primary": { "root": { "bg": "primary", "fg": "primary-foreground", "bg:hover": "primary/90" } }, "secondary": { "root": { "bg": "secondary", "fg": "secondary-foreground", "bg:hover": "secondary/80" } }, "destructive": { "root": { "bg": "destructive/10", "fg": "destructive", "bg:hover": "destructive/20" } }, "ghost": { "root": { "fg": "foreground", "bg:hover": "accent", "fg:hover": "accent-foreground" } }, "outline": { "root": { "border-width": 1, "border": "border", "bg": "background", "fg": "foreground", "bg:hover": "accent", "fg:hover": "accent-foreground" } }, "link": { "root": { "px": 0, "fg": "primary" } } }, "size": { "xs": { "root": { "height": 8, "px": 3, "text": "xs" }, "icon": { "size": 4 } }, "sm": { "root": { "height": 9, "px": 3, "text": "sm" }, "icon": { "size": 4 } }, "md": { "root": { "height": 11, "px": 4, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 6, "text": "base" } }, "icon-sm": { "root": { "size": 9 }, "label": { "hidden": true }, "icon": { "hidden": false } }, "icon": { "root": { "size": 11 }, "label": { "hidden": true }, "icon": { "hidden": false } }, "icon-lg": { "root": { "size": 14 }, "label": { "hidden": true }, "icon": { "hidden": false } } } }, "states": ["default", "hover", "focus", "disabled"], "code": { "file": "button.tsx", "export": "buttonVariants", "template": "button-like", "parts": { "icon": "[&_svg:not([class*='size-'])]" }, "extra": "inline-flex shrink-0 justify-center whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40", "extras": { "variant=link": "h-auto underline-offset-4 hover:underline" }, "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "card", "title": "Card", "parts": ["root", "header", "title", "description", "content", "body", "footer", "action"], "anatomy": { "root": { "width": 320 }, "header": { "fill": true }, "title": { "parent": "header", "sample": "\u0417\u0430\u0433\u043E\u043B\u043E\u0432\u043E\u043A \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0438" }, "description": { "parent": "header", "sample": "\u041A\u043E\u0440\u043E\u0442\u043A\u043E\u0435 \u043E\u043F\u0438\u0441\u0430\u043D\u0438\u0435 \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0433\u043E" }, "content": { "fill": true }, "footer": { "fill": true }, "body": { "parent": "content", "kind": "text", "sample": "\u0417\u0434\u0435\u0441\u044C \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u0435 \u043A\u0430\u0440\u0442\u043E\u0447\u043A\u0438: \u0442\u0435\u043A\u0441\u0442, \u0441\u043F\u0438\u0441\u043E\u043A \u0438\u043B\u0438 \u0442\u0430\u0431\u043B\u0438\u0446\u0430.", "fill": true }, "action": { "parent": "footer", "kind": "instance", "component": { "name": "Button" }, "sample": "\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u0435\u0435" } }, "props": {}, "base": { "root": { "gap": 4, "radius": "lg", "border-width": 1, "border": "border", "bg": "card", "py": 5, "fg": "card-foreground", "layout": "column" }, "header": { "gap": 1, "px": 5, "align": "start", "layout": "column" }, "title": { "text": "base", "weight": "bold" }, "description": { "text": "sm", "fg": "muted-foreground" }, "content": { "px": 5, "layout": "column" }, "footer": { "gap": 2, "px": 5, "layout": "row", "align": "start" }, "body": { "text": "sm", "fg": "muted-foreground" } }, "variants": {}, "states": ["default"], "code": { "file": "card.tsx", "shape": "classes", "template": "card-like", "blocks": ["header", "title", "description", "content", "footer"], "extras": { "header": "grid auto-rows-min grid-rows-[auto_auto] has-data-[slot=card-action]:grid-cols-[1fr_auto]", "footer": "[.border-t]:pt-4" }, "figmaOnly": ["body", "action"], "overrides": { "header": { "layout": null }, "content": { "layout": null }, "footer": { "align": "center" } } } }, { "$schema": "mbank/component@1", "name": "checkbox", "title": "Checkbox", "figma": { "name": "Switchers - Check", "key": "be053b3924b63e289a38bfd661b7180deb83236e", "nodeId": "2280:9729" }, "parts": ["root", "icon", "icon-minus"], "anatomy": { "icon": { "icon": "check" }, "icon-minus": { "icon": "minus" } }, "props": {}, "base": { "root": { "size": 5, "radius": "sm", "border-width": 1, "border": "input", "bg": "background", "border:invalid": "destructive", "border:checked": "primary", "bg:checked": "primary", "fg:checked": "primary-foreground", "border:indeterminate": "primary", "bg:indeterminate": "primary", "fg:indeterminate": "primary-foreground", "focus-ring": "ring/50", "align": "center", "opacity:disabled": 50 }, "icon": { "size": 4, "hidden": true, "hidden:checked": false }, "icon-minus": { "size": 4, "hidden": true, "hidden:indeterminate": false } }, "variants": {}, "states": ["default", "focus", "disabled", "invalid", "checked", "indeterminate"], "code": { "file": "checkbox.tsx", "shape": "classes", "template": "button-like", "modifiers": { "checked": "data-[state=checked]", "indeterminate": "data-[state=indeterminate]" }, "extra": "peer shrink-0 transition-colors outline-none disabled:cursor-not-allowed", "figmaOnly": ["icon", "icon-minus"], "overrides": { "root": { "align": null, "layout": null } } } }, { "$schema": "mbank/component@1", "name": "crm-application-card", "title": "CRM / Application card", "figma": { "name": "CRM / Application card", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "33:28", "uses": 15 } }, "parts": ["root", "top", "id", "time", "name", "amount", "meta", "footer", "badge"], "anatomy": { "root": { "width": 200 }, "top": { "kind": "frame", "layer": "Top", "fill": true }, "id": { "kind": "text", "layer": "ID", "parent": "top", "sample": "CL-240118" }, "time": { "kind": "text", "layer": "Time", "parent": "top", "sample": "09:14" }, "name": { "kind": "text", "layer": "Name", "fill": true, "sample": "\u0410\u0441\u0430\u043D\u043E\u0432 \u041D\u0443\u0440\u043B\u0430\u043D" }, "amount": { "kind": "text", "layer": "Amount", "sample": "450 000 KGS" }, "meta": { "kind": "text", "layer": "Meta", "fill": true, "sample": "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \xB7 24 \u043C\u0435\u0441" }, "footer": { "kind": "frame", "layer": "Footer", "fill": true }, "badge": { "kind": "instance", "layer": "Badge-status", "parent": "footer", "sample": "SLA 25 \u043C\u0438\u043D", "component": { "name": "Badge-status", "set": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd", "key": "b68afd3e0714ecefd38ee21793292c14ae240015", "variant": "Size=S, Form=rounded, Appearance=Info, Status=Off, Icon=Off, Solid=off" } } }, "props": {}, "base": { "root": { "layout": "column", "gap": 1, "px": 3, "py": 3, "radius": "md", "bg": "card", "fg": "foreground" }, "top": { "layout": "row", "align": "between" }, "id": { "text": "xs", "fg": "muted-foreground", "weight": "regular" }, "time": { "text": "xs", "fg": "muted-foreground", "weight": "regular" }, "name": { "text": "sm", "weight": "medium", "fg": "foreground" }, "amount": { "text": "base", "weight": "bold", "fg": "foreground" }, "meta": { "text": "xs", "fg": "muted-foreground", "weight": "regular" }, "footer": { "layout": "row", "align": "start", "pt": 1 } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/ApplicationCard.tsx", "slot": "application-card" } }, { "$schema": "mbank/component@1", "name": "crm-key-value-row", "title": "CRM / Key-value row", "figma": { "name": "CRM / Key-value row", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "24:6539", "uses": 26 } }, "parts": ["root", "label", "value"], "anatomy": { "root": { "width": 480 }, "label": { "kind": "text", "layer": "Label", "width": 180, "sample": "\u041A\u043B\u044E\u0447" }, "value": { "kind": "text", "layer": "Value", "fill": true, "sample": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435" } }, "props": {}, "base": { "root": { "layout": "row", "align": "start", "gap": 4, "px": 0, "py": 2, "text": "sm" }, "label": { "text": "sm", "fg": "muted-foreground", "weight": "regular" }, "value": { "text": "sm", "weight": "medium", "fg": "foreground" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/KeyValueRow.tsx", "slot": "key-value-row" } }, { "$schema": "mbank/component@1", "name": "crm-kpi-card", "title": "CRM / KPI card", "figma": { "name": "CRM / KPI card", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "21:1819", "uses": 8 } }, "parts": ["root", "label", "value", "delta", "delta-value", "delta-label"], "anatomy": { "root": { "width": 260 }, "label": { "kind": "text", "layer": "Label", "sample": "\u041F\u0435\u0440\u0435\u0432\u043E\u0434\u043E\u0432 \u0441\u0435\u0433\u043E\u0434\u043D\u044F" }, "value": { "kind": "text", "layer": "Value", "sample": "12 480" }, "delta": { "kind": "frame", "layer": "Delta" }, "delta-value": { "kind": "text", "layer": "Delta value", "parent": "delta", "sample": "+8,2%" }, "delta-label": { "kind": "text", "layer": "Delta label", "parent": "delta", "sample": "\u043A \u0432\u0447\u0435\u0440\u0430" } }, "props": {}, "base": { "root": { "layout": "column", "gap": 2, "px": 5, "py": 5, "radius": "lg", "bg": "card", "fg": "foreground" }, "label": { "text": "sm", "fg": "muted-foreground", "weight": "regular" }, "value": { "text": "2xl", "weight": "bold", "fg": "foreground" }, "delta": { "layout": "row", "align": "center", "gap": 1 }, "delta-value": { "text": "sm", "weight": "medium", "fg": "foreground" }, "delta-label": { "text": "xs", "fg": "muted-foreground", "weight": "regular" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/KpiCard.tsx", "slot": "kpi-card" } }, { "$schema": "mbank/component@1", "name": "crm-list-item", "title": "CRM / List item", "figma": { "name": "CRM / List item", "page": "\u2630 CRM blocks" }, "parts": ["root", "avatar", "content", "title", "subtitle", "meta"], "anatomy": { "root": { "width": 360, "sides": ["bottom"] }, "avatar": { "kind": "instance", "layer": "Avatar", "sample": "\u0410\u041D", "component": { "name": "Avatar", "set": "a3d5e7947473b09bf719839c62a18d751927d7a8", "key": "2c3fca6917c56c5d664a8c1a8159dedb38cc26ac", "variant": "Size=40 px, Placeholder=False, Upload=False, Name=False" } }, "content": { "kind": "frame", "layer": "Content", "fill": true }, "title": { "kind": "text", "layer": "Title", "sample": "\u0410\u0441\u0430\u043D\u043E\u0432 \u041D\u0443\u0440\u043B\u0430\u043D", "parent": "content", "fill": true }, "subtitle": { "kind": "text", "layer": "Subtitle", "sample": "\u041F\u043E\u0442\u0440\u0435\u0431\u0438\u0442\u0435\u043B\u044C\u0441\u043A\u0438\u0439 \xB7 450 000 KGS", "parent": "content", "fill": true }, "meta": { "kind": "text", "layer": "Meta", "sample": "09:14" } }, "props": {}, "base": { "root": { "layout": "row", "align": "center", "gap": 3, "px": 4, "py": 3, "bg": "card", "border-width": 1, "border": "border" }, "content": { "layout": "column", "gap": 1 }, "title": { "text": "sm", "weight": "medium", "fg": "foreground" }, "subtitle": { "text": "xs", "weight": "regular", "fg": "muted-foreground" }, "meta": { "text": "xs", "weight": "regular", "fg": "muted-foreground" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/ListItem.tsx", "slot": "crm-list-item" } }, { "$schema": "mbank/component@1", "name": "crm-timeline-item", "title": "CRM / Timeline item", "figma": { "name": "CRM / Timeline item", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "24:6542", "uses": 8 } }, "parts": ["root", "marker", "dot", "content", "title", "meta"], "anatomy": { "root": { "width": 320 }, "marker": { "kind": "frame", "layer": "Marker" }, "dot": { "kind": "frame", "layer": "Dot", "parent": "marker" }, "content": { "kind": "frame", "layer": "Content", "fill": true }, "title": { "kind": "text", "layer": "Title", "parent": "content", "fill": true, "sample": "\u0421\u043E\u0431\u044B\u0442\u0438\u0435" }, "meta": { "kind": "text", "layer": "Meta", "parent": "content", "sample": "12.10.2026, 14:32 \xB7 \u0421\u0438\u0441\u0442\u0435\u043C\u0430" } }, "props": {}, "base": { "root": { "layout": "row", "align": "start", "gap": 3 }, "marker": { "layout": "column", "px": 0, "pt": 1, "pb": 0 }, "dot": { "size": 3, "radius": "full", "bg": "primary" }, "content": { "layout": "column", "gap": 1 }, "title": { "text": "sm", "weight": "medium", "fg": "foreground" }, "meta": { "text": "xs", "fg": "muted-foreground", "weight": "regular" } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/TimelineItem.tsx", "slot": "timeline-item" } }, { "$schema": "mbank/component@1", "name": "crm-transfer-row", "title": "CRM / Transfer row", "figma": { "name": "CRM / Transfer row", "page": "\u2630 CRM blocks", "source": { "file": "vVuM5uw3TsWo1xm3vJelXG", "name": "[draft] Mbank CRM \u2014 \u0442\u0435\u0441\u0442 \u0418\u0418", "nodeId": "23:10079", "uses": 10 } }, "parts": ["root", "id-cell", "id-content", "id", "date-cell", "date-content", "date", "sender-cell", "sender-content", "sender", "recipient-cell", "recipient-content", "recipient", "country-cell", "country-content", "country", "amount-cell", "amount-content", "amount", "channel-cell", "channel-content", "channel", "status-cell", "status"], "anatomy": { "root": { "sides": ["bottom"] }, "id-cell": { "kind": "frame", "layer": "TableCell 1", "width": 124, "sides": ["right"] }, "id-content": { "kind": "frame", "layer": "TextContent", "parent": "id-cell", "fill": true }, "id": { "kind": "text", "layer": "Label", "parent": "id-content", "fill": true, "sample": "TR-80421951" }, "date-cell": { "kind": "frame", "layer": "TableCell 2", "width": 156, "sides": ["right"] }, "date-content": { "kind": "frame", "layer": "TextContent", "parent": "date-cell", "fill": true }, "date": { "kind": "text", "layer": "Label", "parent": "date-content", "fill": true, "sample": "12.10.2026, 14:32" }, "sender-cell": { "kind": "frame", "layer": "TableCell 3", "width": 160, "sides": ["right"] }, "sender-content": { "kind": "frame", "layer": "TextContent", "parent": "sender-cell", "fill": true }, "sender": { "kind": "text", "layer": "Label", "parent": "sender-content", "fill": true, "sample": "\u0411\u0430\u043A\u044B\u0442 \u0422\u043E\u043A\u0442\u043E\u0433\u0443\u043B\u043E\u0432" }, "recipient-cell": { "kind": "frame", "layer": "TableCell 4", "width": 170, "sides": ["right"] }, "recipient-content": { "kind": "frame", "layer": "TextContent", "parent": "recipient-cell", "fill": true }, "recipient": { "kind": "text", "layer": "Label", "parent": "recipient-content", "fill": true, "sample": "\u0418\u0432\u0430\u043D \u041F\u0435\u0442\u0440\u043E\u0432" }, "country-cell": { "kind": "frame", "layer": "TableCell 5", "width": 116, "sides": ["right"] }, "country-content": { "kind": "frame", "layer": "TextContent", "parent": "country-cell", "fill": true }, "country": { "kind": "text", "layer": "Label", "parent": "country-content", "fill": true, "sample": "\u0420\u043E\u0441\u0441\u0438\u044F" }, "amount-cell": { "kind": "frame", "layer": "TableCell 6", "width": 124, "sides": ["right"] }, "amount-content": { "kind": "frame", "layer": "TextContent", "parent": "amount-cell", "fill": true }, "amount": { "kind": "text", "layer": "Label", "parent": "amount-content", "fill": true, "sample": "185 000 KGS" }, "channel-cell": { "kind": "frame", "layer": "TableCell 7", "width": 128, "sides": ["right"] }, "channel-content": { "kind": "frame", "layer": "TextContent", "parent": "channel-cell", "fill": true }, "channel": { "kind": "text", "layer": "Label", "parent": "channel-content", "fill": true, "sample": "\u041F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0435" }, "status-cell": { "kind": "frame", "layer": "TableCell 8", "width": 138, "sides": ["right"] }, "status": { "kind": "instance", "layer": "Badge-status", "parent": "status-cell", "sample": "\u0423\u0441\u043F\u0435\u0448\u043D\u043E", "component": { "name": "Badge-status", "set": "f25dcf8a0cdeb0a978f91b7a07790d42b80f9dcd", "key": "4c16cc198bc2c10f229898b330166c1db17200b6", "variant": "Size=S, Form=rounded, Appearance=Success, Status=Off, Icon=Off, Solid=off" } } }, "props": {}, "base": { "root": { "layout": "row", "align": "center", "bg": "background", "border": "border", "border-width": 1, "text": "sm" }, "id-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "id-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "id": { "text": "sm", "weight": "regular", "fg": "foreground" }, "date-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "date-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "date": { "text": "sm", "weight": "regular", "fg": "foreground" }, "sender-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "sender-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "sender": { "text": "sm", "weight": "regular", "fg": "foreground" }, "recipient-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "recipient-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "recipient": { "text": "sm", "weight": "regular", "fg": "foreground" }, "country-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "country-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "country": { "text": "sm", "weight": "regular", "fg": "foreground" }, "amount-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "amount-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "amount": { "text": "sm", "weight": "regular", "fg": "foreground" }, "channel-cell": { "layout": "row", "align": "start", "gap": 2, "px": 3, "border": "border", "border-width": 1 }, "channel-content": { "layout": "column", "gap": 1, "px": 0, "py": 3 }, "channel": { "text": "sm", "weight": "regular", "fg": "foreground" }, "status-cell": { "layout": "row", "align": "center", "gap": 2, "px": 3, "border": "border", "border-width": 1, "py": 3 } }, "variants": {}, "states": ["default"], "code": { "kind": "block", "file": "blocks/crm/TransferRow.tsx", "slot": "transfer-row", "inline": ["id-content", "id", "date-content", "date", "sender-content", "sender", "recipient-content", "recipient", "country-content", "country", "amount-content", "amount", "channel-content", "channel"] } }, { "$schema": "mbank/component@1", "name": "date-picker-trigger", "title": "Date picker trigger", "figma": { "name": "input/calendar-single", "key": "9015ffe0c43d059151c3c414323b4e24e9140985", "nodeId": "2250:4032" }, "parts": ["root", "placeholder", "icon"], "anatomy": { "root": { "width": 240 }, "placeholder": { "kind": "text", "layer": "Placeholder", "sample": "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0434\u0430\u0442\u0443", "fill": true }, "icon": { "kind": "icon", "icon": "calendar" } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "text": "sm", "fg": "foreground", "border:focus": "ring", "layout": "row", "align": "between", "focus-ring": "ring/50", "border:invalid": "destructive", "opacity:disabled": 50 }, "placeholder": { "fg": "muted-foreground" }, "icon": { "size": 5, "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9 } }, "md": { "root": { "height": 11 } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "focus", "disabled", "invalid"], "code": { "file": "date-picker.tsx", "shape": "classes", "template": "button-like", "parts": { "placeholder": "data-[placeholder]" }, "maps": { "size": { "const": "pickerSizes", "part": "root" } }, "extra": "w-full text-left whitespace-nowrap transition-colors outline-none disabled:pointer-events-none aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40", "figmaOnly": ["icon"] } }, { "$schema": "mbank/component@1", "name": "dialog", "title": "Dialog", "figma": { "name": "dialogInfo", "key": "12ed29cbe7be8badd626f5b83ad2a37ab905ebd8", "nodeId": "2405:4807" }, "parts": ["root", "header", "title", "description", "content", "footer", "cancel", "confirm"], "anatomy": { "root": { "width": 480 }, "header": { "kind": "frame", "layer": "Header", "fill": true }, "title": { "kind": "text", "layer": "Title", "sample": "\u041E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443?", "parent": "header", "fill": true }, "description": { "kind": "text", "layer": "Description", "sample": "\u041A\u043B\u0438\u0435\u043D\u0442 \u043F\u043E\u043B\u0443\u0447\u0438\u0442 \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0435 \u0441 \u043F\u0440\u0438\u0447\u0438\u043D\u043E\u0439 \u043E\u0442\u043A\u0430\u0437\u0430", "parent": "header", "fill": true }, "content": { "kind": "frame", "layer": "Content", "fill": true }, "footer": { "kind": "frame", "layer": "Footer", "fill": true }, "cancel": { "kind": "instance", "layer": "Cancel", "parent": "footer", "sample": "\u041E\u0442\u043C\u0435\u043D\u0430", "component": { "name": "Button" } }, "confirm": { "kind": "instance", "layer": "Confirm", "parent": "footer", "sample": "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C", "component": { "name": "Button" } } }, "props": {}, "base": { "root": { "layout": "column", "gap": 4, "px": 6, "py": 6, "radius": "lg", "bg": "card", "fg": "foreground", "shadow": "lg" }, "header": { "layout": "column", "gap": 2 }, "title": { "text": "xl", "weight": "bold" }, "description": { "text": "sm", "fg": "muted-foreground" }, "content": { "layout": "column", "gap": 2, "min-height": 16 }, "footer": { "layout": "row", "align": "end", "gap": 2 } }, "variants": {}, "states": ["default"], "code": { "file": "dialog.tsx", "shape": "classes", "template": "card-like", "blocks": ["header", "title", "description", "footer"], "extra": "fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none", "extras": { "header": "pr-8", "footer": "flex flex-col-reverse sm:flex-row sm:justify-end" }, "figmaOnly": ["content", "cancel", "confirm"], "overrides": { "root": { "layout": null }, "footer": { "layout": null, "align": null } } } }, { "$schema": "mbank/component@1", "name": "dropdown-menu-item", "title": "Dropdown menu item", "figma": { "name": "Item / dropdown / simple", "key": "79cec158925db00a687b7dc969846592cf4cb98f", "nodeId": "5020:11626" }, "parts": ["root", "icon", "label", "shortcut"], "anatomy": { "root": { "width": 220 }, "icon": { "kind": "icon", "icon": "file" }, "label": { "kind": "text", "layer": "Label", "sample": "\u041E\u0442\u043A\u0440\u044B\u0442\u044C", "fill": true }, "shortcut": { "kind": "text", "layer": "Shortcut", "sample": "\u2318O" } }, "props": { "variant": { "values": ["default", "destructive"], "default": "default" } }, "base": { "root": { "align": "center", "gap": 2, "px": 2, "height": 8, "radius": "sm", "text": "sm", "fg": "foreground", "bg:hover": "accent", "opacity:disabled": 50, "fg:hover": "accent-foreground" }, "icon": { "size": 4, "fg": "muted-foreground" }, "shortcut": { "text": "xs", "fg": "muted-foreground" } }, "variants": { "variant": { "default": {}, "destructive": { "root": { "fg": "destructive", "bg:hover": "destructive/10", "fg:hover": "destructive" }, "icon": { "fg": "destructive" } } } }, "states": ["default", "hover", "disabled"], "code": { "file": "dropdown-menu.tsx", "shape": "classes", "template": "button-like", "modifiers": { "hover": "data-[highlighted]", "disabled": "data-[disabled]" }, "parts": { "icon": "[&_svg]" }, "prefix": { "variant": "data-[variant={value}]" }, "extra": "relative flex cursor-default outline-none select-none data-[disabled]:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0", "figmaOnly": ["label", "shortcut"] } }, { "$schema": "mbank/component@1", "name": "empty-state", "title": "Empty state", "figma": { "name": "Empty state" }, "parts": ["root", "icon", "title", "description", "action"], "anatomy": { "root": { "width": 400 }, "icon": { "kind": "icon", "icon": "inbox" }, "title": { "kind": "text", "layer": "Title", "sample": "\u0417\u0430\u044F\u0432\u043E\u043A \u043F\u043E\u043A\u0430 \u043D\u0435\u0442" }, "description": { "kind": "text", "layer": "Description", "sample": "\u041D\u043E\u0432\u044B\u0435 \u0437\u0430\u044F\u0432\u043A\u0438 \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u0437\u0434\u0435\u0441\u044C" }, "action": { "kind": "instance", "layer": "Action", "sample": "\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443", "component": { "name": "Button" } } }, "props": {}, "base": { "root": { "layout": "column", "align": "center", "gap": 3, "px": 6, "py": 16, "radius": "lg", "border-width": 1, "border": "border" }, "icon": { "size": 7, "fg": "muted-foreground" }, "title": { "text": "base", "weight": "bold", "fg": "foreground" }, "description": { "text": "sm", "fg": "muted-foreground" } }, "variants": {}, "states": ["default"], "code": { "file": "EmptyState.tsx", "shape": "classes", "template": "card-like", "extra": "border-dashed text-center", "figmaOnly": ["icon", "title", "description", "action"] } }, { "$schema": "mbank/component@1", "name": "filter-chip", "title": "Filter chip", "figma": { "name": "Item / chipsButton", "key": "a2f7f17786d9e319cebd76c4fe36b067d6f7654f", "nodeId": "2426:13606" }, "parts": ["root", "label", "icon"], "anatomy": { "label": { "kind": "text", "layer": "Label", "sample": "\u0421\u0442\u0430\u0442\u0443\u0441" }, "icon": { "kind": "icon", "icon": "chevron" } }, "props": {}, "base": { "root": { "align": "center", "gap": 1, "px": 3, "height": 9, "radius": "sm", "border-width": 1, "border": "border", "bg": "background", "text": "sm", "weight": "medium", "fg": "foreground", "bg:selected": "primary", "border:selected": "primary", "fg:selected": "primary-foreground", "bg:hover": "accent" }, "icon": { "size": 5 } }, "variants": {}, "states": ["default", "hover", "selected"], "code": { "file": "filter-chip.tsx", "template": "button-like", "modifiers": { "selected": "aria-pressed" }, "parts": { "icon": "[&_svg]" }, "extra": "inline-flex shrink-0 whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:shrink-0", "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "input", "title": "Input", "figma": { "name": "input/default", "key": "9b99d128100afd0ac499d5fc2cfdedf0ae6aa44b", "nodeId": "2184:1939" }, "parts": ["root", "placeholder"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "fg": "foreground", "border:focus": "ring", "border:invalid": "destructive", "layout": "row", "focus-ring": "ring/50", "opacity:disabled": 50 }, "placeholder": { "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9, "text": "sm" } }, "md": { "root": { "height": 11, "text": "sm" } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "focus", "disabled", "invalid"], "code": { "file": "input.tsx", "export": "inputVariants", "template": "input-like", "parts": { "placeholder": "placeholder" }, "extra": "w-full min-w-0 transition-colors outline-none disabled:pointer-events-none file:border-0 file:bg-transparent file:text-sm file:font-medium aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40" } }, { "$schema": "mbank/component@1", "name": "nav-item", "title": "Nav item", "figma": { "name": "item-sidemenu-menu-tree-1", "key": "9789323b5edf20b5384e1623e5d2f75cf7df0c57", "nodeId": "410:11518" }, "parts": ["root", "icon", "label", "count"], "anatomy": { "root": { "width": 256 }, "icon": { "kind": "icon", "icon": "home" }, "label": { "kind": "text", "layer": "Label", "sample": "\u0417\u0430\u044F\u0432\u043A\u0438", "fill": true }, "count": { "kind": "text", "layer": "Count", "sample": "12" } }, "props": {}, "base": { "root": { "gap": 3, "px": 3, "height": 11, "radius": "md", "text": "sm", "weight": "medium", "fg": "muted-foreground", "align": "center", "bg:hover": "accent", "bg:selected": "accent", "fg:selected": "accent-foreground", "focus-ring": "ring/50", "opacity:disabled": 50, "fg:hover": "accent-foreground" }, "icon": { "size": 5, "fg": "muted-foreground", "fg:selected": "accent-foreground" }, "count": { "text": "xs", "weight": "medium", "fg": "muted-foreground" } }, "variants": {}, "states": ["default", "hover", "selected", "disabled"], "code": { "file": "nav-item.tsx", "template": "button-like", "modifiers": { "selected": "aria-[current=page]", "disabled": "aria-disabled" }, "parts": { "icon": "[&_svg]" }, "extra": "flex w-full min-w-0 transition-colors outline-none aria-disabled:pointer-events-none [&_svg]:shrink-0", "figmaOnly": ["label", "count"] } }, { "$schema": "mbank/component@1", "name": "pagination", "title": "Pagination item", "figma": { "name": "item/pagintaion / buttons", "key": "2255ec920c853b652f1389adbc4bd30779ee35d7", "nodeId": "4141:5990" }, "parts": ["root", "icon", "label"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "radius": "sm", "weight": "medium", "fg": "foreground", "bg:hover": "accent", "bg:selected": "background", "fg:selected": "foreground", "align": "center", "focus-ring": "ring/50", "opacity:disabled": 50, "border:selected": "border", "fg:hover": "accent-foreground" }, "icon": { "size": 5, "hidden": true } }, "variants": { "size": { "sm": { "root": { "height": 8, "px": 1.5, "text": "xs" } }, "md": { "root": { "height": 9, "px": 2, "text": "sm" } }, "lg": { "root": { "height": 10, "px": 2.5, "text": "sm" } } } }, "states": ["default", "hover", "focus", "disabled", "selected"], "code": { "file": "pagination.tsx", "export": "paginationItemVariants", "template": "button-like", "parts": { "icon": "[&_svg]" }, "modifiers": { "selected": "aria-[current=page]" }, "extra": "inline-flex shrink-0 justify-center tabular-nums transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:shrink-0", "extras": { "size=sm": "min-w-8", "size=md": "min-w-9", "size=lg": "min-w-10" }, "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "progress", "title": "Progress", "figma": { "name": "Progress bar / Determinate", "key": "cf47478133f9b8625225affab7ae57b7b022c9bd", "nodeId": "4823:334" }, "parts": ["root", "indicator"], "anatomy": { "root": { "width": 240 }, "indicator": { "width": 144 } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" }, "shape": { "values": ["rounded", "square"], "default": "rounded" } }, "base": { "root": { "bg": "primary/20" }, "indicator": { "bg": "primary" } }, "variants": { "size": { "sm": { "root": { "height": 1 } }, "md": { "root": { "height": 2 } }, "lg": { "root": { "height": 3 } } }, "shape": { "rounded": { "root": { "radius": "full" }, "indicator": { "radius": "full" } }, "square": { "root": { "radius": "none" }, "indicator": { "radius": "none" } } } }, "states": ["default"], "code": { "file": "progress.tsx", "export": "progressVariants", "template": "card-like", "extra": "relative w-full overflow-hidden", "figmaOnly": ["indicator"] } }, { "$schema": "mbank/component@1", "name": "radio", "title": "Radio", "figma": { "name": "Switchers - Check", "key": "be053b3924b63e289a38bfd661b7180deb83236e", "nodeId": "2280:9729" }, "parts": ["root", "dot"], "anatomy": { "dot": { "kind": "frame", "layer": "Dot" } }, "props": {}, "base": { "root": { "size": 5, "radius": "full", "border-width": 1, "border": "input", "bg": "background", "align": "center", "border:checked": "primary", "bg:checked": "primary", "focus-ring": "ring/50", "opacity:disabled": 50 }, "dot": { "size": 2, "radius": "full", "bg": "primary-foreground", "hidden": true, "hidden:checked": false } }, "variants": {}, "states": ["default", "focus", "disabled", "checked"], "code": { "file": "radio.tsx", "template": "button-like", "modifiers": { "checked": "data-[state=checked]" }, "extra": "peer inline-flex shrink-0 justify-center transition-colors outline-none disabled:cursor-not-allowed", "figmaOnly": ["dot"] } }, { "$schema": "mbank/component@1", "name": "search-input", "title": "Search input", "figma": { "name": "input/search", "key": "bdc52ccb245ef127e0ce609859f7b0347207a94b", "nodeId": "4001:1384" }, "parts": ["root", "icon", "placeholder"], "anatomy": { "root": { "width": 272 }, "icon": { "kind": "icon", "icon": "search" }, "placeholder": { "kind": "text", "layer": "Placeholder", "sample": "\u041F\u043E\u0438\u0441\u043A", "fill": true } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "text": "sm", "fg": "foreground", "border:focus": "ring", "layout": "row", "align": "center", "focus-ring": "ring/50", "opacity:disabled": 50 }, "placeholder": { "fg": "muted-foreground" }, "icon": { "size": 5, "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9, "radius": "sm" } }, "md": { "root": { "height": 11 } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "focus", "disabled"], "code": { "file": "search-input.tsx", "template": "card-like", "modifiers": { "focus": "focus-within", "disabled": "has-disabled" }, "parts": { "icon": "[&_svg]" }, "extra": "w-full transition-colors has-disabled:pointer-events-none [&_svg]:shrink-0", "figmaOnly": ["placeholder"] } }, { "$schema": "mbank/component@1", "name": "select-trigger", "title": "Select trigger", "figma": { "name": "input/dropdown", "key": "a51f7990a9914a36e511d08aeb2684c412634c09", "nodeId": "2431:11731" }, "parts": ["root", "placeholder", "icon"], "anatomy": { "root": { "width": 240 }, "icon": { "icon": "chevron" } }, "props": { "size": { "values": ["sm", "md", "lg"], "default": "md" } }, "base": { "root": { "gap": 2, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "text": "sm", "fg": "foreground", "border:focus": "ring", "border:invalid": "destructive", "layout": "row", "align": "between", "focus-ring": "ring/50", "opacity:disabled": 50 }, "placeholder": { "fg": "muted-foreground" }, "icon": { "size": 4, "fg": "muted-foreground" } }, "variants": { "size": { "sm": { "root": { "height": 9 } }, "md": { "root": { "height": 11 } }, "lg": { "root": { "height": 14, "px": 4, "text": "base" } } } }, "states": ["default", "focus", "disabled", "invalid"], "code": { "file": "select.tsx", "shape": "classes", "template": "button-like", "parts": { "placeholder": "data-[placeholder]" }, "maps": { "size": { "const": "triggerSizes", "part": "root" } }, "extra": "w-full whitespace-nowrap transition-colors outline-none disabled:pointer-events-none *:data-[slot=select-value]:truncate aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40", "figmaOnly": ["icon"] } }, { "$schema": "mbank/component@1", "name": "separator", "title": "Separator", "figma": { "name": "Separator" }, "parts": ["root"], "props": { "orientation": { "values": ["horizontal", "vertical"], "default": "horizontal" } }, "base": { "root": { "bg": "border" } }, "variants": { "orientation": { "horizontal": { "root": { "layout": "row", "height": 0.25, "px": 30 } }, "vertical": { "root": { "layout": "row", "height": 6, "px": 0.125 } } } }, "states": ["default"], "code": { "file": "separator.tsx", "template": "card-like", "extra": "shrink-0", "extras": { "orientation=horizontal": "h-px w-full", "orientation=vertical": "h-full w-px" }, "overrides": { "root": { "layout": null, "height": null, "px": null } } } }, { "$schema": "mbank/component@1", "name": "skeleton", "title": "Skeleton", "parts": ["root"], "anatomy": { "root": { "width": 240 } }, "props": { "shape": { "values": ["line", "circle", "block"], "default": "line" } }, "base": { "root": { "radius": "md", "bg": "accent" } }, "variants": { "shape": { "line": { "root": { "height": 4, "radius": "sm" } }, "circle": { "root": { "size": 10, "radius": "full" } }, "block": { "root": { "height": 24, "radius": "lg" } } } }, "states": ["default"], "code": { "file": "skeleton.tsx", "shape": "classes", "template": "card-like", "extra": "animate-pulse motion-reduce:animate-none" } }, { "$schema": "mbank/component@1", "name": "spinner", "title": "Spinner", "figma": { "name": "spinner", "key": "03ca97e314c9e429cb882a5f42b978718bc3070d", "nodeId": "2153:1584" }, "parts": ["root"], "props": { "size": { "values": ["sm", "md", "lg"], "default": "sm" } }, "base": { "root": { "radius": "full", "border-width": 2, "border": "primary" } }, "variants": { "size": { "sm": { "root": { "size": 4 } }, "md": { "root": { "size": 5 } }, "lg": { "root": { "size": 6 } } } }, "states": ["default"], "code": { "file": "spinner.tsx", "template": "card-like", "extra": "shrink-0 animate-spin motion-reduce:animate-none", "overrides": { "root": { "radius": null, "border-width": null, "border": null } } } }, { "$schema": "mbank/component@1", "name": "stepper-step", "title": "Stepper step", "figma": { "name": "item-stepper-basic", "key": "954b3a3b55fce287426091c632d9f1e6e84b1a13", "nodeId": "3098:7661" }, "parts": ["root", "marker", "number", "label", "description"], "anatomy": { "marker": { "kind": "frame", "layer": "Marker" }, "number": { "kind": "text", "layer": "Number", "sample": "2", "parent": "marker" }, "label": { "kind": "text", "layer": "Label", "sample": "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430" }, "description": { "kind": "text", "layer": "Description", "sample": "\u0434\u043E 2 \u0434\u043D\u0435\u0439" } }, "props": { "status": { "values": ["done", "current", "upcoming"], "default": "upcoming" } }, "base": { "root": { "align": "center", "gap": 2, "py": 2, "text": "base", "fg": "foreground" }, "marker": { "size": 8, "radius": "full", "align": "center" }, "number": { "text": "sm", "weight": "medium" }, "description": { "text": "xs", "fg": "muted-foreground" } }, "variants": { "status": { "done": { "marker": { "bg": "primary/10" }, "number": { "fg": "primary" } }, "current": { "root": { "weight": "medium" }, "marker": { "bg": "primary" }, "number": { "fg": "primary-foreground" } }, "upcoming": { "root": { "fg": "muted-foreground" }, "marker": { "bg": "muted" }, "number": { "fg": "muted-foreground" } } } }, "states": ["default"], "code": { "file": "stepper-step.tsx", "template": "card-like", "parts": { "marker": "*:data-[slot=stepper-step-marker]", "number": "**:data-[slot=stepper-step-number]" }, "extra": "inline-flex min-w-0 *:data-[slot=stepper-step-marker]:inline-flex *:data-[slot=stepper-step-marker]:shrink-0 *:data-[slot=stepper-step-marker]:justify-center", "figmaOnly": ["label", "description"] } }, { "$schema": "mbank/component@1", "name": "switch", "title": "Switch", "parts": ["root", "thumb"], "anatomy": { "root": { "width": 44 } }, "props": {}, "base": { "root": { "border-width": 2, "height": 6, "radius": "full", "opacity:disabled": 50, "bg:checked": "primary", "bg:unchecked": "input", "align": "start", "focus-ring": "ring/50", "bg": "input", "px": 0.5, "align:checked": "end" }, "thumb": { "size": 5, "radius": "full", "bg": "background" } }, "variants": {}, "states": ["default", "focus", "disabled", "checked", "unchecked"], "code": { "file": "switch.tsx", "shape": "classes", "template": "button-like", "modifiers": { "checked": "data-[state=checked]", "unchecked": "data-[state=unchecked]" }, "extra": "peer inline-flex w-10 shrink-0 border-transparent transition-colors outline-none disabled:cursor-not-allowed aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40", "figmaOnly": ["thumb"], "overrides": { "root": { "align": "center", "align:checked": null, "bg": null, "px": null } } } }, { "$schema": "mbank/component@1", "name": "tabbar-item", "title": "Tabbar item", "figma": { "name": "Tabbar item" }, "parts": ["root", "icon", "label"], "anatomy": { "root": { "width": 80 }, "icon": { "kind": "icon", "icon": "home" }, "label": { "kind": "text", "layer": "Label", "sample": "\u0413\u043B\u0430\u0432\u043D\u0430\u044F" } }, "props": {}, "base": { "root": { "layout": "column", "align": "center", "gap": 1, "px": 2, "py": 2, "text": "xs", "weight": "medium", "fg": "muted-foreground", "fg:selected": "primary", "focus-ring": "ring/50" }, "icon": { "size": 6 } }, "variants": {}, "states": ["default", "selected"], "code": { "file": "tabbar-item.tsx", "template": "button-like", "modifiers": { "selected": "aria-[current=page]" }, "parts": { "icon": "[&_svg]" }, "extra": "min-w-0 flex-1 justify-center transition-colors outline-none [&_svg]:shrink-0", "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "table-cell", "title": "Table cell", "figma": { "name": "TableCell", "key": "75d931d4c1075a08c944e2a7ba1b34b1c4e787d0", "nodeId": "1309:22504" }, "parts": ["root", "text"], "anatomy": { "root": { "width": 160 }, "text": { "sample": "\u0417\u043D\u0430\u0447\u0435\u043D\u0438\u0435" } }, "props": {}, "base": { "root": { "height": 11, "px": 3, "py": 3, "text": "sm" } }, "variants": {}, "states": ["default"], "code": { "file": "table.tsx", "shape": "classes", "template": "card-like", "extra": "align-middle leading-5 whitespace-nowrap tabular-nums [&:has([role=checkbox])]:pr-0" } }, { "$schema": "mbank/component@1", "name": "table-head", "title": "Table head", "figma": { "name": "item/cell/header", "key": "e28abae96eaece6a3a3ca39eb048b04f138c2c0c", "nodeId": "1113:46703" }, "parts": ["root", "text", "icon"], "anatomy": { "root": { "width": 160, "sides": ["bottom"] }, "text": { "kind": "text", "layer": "Text", "sample": "\u041A\u043B\u0438\u0435\u043D\u0442" }, "icon": { "kind": "icon", "icon": "chevron" } }, "props": { "sort": { "values": ["none", "asc", "desc"], "default": "none" } }, "base": { "root": { "gap": 1, "height": 11, "px": 3, "text": "sm", "weight": "medium", "fg": "muted-foreground", "border-width": 1, "border": "border" }, "icon": { "size": 4, "fg": "muted-foreground" } }, "variants": { "sort": { "none": { "icon": { "hidden": true } }, "asc": { "root": { "fg": "foreground" }, "icon": { "fg": "foreground" } }, "desc": { "root": { "fg": "foreground" }, "icon": { "fg": "foreground" } } } }, "states": ["default"], "code": { "file": "table.tsx", "shape": "classes", "template": "card-like", "extra": "text-left align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0", "figmaOnly": ["icon"], "overrides": { "root": { "align": null, "border": null, "border-width": null } } } }, { "$schema": "mbank/component@1", "name": "tabs-list", "title": "Tabs list", "figma": { "name": "segment", "key": "f28915a7224a6ba85128b9cbab0b9d706c9285a8", "nodeId": "2371:564" }, "parts": ["root", "tab-1", "tab-2", "tab-3"], "anatomy": { "tab-1": { "kind": "instance", "component": { "name": "Tabs trigger" }, "sample": "\u0412\u0441\u0435" }, "tab-2": { "kind": "instance", "component": { "name": "Tabs trigger" }, "sample": "\u041C\u043E\u0438" }, "tab-3": { "kind": "instance", "component": { "name": "Tabs trigger" }, "sample": "\u0410\u0440\u0445\u0438\u0432" } }, "props": { "variant": { "values": ["segment", "outline", "line"], "default": "segment" } }, "base": { "root": { "align": "center", "px": 1, "py": 1 } }, "variants": { "variant": { "segment": { "root": { "gap": 1, "radius": "md", "bg": "muted" } }, "outline": { "root": { "gap": 2 } }, "line": { "root": { "gap": 6, "border": "border" } } } }, "states": ["default"], "code": { "file": "tabs.tsx", "export": "tabsListVariants", "template": "card-like", "extra": "group/tabs-list inline-flex w-fit", "extras": { "variant=segment": "p-1", "variant=line": "border-b" }, "overrides": { "root": { "px": null, "py": null } } } }, { "$schema": "mbank/component@1", "name": "tabs-trigger", "title": "Tabs trigger", "figma": { "name": "Item / segmentButtons", "key": "d3dce4a16063872d9bd8a43a3a4901ca546452a5", "nodeId": "2370:4860" }, "parts": ["root", "icon", "label"], "props": { "variant": { "values": ["segment", "outline", "line"], "default": "segment" } }, "base": { "root": { "height": 9, "gap": 2, "px": 3, "text": "sm", "weight": "medium", "fg": "muted-foreground", "fg:hover": "foreground", "align": "center", "focus-ring": "ring/50", "opacity:disabled": 50 }, "icon": { "size": 4, "hidden": true } }, "variants": { "variant": { "segment": { "root": { "radius": "sm", "bg:selected": "background", "fg:selected": "foreground", "shadow:selected": "xs" } }, "outline": { "root": { "radius": "md", "border-width": 1, "border": "border", "border:selected": "primary", "bg:selected": "primary", "fg:selected": "primary-foreground" } }, "line": { "root": { "px": 0, "border:selected": "foreground", "fg:selected": "foreground" } } } }, "states": ["default", "hover", "focus", "disabled", "selected"], "code": { "file": "tabs.tsx", "shape": "classes", "template": "button-like", "parts": { "icon": "[&_svg]" }, "modifiers": { "selected": "data-[state=active]" }, "prefix": { "variant": "group-data-[variant={value}]/tabs-list" }, "extra": "inline-flex justify-center whitespace-nowrap transition-colors outline-none disabled:pointer-events-none [&_svg]:shrink-0", "extras": { "variant=line": "-mb-px border-b-2 border-transparent" }, "figmaOnly": ["label"] } }, { "$schema": "mbank/component@1", "name": "textarea", "title": "Textarea", "figma": { "name": "TextArea", "key": "f5e8ed2faaef70b5702fa5e0f70d9c65a370a8ed", "nodeId": "3069:1804" }, "parts": ["root", "placeholder"], "props": {}, "base": { "root": { "min-height": 24, "radius": "md", "border-width": 1, "border": "input", "bg": "background", "px": 3, "py": 2.5, "text": "sm", "fg": "foreground", "border:focus": "ring", "border:invalid": "destructive", "layout": "row", "focus-ring": "ring/50", "opacity:disabled": 50 }, "placeholder": { "fg": "muted-foreground" } }, "variants": {}, "states": ["default", "focus", "disabled", "invalid"], "code": { "file": "textarea.tsx", "shape": "classes", "template": "input-like", "parts": { "placeholder": "placeholder" }, "extra": "field-sizing-content w-full min-w-0 transition-colors outline-none disabled:pointer-events-none aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40" } }, { "$schema": "mbank/component@1", "name": "toast", "title": "Toast", "figma": { "name": "toast", "key": "17ef4420d2a9d9159bfc9f5668936bd87fdb216a", "nodeId": "4316:3805" }, "parts": ["root", "icon", "title", "description"], "anatomy": { "root": { "width": 400 }, "icon": { "kind": "icon", "icon": "info" }, "title": { "kind": "text", "layer": "Title", "sample": "\u0417\u0430\u044F\u0432\u043A\u0430 \u043E\u0442\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0430", "fill": true }, "description": { "kind": "text", "layer": "Description", "sample": "\u0421\u0442\u0430\u0442\u0443\u0441 \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u0447\u0435\u0440\u0435\u0437 \u043C\u0438\u043D\u0443\u0442\u0443", "fill": true } }, "props": { "type": { "values": ["default", "success", "error"], "default": "default" } }, "base": { "root": { "layout": "column", "align": "start", "gap": 1, "px": 4, "py": 4, "radius": "md", "border-width": 1, "border": "border", "bg": "card", "fg": "foreground", "text": "sm", "shadow": "lg" }, "icon": { "size": 5, "fg": "foreground" }, "title": { "text": "base", "weight": "bold" }, "description": { "fg": "muted-foreground" } }, "variants": { "type": { "default": {}, "success": {}, "error": { "icon": { "fg": "destructive" }, "title": { "fg": "destructive" } } } }, "states": ["default"], "code": { "file": "sonner.tsx", "shape": "classes", "template": "card-like", "extra": "group/toast w-full [&_[data-icon]]:mt-0.5 [&_[data-icon]]:size-5 [&_[data-icon]]:shrink-0", "figmaOnly": ["icon", "title", "description"], "overrides": { "root": { "layout": "row", "gap": 3 } } } }, { "$schema": "mbank/component@1", "name": "tooltip", "title": "Tooltip", "figma": { "name": "tooltip", "key": "cb5b8f83bc82080cd014efcd0b3778415b083b36", "nodeId": "2266:2623" }, "parts": ["root", "label"], "anatomy": { "label": { "kind": "text", "layer": "Label", "sample": "\u041F\u043E\u0434\u0441\u043A\u0430\u0437\u043A\u0430" } }, "props": {}, "base": { "root": { "align": "center", "px": 3, "py": 2, "radius": "sm", "bg": "foreground", "fg": "background", "text": "xs" } }, "variants": {}, "states": ["default"], "code": { "file": "tooltip.tsx", "shape": "classes", "template": "card-like", "extra": "z-50 max-w-xs animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 motion-reduce:animate-none", "overrides": { "root": { "align": null } } } }];
 
   // examples/credit-crm.spec.json
   var credit_crm_spec_default = {
@@ -6350,3594 +5787,6 @@
     ]
   };
 
-  // ../skills/mbank-figma-patterns/references/tokens.json
-  var tokens_default = {
-    source: "Full-seat read of Foundation, Mobile KIT and Web components via use_figma (devmd8, 2026-10-09)",
-    fonts: {
-      availableToMCP: [
-        "Nunito",
-        "Nunito Sans",
-        "Inter",
-        "SF Pro",
-        "SF Pro Rounded",
-        "SF Compact",
-        "Roboto"
-      ],
-      missing: [
-        "Inter Mbank",
-        "SF UI Display"
-      ],
-      web: "Inter Mbank",
-      mobile: "Nunito (mobile collection modes: Nunito | Inter -> Inter Mbank)"
-    },
-    theme: {
-      collection: "2.theme",
-      key: "06493676b1b271285f2ff7d444d6ef08e9e0709c",
-      modes: [
-        "light",
-        "dark"
-      ],
-      vars: [
-        {
-          name: "brand/bank/default",
-          key: "12e4e4596b58af08ecfc0c67c3075266c235e6d8",
-          light: "#16a34a",
-          dark: "#189547",
-          aliasLight: "green/70 solid"
-        },
-        {
-          name: "brand/bank/hover",
-          key: "171014cab90121189edc02101a38fc444d0b2084",
-          light: "#189547",
-          dark: "#22c55e",
-          aliasLight: "green/75 solid"
-        },
-        {
-          name: "brand/bank/active",
-          key: "dee979923a63b7e630b81bd9928f1d0400c98800",
-          light: "#16a34a",
-          dark: "#22c55e",
-          aliasLight: "green/70 solid"
-        },
-        {
-          name: "brand/bank/on-accent",
-          key: "03bc6482935f3fc98465a9b9e879fd12b523a9f6",
-          light: "#ffffff",
-          dark: "#ffffff",
-          aliasLight: "white/100"
-        },
-        {
-          name: "brand/bank/on-accent-muted",
-          key: "7c91fabda64717d68fe0686136acd5cc45959f59",
-          light: "#a9b4bc",
-          dark: "#a9b4bc",
-          aliasLight: "black/30 solid"
-        },
-        {
-          name: "brand/bank/container-muted",
-          key: "3791df61bfbcee5205255396ceb79c3f821dfff3",
-          light: "#f0f3f4",
-          dark: "#3f4146",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "brand/bank/ghost-default",
-          key: "4f19513acba69cbd31ef0b5e741c6b9345281b0a",
-          light: "#f0fdf4",
-          dark: "#16a34a1a",
-          aliasLight: "green/10 solid"
-        },
-        {
-          name: "brand/bank/ghost-hover",
-          key: "8d57d4b3cb74579ea3e7d9c671348727e0f0abb6",
-          light: "#e8fcee",
-          dark: "#16a34a1a",
-          aliasLight: "green/15 solid"
-        },
-        {
-          name: "brand/bank/ghost-active",
-          key: "a741becb0d755013843167392086c2ca753a493d",
-          light: "#f0fdf4",
-          dark: "#16a34a1a",
-          aliasLight: "green/10 solid"
-        },
-        {
-          name: "brand/bank/ghost-on-accent",
-          key: "94f6942d3a1762a86c5bddbeb6437636689ad77c",
-          light: "#16a34a",
-          dark: "#189547",
-          aliasLight: "green/70 solid"
-        },
-        {
-          name: "brand/bank/ghost-on-accent-muted",
-          key: "03c5d1cf769c90977351b9c41523e781d68a97b0",
-          light: "#86efac",
-          dark: "#16a34a1a",
-          aliasLight: "green/40 solid"
-        },
-        {
-          name: "brand/bank/ghost-container-muted",
-          key: "9928396b12c637c90694aed070e0fd4c0ccd8084",
-          light: "#f0fdf4",
-          dark: "#16a34a1a",
-          aliasLight: "green/10 solid"
-        },
-        {
-          name: "brand/kassa/default",
-          key: "5dd34baabc8a192769410ef7b2102a257b71892e",
-          light: "#2563eb",
-          dark: "#3b82f6",
-          aliasLight: "blue/70 solid"
-        },
-        {
-          name: "brand/kassa/hover",
-          key: "9f6d43bd181b1af0efecb8ddd0d252fcad933889",
-          light: "#1d4ed8",
-          dark: "#1d4ed8",
-          aliasLight: "blue/80 solid"
-        },
-        {
-          name: "brand/kassa/active",
-          key: "9495ccf8001c3651f0e8d416a7e58971c12eb0c7",
-          light: "#1d4ed8",
-          dark: "#2563eb",
-          aliasLight: "blue/80 solid"
-        },
-        {
-          name: "brand/kassa/on-accent",
-          key: "5458fb3049697c6195554f1219b6e44851b24781",
-          light: "#ffffff",
-          dark: "#ffffff",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "brand/kassa/on-accent-muted",
-          key: "2323b160e675d6180d2e3275dec131497579a96c",
-          light: "#a9b4bc",
-          dark: "#a9b4bc",
-          aliasLight: "black/30 solid"
-        },
-        {
-          name: "brand/kassa/container-muted",
-          key: "778497db53d43e3cee8b37992455d0b03c81857e",
-          light: "#f0f3f4",
-          dark: "#3f4146",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "brand/kassa/ghost-default",
-          key: "6833a82d76193190f62f27af4700d5d8482550aa",
-          light: "#dbeafe",
-          dark: "#13203d",
-          aliasLight: "blue/20 solid"
-        },
-        {
-          name: "brand/kassa/ghost-hover",
-          key: "4db3961a3fc1eab8c783e7bc33ad67974962c868",
-          light: "#bfdbfe",
-          dark: "#162c5d",
-          aliasLight: "blue/30 solid"
-        },
-        {
-          name: "brand/kassa/ghost-active",
-          key: "e1c384fb0fde2eeb0ca32843664a91a4bd64df89",
-          light: "#dbeafe",
-          dark: "#173168",
-          aliasLight: "blue/20 solid"
-        },
-        {
-          name: "brand/kassa/ghost-on-accent",
-          key: "948c2e82b98ffb2b4d8bdcdf5f0d2dfed35e095d",
-          light: "#1d4ed8",
-          dark: "#2563eb",
-          aliasLight: "blue/80 solid"
-        },
-        {
-          name: "brand/kassa/ghost-on-accent-muted",
-          key: "3644fb31a91b287acfeab9a77abca1918287b784",
-          light: "#3b82f6",
-          dark: "#60a5fa",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "brand/kassa/ghost-container-muted",
-          key: "14ff6aab7166f335ad0e33ce5767a5af15ff6304",
-          light: "#eff6ff",
-          dark: "#101727",
-          aliasLight: "blue/10 solid"
-        },
-        {
-          name: "brand/travel/default",
-          key: "5e8ca0af3975d72bf9f2861a0aba97ff90dfe723",
-          light: "#60a5fa",
-          dark: "#3b82f6",
-          aliasLight: "blue/50 solid"
-        },
-        {
-          name: "brand/artwin/default",
-          key: "206601d34fec5059fc773cf49ce0338ac328c1ec",
-          light: "#fddb2b",
-          dark: "#f7c21c",
-          aliasLight: "yellow/50 solid"
-        },
-        {
-          name: "brand/artwin/hover",
-          key: "c8025d51a4c30dae7e774345686ca04ee19e1e86",
-          light: "#f7c21c",
-          dark: "#fddb2b",
-          aliasLight: "yellow/60 solid"
-        },
-        {
-          name: "brand/artwin/active",
-          key: "561fa0768650b686d1b4672a07510da9bc8988a6",
-          light: "#fddb2b",
-          dark: "#fddb2b",
-          aliasLight: "yellow/50 solid"
-        },
-        {
-          name: "brand/artwin/on-accent",
-          key: "d4042687755e2092881eab03e6c41e15208017dd",
-          light: "#0e0f11",
-          dark: "#a9b4bc",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "brand/artwin/on-accent-muted",
-          key: "b1afb8a55de6093d959d3684b1d3728ea6272208",
-          light: "#a9b4bc",
-          dark: "#3f4146",
-          aliasLight: "black/30 solid"
-        },
-        {
-          name: "brand/artwin/container-muted",
-          key: "32266133ec30b3f616728b6271c8ca9deeb2a787",
-          light: "#f0f3f4",
-          dark: "#f0f3f4",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "brand/artwin/ghost-default",
-          key: "bddcc2f203a19cdb1225e78b72cd033e720cced2",
-          light: "#fef7b4",
-          dark: "#2563eb33",
-          aliasLight: "yellow/20 solid"
-        },
-        {
-          name: "brand/artwin/ghost-hover",
-          key: "f1b946191ef9d1f12a348ad700f6b489d5351b07",
-          light: "#fef08a",
-          dark: "#2563eb33",
-          aliasLight: "yellow/30 solid"
-        },
-        {
-          name: "brand/artwin/ghost-active",
-          key: "727a5ea0cd028ba0cf9ceaf372b01922abe5f9fc",
-          light: "#fef7b4",
-          dark: "#2563eb33",
-          aliasLight: "yellow/20 solid"
-        },
-        {
-          name: "brand/artwin/ghost-on-accent",
-          key: "97154a2943f9136c160c0d7ec7cddab4c3a7f80d",
-          light: "#d9a607",
-          dark: "#2563eb33",
-          aliasLight: "yellow/70 solid"
-        },
-        {
-          name: "brand/artwin/ghost-on-accent-muted",
-          key: "eeae26c52d475650a250ab53ef592e6071ce05ca",
-          light: "#f7c21c",
-          dark: "#2563eb33",
-          aliasLight: "yellow/60 solid"
-        },
-        {
-          name: "brand/artwin/ghost-container-muted",
-          key: "90447f587bce8232b882b3a2031e2b8282262a30",
-          light: "#fefce8",
-          dark: "#2563eb33",
-          aliasLight: "yellow/10 solid"
-        },
-        {
-          name: "brand/travel/hover",
-          key: "b0d9734725216fd64b5b1c156ade8bae29856d5c",
-          light: "#4d9af9",
-          dark: "#3b82f6",
-          aliasLight: "blue/55 solid"
-        },
-        {
-          name: "brand/travel/active",
-          key: "9622bdc1ea284c054c23c0cfb154ceb268983fed",
-          light: "#60a5fa",
-          dark: "#60a5fa",
-          aliasLight: "blue/50 solid"
-        },
-        {
-          name: "brand/travel/on-accent",
-          key: "207149bf7d9b0f34ae31970e3583d10e85ea22e6",
-          light: "#ffffff",
-          dark: "#ffffff",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "brand/travel/on-accent-muted",
-          key: "4acd783d4e7bb82843a00d7e56fd6ba5f0d7e25a",
-          light: "#a9b4bc",
-          dark: "#a9b4bc",
-          aliasLight: "black/30 solid"
-        },
-        {
-          name: "brand/travel/container-muted",
-          key: "411a2f33bb28b640e313538e383c1ce6e59a73cc",
-          light: "#f0f3f4",
-          dark: "#3f4146",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "brand/travel/ghost-default",
-          key: "52ac5354f5e1665977d6fe52790c5d05e664dbe9",
-          light: "#eff6ff",
-          dark: "#2563eb33",
-          aliasLight: "blue/10 solid"
-        },
-        {
-          name: "brand/travel/ghost-hover",
-          key: "b18a86f98a0f8b2578c0f4b63681ba8378ef3e33",
-          light: "#e5f1ff",
-          dark: "#2563eb33",
-          aliasLight: "blue/15 solid"
-        },
-        {
-          name: "brand/travel/ghost-active",
-          key: "bacc51429a04e6af5666b05bf65168abc2b3977b",
-          light: "#eff6ff",
-          dark: "#2563eb33",
-          aliasLight: "blue/10 solid"
-        },
-        {
-          name: "brand/travel/ghost-on-accent-muted",
-          key: "545b7b1f5ed08e1bd2f8515913ac2c431d548126",
-          light: "#93c5fd",
-          dark: "#2563eb33",
-          aliasLight: "blue/40 solid"
-        },
-        {
-          name: "brand/travel/ghost-container-muted",
-          key: "3f6e7c1341b4523a99e1eed9b752130c9d2e719c",
-          light: "#eff6ff",
-          dark: "#2563eb33",
-          aliasLight: "blue/10 solid"
-        },
-        {
-          name: "brand/travel/ghost-on-accent",
-          key: "7c076c66db830c6de58eff2ef221cc41592e2e88",
-          light: "#60a5fa",
-          dark: "#2563eb33",
-          aliasLight: "blue/50 solid"
-        },
-        {
-          name: "accent/primary/default",
-          key: "2547333051bd1cffc8f9f2aba391bee960d750c9",
-          light: "#fddb2b",
-          dark: "#f7c21c",
-          aliasLight: "yellow/50 solid"
-        },
-        {
-          name: "neutral/primary/default",
-          key: "082d1082b3a083bb57b8f0a9e7f2646e1285beed",
-          light: "#17191d",
-          dark: "#26292e",
-          aliasLight: "black/95 solid"
-        },
-        {
-          name: "neutral/primary/hover",
-          key: "2cb95313acd7575d217d9885f6a3ba0292e9fdd8",
-          light: "#26292e",
-          dark: "#464e58",
-          aliasLight: "black/90 solid"
-        },
-        {
-          name: "neutral/primary/active",
-          key: "847bd8512d6dc19207b6b80674e053dd867f3df1",
-          light: "#17191d",
-          dark: "#464e58",
-          aliasLight: "black/95 solid"
-        },
-        {
-          name: "neutral/primary/on-accent",
-          key: "850d035c748c1bafefc3fb2f9ce21a77f1e16afb",
-          light: "#0e0f11f2",
-          dark: "#0e0f11",
-          aliasLight: "black/95"
-        },
-        {
-          name: "neutral/primary/container-muted",
-          key: "c1195d122ebce15eca2981b918e9fcbbaeca9f22",
-          light: "#f0f3f4",
-          dark: "#3a3c41",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "neutral/primary/on-accent-muted",
-          key: "1a6dcc903b732c0860254eb87f608d81914200e9",
-          light: "#93a0a9",
-          dark: "#0e0f11f2",
-          aliasLight: "black/35 solid"
-        },
-        {
-          name: "neutral/secondary/flat default/default",
-          key: "e964071fb5ae6d4ff91c17ec0bdc777265006f83",
-          light: "#e0e5e8",
-          dark: "#26292e",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "neutral/secondary/flat default/hover",
-          key: "17c06fabfe9e30851abdf22a9adecd9286d7eefc",
-          light: "#d7dce1",
-          dark: "#1d2024",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "neutral/secondary/flat default/active",
-          key: "f3ad249ef22b723653e4a2d79e13784ec18f9fec",
-          light: "#d7dce1",
-          dark: "#1d2024",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "neutral/secondary/flat default/on-accent",
-          key: "7e997f25e8e9794d5ff681a827576b6dbc3bb36b",
-          light: "#0e0f11",
-          dark: "#f0f3f4",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/secondary/flat default/container-muted",
-          key: "b4c2ed6c82f71751ffb7495563974025e0bc4cb8",
-          light: "#f6f8f9",
-          dark: "#3a3c41",
-          aliasLight: "black/5 solid"
-        },
-        {
-          name: "neutral/secondary/flat default/on-accent-muted",
-          key: "d74e7c9755451432691a266818d2ab5e0210da66",
-          light: "#5d6c79",
-          dark: "#a9b4bc",
-          aliasLight: "black/63 solid"
-        },
-        {
-          name: "neutral/secondary/flat/default",
-          key: "3003ad655612547f33197428ae0b4f9442a02caa",
-          light: "#ffffff00",
-          dark: "#26292e",
-          aliasLight: null
-        },
-        {
-          name: "neutral/secondary/flat/hover",
-          key: "2a4fa1126c90e06b620dabe023ab5b2844c58d80",
-          light: "#d7dce1",
-          dark: "#20232700",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "neutral/secondary/flat/active",
-          key: "1d5e1a28632b63519545234b2129f87a21ca9fb7",
-          light: "#d7dce1",
-          dark: "#20232700",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "neutral/secondary/flat/on-accent",
-          key: "9a09df272e93597bd204c33cbad9cb9c27ce75c8",
-          light: "#0e0f11",
-          dark: "#f0f3f4",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/secondary/flat/container-muted",
-          key: "08e4db70fed2d45423b386e1cc89f04d06c27f6e",
-          light: "#ffffff00",
-          dark: "#3a3c4100",
-          aliasLight: null
-        },
-        {
-          name: "neutral/secondary/flat/on-accent-muted",
-          key: "7aecf76a9e77147f2b13df5b053d9d3d29e41e4a",
-          light: "#0e0f11",
-          dark: "#a9b4bc",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/secondary/flat filled/default",
-          key: "8807556f95b98cd30cac23158e361dbbabe046ee",
-          light: "#e0e5e8",
-          dark: "#26292e",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "neutral/secondary/flat filled/hover",
-          key: "8ab173cead104575db05fe41799b8ed78dba3db3",
-          light: "#d7dce1",
-          dark: "#202327",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "neutral/secondary/flat filled/active",
-          key: "c953dea4173c81ed5e3874f190031366b9920be2",
-          light: "#d7dce1",
-          dark: "#202327",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "neutral/secondary/flat filled/on-accent",
-          key: "e42d34d9f287b5a0a54ec77db20ba1b24e39ec42",
-          light: "#0e0f11",
-          dark: "#f0f3f4",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/secondary/flat filled/container-muted",
-          key: "bc6573643235e1a1923710a58642dd716bccb913",
-          light: "#0e0f11f2",
-          dark: "#3a3c41",
-          aliasLight: "black/95"
-        },
-        {
-          name: "neutral/secondary/flat filled/on-accent-muted",
-          key: "dc77f3ec3c4713a12829aae2358650ea69940b3d",
-          light: "#0e0f11",
-          dark: "#a9b4bc",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/secondary/outline/default",
-          key: "2461f38b7d19f180954432c22346812630cf0a0d",
-          light: "#e0e5e8",
-          dark: "#26292e",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "neutral/secondary/outline/hover",
-          key: "02e23e7b06ace1f4d2a0bc450cb5de50589f9ce0",
-          light: "#cad1d7",
-          dark: "#202327",
-          aliasLight: "black/24 solid"
-        },
-        {
-          name: "neutral/secondary/outline/active",
-          key: "9b0d66900ca306f6b9dff2c1aaf67fe11bb4f875",
-          light: "#cad1d7",
-          dark: "#202327",
-          aliasLight: "black/24 solid"
-        },
-        {
-          name: "neutral/secondary/outline/on-accent",
-          key: "02385f1e3d8489893bc403b83af0b3dc8b8859be",
-          light: "#0e0f11",
-          dark: "#202327",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/secondary/outline/on-accent-muted",
-          key: "0a5b50116e25662756a61e96bca73f911e26e273",
-          light: "#0e0f11",
-          dark: "#0e0f11f2",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/secondary/outline/container-muted",
-          key: "4501ea3188e6502c04266d82c9ad49d5bdfbfbd2",
-          light: "#f6f8f9",
-          dark: "#26292e",
-          aliasLight: "black/5 solid"
-        },
-        {
-          name: "neutral/negative/default",
-          key: "7c507104d0f9c48829ed82d10239cee95eedc293",
-          light: "#feebeb",
-          dark: "#b91c1c",
-          aliasLight: "red/10 solid"
-        },
-        {
-          name: "neutral/negative/hover",
-          key: "da22c2b67af546c841c5c3560105c00886474bb6",
-          light: "#fee2e2",
-          dark: "#b91c1c",
-          aliasLight: "red/20 solid"
-        },
-        {
-          name: "neutral/negative/active",
-          key: "dd47676b678574b8509943a8c7743225c332a9e5",
-          light: "#fee2e2",
-          dark: "#b91c1c",
-          aliasLight: "red/20 solid"
-        },
-        {
-          name: "neutral/negative/on-accent",
-          key: "804f284adcaa6af59e8169642d3e5703cecf3dd3",
-          light: "#ef4444",
-          dark: "#0e0f11f2",
-          aliasLight: "red/60 solid"
-        },
-        {
-          name: "neutral/negative/container-muted",
-          key: "6059caa72c3269f8bcb3a367900e49007375cabf",
-          light: "#feebeb",
-          dark: "#fca5a5",
-          aliasLight: "red/10 solid"
-        },
-        {
-          name: "neutral/negative/on-accent-muted",
-          key: "cf3c3a71b0bdd39e8020811f316748c1f0c4c3b0",
-          light: "#fca5a5",
-          dark: "#0e0f11f2",
-          aliasLight: "red/40 solid"
-        },
-        {
-          name: "neutral/positive/default",
-          key: "5df7f0ddd95348768ad8c4fe9d11d05951fe5f43",
-          light: "#ecfdf5",
-          dark: "#ecfdf5",
-          aliasLight: "emerald/10 solid"
-        },
-        {
-          name: "neutral/positive/hover",
-          key: "cf1a095e7675eaa3cff748a29ccd29c994258cd7",
-          light: "#dffced",
-          dark: "#dffced",
-          aliasLight: "emerald/15 solid"
-        },
-        {
-          name: "neutral/positive/active",
-          key: "79bd7dfd020803a06a136ba2fd29e6d33c74c556",
-          light: "#dffced",
-          dark: "#dffced",
-          aliasLight: "emerald/15 solid"
-        },
-        {
-          name: "neutral/positive/on-accent",
-          key: "5d9167092a312b8188d60a68d6098059f9c1a525",
-          light: "#0fa976",
-          dark: "#0fa976",
-          aliasLight: "emerald/65 solid"
-        },
-        {
-          name: "neutral/positive/container-muted",
-          key: "c715c4e2fd2d7eaa0850a66760e7f676a948c8b3",
-          light: "#ecfdf5",
-          dark: "#ecfdf5",
-          aliasLight: "emerald/10 solid"
-        },
-        {
-          name: "neutral/positive/on-accent-muted",
-          key: "595458ab8622a2b9f53bbefb1d9f31f70d90b678",
-          light: "#0fa976",
-          dark: "#0fa976",
-          aliasLight: "emerald/65 solid"
-        },
-        {
-          name: "neutral/static/default",
-          key: "448af814ad20db49ead9be6b7ef02e55e116bdaf",
-          light: "#0e0f11",
-          dark: "#0e0f11",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/static/hover",
-          key: "106cfb25e7fd8074b7e6d7900eda84a47d1aa172",
-          light: "#26292e",
-          dark: "#26292e",
-          aliasLight: "black/90 solid"
-        },
-        {
-          name: "neutral/static/active",
-          key: "7fe368c6595cdfb2ab5e1096ae2ab83fc23d303c",
-          light: "#0e0f11",
-          dark: "#0e0f11",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "neutral/static/on-accent",
-          key: "854005feab469595b9586d967f704ff4a955f8fc",
-          light: "#ffffff",
-          dark: "#0e0f11f2",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "neutral/static/on-accent-muted",
-          key: "e229789d4ca46d2865816a119a463b2744abbfd1",
-          light: "#93a0a9",
-          dark: "#93a0a9",
-          aliasLight: "black/35 solid"
-        },
-        {
-          name: "neutral/static/container-muted",
-          key: "97d53b3d31d05155981ddb40fc88581dba8812a4",
-          light: "#f0f3f4",
-          dark: "#f0f3f4",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "accent/primary/hover",
-          key: "6b557bc7821bb9fc5b0d2b2fe933bbc9d9ed23c8",
-          light: "#f7c21c",
-          dark: "#fddb2b",
-          aliasLight: "yellow/60 solid"
-        },
-        {
-          name: "accent/primary/active",
-          key: "7dad401d284a0665062ccdb2af0f89b898fa911a",
-          light: "#fddb2b",
-          dark: "#fddb2b",
-          aliasLight: "yellow/50 solid"
-        },
-        {
-          name: "accent/primary/on-accent",
-          key: "5e755c94dc67c5dea2ec450f7eb50c4223859c47",
-          light: "#0e0f11",
-          dark: "#0e0f11",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "accent/primary/on-accent-muted",
-          key: "cdd021e79fa64da6e795f524c455208a5dad21f8",
-          light: "#0e0f11",
-          dark: "#0e0f11",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "accent/primary/container-muted",
-          key: "f51910b07f47fce154594921a4fc339d6347ab13",
-          light: "#fef08a",
-          dark: "#fef08a",
-          aliasLight: "yellow/30 solid"
-        },
-        {
-          name: "accent/secondary/flat/default",
-          key: "da80bc6968b1ae081d2e8152229a27cccc2e200b",
-          light: "#f0f3f4",
-          dark: "#26292e",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "accent/secondary/flat/hover",
-          key: "d4a319e901a82d17f0007f8554df5be561ab2363",
-          light: "#e0e5e8",
-          dark: "#3f4146",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "accent/secondary/flat/active",
-          key: "4cc8a214d7a202004df5788a18d6ac8fec612867",
-          light: "#f0f3f4",
-          dark: "#26292e",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "accent/secondary/flat/on-accent",
-          key: "860e76a24bbea21039e31ddb33af9d61fd62c233",
-          light: "#3b82f6",
-          dark: "#3b82f6",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "accent/secondary/flat/container-muted",
-          key: "0c1d4a79f618cd9a4e5af8cf1610a0ae655c2b63",
-          light: "#f4f6f7",
-          dark: "#3a3c41",
-          aliasLight: "black/10 solid"
-        },
-        {
-          name: "accent/secondary/flat/on-accent-muted",
-          key: "0fd195a7c5c4fa70d7c5c0350fd57124c5cf8f9b",
-          light: "#3b82f6",
-          dark: "#0e0f11f2",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "accent/negative/default",
-          key: "3717327211c6b7f0a3f533f2f0c79f865b529f30",
-          light: "#ef4444",
-          dark: "#b91c1c",
-          aliasLight: "red/60 solid"
-        },
-        {
-          name: "accent/positive/default",
-          key: "454762e6ceaea6431078b001351ace25d4e7e9dd",
-          light: "#0fa976",
-          dark: "#0fa976",
-          aliasLight: "emerald/65 solid"
-        },
-        {
-          name: "accent/static/default",
-          key: "cc0476ada5bec7d0deac8b51f9ecf77183407a22",
-          light: "#ffffff",
-          dark: "#ffffff",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "accent/static/hover",
-          key: "94226beb537849177b9556669e1ad5153bc192c2",
-          light: "#d7dce1",
-          dark: "#d7dce1",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "accent/static/active",
-          key: "292a0dc7347bb1be5b4943ae40cc9e9a0d909ac4",
-          light: "#ffffff",
-          dark: "#cad1d7",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "accent/static/on-accent",
-          key: "c94073320949e77be47c3ce53eb51d104b5da43c",
-          light: "#0e0f11",
-          dark: "#0e0f11",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "accent/static/container-muted",
-          key: "89602c2aae0faed3abce2252378c5b5293f6f26c",
-          light: "#ffffff",
-          dark: "#768793",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "accent/static/on-accent-muted",
-          key: "b27997c1cf48595b74bef839b7383e2788a8683f",
-          light: "#0e0f11",
-          dark: "#0e0f11",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "accent/positive/hover",
-          key: "6b9599885cefa8bc7cdf2a19f7a9f5629fda1ce4",
-          light: "#059669",
-          dark: "#059669",
-          aliasLight: "emerald/70 solid"
-        },
-        {
-          name: "accent/positive/active",
-          key: "9b091443a860ecd5a32379af21a579ffe59c5855",
-          light: "#0fa976",
-          dark: "#10b981",
-          aliasLight: "emerald/65 solid"
-        },
-        {
-          name: "accent/positive/on-accent",
-          key: "01b82dea3e963da6e01f4ca08923b0c14511705d",
-          light: "#0e0f11f2",
-          dark: "#0e0f11f2",
-          aliasLight: "black/95"
-        },
-        {
-          name: "accent/positive/container-muted",
-          key: "aac4cd3543030c4fd888c73dffa0726b9d1de149",
-          light: "#d1fae5",
-          dark: "#d1fae5",
-          aliasLight: "emerald/20 solid"
-        },
-        {
-          name: "accent/positive/on-accent-muted",
-          key: "e109107ddbe665ea5bab26eefcb04d9e203ab60f",
-          light: "#0e0f11f2",
-          dark: "#0e0f11f2",
-          aliasLight: "black/95"
-        },
-        {
-          name: "accent/negative/hover",
-          key: "746a41958228054bd386b27501bf85a033dc4891",
-          light: "#b91c1c",
-          dark: "#b91c1c",
-          aliasLight: "red/80 solid"
-        },
-        {
-          name: "accent/negative/active",
-          key: "a666254f7ddcc865dc06649724a798da5aaab422",
-          light: "#ef4444",
-          dark: "#b91c1c",
-          aliasLight: "red/60 solid"
-        },
-        {
-          name: "accent/negative/on-accent",
-          key: "bc02a16da8fc10b5c20d8700fd21cc782d4af51d",
-          light: "#0e0f11f2",
-          dark: "#0e0f11f2",
-          aliasLight: "black/95"
-        },
-        {
-          name: "accent/negative/container-muted",
-          key: "b7c353146262738e83d00afb5765d666379a223c",
-          light: "#fca5a5",
-          dark: "#fca5a5",
-          aliasLight: "red/40 solid"
-        },
-        {
-          name: "accent/negative/on-accent-muted",
-          key: "2dc7fc4bfa5698d5e6730e36c4c85aef057ca2db",
-          light: "#0e0f11f2",
-          dark: "#0e0f11f2",
-          aliasLight: "black/95"
-        },
-        {
-          name: "static/light",
-          key: "5c4810c36d8078c5314d391514845b5c5828b8df",
-          light: "#ffffff",
-          dark: "#ffffff",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "static/dark",
-          key: "fbd4bfe877400ffe7e3af5a2572847c03e587e80",
-          light: "#0e0f11",
-          dark: "#0e0f11",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "text/brand",
-          key: "9182775236adb96970d21e01ce9fbee25834e230",
-          light: "#16a34a",
-          dark: "#189547",
-          aliasLight: "brand/default"
-        },
-        {
-          name: "text/default",
-          key: "8af86f380514faeacdc79b7a232d03723fab0bde",
-          light: "#0e0f11",
-          dark: "#f0f3f4",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "components/chipsButton/soft/default",
-          key: "e4ac0f7453347b568d1792b1bd6b2a236ab9c2c1",
-          light: "#e0e5e8",
-          dark: "#3f4146",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "text/soft",
-          key: "f729c62f2c73030dcb2f5a7b78984146b05aea2b",
-          light: "#40474f",
-          dark: "#d7dce1",
-          aliasLight: "black/84 solid"
-        },
-        {
-          name: "text/muted",
-          key: "8bb44dbea94883e123e8c8999072b7e40886ca68",
-          light: "#768793",
-          dark: "#768793",
-          aliasLight: "black/40 solid"
-        },
-        {
-          name: "components/chipsButton/soft/hover",
-          key: "3f881b557413b377c101cd1cf6733d3c6c81fe31",
-          light: "#d7dce1",
-          dark: "#26292e",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "text/disabled",
-          key: "667c29a1ebfcefbc7be637b6c421c1f6fba79b51",
-          light: "#a9b4bc",
-          dark: "#5d6c79",
-          aliasLight: "black/30 solid"
-        },
-        {
-          name: "components/chipsButton/soft/active",
-          key: "d315b1aa94b6c541d0ceb9ab0618564ee7031979",
-          light: "#17191d",
-          dark: "#4d5661",
-          aliasLight: "black/95 solid"
-        },
-        {
-          name: "text/inverse",
-          key: "f85ccfae4cfb11d0d3436726babf269a22afdd7e",
-          light: "#f4f6f7",
-          dark: "#0e0f11",
-          aliasLight: "black/10 solid"
-        },
-        {
-          name: "text/link",
-          key: "3019aa5c09a3caaa6ef5a60a0aea282d659084ea",
-          light: "#3b82f6",
-          dark: "#3b82f6",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "text/danger",
-          key: "c71864d1c0dbe42e85d945e45b2e8b2e07f2873b",
-          light: "#ef4444",
-          dark: "#b91c1c",
-          aliasLight: "accent/negative/default"
-        },
-        {
-          name: "text/positive",
-          key: "38f2afee24740dccbb19d9f5bd8488b50973c359",
-          light: "#0fa976",
-          dark: "#059669",
-          aliasLight: "accent/positive/default"
-        },
-        {
-          name: "text/warning",
-          key: "863eb2737166b081d843174d16b1842c62eea90c",
-          light: "#f97316",
-          dark: "#ea580c",
-          aliasLight: "border/accent/warning"
-        },
-        {
-          name: "components/chipsButton/light/default",
-          key: "c77c6d36c42a1dac30ef4b05a5aade2b509ac1a9",
-          light: "#ffffff",
-          dark: "#515c69",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "components/chipsButton/light/hover",
-          key: "e8da076d4edb2dc308bd0725bd4434771e8fde82",
-          light: "#f4f6f7",
-          dark: "#515c69",
-          aliasLight: "black/10 solid"
-        },
-        {
-          name: "components/chipsButton/light/active",
-          key: "a79bf5e6055a74e21563bba187c89d0f4dc5aadf",
-          light: "#17191d",
-          dark: "#515c69",
-          aliasLight: "black/95 solid"
-        },
-        {
-          name: "background/surface/light",
-          key: "6b620b0494f77db47571a4133623011b8f0fe3b5",
-          light: "#ffffff",
-          dark: "#0e0f11",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "background/surface/soft",
-          key: "9937a9232afab99fdc4fa020576aae016c3d7630",
-          light: "#f4f6f7",
-          dark: "#17191d",
-          aliasLight: "black/10 solid"
-        },
-        {
-          name: "background/onsurface/0",
-          key: "597e34eb4635ee8b4625923be7f8b6496f987f1c",
-          light: "#ffffff",
-          dark: "#26292e",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "background/global/clear/default",
-          key: "9a8e2ee53b78cef5d7a3ecdd6ceb22ebadf564dd",
-          light: "#ffffff00",
-          dark: "#1b1e22",
-          aliasLight: null
-        },
-        {
-          name: "background/global/light/default",
-          key: "eea1abcc3330f203d90fec3a838007499cff7997",
-          light: "#ffffff",
-          dark: "#1b1e22",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "background/global/light/hover",
-          key: "37529e5928f9e857069853b4a5775209092779e5",
-          light: "#eaeef0",
-          dark: "#40474f",
-          aliasLight: "black/17 solid"
-        },
-        {
-          name: "background/global/light/active",
-          key: "852d6da2b613c8529cbbc013c3aff18cf60889ff",
-          light: "#f0f3f4",
-          dark: "#373c42",
-          aliasLight: "black/15 solid"
-        },
-        {
-          name: "background/global/light/container-muted",
-          key: "50482fc1d0f6450a247148aed6b8b7eed39dd0b0",
-          light: "#ffffff00",
-          dark: "#40474f",
-          aliasLight: null
-        },
-        {
-          name: "background/global/soft/default",
-          key: "53a04a552dad4c0b33bbbb141d85db8e91f0e62a",
-          light: "#e0e5e8",
-          dark: "#373c42",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "background/global/soft/hover",
-          key: "da113c8a57297ff4ccc92c908b9e2e2c0407cad4",
-          light: "#eaeef0",
-          dark: "#40474f",
-          aliasLight: "black/17 solid"
-        },
-        {
-          name: "background/global/soft/active",
-          key: "a8a0895f496f7ceab6151e4663df72324cfadabc",
-          light: "#eaeef0",
-          dark: "#373c42",
-          aliasLight: "black/17 solid"
-        },
-        {
-          name: "background/global/soft/container-muted",
-          key: "0ba898b66fd18a189ef0fc5dbf2055ffe1940606",
-          light: "#ffffff00",
-          dark: "#40474f",
-          aliasLight: null
-        },
-        {
-          name: "background/global/clear/hover",
-          key: "5c3c1667e9ee8759de59d89a675249d8c2f82094",
-          light: "#eaeef0",
-          dark: "#40474f",
-          aliasLight: "black/17 solid"
-        },
-        {
-          name: "background/global/clear/active",
-          key: "4e2c605fe109a44bb90452bfc4acf361e9351f92",
-          light: "#ffffff00",
-          dark: "#ffffff00",
-          aliasLight: null
-        },
-        {
-          name: "background/global/clear/container-muted",
-          key: "f064a4c6cb6aaab8d3a00e7aa30c4d49c0863229",
-          light: "#ffffff00",
-          dark: "#40474f",
-          aliasLight: null
-        },
-        {
-          name: "background/onsurface/1",
-          key: "6ff51ba6d871c88f2ab26ab3d74b76f72bfe63f1",
-          light: "#f4f6f7",
-          dark: "#2e3238",
-          aliasLight: "black/10 solid"
-        },
-        {
-          name: "background/onsurface/2",
-          key: "fbe8e32317aa0b95304841f2881d7d01c810fa33",
-          light: "#eaeef0",
-          dark: "#3a3c41",
-          aliasLight: "black/17 solid"
-        },
-        {
-          name: "background/onsurface/3",
-          key: "79215f526cdbdc48db8837e6d61048e072896d9f",
-          light: "#d7dce1",
-          dark: "#3f4146",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "background/onsurface/4",
-          key: "57ddc4d21ad7814cd9e5a04f2fb5505359e28ec9",
-          light: "#cad1d7",
-          dark: "#40474f",
-          aliasLight: "black/24 solid"
-        },
-        {
-          name: "background/onsurface/5",
-          key: "fce09485d8065467a5abed1c4f9854c683f69988",
-          light: "#a9b4bc",
-          dark: "#464e58",
-          aliasLight: "black/30 solid"
-        },
-        {
-          name: "background/onsurface/6",
-          key: "6fa2c477f4797f975d8b37e89c55f35836b382f1",
-          light: "#768793",
-          dark: "#4d5661",
-          aliasLight: "black/40 solid"
-        },
-        {
-          name: "background/onsurface/0-inverse",
-          key: "b07141d92666bb6469056965114ce8385823763b",
-          light: "#0e0f11",
-          dark: "#f4f6f7",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "border/accent/danger",
-          key: "a725b5229c21f98c37ffdbbd676b50ffd49c24be",
-          light: "#ef4444",
-          dark: "#dc2626",
-          aliasLight: "red/60 solid"
-        },
-        {
-          name: "border/accent/positive",
-          key: "41b2aaa3f8ca573a86354875fbbc2a681ff96979",
-          light: "#0fa976",
-          dark: "#0fa976",
-          aliasLight: "emerald/65 solid"
-        },
-        {
-          name: "border/accent/warning",
-          key: "6176d3a6b84d308ca2af1e0f3fa5db0c1e456e4e",
-          light: "#f97316",
-          dark: "#f97316",
-          aliasLight: "orange/60 solid"
-        },
-        {
-          name: "border/accent/brand",
-          key: "dc946628c987112c7727236e341ca1bc72acd278",
-          light: "#16a34a",
-          dark: "#189547",
-          aliasLight: "brand/default"
-        },
-        {
-          name: "border/divider/primary",
-          key: "51813af7717630a119a3ea6291e05b540359c8c5",
-          light: "#e0e5e8",
-          dark: "#3a3c41",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "border/global/soft/default",
-          key: "2633ff7c179a75b585932d697e2c9c0967f7005e",
-          light: "#d7dce1",
-          dark: "#4d5661",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "border/global/soft/hover",
-          key: "0011f441b8c33d89cd6610c2325f3cf599248f34",
-          light: "#768793",
-          dark: "#515c69",
-          aliasLight: "black/40 solid"
-        },
-        {
-          name: "border/global/soft/filled",
-          key: "6e85c3539201fec02d1a3e79197d074a655a95ba",
-          light: "#d7dce1",
-          dark: "#40474f",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "border/global/soft/active",
-          key: "ae82d51efbabd022f3d5fb769cafb5693538676f",
-          light: "#a9b4bc",
-          dark: "#515c69",
-          aliasLight: "black/30 solid"
-        },
-        {
-          name: "border/global/soft/disabled",
-          key: "60b115ea0f2bea5f926325412bef066624af1020",
-          light: "#eaeef0",
-          dark: "#26292e",
-          aliasLight: "black/17 solid"
-        },
-        {
-          name: "border/divider/secondary",
-          key: "9da710ec28de3b2bcbdecc9da0d8e6a84ebd2710",
-          light: "#d7dce1",
-          dark: "#40474f",
-          aliasLight: "black/22 solid"
-        },
-        {
-          name: "border/divider/tetriary",
-          key: "a8277d111f27e8a58ff96ab381ad246898660068",
-          light: "#cad1d7",
-          dark: "#464e58",
-          aliasLight: "black/24 solid"
-        },
-        {
-          name: "status/filled/bg/default",
-          key: "8e125a92ece57b864b1c321a805d389c15508618",
-          light: "#5d6c79",
-          dark: "#a9b4bc",
-          aliasLight: "black/63 solid"
-        },
-        {
-          name: "status/filled/bg/accent",
-          key: "9cebb5a355608795a767ac9853404fbb43db5206",
-          light: "#fddb2b",
-          dark: "#fddb2b",
-          aliasLight: "yellow/50 solid"
-        },
-        {
-          name: "status/filled/bg/success",
-          key: "fc1939007674cf3c93b1c94017470f8c6a87573a",
-          light: "#10b981",
-          dark: "#10b981",
-          aliasLight: "emerald/60 solid"
-        },
-        {
-          name: "status/filled/bg/warning",
-          key: "d2001fcbd94fb99277f5761d0d4f66072c415c5d",
-          light: "#ea580c",
-          dark: "#ea580c",
-          aliasLight: "orange/70 solid"
-        },
-        {
-          name: "status/filled/bg/error",
-          key: "27dee2b70f6e109a4b3a2ac5966cb8bfc42024eb",
-          light: "#e11d48",
-          dark: "#e11d48",
-          aliasLight: "rose/70 solid"
-        },
-        {
-          name: "status/filled/bg/info",
-          key: "3ad196a6d3a682b186c23de842f6471b83370b08",
-          light: "#2563eb",
-          dark: "#2563eb",
-          aliasLight: "blue/70 solid"
-        },
-        {
-          name: "status/filled/bg/clear",
-          key: "93d33d613eab2d1b4d31a8e619b64b381d72a4e3",
-          light: "#dde2e6",
-          dark: "#54606d",
-          aliasLight: "black/21 solid"
-        },
-        {
-          name: "status/filled/text/default",
-          key: "5019f6f5b7ba914f887b62c93d5edb2e06fd69b2",
-          light: "#0e0f11f2",
-          dark: "#0e0f11f2",
-          aliasLight: "black/95"
-        },
-        {
-          name: "status/filled/text/default-inverse",
-          key: "0949f04c7ab8b91faaa35136172c7e0557957d5e",
-          light: "#0e0f11",
-          dark: "#f0f3f4",
-          aliasLight: "black/97 solid"
-        },
-        {
-          name: "status/ghost/bg/default",
-          key: "a015840d61d7555752a6d553bfd5a27debbe72d4",
-          light: "#cad1d7",
-          dark: "#4d5661",
-          aliasLight: "black/24 solid"
-        },
-        {
-          name: "status/ghost/bg/accent",
-          key: "3a9c3243f8607e33721507cd402401fbef257e79",
-          light: "#fef7b4",
-          dark: "#492c12",
-          aliasLight: "yellow/20 solid"
-        },
-        {
-          name: "status/ghost/bg/success",
-          key: "30ca12f279cfc6d8b82695c4b9449bbc9f03df41",
-          light: "#dcfce7",
-          dark: "#093429",
-          aliasLight: "green/20 solid"
-        },
-        {
-          name: "status/ghost/bg/warning",
-          key: "8600b871f9331691b62a6251c38876f768dfd97b",
-          light: "#ffedd5",
-          dark: "#542212",
-          aliasLight: "orange/20 solid"
-        },
-        {
-          name: "status/ghost/bg/error",
-          key: "d6976782df00d03acc38f85fc707a23691a6e849",
-          light: "#fee2e2",
-          dark: "#4b1124",
-          aliasLight: "red/20 solid"
-        },
-        {
-          name: "status/ghost/bg/info",
-          key: "4f0694156bf507c9d8489ac865d0958d83f3c3f0",
-          light: "#e0f2fe",
-          dark: "#14234e",
-          aliasLight: "light blue/20 solid"
-        },
-        {
-          name: "status/ghost/bg/clear",
-          key: "4521c8dfedc48ebecfaf00b393f14950b2c93347",
-          light: "#f4f6f7",
-          dark: "#1f2326",
-          aliasLight: "black/10 solid"
-        },
-        {
-          name: "status/ghost/text/default",
-          key: "f051b5799e28331ef340deb471b46ee61886739f",
-          light: "#1b1e22",
-          dark: "#dde2e6",
-          aliasLight: "black/93 solid"
-        },
-        {
-          name: "status/ghost/text/accent",
-          key: "22f5b1784478aaac7409799c7e04470e54eca5c6",
-          light: "#713f12",
-          dark: "#d9a607",
-          aliasLight: "yellow/100 solid"
-        },
-        {
-          name: "status/ghost/text/success",
-          key: "d4e0020199320ae0b6795793a8624f31181dcb6f",
-          light: "#033a29",
-          dark: "#10b981",
-          aliasLight: "emerald/100 solid"
-        },
-        {
-          name: "status/ghost/text/warning",
-          key: "87c8cde7b5048a85bc5f7adecb3450c55e2be986",
-          light: "#7c2d12",
-          dark: "#f97316",
-          aliasLight: "orange/100 solid"
-        },
-        {
-          name: "status/ghost/text/error",
-          key: "b0cd6e709e506da9ec9be38f3ba06fd0aab8a793",
-          light: "#881337",
-          dark: "#f43f5e",
-          aliasLight: "rose/100 solid"
-        },
-        {
-          name: "status/ghost/text/info",
-          key: "c82074870b69f984cc5be9a4928ef53f3d8e962c",
-          light: "#1e3a8a",
-          dark: "#60a5fa",
-          aliasLight: "blue/100 solid"
-        },
-        {
-          name: "status/ghost/text/clear",
-          key: "3f7b0a622f408f0da56d95bdc81cd7d204db0cc2",
-          light: "#1b1e22",
-          dark: "#a9b4bc",
-          aliasLight: "black/93 solid"
-        },
-        {
-          name: "supportive/filled/1",
-          key: "ad6e033b05a95ceef888b7df75bf1060ff1cb587",
-          light: "#5d6c79",
-          dark: "#5d6c79",
-          aliasLight: "black/63 solid"
-        },
-        {
-          name: "supportive/filled/1-hc",
-          key: "7d58f0fbc6a5b1b97668b0789bf1d5a0fc1864e1",
-          light: "#768793",
-          dark: "#768793",
-          aliasLight: "black/40 solid"
-        },
-        {
-          name: "misc/scrollbar/default",
-          key: "2276cee9aa3287df8f026cefd51de27aad367d6a",
-          light: "#00000033",
-          dark: "#ffffff3d",
-          aliasLight: null
-        },
-        {
-          name: "misc/scrollbar/hover",
-          key: "b3d0ba9e9831417d7af3fbaa9bae21c9b579e385",
-          light: "#0000003d",
-          dark: "#ffffff52",
-          aliasLight: null
-        },
-        {
-          name: "misc/scrollbar/active",
-          key: "7f849b402015ebc987be8caf4b884e46fabd4207",
-          light: "#0000007a",
-          dark: "#ffffff7a",
-          aliasLight: null
-        },
-        {
-          name: "misc/overlay/default",
-          key: "7cbaa01f8f8a3416948ec7a58834a562dc379155",
-          light: "#000000bf",
-          dark: "#ffffff7a",
-          aliasLight: null
-        },
-        {
-          name: "misc/overlay/blur 0",
-          key: "c8c71fb6157ef94ab902baa089ffb65d9c804c0f",
-          light: "#f4f6f759",
-          dark: "#14161959",
-          aliasLight: null
-        },
-        {
-          name: "misc/overlay/blur 1",
-          key: "f97a69cb2a3c4f00db3876f7a6f7171beb10d9d7",
-          light: "#eaeef059",
-          dark: "#3a3c4159",
-          aliasLight: null
-        },
-        {
-          name: "misc/overlay/blur 2",
-          key: "fd487333eec6709aaa3447359e628da49f78bad2",
-          light: "#d7dce159",
-          dark: "#3f414659",
-          aliasLight: null
-        },
-        {
-          name: "supportive/filled/2",
-          key: "b4b05bb60a566b12e934113a031100ce7cb0416b",
-          light: "#f7c21c",
-          dark: "#f7c21c",
-          aliasLight: "yellow/60 solid"
-        },
-        {
-          name: "supportive/filled/2-hc",
-          key: "6a2ff6a53d156042459110510dfedb6d1970a9b8",
-          light: "#f7c21c",
-          dark: "#f7c21c",
-          aliasLight: "yellow/60 solid"
-        },
-        {
-          name: "supportive/filled/3",
-          key: "e8cf9a531d8f5ce6f31f0914dc0cc0f8a1a0ea62",
-          light: "#10b981",
-          dark: "#059669",
-          aliasLight: "emerald/60 solid"
-        },
-        {
-          name: "supportive/filled/3-hc",
-          key: "8e8f7e2a4a4eb81ac9e27f5c49018654e8397b6e",
-          light: "#34d399",
-          dark: "#10b981",
-          aliasLight: "emerald/50 solid"
-        },
-        {
-          name: "supportive/filled/4",
-          key: "a3cd7b5cfd146e94e58f58b0b75aa6539347c05d",
-          light: "#ea580c",
-          dark: "#ea580c",
-          aliasLight: "orange/70 solid"
-        },
-        {
-          name: "supportive/filled/4-hc",
-          key: "98ec2dea9d839c8df3f2e61eef294ff3e4597b61",
-          light: "#f97316",
-          dark: "#f97316",
-          aliasLight: "orange/60 solid"
-        },
-        {
-          name: "supportive/filled/5",
-          key: "20332c1546b7dae1ff61a602bc9df5a0a7cd44ee",
-          light: "#e11d48",
-          dark: "#e11d48",
-          aliasLight: "rose/70 solid"
-        },
-        {
-          name: "supportive/filled/5-hc",
-          key: "f81a37baa9de332d5624fdd92fd658a6fbaf6b97",
-          light: "#f43f5e",
-          dark: "#f43f5e",
-          aliasLight: "rose/60 solid"
-        },
-        {
-          name: "supportive/filled/6",
-          key: "9e455d107e271b9181ad892fae1bb3ad5a291820",
-          light: "#2563eb",
-          dark: "#2563eb",
-          aliasLight: "blue/70 solid"
-        },
-        {
-          name: "supportive/filled/6-hc",
-          key: "95e9af210d2e5243337d134234db16f80fe365d3",
-          light: "#3b82f6",
-          dark: "#3b82f6",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "supportive/filled/7",
-          key: "5c42d1ac83e5e05827bce398e0859b61853b9bee",
-          light: "#7c3aed",
-          dark: "#7c3aed",
-          aliasLight: "violet/70 solid"
-        },
-        {
-          name: "supportive/filled/7-hc",
-          key: "c3119e67298397c0353dc26f4bc3343c1d2eed4e",
-          light: "#8b5cf6",
-          dark: "#8b5cf6",
-          aliasLight: "violet/60 solid"
-        },
-        {
-          name: "supportive/filled/8",
-          key: "6fee4e3e1523a572be5ffa0f28f66bafe20fe15e",
-          light: "#4f46e5",
-          dark: "#4f46e5",
-          aliasLight: "indigo/70 solid"
-        },
-        {
-          name: "supportive/filled/8-hc",
-          key: "7c5f439eea40ad61e05a14f071bf7c415b52358d",
-          light: "#6366f1",
-          dark: "#6366f1",
-          aliasLight: "indigo/60 solid"
-        },
-        {
-          name: "supportive/filled/9",
-          key: "3a799ae89d05ac0f207c536b4409df418b15bb86",
-          light: "#db2777",
-          dark: "#db2777",
-          aliasLight: "pink/70 solid"
-        },
-        {
-          name: "supportive/filled/9-hc",
-          key: "747eb9ca9d3cfe18a63907ddb5f1a4b2207ad450",
-          light: "#ec4899",
-          dark: "#ec4899",
-          aliasLight: "pink/60 solid"
-        },
-        {
-          name: "supportive/filled/10",
-          key: "13c034aa449bbd2c49096178a31ed94b7ac94785",
-          light: "#0f766b",
-          dark: "#0f766b",
-          aliasLight: "teal/70 solid"
-        },
-        {
-          name: "supportive/ghost/1",
-          key: "3792dad1e6dec20e68675dcbe5da9eabb675ef92",
-          light: "#e7e9eb",
-          dark: "#2e3236",
-          aliasLight: null
-        },
-        {
-          name: "supportive/filled/10-hc",
-          key: "ccb92a2a828bbaa7e547bcfd14251d9311884fb7",
-          light: "#0d9485",
-          dark: "#0d9485",
-          aliasLight: "teal/60 solid"
-        },
-        {
-          name: "supportive/ghost/2",
-          key: "6c8168b02aa970f7b6b94981412622aae4ac4395",
-          light: "#f2ebd4",
-          dark: "#433b1e",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/3",
-          key: "2fe70ff7cd20a95af7a5993310eab993ec943a6f",
-          light: "#dff1ec",
-          dark: "#1a3f37",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/4",
-          key: "82604b98cf358d6f5c4c008c66a0f0c0b464a3bf",
-          light: "#f4e7e0",
-          dark: "#462b1f",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/5",
-          key: "fde585df00890604093b1d6af4b11932096f05f5",
-          light: "#f4e1e6",
-          dark: "#441f2b",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/6",
-          key: "5575400919f04f4c4c36efb38492fc1dc8bf68d3",
-          light: "#e1e8f7",
-          dark: "#1f2d4c",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/7",
-          key: "0d61b8f8b0fe06f7338815bafc12eb9204a7bdef",
-          light: "#e9e4f7",
-          dark: "#30254c",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/8",
-          key: "930d0154ef61f47c09b1b8aac9e1d53af3591d78",
-          light: "#e5e5f6",
-          dark: "#2a2a54",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/9",
-          key: "66481078c006617a3eba056480773f8ff20537ec",
-          light: "#f3e2eb",
-          dark: "#432135",
-          aliasLight: null
-        },
-        {
-          name: "supportive/ghost/10",
-          key: "02facbf6f327fd1d3b542b2f4ccaf7a305e3af8b",
-          light: "#deeded",
-          dark: "#1a3738",
-          aliasLight: null
-        },
-        {
-          name: "accent/secondary/clear/default",
-          key: "fd1f40c46864a2a2a1f0a16c80561d896fbc9575",
-          light: "#ffffff00",
-          dark: "#26292e00",
-          aliasLight: null
-        },
-        {
-          name: "accent/secondary/flat filled/default",
-          key: "885388b6e4c15303f30384cbc0d0728a42fafc43",
-          light: "#ffffff",
-          dark: "#26292e",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "accent/secondary/flat filled/hover",
-          key: "0b98cf259bae6d23bb8a1db0e097ee6e27bf240f",
-          light: "#e0e5e8",
-          dark: "#2a2d32",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "accent/secondary/flat filled/active",
-          key: "5dff4c25a41d22625295184cfcd1eb3ff391d748",
-          light: "#ffffff",
-          dark: "#2a2d32",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "accent/secondary/flat filled/on-accent",
-          key: "4dc980fdb31fb15ec2b77044cc63ccc64bcc1531",
-          light: "#3b82f6",
-          dark: "#3b82f6",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "accent/secondary/flat filled/container-muted",
-          key: "6c122bf0ef75101889a2b3266348ecc1e8aef9b6",
-          light: "#ffffff",
-          dark: "#3a3c41",
-          aliasLight: "black/0 solid"
-        },
-        {
-          name: "accent/secondary/flat filled/on-accent-muted",
-          key: "8957c3365a44f1eb386cac6d7a3d8067444c1c6e",
-          light: "#3b82f6",
-          dark: "#3b82f6",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "accent/secondary/clear/hover",
-          key: "e1ac136b0bca70dfc827da7aaaa0ab1d820185e1",
-          light: "#e0e5e8",
-          dark: "#2a2d32",
-          aliasLight: "black/20 solid"
-        },
-        {
-          name: "accent/secondary/clear/active",
-          key: "7b40a53154d42eddd35caedbbe7b8b024a5395c4",
-          light: "#ffffff00",
-          dark: "#2a2d32",
-          aliasLight: null
-        },
-        {
-          name: "accent/secondary/clear/on-accent",
-          key: "31a5b466a3ece52eeaaf1e74fbd833e21deaa1a2",
-          light: "#3b82f6",
-          dark: "#3b82f6",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "accent/secondary/clear/container-muted",
-          key: "951bb1a8cb99740b5b1564e7aa6f562ca8005e74",
-          light: "#ffffff00",
-          dark: "#3a3c4100",
-          aliasLight: null
-        },
-        {
-          name: "accent/secondary/clear/on-accent-muted",
-          key: "6be35fe04e678e4068343463a12b78bc764c811d",
-          light: "#3b82f6",
-          dark: "#ffffff",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "accent/secondary/outline/default",
-          key: "d5d9d4dbb9d32e0de4988fa1f5a1758e3d957e60",
-          light: "#bfdbfe",
-          dark: "#2563eb",
-          aliasLight: "blue/30 solid"
-        },
-        {
-          name: "accent/secondary/outline/hover",
-          key: "289c71271be74888d006a027a492ce86f72aff97",
-          light: "#93c5fd",
-          dark: "#1d4ed8",
-          aliasLight: "blue/40 solid"
-        },
-        {
-          name: "accent/secondary/outline/active",
-          key: "078061ee00916af6074c7165c53e3c7b7d4deeb5",
-          light: "#bfdbfe",
-          dark: "#2563eb",
-          aliasLight: "blue/30 solid"
-        },
-        {
-          name: "accent/secondary/outline/on-accent",
-          key: "9239241cc2ede419c9bd254ffcf879607053f7fc",
-          light: "#3b82f6",
-          dark: "#3b82f6",
-          aliasLight: "blue/60 solid"
-        },
-        {
-          name: "accent/secondary/outline/container-muted",
-          key: "67947bcec00e9caa270ce55a34ba9ae4e6ad2122",
-          light: "#eff6ff",
-          dark: "#1e40af",
-          aliasLight: "blue/10 solid"
-        },
-        {
-          name: "background/onsurface/0-inverse-soft",
-          key: "391c55c48db5284cd79177cf36f8c77a16b7ffb7",
-          light: "#ffffff",
-          dark: "#4d5661",
-          aliasLight: "black/0 solid"
-        }
-      ]
-    },
-    brand: {
-      columns: [
-        "bank",
-        "kassa",
-        "travel",
-        "artwin",
-        "koko"
-      ],
-      vars: [
-        {
-          name: "brand/default",
-          key: "3fcd6d12c7cc69c1234f116a3814b8add7ab2497",
-          values: [
-            "#16a34a",
-            "#2563eb",
-            "#60a5fa",
-            "#fddb2b",
-            "#da78f2"
-          ]
-        },
-        {
-          name: "brand/hover",
-          key: "82a3be583bee1e54a9820a88b176bc1a0609fa2c",
-          values: [
-            "#189547",
-            "#1d4ed8",
-            "#4d9af9",
-            "#f7c21c",
-            "#f7c21c"
-          ]
-        },
-        {
-          name: "brand/active",
-          key: "1b3f03e7755cc15e0cbdac50e402785669ce1825",
-          values: [
-            "#16a34a",
-            "#1d4ed8",
-            "#60a5fa",
-            "#fddb2b",
-            "#fddb2b"
-          ]
-        },
-        {
-          name: "brand/on-accent",
-          key: "9ee77db9b335856989165e8f70a4c08b1fd42b07",
-          values: [
-            "#ffffff",
-            "#ffffff",
-            "#ffffff",
-            "#0e0f11",
-            "#0e0f11"
-          ]
-        },
-        {
-          name: "brand/on-accent-muted",
-          key: "7dcb7080f888546265c5196924993c42cc2bf41b",
-          values: [
-            "#a9b4bc",
-            "#a9b4bc",
-            "#a9b4bc",
-            "#a9b4bc",
-            "#a9b4bc"
-          ]
-        },
-        {
-          name: "brand/container-muted",
-          key: "e78d2a11607d7e68ba3c17c4559abc03bafd65f6",
-          values: [
-            "#f0f3f4",
-            "#f0f3f4",
-            "#f0f3f4",
-            "#f0f3f4",
-            "#f0f3f4"
-          ]
-        },
-        {
-          name: "brand/ghost-default",
-          key: "618558efb4b8526fe7d694f6cef6c786da1614d1",
-          values: [
-            "#f0fdf4",
-            "#dbeafe",
-            "#eff6ff",
-            "#fef7b4",
-            "#fef7b4"
-          ]
-        },
-        {
-          name: "brand/ghost-hover",
-          key: "94afb4debb19af70507fb5070792ff6cf8245d62",
-          values: [
-            "#e8fcee",
-            "#bfdbfe",
-            "#e5f1ff",
-            "#fef08a",
-            "#fef08a"
-          ]
-        },
-        {
-          name: "brand/ghost-active",
-          key: "5409c22ed2729aa2ca5adc39504f2151152e9ff3",
-          values: [
-            "#f0fdf4",
-            "#dbeafe",
-            "#eff6ff",
-            "#fef7b4",
-            "#fef7b4"
-          ]
-        },
-        {
-          name: "brand/ghost-on-accent-muted",
-          key: "4e1ccb3eaf0bbf9f541aebbac32471c813c2a7ab",
-          values: [
-            "#86efac",
-            "#3b82f6",
-            "#93c5fd",
-            "#f7c21c",
-            "#f7c21c"
-          ]
-        },
-        {
-          name: "brand/ghost-container-muted",
-          key: "3920f79f5f81b23546281bde748ac4a909a1608d",
-          values: [
-            "#f0fdf4",
-            "#eff6ff",
-            "#eff6ff",
-            "#fefce8",
-            "#fefce8"
-          ]
-        },
-        {
-          name: "brand/ghost-on-accent",
-          key: "3a014360ef561bd9d8459ba4a7852757ec660bfc",
-          values: [
-            "#16a34a",
-            "#1d4ed8",
-            "#60a5fa",
-            "#d9a607",
-            "#d9a607"
-          ]
-        }
-      ],
-      modes: [
-        "bank",
-        "kassa",
-        "travel",
-        "artwin",
-        "koko"
-      ]
-    },
-    brandRadius: {
-      columns: [
-        "value"
-      ],
-      vars: [
-        {
-          name: "radius/full",
-          key: "880334001c5c1a616d6700df798cd84e29cf0070",
-          values: [
-            "1000"
-          ]
-        },
-        {
-          name: "radius/xl-4",
-          key: "0552e3addd4a74430e7c53b6718479b9aa6d60e6",
-          values: [
-            "40"
-          ]
-        },
-        {
-          name: "radius/xl-3",
-          key: "b60fc0f5852bc96ca2f6c0cf1711f36f033d788d",
-          values: [
-            "32"
-          ]
-        },
-        {
-          name: "radius/xl-2",
-          key: "5c0fd5fb1f56125215d6330cdee12086f32a53f7",
-          values: [
-            "24"
-          ]
-        },
-        {
-          name: "radius/xl",
-          key: "46ff3d87efcea0e8e529e8dbaa14ee9c81faafb2",
-          values: [
-            "20"
-          ]
-        },
-        {
-          name: "radius/l",
-          key: "215a81ed22f0545e5c4e4bacdaba3f52506fc65e",
-          values: [
-            "16"
-          ]
-        },
-        {
-          name: "radius/m",
-          key: "cff2d86748887ff2a64d9de8911be6e9c7c48f3e",
-          values: [
-            "12"
-          ]
-        },
-        {
-          name: "radius/s",
-          key: "9d4b1d6c55e145f473e312025829306854a3a023",
-          values: [
-            "8"
-          ]
-        },
-        {
-          name: "radius/xs",
-          key: "e5e218dc0552b718be2cdcf3992ae8475ee3f492",
-          values: [
-            "4"
-          ]
-        },
-        {
-          name: "radius/xss",
-          key: "243485996c0d982afbccdfdfc18c58ead796485b",
-          values: [
-            "2"
-          ]
-        },
-        {
-          name: "radius/none",
-          key: "8d2416e70df7331ba3e0496575be0c02514377fb",
-          values: [
-            "0"
-          ]
-        }
-      ]
-    },
-    borderRadius: {
-      columns: [
-        "value"
-      ],
-      vars: [
-        {
-          name: "border-radius/full",
-          key: "0c623a2bff941b61f99500d938b32b30d62e8189",
-          values: [
-            "1000"
-          ]
-        },
-        {
-          name: "border-radius/xl-4",
-          key: "e492b8f7b74f3167adddea50ca768c31f4163cdf",
-          values: [
-            "40"
-          ]
-        },
-        {
-          name: "border-radius/xl-3",
-          key: "9b9d79b1ef31201c04903b45671fe485d6f75c7c",
-          values: [
-            "32"
-          ]
-        },
-        {
-          name: "border-radius/xl-2",
-          key: "b43b8564d904c26c3147d3e61d89a2cfcf8d1e7f",
-          values: [
-            "24"
-          ]
-        },
-        {
-          name: "border-radius/xl",
-          key: "163a64c42405550c6b3bc85182e6aff4bcab58e0",
-          values: [
-            "20"
-          ]
-        },
-        {
-          name: "border-radius/l",
-          key: "d57f472525c8756360b9023d49bb093edb04a41a",
-          values: [
-            "16"
-          ]
-        },
-        {
-          name: "border-radius/m",
-          key: "ff615bebaee8bcbf4953d65b2d7b5a162c6aa45c",
-          values: [
-            "12"
-          ]
-        },
-        {
-          name: "border-radius/s",
-          key: "2f35262ae3ae0f15d4c8a18bc61b5006391e7436",
-          values: [
-            "8"
-          ]
-        },
-        {
-          name: "border-radius/xs",
-          key: "78c30ccab1bb9e8bbae51ce0132119ec0de8304b",
-          values: [
-            "4"
-          ]
-        },
-        {
-          name: "border-radius/xss",
-          key: "e42ccaf32d0f9f89f906f3f7d447324a43e690e7",
-          values: [
-            "2"
-          ]
-        },
-        {
-          name: "inner-radius-segment/l",
-          key: "0999b6732b02aae49c153a574de11fb5ddd9f68e",
-          values: [
-            "18"
-          ]
-        },
-        {
-          name: "inner-radius-segment/s",
-          key: "752efd0b6cb81b8c8f67acaeef512a5357abb9bb",
-          values: [
-            "15"
-          ]
-        },
-        {
-          name: "inner-radius-segment/m",
-          key: "3050b4e31cc04f9761d7d880334679181c6ca8f6",
-          values: [
-            "10"
-          ]
-        }
-      ]
-    },
-    rem: {
-      columns: [
-        "value"
-      ],
-      vars: [
-        {
-          name: "rem/default/0",
-          key: "1bbae6b23893ee52749c03d355a9b62c63eb7a41",
-          values: [
-            "0"
-          ]
-        },
-        {
-          name: "rem/default/2",
-          key: "c59a9be0c4c9a1fbfd706f6f7eeb551252d527e7",
-          values: [
-            "2"
-          ]
-        },
-        {
-          name: "rem/default/4",
-          key: "ad8f3b7f62f28241835a75389d8d6ded150a6f8a",
-          values: [
-            "4"
-          ]
-        },
-        {
-          name: "rem/default/6",
-          key: "f3f6f21e57c99a41891d54dfa3d0a469fd45adbb",
-          values: [
-            "6"
-          ]
-        },
-        {
-          name: "rem/default/8",
-          key: "5b26e724955a5e40c9be2ca63f157d4734e3c85e",
-          values: [
-            "8"
-          ]
-        },
-        {
-          name: "rem/default/10",
-          key: "2a9083fe3044d93424acc3688d4e3b033d93cd09",
-          values: [
-            "10"
-          ]
-        },
-        {
-          name: "rem/default/12",
-          key: "7ebbef3d4a05f7623eca40a6b176cda22d8749a6",
-          values: [
-            "12"
-          ]
-        },
-        {
-          name: "rem/default/14",
-          key: "a3708337250568bee43e0c049bf7fdfbf27bdeff",
-          values: [
-            "14"
-          ]
-        },
-        {
-          name: "rem/default/16",
-          key: "6546edd17b72e154b5c3468b773e8a40036b3df7",
-          values: [
-            "16"
-          ]
-        },
-        {
-          name: "rem/default/20",
-          key: "7ab74e1119917b06823e2155333141fe68a795be",
-          values: [
-            "20"
-          ]
-        },
-        {
-          name: "rem/default/24",
-          key: "848ab6eaa317b35e5da6820a7571a4e8548433c8",
-          values: [
-            "24"
-          ]
-        },
-        {
-          name: "rem/default/28",
-          key: "bf5b3b43fcccd79ba5bf60065422d26013d96d43",
-          values: [
-            "28"
-          ]
-        },
-        {
-          name: "rem/default/32",
-          key: "0b651763bbb43ad2e2387ef38e05a775545e84ab",
-          values: [
-            "32"
-          ]
-        },
-        {
-          name: "rem/default/36",
-          key: "a91ce087a65c458cdbb817cc14d396b43f5dbbca",
-          values: [
-            "36"
-          ]
-        },
-        {
-          name: "rem/default/40",
-          key: "fd32316b18edfdc75c0167cd5285ed5e6d9bef94",
-          values: [
-            "40"
-          ]
-        },
-        {
-          name: "rem/default/48",
-          key: "0eb02f7d1b88b866ab15772afd6779c88f0e8e13",
-          values: [
-            "48"
-          ]
-        },
-        {
-          name: "rem/default/56",
-          key: "f1101d370313d1acfa7e95e5c3d190fdb46eddc4",
-          values: [
-            "56"
-          ]
-        },
-        {
-          name: "rem/default/64",
-          key: "e7181ea608339bc60f7f29094767658c3b777a22",
-          values: [
-            "64"
-          ]
-        },
-        {
-          name: "rem/default/72",
-          key: "6b3b47272e28f3381e149f220644bd19aa11c5ed",
-          values: [
-            "72"
-          ]
-        },
-        {
-          name: "rem/default/80",
-          key: "0e5252ebf4ab528029d2f1d177cb0a3f119fb146",
-          values: [
-            "80"
-          ]
-        }
-      ]
-    },
-    webSpacing: {
-      columns: [
-        "value"
-      ],
-      vars: [
-        {
-          name: "spacing/none",
-          key: "469eae815f2cdfa1596c9cdb6701618e0030a899",
-          values: [
-            "0"
-          ]
-        },
-        {
-          name: "spacing/xs",
-          key: "49fe1d2a4517444f7f637ea69fad54c17decba64",
-          values: [
-            "4"
-          ]
-        },
-        {
-          name: "spacing/s-3",
-          key: "25548a2aee9592223ee300340cc03b54847db6b8",
-          values: [
-            "8"
-          ]
-        },
-        {
-          name: "spacing/s-2",
-          key: "bd33cdc1be90ca2ac5f3d0beb7e6cd3dcbe826e9",
-          values: [
-            "10"
-          ]
-        },
-        {
-          name: "spacing/s-1",
-          key: "b7f3190a4d32d94e37e2349ac0035f2b7a28ddf7",
-          values: [
-            "12"
-          ]
-        },
-        {
-          name: "spacing/m-2-base",
-          key: "06f234ad59d196f83831e10bcb2ba0dda48564a8",
-          values: [
-            "16"
-          ]
-        },
-        {
-          name: "spacing/m-1",
-          key: "945c102a9deead688072a884e69d5b10932b013e",
-          values: [
-            "20"
-          ]
-        },
-        {
-          name: "spacing/l-2",
-          key: "c25e02637c18d4b74c20014d98a2ee237c50749a",
-          values: [
-            "24"
-          ]
-        },
-        {
-          name: "spacing/l-1",
-          key: "139bc110af5978890090115e3686b93fa86dbef0",
-          values: [
-            "28"
-          ]
-        },
-        {
-          name: "spacing/xl-2",
-          key: "d80486a8ad621a92eefd5fa6500a3ce339f6dd76",
-          values: [
-            "32"
-          ]
-        },
-        {
-          name: "spacing/xl-1",
-          key: "afc59ca2bae3e2c7b18935a7f518fe9a12aa6fcd",
-          values: [
-            "36"
-          ]
-        },
-        {
-          name: "spacing/xxl-2",
-          key: "5112dc6b296ab4e9d858030023ca5db8790524d2",
-          values: [
-            "40"
-          ]
-        },
-        {
-          name: "spacing/xxl-1",
-          key: "f68a450bfa5d2d835a3493982430608b136b0692",
-          values: [
-            "48"
-          ]
-        }
-      ]
-    },
-    mobileFoundation: {
-      columns: [
-        "value"
-      ],
-      vars: [
-        {
-          name: "paddings/default/none",
-          key: "fb109a5072b402ff23bef536000e8e6b2c5ef8d5",
-          values: [
-            "0"
-          ]
-        },
-        {
-          name: "paddings/default/xs",
-          key: "4e84b77b36220c2f282456e7cf0495104d5084dd",
-          values: [
-            "2"
-          ]
-        },
-        {
-          name: "paddings/default/xs 2",
-          key: "d4c8e9d721b5696cee908a4366ad497721653773",
-          values: [
-            "4"
-          ]
-        },
-        {
-          name: "paddings/default/s",
-          key: "6e80bc94476fe9fb8e18a2ecd1184d9cc31865df",
-          values: [
-            "8"
-          ]
-        },
-        {
-          name: "paddings/default/s - 2",
-          key: "c44220317b3fa1713b480e666de7cd5fc2540446",
-          values: [
-            "12"
-          ]
-        },
-        {
-          name: "paddings/default/m",
-          key: "f5a1fba27841d60b694005eb8da23f146b5c3269",
-          values: [
-            "14"
-          ]
-        },
-        {
-          name: "paddings/default/m - 2",
-          key: "81a966b963f940ab223bdc6d0742e7222a85a39f",
-          values: [
-            "16"
-          ]
-        },
-        {
-          name: "paddings/default/l",
-          key: "22db93c32da263a7da496ff79f405638628a6c17",
-          values: [
-            "20"
-          ]
-        },
-        {
-          name: "paddings/default/xl",
-          key: "3415f336c1457466e9e4026def9f3f53ad1477c2",
-          values: [
-            "24"
-          ]
-        },
-        {
-          name: "paddings/default/xxl",
-          key: "77387b36180f1321d8fb6a702a1294c1c7a9d0f2",
-          values: [
-            "28"
-          ]
-        },
-        {
-          name: "paddings/default/xxxl",
-          key: "e26c9bc27be00b5e5452fd6ff1e9100bb129f547",
-          values: [
-            "32"
-          ]
-        },
-        {
-          name: "paddings/inverse/-xs",
-          key: "c1af1dc8facfa9468f27e7574a36075595fe6039",
-          values: [
-            "-4"
-          ]
-        },
-        {
-          name: "paddings/inverse/-s",
-          key: "d940fd2511bfd70ba2873fe910ac597112c5bb86",
-          values: [
-            "-8"
-          ]
-        },
-        {
-          name: "paddings/inverse/-m",
-          key: "257dd4c377e271b531edef870ddb3761dfdbf582",
-          values: [
-            "-16"
-          ]
-        },
-        {
-          name: "radius/none (mobile)",
-          key: "307348f93f8587eb6f3eca52b4778f9a092d35bb",
-          values: [
-            "0"
-          ]
-        },
-        {
-          name: "radius/xxs (mobile)",
-          key: "eea831d02251e6334c9383c2a8dbaf8ac1c467b5",
-          values: [
-            "4"
-          ]
-        },
-        {
-          name: "radius/xs (mobile)",
-          key: "d3785f1a672886dab4f07230c66d7cb14677b87d",
-          values: [
-            "8"
-          ]
-        },
-        {
-          name: "radius/s (mobile)",
-          key: "5ad164a0bfd5cf02aad0e9578356a2ae6e3f4005",
-          values: [
-            "12"
-          ]
-        },
-        {
-          name: "radius/m (mobile)",
-          key: "e0a9d7d5ad30e3eb9ed959084e24d924674ef691",
-          values: [
-            "16"
-          ]
-        },
-        {
-          name: "radius/l (mobile)",
-          key: "9bf7a0dce8faa91850c3902d2b1b6a1aa67a2546",
-          values: [
-            "20"
-          ]
-        },
-        {
-          name: "radius/xl (mobile)",
-          key: "6b44870a2403aaf41999d1892a919dae2cf1c0f7",
-          values: [
-            "24"
-          ]
-        },
-        {
-          name: "radius/xxl (mobile)",
-          key: "71e2e936964d07b19be084f25da408f1d7ba670b",
-          values: [
-            "1000"
-          ]
-        }
-      ]
-    },
-    textStyles: {
-      web: [
-        {
-          name: "font/Display/l",
-          key: "e316e5b34dae81e60cc2ab97a1ab8cdef4563a98",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 72,
-          lineHeight: 88
-        },
-        {
-          name: "font/Display/l-md",
-          key: "5ab7b80c54c4507d649b6306dd3e61b8f1721230",
-          family: "Inter Mbank",
-          style: "SemiBold",
-          size: 72,
-          lineHeight: 88
-        },
-        {
-          name: "font/Display/l-strong",
-          key: "9b0ca8f78c395d4698e06d129e87dee3e6ead2b5",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 72,
-          lineHeight: 88
-        },
-        {
-          name: "font/Display/m",
-          key: "3e023dd0da2e1e176c3187b68196a6586d802b8a",
-          family: "Inter Mbank",
-          style: "Medium",
-          size: 56,
-          lineHeight: 68
-        },
-        {
-          name: "font/Display/m-md",
-          key: "6fd5a97d91cc9a9de866ac0f36f7ad642b2d2b05",
-          family: "Inter Mbank",
-          style: "SemiBold",
-          size: 56,
-          lineHeight: 68
-        },
-        {
-          name: "font/Display/m-strong",
-          key: "a95b07a2b43f24aa401f1ef8c1b32b489149392f",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 56,
-          lineHeight: 68
-        },
-        {
-          name: "font/Display/s",
-          key: "6b7f650ff27b4c6c9d69163260725f86cfd4fca2",
-          family: "Inter Mbank",
-          style: "Medium",
-          size: 48,
-          lineHeight: 56
-        },
-        {
-          name: "font/Display/s-md",
-          key: "e06696cc2138f91849ecab3b1db9f94381d41b82",
-          family: "Inter Mbank",
-          style: "SemiBold",
-          size: 48,
-          lineHeight: 56
-        },
-        {
-          name: "font/Display/s-strong",
-          key: "c249d0bd029a93d6d6923dbf531dde2d3e4e11fe",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 48,
-          lineHeight: 56
-        },
-        {
-          name: "font/Heading/h1",
-          key: "e08e01dab2c6eb1e477b5e7bc9fd8bb7de4fd8a3",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 44,
-          lineHeight: 52
-        },
-        {
-          name: "font/Heading/h2",
-          key: "69b9a4ac3a851a758d18a02b4a29af33ecb256ad",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 44,
-          lineHeight: 52
-        },
-        {
-          name: "font/Heading/h3",
-          key: "23dc9ab4ba71b905aa555d4aa563e364598fa40c",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 32,
-          lineHeight: 40
-        },
-        {
-          name: "font/Heading/h4",
-          key: "3c1db2e1820e70adce82a63dc504382b52ee759a",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 24,
-          lineHeight: 32
-        },
-        {
-          name: "font/Heading/h5",
-          key: "d42185ecec5526dbd0305063826a760364c56df0",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 20,
-          lineHeight: 28
-        },
-        {
-          name: "font/Heading/h6",
-          key: "6fb93a2cc4474df73cd2ae1bbd7d6d9b041e835f",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "font/Body/xl",
-          key: "aa8b7fbaa97839c3510a2fe501e42b210d3a872e",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 18,
-          lineHeight: 26
-        },
-        {
-          name: "font/Body/xl-md",
-          key: "07863401d95c6f432ee9a03758fa0fc226d159ab",
-          family: "Inter Mbank",
-          style: "Medium",
-          size: 18,
-          lineHeight: 26
-        },
-        {
-          name: "font/Body/xl-strong",
-          key: "9be63943b5c7f6b88df6340c47e73a3d6d2728fe",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 18,
-          lineHeight: 26
-        },
-        {
-          name: "font/Body/l",
-          key: "98dc7c792e61f09be4d5f519634aada8b52cfcd3",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "font/Body/l-md",
-          key: "a7b3a781c611400a807bdee354a39c3736df09bd",
-          family: "Inter Mbank",
-          style: "Medium",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "font/Body/l-strong",
-          key: "cac77d0fc4391374fa731efc663cc720e5049da4",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "font/Body/m",
-          key: "4d1b7e47cbc9fc3531246736359f2c9325535de6",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 15,
-          lineHeight: 22
-        },
-        {
-          name: "font/Body/m-md",
-          key: "a52537e7e015a8c7a857ad4c3c1527c811d582d1",
-          family: "Inter Mbank",
-          style: "Medium",
-          size: 15,
-          lineHeight: 22
-        },
-        {
-          name: "font/Body/m-strong",
-          key: "473c82346b61cca42405ac66ec8888a5ceaa5112",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 15,
-          lineHeight: 22
-        },
-        {
-          name: "font/Body/s",
-          key: "476f8d56a3c3bcaa804a33fd3658f73dbbb06fa3",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 14,
-          lineHeight: 20
-        },
-        {
-          name: "font/Body/s-md",
-          key: "6ebb3dab78e706c0f2ee21bd5fd79999aecc4862",
-          family: "Inter Mbank",
-          style: "Medium",
-          size: 14,
-          lineHeight: 20
-        },
-        {
-          name: "font/Body/s-strong",
-          key: "8f1f4e2617b460a9982399f453c4d9baa952dc45",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 14,
-          lineHeight: 20
-        },
-        {
-          name: "font/Body/xs",
-          key: "8850f7044628d2c0d22dd32323557ea8baa5e178",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 13,
-          lineHeight: 16
-        },
-        {
-          name: "font/Body/xs-md",
-          key: "aa171a29710200f383227c5de81e8ac07bd72ed0",
-          family: "Inter Mbank",
-          style: "Medium",
-          size: 13,
-          lineHeight: 16
-        },
-        {
-          name: "font/Body/xs-strong",
-          key: "fe0bc48b745d27ee08208ae8f35afda3e8206bd5",
-          family: "Inter Mbank",
-          style: "Bold",
-          size: 13,
-          lineHeight: 16
-        },
-        {
-          name: "font/Label/l",
-          key: "7a128f79cc1cd1422c65b1e8787741357c438ea9",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 14,
-          lineHeight: 16
-        },
-        {
-          name: "font/Label/m",
-          key: "5ce2601a5d83c46550be0cc8999693e275c7c5f5",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 12,
-          lineHeight: 16
-        },
-        {
-          name: "font/Label/s",
-          key: "8fc90fb03d6fad3a47f660345698efd4b84e9c0d",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 11,
-          lineHeight: 14
-        },
-        {
-          name: "font/description/l",
-          key: "7d16943d07753ab98f3f8c03a62e2e09a07274df",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 13,
-          lineHeight: 16
-        },
-        {
-          name: "font/description/l-strong",
-          key: "f36e178caa81d1327daca41ec2433253fdf4181e",
-          family: "Inter Mbank",
-          style: "SemiBold",
-          size: 13,
-          lineHeight: 16
-        },
-        {
-          name: "font/description/m",
-          key: "f0df2a3cba519550cdc24d7c51281fa594092871",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 12,
-          lineHeight: 16
-        },
-        {
-          name: "font/description/m-strong",
-          key: "cf52afe4f832a6b223ccd031fbbf36ec42aa44fd",
-          family: "Inter Mbank",
-          style: "SemiBold",
-          size: 12,
-          lineHeight: 16
-        },
-        {
-          name: "font/description/s",
-          key: "9d9978915ce26a75add453d62bdc2b2838c015a4",
-          family: "Inter Mbank",
-          style: "Regular",
-          size: 11,
-          lineHeight: 14
-        },
-        {
-          name: "font/description/s-strong",
-          key: "b5a2d7494f74f33a5f8cdff6262e4aeffa9020f3",
-          family: "Inter Mbank",
-          style: "SemiBold",
-          size: 11,
-          lineHeight: 14
-        }
-      ],
-      mobile: [
-        {
-          name: "display/large",
-          key: "935eecfccf8f19e0b0b07db993694abd68d7d6fa",
-          family: "Nunito",
-          style: "Black",
-          size: 56,
-          lineHeight: 68
-        },
-        {
-          name: "display/medium",
-          key: "77389d3ebaea2c5a0e51c9888d13085cc2a06625",
-          family: "Nunito",
-          style: "ExtraBold",
-          size: 44,
-          lineHeight: 56
-        },
-        {
-          name: "display/small",
-          key: "fbc14f8cc8d7ec20ed34ef6c9035d7c32a6d71c8",
-          family: "Nunito",
-          style: "ExtraBold",
-          size: 36,
-          lineHeight: 48
-        },
-        {
-          name: "headline/large",
-          key: "42bd51967686fee5ca4ccc96538ce60fa5058d69",
-          family: "Nunito",
-          style: "Bold",
-          size: 32,
-          lineHeight: 40
-        },
-        {
-          name: "headline/medium",
-          key: "dabf12c1016d1f2ad529f2b44c76a7cfc2f129f1",
-          family: "Nunito",
-          style: "Bold",
-          size: 28,
-          lineHeight: 36
-        },
-        {
-          name: "headline/small",
-          key: "cf5b068f4264ad7d2cab1343d5c8e995964607b8",
-          family: "Nunito",
-          style: "Bold",
-          size: 24,
-          lineHeight: 32
-        },
-        {
-          name: "title/large 2",
-          key: "cda42c331c76712c19b4f260be17b2b28e62460a",
-          family: "Nunito",
-          style: "Bold",
-          size: 22,
-          lineHeight: 28
-        },
-        {
-          name: "title/large 1",
-          key: "e25d51b8915eb2d26b659620aef2f06e3199dddc",
-          family: "Nunito",
-          style: "Bold",
-          size: 18,
-          lineHeight: 24
-        },
-        {
-          name: "title/medium",
-          key: "5e00391d94336064ae90578d9b2d488f6ae30edd",
-          family: "Nunito",
-          style: "Bold",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "title/small",
-          key: "8ad541a9910d966f41fd18c4b134828a01224a61",
-          family: "Nunito",
-          style: "Bold",
-          size: 14,
-          lineHeight: 20
-        },
-        {
-          name: "body/large",
-          key: "0b0bc64ef8b5dc133fd1194d126f262df2a930ae",
-          family: "Nunito",
-          style: "Medium",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "body/medium",
-          key: "6f67996c8bfa4eddc6c219cb559800ba1d1bb590",
-          family: "Nunito",
-          style: "Medium",
-          size: 14,
-          lineHeight: 20
-        },
-        {
-          name: "body/small",
-          key: "43a4ed0fc2a0718be0f2e2c509ddcb620c93e3e9",
-          family: "Nunito",
-          style: "Medium",
-          size: 12,
-          lineHeight: 16
-        },
-        {
-          name: "label/large-prominent",
-          key: "e4778cf7733078e9b75f0532853aa9a55ed05ac5",
-          family: "Nunito",
-          style: "Bold",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "label/large",
-          key: "b5146d924829d4afbc81cdf4802c39a15b59c203",
-          family: "Nunito",
-          style: "Medium",
-          size: 16,
-          lineHeight: 24
-        },
-        {
-          name: "label/medium-prominent",
-          key: "37add98b49257c926e19f1e45381f502e2be451b",
-          family: "Nunito",
-          style: "Bold",
-          size: 14,
-          lineHeight: 20
-        },
-        {
-          name: "label/medium",
-          key: "22b70c3f6ff11d198c6043879ea2977f3e07bdf2",
-          family: "Nunito",
-          style: "SemiBold",
-          size: 14,
-          lineHeight: 20
-        },
-        {
-          name: "label/small m - prominent",
-          key: "83d85bcafe0b51a3656ddc48731726188143c838",
-          family: "Nunito",
-          style: "Bold",
-          size: 13,
-          lineHeight: 16
-        },
-        {
-          name: "label/small m",
-          key: "c6f52356a7c782670153ff55cdfbf3456849fd3e",
-          family: "Nunito",
-          style: "Medium",
-          size: 13,
-          lineHeight: 16
-        },
-        {
-          name: "label/small s - prominent",
-          key: "81d7ea4c0dfcebb6fe7a9dfd9793bdafbb8e52e1",
-          family: "Nunito",
-          style: "Bold",
-          size: 12,
-          lineHeight: 14
-        },
-        {
-          name: "label/small s",
-          key: "d5105b04b8c92621288b5c6a8d59e5356979c571",
-          family: "Nunito",
-          style: "Medium",
-          size: 12,
-          lineHeight: 14
-        }
-      ]
-    },
-    effectStyles: {
-      web: [
-        {
-          name: "shadow/none",
-          key: "8acf8b7a42bf5700ba96fedbb871bf5819f783e4",
-          effects: "none"
-        },
-        {
-          name: "shadow/Default",
-          key: "4022ed1f609ecc4e8d56143d3dc583270da14404",
-          effects: "DROP_SHADOW 0,4 r24"
-        },
-        {
-          name: "shadow/Default-hover",
-          key: "3ba21a75473937d8cea9b629aaa9b32420f87e18",
-          effects: "DROP_SHADOW 0,12 r36"
-        },
-        {
-          name: "shadow/dropdown",
-          key: "fee84674c72640e71ad87cb7242bfcf66a529d1c",
-          effects: "DROP_SHADOW 0,3 r6 + 0,11 r11 + 0,15 r35"
-        },
-        {
-          name: "shadow/notification",
-          key: "0849c663f3bd667083617a09592b8eb9ed1d8c36",
-          effects: "DROP_SHADOW 0,8 r16"
-        },
-        {
-          name: "shadow/modal",
-          key: "f584a1bc29d2235b8d036666788a22be86abb4e2",
-          effects: "DROP_SHADOW 0,18 r30"
-        },
-        {
-          name: "shadow/tooltip",
-          key: "7b6ebd53cddd6da1b80df822729b4cebaa48371c",
-          effects: "DROP_SHADOW 0,4 r6 + 0,12 r12 + 0,24 r16 + 0,0 r2"
-        },
-        {
-          name: "shadow/bottom/controls",
-          key: "fd6ac19b432ce73bce36e50f41f509a627ce9d44",
-          effects: "DROP_SHADOW 0,2 r2 + 0,0 r1"
-        },
-        {
-          name: "shadow/bottom/s",
-          key: "d444bf9240ed99ea2f21d5c33ec2a73140e68430",
-          effects: "DROP_SHADOW 0,2 r4 + 0,0 r8"
-        },
-        {
-          name: "shadow/bottom/m",
-          key: "c867ef24d0e44cc0cebb1741884cf3e2cada237b",
-          effects: "DROP_SHADOW 0,4 r8 + 0,0 r16"
-        },
-        {
-          name: "shadow/bottom/l",
-          key: "801a169f55b5f3a890cba9c9860ad4a3cdab5e3e",
-          effects: "DROP_SHADOW 0,12 r20 + 0,0 r20"
-        },
-        {
-          name: "shadow/bottom/xl",
-          key: "62bddc7abd7015237fd174f6c0e7700d63b3ff77",
-          effects: "DROP_SHADOW 0,32 r32 + 0,0 r32"
-        },
-        {
-          name: "shadow/top/controls",
-          key: "0bbbacb7185609e64d65b0b4b7cb329595a56a0d",
-          effects: "DROP_SHADOW 0,-2 r2 + 0,0 r1"
-        },
-        {
-          name: "shadow/top/s",
-          key: "4a873714e2dee817fadf03d129e5fe32617f87ac",
-          effects: "DROP_SHADOW 0,-2 r4 + 0,0 r8"
-        },
-        {
-          name: "shadow/top/m",
-          key: "668b437ab010a6dfbd2d3f7c25c6759aa8c3d0a4",
-          effects: "DROP_SHADOW 0,-4 r8 + 0,0 r16"
-        },
-        {
-          name: "shadow/top/l",
-          key: "6274b8e4cc57b6491cb734f26a448590dfb16d61",
-          effects: "DROP_SHADOW 0,-12 r20 + 0,0 r20"
-        },
-        {
-          name: "shadow/top/xl",
-          key: "e94d19faf070d3aaffd4bf9239eb1814df5a9b24",
-          effects: "DROP_SHADOW 0,-32 r32 + 0,0 r32"
-        }
-      ],
-      mobile: [
-        {
-          name: "blocks/elevateBlocks",
-          key: "af66c8cb44215b21732f55a594ff6ea5fb61b200",
-          effects: "DROP_SHADOW 0,4 r20"
-        },
-        {
-          name: "shadow/Default",
-          key: "cf3f2c1cec4b9973388dc957f2e14b4b5f4bc21a",
-          effects: "DROP_SHADOW 0,4 r24"
-        },
-        {
-          name: "shadow/Default-hover",
-          key: "2e66027ce4ce5d9243511b148dfa32362623d3ce",
-          effects: "DROP_SHADOW 0,12 r36"
-        },
-        {
-          name: "shadow/dropdown",
-          key: "52cf274a237c77f957b26bdfb8f8d9743c267d70",
-          effects: "DROP_SHADOW 0,3 r6 + 0,11 r11 + 0,25 r15"
-        },
-        {
-          name: "shadow/notification",
-          key: "53bfc4ffe3cf10e1aba5abcca629f8c3845b6fe5",
-          effects: "DROP_SHADOW 0,8 r16"
-        },
-        {
-          name: "shadow/modal",
-          key: "b19fb1c69429a6e20e310a26b4def93ba35906fe",
-          effects: "DROP_SHADOW 0,18 r30"
-        },
-        {
-          name: "shadow/tooltip",
-          key: "4564637f5cbcb2c09bbbfdda19dab7782e391b7a",
-          effects: "DROP_SHADOW 0,4 r6 + 0,12 r12 + 0,24 r16 + 0,0 r2"
-        }
-      ]
-    },
-    platforms: {
-      web: {
-        title: "Web",
-        order: 1,
-        figmaLibrary: "Web components",
-        viewports: {
-          desktop: 1440,
-          tablet: 768
-        },
-        scales: {
-          spacing: {
-            section: "webSpacing",
-            prefix: "spacing/"
-          },
-          radius: {
-            section: "brandRadius",
-            prefix: "radius/"
-          }
-        },
-        sections: [
-          "brandRadius",
-          "borderRadius",
-          "rem",
-          "webSpacing"
-        ]
-      },
-      mobile: {
-        title: "Mobile",
-        order: 2,
-        figmaLibrary: "Mobile KIT",
-        viewports: {
-          mobile: 375
-        },
-        scales: {
-          spacing: {
-            section: "mobileFoundation",
-            prefix: "paddings/default/"
-          },
-          radius: {
-            section: "mobileFoundation",
-            prefix: "radius/"
-          }
-        },
-        sections: [
-          "mobileFoundation"
-        ]
-      }
-    }
-  };
-
-  // ../widget/core/model.js
-  var BRANDS = ["bank", "kassa", "travel", "artwin", "koko"];
-  var MODES = ["light", "dark"];
-  var THEME = "2.theme";
-  var BRAND = "1.brand";
-  function groupOf2(css, collection) {
-    if (collection === BRAND || /^brand(-|$)/.test(css)) return "brand";
-    if (/^radius-/.test(css)) return "radius";
-    if (/^supportive-/.test(css)) return "supportive";
-    if (/^(status-|success|destructive|warning)/.test(css)) return "status";
-    if (/^(border|input|ring)/.test(css)) return "border";
-    if (/^(primary|secondary|soft-hover|soft$|soft-foreground-strong|ghost|outline|static|neutral|accent|overlay)/.test(css)) return "accent";
-    return "surface";
-  }
-  var CYR_TO_LAT = { \u0430: "a", \u0432: "b", \u0435: "e", \u043A: "k", \u043C: "m", \u043D: "h", \u043E: "o", \u0440: "p", \u0441: "c", \u0442: "t", \u0443: "y", \u0445: "x", \u0456: "i" };
-  var modeName = (name) => [...String(name).trim().toLowerCase()].map((ch) => CYR_TO_LAT[ch] || ch).join("");
-  function normHex(value) {
-    if (value == null) return null;
-    let h = String(value).trim().toLowerCase().replace(/^#/, "");
-    if (h.length === 3 || h.length === 4) h = [...h].map((c) => c + c).join("");
-    if (!/^[0-9a-f]{6}([0-9a-f]{2})?$/.test(h)) return null;
-    return `#${h.length === 8 && h.endsWith("ff") ? h.slice(0, 6) : h}`;
-  }
-  var sameValue = (a, b) => {
-    if (a == null || b == null) return a == b;
-    const ha = normHex(a);
-    return ha ? ha === normHex(b) : String(a) === String(b);
-  };
-  function indexSource(tokens) {
-    const by = (list2) => new Map((list2 || []).map((v) => [v.name, v]));
-    return {
-      tokens,
-      theme: by(tokens.theme && tokens.theme.vars),
-      brand: by(tokens.brand && tokens.brand.vars),
-      brandModes: tokens.brand && (tokens.brand.modes || tokens.brand.columns) || BRANDS,
-      radius: by(tokens.brandRadius && tokens.brandRadius.vars)
-    };
-  }
-  function sourceRows(ix, brand = "bank") {
-    const rows = [];
-    const bi = Math.max(0, ix.brandModes.indexOf(brand));
-    for (const [css, m] of Object.entries(TOKEN_MAP.colors)) {
-      if (!m.figma) continue;
-      if (m.collection === BRAND) {
-        const name = `brand/${m.figma}`;
-        const src = ix.brand.get(name);
-        const dark = ix.theme.get(`brand/${brand}/${m.figma}`);
-        const light = src ? src.values[bi] : null;
-        rows.push({
-          key: `${brand}:${css}`,
-          css,
-          figma: name,
-          collection: BRAND,
-          kind: "color",
-          group: "brand",
-          brand,
-          darkFigma: `brand/${brand}/${m.figma}`,
-          source: { light, dark: dark ? dark.dark : light },
-          note: dark ? null : `\u043D\u0435\u0442 2.theme brand/${brand}/${m.figma}: \u0442\u0451\u043C\u043D\u043E\u0435 \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435 = \u0441\u0432\u0435\u0442\u043B\u043E\u0435 (G04)`
-        });
-      } else {
-        const src = ix.theme.get(m.figma);
-        rows.push({
-          key: css,
-          css,
-          figma: m.figma,
-          collection: THEME,
-          kind: "color",
-          group: groupOf2(css, THEME),
-          source: { light: src ? src.light : null, dark: src ? src.dark : null },
-          aliasLight: src ? src.aliasLight : null,
-          note: src ? null : "\u043D\u0435\u0442 \u0432 tokens.json"
-        });
-      }
-    }
-    for (const [key, figma2] of Object.entries(TOKEN_MAP.radius)) {
-      const src = ix.radius.get(figma2);
-      const v = src ? Number(src.values[0]) : null;
-      rows.push({ key: `radius-${key}`, css: `radius-${key}`, figma: figma2, collection: BRAND, kind: "radius", group: "radius", source: { light: v, dark: v }, note: src ? null : "\u043D\u0435\u0442 \u0432 tokens.json" });
-    }
-    return rows;
-  }
-  var SLOT_CSS = Object.fromEntries(Object.entries(TOKEN_MAP.colors).filter(([, m]) => m.collection === BRAND).map(([css, m]) => [m.figma, css]));
-  function extraFigmaName(extra) {
-    const prefix = extra.name.split("-")[0];
-    return customName(prefix, extra.name);
-  }
-  function buildModel(tokens, { brand = "bank", edits = {}, extras = [] } = {}) {
-    const ix = indexSource(tokens);
-    const rows = sourceRows(ix, brand).map((r) => {
-      const m = /^brand\/(\w+)\/(.+)$/.exec(r.collection === THEME ? r.figma : "");
-      if (m && SLOT_CSS[m[2]]) r = __spreadProps(__spreadValues({}, r), { derivedFrom: `${m[1]}:${SLOT_CSS[m[2]]}` });
-      const e = edits[r.derivedFrom || r.key] || {};
-      const light = e.light !== void 0 ? e.light : r.source.light;
-      const dark = e.dark !== void 0 ? e.dark : r.source.dark;
-      const edited = !sameValue(light, r.source.light) || !sameValue(dark, r.source.dark);
-      return __spreadProps(__spreadValues({}, r), { light, dark, edited });
-    });
-    for (const x of extras) {
-      rows.push({
-        key: `extra:${x.name}`,
-        css: x.name,
-        figma: extraFigmaName(x),
-        collection: THEME,
-        kind: x.kind,
-        group: "extra",
-        extra: true,
-        pairWith: x.pairWith || null,
-        source: { light: null, dark: null },
-        light: x.light,
-        dark: x.dark || x.light,
-        edited: true
-      });
-    }
-    return { brand, rows, ix };
-  }
-  var rowsByCss = (rows) => new Map(rows.map((r) => [r.css, r]));
-
-  // ../widget/core/sync.js
-  function scopesOf(row) {
-    if (row.kind === "radius") return ["CORNER_RADIUS"];
-    if (row.kind === "size") return ["WIDTH_HEIGHT", "GAP"];
-    return scopesFor(row.css);
-  }
-  function valueFor(raw, byCss) {
-    const m = /^var\(--([\w-]+)\)$/.exec(String(raw == null ? "" : raw).trim());
-    if (!m) return raw;
-    const t = byCss.get(m[1]);
-    if (!t) return { error: `var(--${m[1]}): \u0442\u0430\u043A\u043E\u0433\u043E \u0442\u043E\u043A\u0435\u043D\u0430 \u043D\u0435\u0442` };
-    return { aliasOf: { collection: t.collection, name: t.figma } };
-  }
-  function planWrites(model, opts = {}) {
-    const byCss = rowsByCss(model.rows);
-    const writes = [];
-    const skipped = [];
-    for (const r of model.rows) {
-      if (!opts.all && !r.edited) continue;
-      if (r.light == null) {
-        skipped.push({ css: r.css, reason: "\u043D\u0435\u0442 \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F" });
-        continue;
-      }
-      const base = { css: r.css, rowKey: r.key, scopes: scopesOf(r) };
-      if (r.kind === "radius" && !r.extra) {
-        writes.push(__spreadProps(__spreadValues({}, base), { collection: BRAND, name: r.figma, type: "FLOAT", values: { "*": Number(r.light) } }));
-        continue;
-      }
-      const light = r.kind === "color" ? valueFor(r.light, byCss) : Number(r.light);
-      const dark = r.kind === "color" ? valueFor(r.dark == null ? r.light : r.dark, byCss) : Number(r.dark == null ? r.light : r.dark);
-      const bad = [light, dark].find((v) => v && v.error);
-      if (bad) {
-        skipped.push({ css: r.css, reason: bad.error });
-        continue;
-      }
-      const type = r.kind === "color" ? "COLOR" : "FLOAT";
-      if (r.collection === BRAND) {
-        writes.push(__spreadProps(__spreadValues({}, base), { collection: BRAND, name: r.figma, type, values: { [r.brand]: light } }));
-        writes.push(__spreadProps(__spreadValues({}, base), { collection: THEME, name: r.darkFigma, type, values: { light, dark }, scopes: [] }));
-      } else {
-        writes.push(__spreadProps(__spreadValues({}, base), { collection: THEME, name: r.figma, type, values: { light, dark } }));
-      }
-    }
-    return { writes, skipped };
-  }
-  function plainValue(v) {
-    if (v && typeof v === "object" && "r" in v) {
-      const b = (x) => Math.round(Math.min(1, Math.max(0, x)) * 255).toString(16).padStart(2, "0");
-      return normHex(`#${b(v.r)}${b(v.g)}${b(v.b)}${v.a === void 0 || v.a >= 1 ? "" : b(v.a)}`);
-    }
-    return v;
-  }
-  function planAllBrands(build, brands, opts = {}) {
-    const writes = [];
-    const skipped = [];
-    brands.forEach((brand, i) => {
-      const model = build(brand);
-      if (i > 0) model.rows = model.rows.filter((r) => r.collection === BRAND && r.kind === "color");
-      const plan = planWrites(model, opts);
-      writes.push(...plan.writes);
-      skipped.push(...plan.skipped);
-    });
-    return { writes, skipped };
-  }
-
-  // ../widget/src/figma-io.js
-  var isAlias2 = (x) => x && typeof x === "object" && x.type === "VARIABLE_ALIAS";
-  var OURS = [THEME, BRAND];
-  var MODES_OF = { [THEME]: MODES, [BRAND]: BRANDS };
-  async function loadLocal() {
-    const cols2 = await figma.variables.getLocalVariableCollectionsAsync();
-    const vars = await figma.variables.getLocalVariablesAsync();
-    const colById = new Map(cols2.map((c) => [c.id, c]));
-    const col = {};
-    for (const c of cols2) col[c.name.trim()] = c;
-    const named = {};
-    for (const name of OURS) named[name] = /* @__PURE__ */ new Map();
-    for (const v of vars) {
-      const c = colById.get(v.variableCollectionId);
-      if (c && named[c.name.trim()]) named[c.name.trim()].set(v.name, v);
-    }
-    return { cols: cols2, vars, colById, col, named };
-  }
-  async function resolve2(value, mode, depth = 0) {
-    if (!isAlias2(value)) return value;
-    if (depth > 10) return null;
-    const target = await figma.variables.getVariableByIdAsync(value.id);
-    if (!target) return null;
-    const c = await figma.variables.getVariableCollectionByIdAsync(target.variableCollectionId);
-    const m = c && (c.modes.find((x) => modeName(x.name) === modeName(mode)) || c.modes.find((x) => x.modeId === c.defaultModeId)) || null;
-    return m ? resolve2(target.valuesByMode[m.modeId], mode, depth + 1) : null;
-  }
-  async function primitiveIndex(ix) {
-    const out = /* @__PURE__ */ new Map();
-    for (const v of ix.vars) {
-      const c = ix.colById.get(v.variableCollectionId);
-      if (!c || OURS.includes(c.name.trim()) || v.resolvedType !== "COLOR") continue;
-      const val = v.valuesByMode[c.defaultModeId];
-      if (isAlias2(val)) continue;
-      const hex = plainValue(val);
-      if (hex && !out.has(hex)) out.set(hex, v);
-    }
-    return out;
-  }
-  function modeFailed(report2, collection, mode, e) {
-    report2.modesFailed = report2.modesFailed || {};
-    const list2 = report2.modesFailed[collection] || (report2.modesFailed[collection] = []);
-    if (list2.includes(mode)) return;
-    list2.push(mode);
-    const limit = /Limited to (\d+) modes?/i.exec(e.message || "");
-    if (list2.length > 1) return;
-    report2.errors.push(limit ? `${collection}: \u0442\u0430\u0440\u0438\u0444 \u0444\u0430\u0439\u043B\u0430 \u0440\u0430\u0437\u0440\u0435\u0448\u0430\u0435\u0442 ${limit[1]} \u0440\u0435\u0436\u0438\u043C(\u0430) \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445 \u2014 \u0437\u0430\u043F\u0438\u0441\u0430\u043D \u0442\u043E\u043B\u044C\u043A\u043E \xAB${collection === THEME ? "light" : "\u043F\u0435\u0440\u0432\u044B\u0439 \u0431\u0440\u0435\u043D\u0434"}\xBB. \u041D\u0443\u0436\u0435\u043D \u0444\u0430\u0439\u043B \u0432 \u043A\u043E\u043C\u0430\u043D\u0434\u0435 Professional+ (\u0438\u043B\u0438 Foundation), \u0447\u0442\u043E\u0431\u044B \u0431\u044B\u043B\u0438 dark \u0438 \u0432\u0441\u0435 \u0431\u0440\u0435\u043D\u0434\u044B.` : `${collection}: \u0440\u0435\u0436\u0438\u043C \xAB${mode}\xBB \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D (${e.message})`);
-  }
-  function ensureCollection(ix, name, report2, dryRun) {
-    if (ix.col[name]) return ix.col[name];
-    if (report2.collectionsCreated.includes(name)) return null;
-    report2.collectionsCreated.push(name);
-    if (dryRun) return null;
-    const c = figma.variables.createVariableCollection(name);
-    const modes = MODES_OF[name];
-    c.renameMode(c.modes[0].modeId, modes[0]);
-    for (const m of modes.slice(1)) {
-      try {
-        c.addMode(m);
-      } catch (e) {
-        modeFailed(report2, name, m, e);
-      }
-    }
-    ix.col[name] = c;
-    return c;
-  }
-  function modeIdsFor(c, key, report2, dryRun) {
-    if (!c) return [key];
-    if (key === "*") return c.modes.map((m) => m.modeId);
-    const hit = c.modes.find((m) => modeName(m.name) === modeName(key));
-    if (hit) return [hit.modeId];
-    if (dryRun) {
-      if (!report2.modesAdded.includes(`${c.name}/${key}`)) report2.modesAdded.push(`${c.name}/${key}`);
-      return [];
-    }
-    if (report2.modesFailed && report2.modesFailed[c.name]) {
-      modeFailed(report2, c.name, key, {});
-      return [];
-    }
-    try {
-      const id = c.addMode(key);
-      report2.modesAdded.push(`${c.name}/${key}`);
-      return [id];
-    } catch (e) {
-      modeFailed(report2, c.name, key, e);
-      return [];
-    }
-  }
-  var rgba2 = (hex) => {
-    const { r, g, b, a } = hexToRgb(hex);
-    return { r, g, b, a };
-  };
-  async function libraryGuard(ix) {
-    if (OURS.every((n) => ix.col[n])) return null;
-    if (!figma.teamLibrary) return null;
-    let libs = [];
-    try {
-      libs = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
-    } catch (e) {
-      return null;
-    }
-    const connected = libs.filter((l) => OURS.includes(String(l.name).trim()));
-    if (!connected.length) return null;
-    const from = [...new Set(connected.map((l) => l.libraryName).filter(Boolean))].join(", ") || "Foundation";
-    return `\u0424\u0430\u0439\u043B \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u0442\u043E\u043A\u0435\u043D\u044B \u0438\u0437 \u0431\u0438\u0431\u043B\u0438\u043E\u0442\u0435\u043A\u0438 \xAB${from}\xBB. \u041F\u0440\u0438\u043C\u0435\u043D\u044F\u0442\u044C \u043D\u0443\u0436\u043D\u043E \u0432 \u0441\u0430\u043C\u043E\u043C \u0444\u0430\u0439\u043B\u0435 Foundation \u0438\u043B\u0438 \u0432 \u0435\u0433\u043E \u0432\u0435\u0442\u043A\u0435, \u0438\u043D\u0430\u0447\u0435 \u0437\u0434\u0435\u0441\u044C \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0435 \u043A\u043E\u043F\u0438\u0438 \u043A\u043E\u043B\u043B\u0435\u043A\u0446\u0438\u0439 ${OURS.join(" \u0438 ")}. \u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 (\u043F\u0440\u043E\u0431\u043D\u044B\u0439 \u043F\u0440\u043E\u0433\u043E\u043D) \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430.`;
-  }
-  async function applyWrites(writes, opts = {}) {
-    if (figma.editorType && figma.editorType !== "figma") throw new Error("\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u043C\u043E\u0436\u043D\u043E \u0442\u043E\u043B\u044C\u043A\u043E \u0432 \u0444\u0430\u0439\u043B\u0435 Figma Design (\u043D\u0435 FigJam)");
-    const dryRun = !!opts.dryRun;
-    const ix = await loadLocal();
-    if (!dryRun) {
-      const reason = await libraryGuard(ix);
-      if (reason) throw new Error(reason);
-    }
-    const prims = await primitiveIndex(ix);
-    const report2 = { dryRun, collectionsCreated: [], modesAdded: [], created: [], updated: [], aliased: [], raw: [], unchanged: 0, errors: [], changed: [] };
-    for (const w of writes) {
-      const key = `${w.collection}/${w.name}`;
-      const touched = () => {
-        if (!report2.changed.includes(key)) report2.changed.push(key);
-      };
-      const c = ensureCollection(ix, w.collection, report2, dryRun);
-      let v = ix.named[w.collection].get(w.name);
-      if (v && v.resolvedType !== w.type) {
-        report2.errors.push(`${w.collection}/${w.name}: \u0442\u0438\u043F ${v.resolvedType}, \u0430 \u043D\u0443\u0436\u0435\u043D ${w.type}`);
-        continue;
-      }
-      const fresh = !v;
-      if (fresh) {
-        report2.created.push(key);
-        touched();
-        if (!dryRun) {
-          v = figma.variables.createVariable(w.name, c, w.type);
-          v.scopes = w.scopes && w.scopes.length ? w.scopes : [];
-          if (w.css && (w.collection === THEME || /^custom\//.test(w.name)) && !/^brand\//.test(w.name)) v.setVariableCodeSyntax("WEB", `var(--${w.css})`);
-          ix.named[w.collection].set(w.name, v);
-          const first = Object.values(w.values)[0];
-          if (!(first && first.aliasOf)) for (const m of c.modes) v.setValueForMode(m.modeId, w.type === "COLOR" ? rgba2(first) : Number(first));
-        }
-      }
-      for (const [modeKey, wanted] of Object.entries(w.values)) {
-        for (const modeId of modeIdsFor(c, modeKey, report2, dryRun)) {
-          const label2 = `${w.collection}/${w.name} (${modeKey === "*" ? "\u0432\u0441\u0435 \u0440\u0435\u0436\u0438\u043C\u044B" : modeKey})`;
-          const current = v && !fresh ? v.valuesByMode[modeId] : void 0;
-          if (wanted && wanted.aliasOf) {
-            const target = ix.named[wanted.aliasOf.collection] && ix.named[wanted.aliasOf.collection].get(wanted.aliasOf.name);
-            if (!target && !dryRun) {
-              report2.errors.push(`${label2}: \u043D\u0435\u0442 \u043F\u0435\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0439 ${wanted.aliasOf.collection}/${wanted.aliasOf.name} \u0434\u043B\u044F \u0441\u0441\u044B\u043B\u043A\u0438`);
-              continue;
-            }
-            if (isAlias2(current) && target && current.id === target.id) {
-              report2.unchanged++;
-              continue;
-            }
-            report2.aliased.push(`${label2} \u2192 ${wanted.aliasOf.name}`);
-            touched();
-            if (!dryRun) v.setValueForMode(modeId, figma.variables.createVariableAlias(target));
-            continue;
-          }
-          const now = current === void 0 ? void 0 : plainValue(await resolve2(current, modeKey));
-          if (!fresh && current !== void 0 && sameValue(now, w.type === "COLOR" ? normHex(wanted) : wanted)) {
-            report2.unchanged++;
-            continue;
-          }
-          const before = isAlias2(current) ? "\u0441\u0441\u044B\u043B\u043A\u0430" : now;
-          touched();
-          if (w.type === "COLOR") {
-            const prim = prims.get(normHex(wanted));
-            if (prim) {
-              report2.aliased.push(`${label2} \u2192 ${prim.name}`);
-              if (!dryRun) v.setValueForMode(modeId, figma.variables.createVariableAlias(prim));
-            } else {
-              report2.raw.push(`${label2}: ${normHex(wanted)}${before !== void 0 ? ` (\u0431\u044B\u043B\u043E ${before})` : ""}`);
-              if (!dryRun) v.setValueForMode(modeId, rgba2(wanted));
-            }
-          } else if (!dryRun) v.setValueForMode(modeId, Number(wanted));
-          if (!fresh && current !== void 0) report2.updated.push(`${label2}: ${before} \u2192 ${wanted}`);
-        }
-      }
-    }
-    return report2;
-  }
-
   // plugin/src/bridge.js
   var URL_BASE = "http://localhost:3055";
   var BRIDGE_HTML = `<!doctype html><meta charset="utf-8"><body style="font:12px Inter,system-ui;margin:12px;color:#111">
@@ -10004,10 +5853,10 @@ loop();
       const cols2 = await figma.variables.getLocalVariableCollectionsAsync();
       return { file: figma.root.name, pages, collections: cols2.map((c) => ({ name: c.name, modes: c.modes.map((m) => m.name), variables: c.variableIds.length })) };
     },
+    // Creates / completes the «shadcn» collection (canonical values); reset: true rewrites every value.
     async "tokens-apply"(a) {
-      const plan = planAllBrands((b) => buildModel(tokens_default, { brand: b, edits: a.edits || {}, extras: a.extras || [] }), BRANDS, { all: true });
-      const r = await applyWrites(plan.writes, { dryRun: !!a.dryRun });
-      return { created: r.created.length, updated: r.updated.length, raw: r.raw.length, errors: r.errors };
+      const r = await ensureShadcn({ reset: !!a.reset });
+      return { created: r.created.length, reset: r.reset, collection: r.collection };
     }
   };
   function startBridge(handlers2) {
@@ -10121,26 +5970,6 @@ loop();
     if (!kitCache) kitCache = await scanKit();
     return kitCache;
   }
-  async function exportTokens(brand, style) {
-    const table2 = await readBrand(brand, style);
-    const colors = { light: {}, dark: {} };
-    for (const r of table2.rows) if (r.hex) colors[r.theme][r.token] = r.hex;
-    const ix = await loadIndex();
-    const custom = await resolveCustom(brand, style);
-    const radiusVar = ix.named[C.style].get("radius/lg");
-    const sm = ix.col[C.style].modes.find((m) => m.name === style) || ix.col[C.style].modes[0];
-    const missing = COLOR_TOKENS.filter((t) => !colors.light[t] || !colors.dark[t]);
-    return {
-      $schema: "ds-builder/tokens@1",
-      name: brand,
-      style: sm.name,
-      font: { sans: table2.font || "Inter", mono: "Geist Mono" },
-      radius: radiusVar ? radiusVar.valuesByMode[sm.modeId] : 10,
-      colors,
-      custom,
-      missing
-    };
-  }
   function screensReport(res) {
     const s = res.stats;
     const hand = (res.handDrawn || []).map((x) => `${x.role} ${x.count}`).join(", ");
@@ -10151,55 +5980,33 @@ loop();
     async init() {
       return { status: await inspect() };
     },
-    async setup(m) {
-      const report2 = await setupBrand(m);
-      return { report: report2, status: await inspect() };
+    async "tokens-apply"(m) {
+      const report2 = await ensureShadcn({ reset: !!m.reset });
+      return { report: report2, status: await inspect(), tokens: await readShadcn() };
     },
-    async rollback() {
-      const r = await rollbackBrand();
-      return { report: r, status: await inspect() };
-    },
-    async "add-brand"(m) {
-      await addBrand(m.name);
-      return { status: await inspect() };
-    },
-    async "remove-brand"(m) {
-      await removeBrand(m.name);
-      return { status: await inspect() };
-    },
-    async "read-brand"(m) {
-      return { table: await readBrand(m.brand, m.style) };
-    },
-    async "apply-brand"(m) {
-      const rows = await applyBrand(m.brand, m.tokens, m.keys, { reset: m.reset, snap: m.snap });
-      return { rows, table: await readBrand(m.brand, m.style) };
-    },
-    async "add-token"(m) {
-      const t = await addCustomToken(m.token);
-      return { token: t, custom: await listCustom() };
-    },
-    async "list-custom"() {
-      return { custom: await listCustom() };
+    async "tokens-read"() {
+      return { tokens: await readShadcn() };
     },
     async "scan-kit"() {
       kitCache = null;
       const k = await kit();
       return { kit: k.kit, count: k.components.length, components: k.components };
     },
-    async "export-css"(m) {
-      const tokens = await exportTokens(m.brand, m.style);
+    async "export-css"() {
+      const tokens = await readShadcn();
       return { tokens, css: toShadcnCss(tokens) };
     },
     async build(m) {
       const errors = [...validateSpec(m.spec), ...validateLinks(m.spec)];
       if (errors.length) return { errors };
+      await ensureShadcn();
       const { vars, radius } = await screenVars(await modeVars());
       const components = m.components === false ? null : await ensureContracts(m.spec, contracts_default, { font: m.font, create: m.create });
       if (components && components.built.length) kitCache = null;
       const k = await kit();
       const res = await buildSpec(
         m.spec,
-        { vars, radius, kit: k.kit, font: m.font, brand: m.brand, style: m.style, theme: m.theme, only: m.only, contracts: components ? components.sets : void 0 },
+        { vars, radius, kit: k.kit, font: m.font, theme: m.theme, only: m.only, contracts: components ? components.sets : void 0 },
         (done, total, label2) => post("progress", { done, total, label: label2 })
       );
       res.components = components && { built: components.built, failed: components.failed, unknown: components.unknown };
@@ -10230,7 +6037,7 @@ loop();
       return `\u041A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442\u044B: ${r.built} \u043D\u0430 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0435 \xAB${r.page}\xBB${r.failed.length ? `, \u043D\u0435 \u0441\u043E\u0431\u0440\u0430\u043D\u044B: ${r.failed.join(", ")}` : ""}${r.missing.length ? ` \xB7 \u043D\u0435\u0442 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 (${r.missing.length}): ${r.missing.slice(0, 8).join(", ")}` : " \xB7 \u0432\u0441\u0435 \u0442\u043E\u043A\u0435\u043D\u044B \u043D\u0430\u0439\u0434\u0435\u043D\u044B"}`;
     },
     async "build-example"() {
-      const r = await handlers.build({ spec: credit_crm_spec_default, brand: "bank", theme: "light" });
+      const r = await handlers.build({ spec: credit_crm_spec_default, theme: "light" });
       if (r.errors) return `\u0421\u043F\u0435\u043A\u0430 \u0441 \u043E\u0448\u0438\u0431\u043A\u0430\u043C\u0438: ${r.errors.slice(0, 3).join("; ")}`;
       return `\u042D\u043A\u0440\u0430\u043D\u044B: ${r.result.frames.length} \u0444\u0440\u0435\u0439\u043C\u043E\u0432, ${r.result.sections.length} \u044D\u043A\u0440\u0430\u043D\u043E\u0432 \xB7 ${r.result.report}`;
     }

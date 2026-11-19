@@ -1,0 +1,12 @@
+{
+  "common": { "close": "Close", "retry": "Retry", "reload": "Reload", "loading": "Loading" },
+  "host": {
+    "standalone": { "title": "Open in the Mbank app", "text": "This service works only inside the app." },
+    "failed": { "title": "Could not reach the app", "text": "Close the service and open it again." },
+    "expired": { "title": "Session expired", "text": "Sign in to the app again." }
+  },
+  "crash": { "title": "Something went wrong", "text": "Reload the service. If it happens again, contact support." },
+  "offline": "No internet. Fresh data will appear when the connection is back.",
+  "notFound": { "title": "Page not found", "action": "Go home" },
+  "home": { "title": "Home", "greeting": "Hi, {{name}}", "phone": "Phone", "error": "Could not load the profile" }
+}

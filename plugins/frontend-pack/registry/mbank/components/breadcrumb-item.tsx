@@ -19,7 +19,7 @@ const breadcrumbItemVariants = cva(
         true: "text-foreground font-medium",
       },
     },
-    defaultVariants: { current: "false" },
+    defaultVariants: { current: false },
   },
 )
 // @contract breadcrumb-item end
@@ -44,7 +44,7 @@ function BreadcrumbItem({ className, label, href, current = false, ...props }: B
         <a
           data-slot="breadcrumb-item-label"
           href={href}
-          className="truncate rounded-xs outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30"
+          className="truncate rounded-xs outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           {label}
         </a>

@@ -33,7 +33,7 @@ export function BoardColumn({ title, count, sla, children, footer, emptyText = "
             {count}
           </Badge>
         </div>
-        {sla && <p className="truncate text-caption text-muted-foreground">{sla}</p>}
+        {sla && <p className="truncate text-xs text-muted-foreground">{sla}</p>}
       </header>
       {cards.length > 0 ? (
         <ul className="flex flex-col gap-2">
@@ -42,7 +42,7 @@ export function BoardColumn({ title, count, sla, children, footer, emptyText = "
           ))}
         </ul>
       ) : (
-        <p className="rounded-md border border-dashed border-border-secondary px-3 py-6 text-center text-sm text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-3 py-6 text-center text-sm text-muted-foreground">
           {emptyText}
         </p>
       )}

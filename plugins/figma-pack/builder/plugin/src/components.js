@@ -4,8 +4,7 @@
 // contract.anatomy nests parts (parent), fixes widths, fills, stroke sides, sample text and places
 // library instances (Badge-status), so a block like «CRM / Application card» is drawn as the designers drew it.
 import { validateContract, variantList, resolveStyle, inherited, layoutFor, diffVariants, splitToken, partKind, parentOf, statesOf, STEP } from '../../core/contract.js';
-import { TOKEN_MAP } from '../../core/token-map.js';
-import { TYPE_SCALE } from '../../core/tokens.js';
+import { TYPE_SCALE, radiusScale } from '../../core/tokens.js';
 import { createCtx, loadFonts, textStyle } from './draw.js';
 import { icon } from './icons.js';
 import { importByKey } from './library-import.js';
@@ -14,9 +13,8 @@ import { tokenIndex, colorVar, floatVar } from './tokens-resolve.js';
 export const PAGE = 'Components';
 export const KEY = 'mbank-contract';
 const GAP = 24;
-const RADIUS_PX = { none: 0, '2xs': 2, xs: 2, sm: 4, md: 8, lg: 12, xl: 16, '2xl': 20, '3xl': 24, '4xl': 32, full: 9999 };
+const RADIUS_PX = { none: 0, ...radiusScale(), full: 9999 };
 const MAGENTA = { r: 1, g: 0, b: 1 };
-const WEIGHT_SUFFIX = { medium: '-md', semibold: '-strong', bold: '-strong' };
 
 /** Page for the set: contract.figma.page (e.g. «☰ CRM blocks» in CRM UI KIT), default «Components». */
 export async function componentsPage(name = PAGE) {
@@ -59,7 +57,9 @@ async function ringFor(r, value) {
   return figma.variables.setBoundVariableForEffect(effect, 'color', v);
 }
 
+// Spacing has no shadcn token: the raw number set by the layout stays, nothing to bind.
 async function bindFloat(r, node, fields, kind, value) {
+  if (kind === 'space') return;
   const v = await floatVar(r.t, kind, value);
   if (!v) { r.unbound++; return; }
   for (const f of fields) node.setBoundVariable(f, v);
@@ -103,37 +103,20 @@ async function applyFrame(r, node, s, a = {}) {
   if (s.radius !== undefined) {
     const v = await floatVar(r.t, 'radius', s.radius);
     if (v) { for (const f of ['topLeftRadius', 'topRightRadius', 'bottomLeftRadius', 'bottomRightRadius']) node.setBoundVariable(f, v); r.bound++; }
-    else node.cornerRadius = RADIUS_PX[s.radius] ?? 8;
+    else node.cornerRadius = RADIUS_PX[s.radius] ?? RADIUS_PX.md;
   } else node.cornerRadius = 0;
   node.opacity = s.opacity !== undefined ? s.opacity / 100 : 1;
   node.effects = s['focus-ring'] ? [await ringFor(r, s['focus-ring'])] : [];
 }
 
-// Mbank Foundation text style (font/Body/s[-md]) first, then the kit / ds/* styles from draw.js.
+// Text styles: the kit's text-<size>/leading-normal/<weight> or the ds/* styles from draw.js.
 async function pickTextStyle(r, size, weight) {
   const key = `${size}/${weight}`;
   if (r.textStyles.has(key)) return r.textStyles.get(key);
-  const local = new Map((await figma.getLocalTextStylesAsync()).map((s) => [s.name, s]));
-  const mapped = TOKEN_MAP.text[size];
-  let st = null;
-  for (const name of mapped ? [`${mapped}${WEIGHT_SUFFIX[weight] || ''}`, mapped] : []) {
-    const hit = local.get(name) || (await libraryStyle(name));
-    if (!hit) continue;
-    try { await figma.loadFontAsync(hit.fontName); st = hit; break; } catch (e) { /* font not installed */ }
-  }
-  if (!st) {
-    const sz = TYPE_SCALE[size] ? size : { '2xs': 'xs', caption: 'xs', md: 'sm', '5xl': '4xl', '6xl': '4xl', '7xl': '4xl' }[size] || 'sm';
-    st = await textStyle(r.ctx, sz, weight);
-  }
+  const sz = TYPE_SCALE[size] ? size : { '2xs': 'xs', caption: 'xs', md: 'sm', '5xl': '4xl', '6xl': '4xl', '7xl': '4xl' }[size] || 'sm';
+  const st = await textStyle(r.ctx, sz, weight);
   r.textStyles.set(key, st);
   return st;
-}
-
-// Web components text style through its baked key (CRM UI KIT uses it as a library).
-async function libraryStyle(name) {
-  const key = TOKEN_MAP.styleKeys && TOKEN_MAP.styleKeys[name];
-  if (!key || !figma.importStyleByKeyAsync) return null;
-  return importByKey(() => figma.importStyleByKeyAsync(key));
 }
 
 const LABELS = { button: 'Кнопка', badge: 'Статус', pagination: '1', 'tabs-trigger': 'Вкладка', avatar: 'АТ' };
@@ -299,7 +282,7 @@ async function renderSingle(r, t, page, found, c) {
 }
 
 /**
- * opts: { font, create (missing colour tokens -> Brand; default true), prune (remove stale variants) }.
+ * opts: { font, create (a missing shadcn colour creates the shadcn collection; default true), prune (remove stale variants) }.
  * Returns the report and the contract with figma.nodeId filled in.
  */
 export async function renderContract(c, opts = {}) {

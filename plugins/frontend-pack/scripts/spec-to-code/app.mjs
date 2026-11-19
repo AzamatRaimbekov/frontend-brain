@@ -169,7 +169,7 @@ export function AppLayout() {
   const [collapsed, setCollapsed] = useState(false)
   if (header?.plain) {
     return (
-      <main className="flex min-h-dvh items-center justify-center bg-surface-1 p-4">
+      <main className="flex min-h-dvh items-center justify-center bg-muted p-4">
         <Outlet />
       </main>
     )

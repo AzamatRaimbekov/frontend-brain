@@ -181,12 +181,56 @@ const tests = {
         encoding: 'utf8', input: JSON.stringify({ prompt, cwd }),
       }).stdout;
     try {
-      assert.equal(hook('сделай страницу заказов'), '', 'not a frontend project and no stack words');
+      assert.match(hook('сделай страницу заказов'), /frontend-pack:frontend/, 'empty folder: a UI task still goes through the brain');
+      assert.match(hook('мне нужна одна страница где есть калькулятор'), /frontend-pack:frontend/);
+      assert.equal(hook('подними докер на сервере'), '', 'infra task in an empty folder');
+      writeFileSync(join(dir, 'package.json'), JSON.stringify({ dependencies: { express: '5.0.0' } }));
+      assert.equal(hook('сделай страницу заказов'), '', 'backend project, no stack words');
       assert.match(hook('сделай страницу заказов на React'), /frontend-pack:frontend/);
       writeFileSync(join(dir, 'package.json'), JSON.stringify({ dependencies: { react: '19.0.0' } }));
       assert.match(hook('сделай страницу заказов'), /frontend-pack:frontend/);
       assert.equal(hook('сколько будет 2+2'), '');
       assert.equal(hook('$frontend сделай страницу'), '', 'already routed');
+      assert.match(hook('сделай страницу заказов'), /Mode vibe/, 'fast by default');
+      assert.match(hook('сделай страницу заказов до MR'), /Mode team/, 'process on request');
+      mkdirSync(join(dir, '.frontend'));
+      writeFileSync(join(dir, '.frontend', 'mode'), 'team\n');
+      assert.match(hook('сделай страницу заказов'), /Mode team/, 'project switch');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  },
+  'require-frontend-skill blocks frontend code until the brain is loaded'() {
+    const dir = mkdtempSync(join(tmpdir(), 'frontend-brain-'));
+    try {
+      writeFileSync(join(dir, 'package.json'), JSON.stringify({ dependencies: { react: '19.0.0' } }));
+      const transcript = join(dir, 'session.jsonl');
+      writeFileSync(transcript, '{"type":"user","message":{"content":"сделай калькулятор"}}\n');
+      const input = (file, extra = {}) => ({ tool_name: 'Write', tool_input: { file_path: join(dir, file) }, transcript_path: transcript, ...extra });
+      const r = run('require-frontend-skill.mjs', input('src/App.tsx'));
+      assert.equal(r.status, 2);
+      assert.match(r.stderr, /frontend-pack:frontend/);
+      assert.equal(run('require-frontend-skill.mjs', input('src/index.css')).status, 2, 'styles too');
+      assert.equal(run('require-frontend-skill.mjs', input('README.md')).status, 0, 'not code');
+      assert.equal(run('require-frontend-skill.mjs', input('src/App.test.tsx')).status, 0, 'tests are free');
+      assert.equal(run('require-frontend-skill.mjs', input('src/App.tsx', { agent_type: 'frontend-pack:frontend-engineer' })).status, 0);
+      assert.equal(run('require-frontend-skill.mjs', input('src/App.tsx'), { MDIGITAL_SKILL_GATE: 'off' }).status, 0);
+      const bash = (command) => run('require-frontend-skill.mjs', { tool_name: 'Bash', tool_input: { command }, transcript_path: transcript }).status;
+      assert.equal(bash('npm create vite@latest calc -- --template react-ts'), 2, 'bare scaffold is gated');
+      assert.equal(bash('npx create-next-app@latest web'), 2);
+      assert.equal(bash('npm install && npm run build'), 0, 'other commands pass');
+      const empty = mkdtempSync(join(tmpdir(), 'no-pkg-'));
+      const orphan = (f) => run('require-frontend-skill.mjs', { tool_name: 'Write', tool_input: { file_path: join(empty, f) }, transcript_path: transcript }).status;
+      assert.equal(orphan('calc/src/App.tsx'), 2, 'a .tsx with no package.json is a React project being born');
+      assert.equal(orphan('notes/style.css'), 0, 'plain css outside a project is not gated');
+      rmSync(empty, { recursive: true, force: true });
+      writeFileSync(transcript, '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Skill","input":{"skill":"frontend-pack:frontend"}}]}}\n', { flag: 'a' });
+      assert.equal(run('require-frontend-skill.mjs', input('src/App.tsx')).status, 0, 'skill loaded');
+      assert.equal(run('require-frontend-skill.mjs', { tool_name: 'Bash', tool_input: { command: 'npm create vite@latest x' }, transcript_path: transcript }).status, 0, 'scaffold after the skill');
+      const other = mkdtempSync(join(tmpdir(), 'not-frontend-'));
+      writeFileSync(join(other, 'package.json'), '{}');
+      assert.equal(run('require-frontend-skill.mjs', { ...input('x'), tool_input: { file_path: join(other, 'src/a.tsx') }, transcript_path: join(other, 'none.jsonl') }).status, 0, 'not a frontend project');
+      rmSync(other, { recursive: true, force: true });
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

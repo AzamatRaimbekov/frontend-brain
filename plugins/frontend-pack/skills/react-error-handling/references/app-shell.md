@@ -58,7 +58,7 @@ export function OfflineBanner() {
   const online = useOnlineStatus()
   if (online) return null
   return (
-    <div role="status" className="sticky top-0 z-[var(--z-sticky,50)] bg-status-warning-muted px-4 py-2 text-center text-sm text-status-warning-foreground">
+    <div role="status" className="sticky top-0 z-50 bg-muted px-4 py-2 text-center text-sm text-foreground">
       {m.offline}
     </div>
   )
@@ -67,7 +67,7 @@ export function OfflineBanner() {
 
 - Put `<OfflineBanner />` once, in the app layout under the providers (it needs `QueryClientProvider` only for consistency with `onlineManager`, which is a singleton).
 - Submit buttons of forms that need the server: keep them enabled; a paused mutation shows the pending state and resumes. For actions that must not wait (payment confirmation), disable the button with `!online` and say why next to it.
-- Products that are not Mbank: replace the status tokens with the project's warning tokens.
+- Colours: only standard shadcn tokens (`bg-muted`, `text-foreground`); there is no warning token, the text carries the meaning.
 
 ## Not found
 

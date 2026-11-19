@@ -3,7 +3,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createFigma, seedKit } from './figma-mock.mjs';
-import { COLOR_TOKENS, EXTENSION_TOKENS } from '../core/tokens.js';
 import { normalizeSpec, validateSpec } from '../core/spec.js';
 import { resolveLinks, parseAction, actionLabel, validateLinks } from '../core/links.js';
 
@@ -14,9 +13,8 @@ const to = (links, from, on) => links.find((l) => l.from === from && l.on === on
 async function build(opts = {}, s = spec) {
   const m = createFigma();
   globalThis.figma = m.figma;
-  await seedKit(m.figma, COLOR_TOKENS.filter((t) => !EXTENSION_TOKENS.includes(t)));
-  const brand = await import('../plugin/src/brand.js');
-  await brand.setupBrand({ fixNames: true });
+  await seedKit(m.figma);
+  const brand = await import('../plugin/src/variables.js');
   const { vars, radius } = await brand.modeVars();
   const { buildSpec } = await import('../plugin/src/screens.js');
   const run = (o) => buildSpec(s, { vars, radius, kit: {}, font: 'Inter', ...o });

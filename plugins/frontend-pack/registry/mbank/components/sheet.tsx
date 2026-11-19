@@ -7,8 +7,7 @@ import { CloseIcon } from "./icons"
 
 /*
  * Side panel on Radix Dialog: record details, filters, edit forms next to a CRM table.
- * Same overlay, surface, shadow and z-index as Dialog (misc/overlay/default, onsurface/0,
- * shadow/modal, z-modal). On phones the bottom side is the web stand-in for Bottom sheet.
+ * Same overlay, surface, shadow and z-index as Dialog (bg-black/50, card, shadow-lg, z-50). On phones the bottom side is the web stand-in for Bottom sheet.
  */
 function Sheet(props: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
@@ -23,7 +22,7 @@ function SheetClose(props: React.ComponentProps<typeof SheetPrimitive.Close>) {
 }
 
 const sheetVariants = cva(
-  "fixed z-(--z-modal) flex flex-col gap-4 overflow-y-auto bg-card text-card-foreground shadow-modal outline-none transition ease-in-out data-[state=open]:animate-in data-[state=open]:duration-300 data-[state=closed]:animate-out data-[state=closed]:duration-200 motion-reduce:animate-none",
+  "fixed z-50 flex flex-col gap-4 overflow-y-auto bg-card text-card-foreground shadow-lg outline-none transition ease-in-out data-[state=open]:animate-in data-[state=open]:duration-300 data-[state=closed]:animate-out data-[state=closed]:duration-200 motion-reduce:animate-none",
   {
     variants: {
       side: {
@@ -51,7 +50,7 @@ function SheetContent({ className, children, side = "right", size = "md", showCl
     <SheetPrimitive.Portal>
       <SheetPrimitive.Overlay
         data-slot="sheet-overlay"
-        className="fixed inset-0 z-(--z-overlay) bg-overlay data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0"
+        className="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0"
       />
       <SheetPrimitive.Content
         data-slot="sheet-content"
@@ -63,7 +62,7 @@ function SheetContent({ className, children, side = "right", size = "md", showCl
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
-            className="absolute top-4 right-4 inline-flex size-8 items-center justify-center rounded-sm text-muted-foreground transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30"
+            className="absolute top-4 right-4 inline-flex size-8 items-center justify-center rounded-sm text-muted-foreground transition-colors outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <CloseIcon className="size-5" />
             <span className="sr-only">Закрыть</span>

@@ -14,13 +14,13 @@
   },
   "variants": {
     "tone": {
-      "neutral": { "root": { "bg": "status-neutral-muted", "fg": "status-neutral-foreground" } },
-      "success": { "root": { "bg": "status-success-muted", "fg": "status-success-foreground" } },
-      "error": { "root": { "bg": "status-error-muted", "fg": "status-error-foreground" } }
+      "neutral": { "root": { "bg": "secondary", "fg": "secondary-foreground" } },
+      "success": { "root": { "bg": "primary/10", "fg": "primary" } },
+      "error": { "root": { "bg": "destructive/10", "fg": "destructive" } }
     },
     "fill": {
       "ghost": {},
-      "solid": { "root": { "fg": "status-filled-foreground" } }
+      "solid": { "root": { "fg": "primary-foreground" } }
     },
     "size": {
       "sm": { "root": { "height": 5, "px": 1.5, "text": "xs" } },
@@ -28,9 +28,9 @@
     }
   },
   "compound": [
-    { "when": { "fill": "solid", "tone": "neutral" }, "root": { "bg": "status-neutral" } },
-    { "when": { "fill": "solid", "tone": "success" }, "root": { "bg": "status-success" } },
-    { "when": { "fill": "solid", "tone": "error" }, "root": { "bg": "status-error" } }
+    { "when": { "fill": "solid", "tone": "neutral" }, "root": { "bg": "muted-foreground" } },
+    { "when": { "fill": "solid", "tone": "success" }, "root": { "bg": "primary" } },
+    { "when": { "fill": "solid", "tone": "error" }, "root": { "bg": "destructive" } }
   ],
   "states": ["default"],
   "code": { "file": "badge.tsx", "export": "badgeVariants", "extra": "w-fit shrink-0 overflow-hidden whitespace-nowrap" }

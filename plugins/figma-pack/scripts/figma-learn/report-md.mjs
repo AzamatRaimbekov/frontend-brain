@@ -13,7 +13,7 @@ export function renderReport(r) {
     '# Figma: что у нас в макетах (figma-learn)',
     '',
     `Сгенерировано ${r.generatedAt.slice(0, 10)}. Файлов ${t.files}, страниц ${t.pages}, экранов-фреймов ${t.screens} (уникальных экранов ${t.screenGroups}). Готовность к разработке в среднем: **${t.score ?? '—'}/100**.`,
-    `Источники: catalog.json ${r.sources.catalog ? 'да' : 'нет'}, карта компонентов design-engine ${r.sources.componentsMap ? 'да' : 'нет (статусы кода из catalog.json)'}, tokens.json ${r.sources.tokens ? 'да' : 'нет'}.`,
+    `Источники: catalog.json ${r.sources.catalog ? 'да' : 'нет'}, карта компонентов design-engine ${r.sources.componentsMap ? 'да' : 'нет (статусы кода из catalog.json)'}, shadcn-tokens.json ${r.sources.tokens ? 'да' : 'нет'}.`,
     '',
     '## Типы экранов',
     '',
@@ -41,7 +41,7 @@ export function renderReport(r) {
     '',
   ];
   if (h.rawHex.length) {
-    out.push('Сырые hex (чаще всего) и ближайший токен 2.theme:', '');
+    out.push('Сырые hex (чаще всего) и ближайший токен shadcn:', '');
     out.push(...table(['hex', 'Раз', 'Токен', 'Совпадение'], h.rawHex.slice(0, 12).map((x) => [x.hex, x.count, x.token?.name || '—', x.token ? (x.token.exact ? 'точное' : x.token.far ? `далеко, ≈ ${x.token.distance}: цвет вне палитры` : `≈ ${x.token.distance}`) : '—'])), '');
   }
   out.push('## Бэклог кита (топ)', '');

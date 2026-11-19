@@ -5,9 +5,8 @@ import { cn } from "@/shared/lib/utils"
 import { CheckIcon, MinusIcon } from "./icons"
 
 /*
- * Figma `Switchers - Check` Type=Checkbox. Selected uses the product brand (1.brand) so it follows
- * data-brand. TODO: confirm the selected fill against the Switchers frame (colour not in tokens.md).
- * Figma has no error/indeterminate states (G10); aria-invalid and indeterminate are added for code.
+ * Figma `Switchers - Check` Type=Checkbox on shadcn tokens: checked = primary, error = aria-invalid
+ * (destructive), disabled = opacity-50. Indeterminate is supported in code.
  */
 function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
   return (
@@ -15,7 +14,7 @@ function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxP
       data-slot="checkbox"
       className={cn(
         // @contract checkbox start
-        "peer size-5 shrink-0 rounded-xs border border-input bg-background transition-colors outline-none hover:border-input-hover focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:border-input-disabled disabled:bg-muted aria-invalid:border-border-destructive data-[state=checked]:border-brand data-[state=checked]:bg-brand data-[state=checked]:text-brand-foreground data-[state=indeterminate]:border-brand data-[state=indeterminate]:bg-brand data-[state=indeterminate]:text-brand-foreground disabled:data-[state=checked]:opacity-50",
+        "peer size-5 shrink-0 rounded-sm border border-input bg-background transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed aria-invalid:border-destructive data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground disabled:opacity-50",
         // @contract checkbox end
         className,
       )}

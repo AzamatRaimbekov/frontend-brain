@@ -1,7 +1,7 @@
 // Project page: header and the three tabs (tokens, Figma, code). The tab lives in the hash.
-import { Badge } from "@/generated/kit/ui/badge"
-import { Skeleton } from "@/generated/kit/ui/skeleton"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/generated/kit/ui/tabs"
+import { Badge } from "@/kit/ui/badge"
+import { Skeleton } from "@/kit/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/kit/ui/tabs"
 
 import { ErrorAlert } from "../error-alert"
 import { useProject } from "../queries"
@@ -28,26 +28,25 @@ export function ProjectPage({ id, tab }: { id: string; tab: ProjectTab }) {
     return (
       <main className="mx-auto max-w-3xl p-4 md:p-6">
         <ErrorAlert error={query.error} title="Проект не открылся" />
-        <a href="#/" className="mt-3 inline-block text-sm text-link underline-offset-4 hover:underline">← К проектам</a>
+        <a href="#/" className="mt-3 inline-block text-sm text-primary underline-offset-4 hover:underline">← К проектам</a>
       </main>
     )
   }
   const { project, tokens, rows } = query.data
-  const changed = rows.filter((r) => r.overridden.light || r.overridden.dark).length
+  const changed = rows.filter((r) => r.overridden).length
 
   return (
     <main className="mx-auto grid max-w-7xl gap-4 p-4 md:p-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
-          <a href="#/" className="text-caption text-muted-foreground hover:text-foreground">← Проекты</a>
+          <a href="#/" className="text-xs text-muted-foreground hover:text-foreground">← Проекты</a>
           <h1 className="truncate text-2xl font-semibold">{project.name}</h1>
-          <p className="font-mono text-caption text-muted-foreground">{project.id}</p>
+          <p className="font-mono text-xs text-muted-foreground">{project.id}</p>
         </div>
         <div className="flex flex-wrap gap-1.5">
-          <Badge tone="accent">Mbank · {tokens.brand}</Badge>
-          <Badge>версия {tokens.version}</Badge>
-          <Badge tone={changed ? "warning" : "clear"}>изменено {changed}</Badge>
-          <Badge tone={tokens.custom.length ? "info" : "clear"}>своих {tokens.custom.length}</Badge>
+          <Badge variant="outline">shadcn</Badge>
+          <Badge variant="outline">версия {tokens.version}</Badge>
+          <Badge variant={changed ? "secondary" : "outline"}>изменено {changed}</Badge>
         </div>
       </header>
       <Tabs value={tab} onValueChange={go}>

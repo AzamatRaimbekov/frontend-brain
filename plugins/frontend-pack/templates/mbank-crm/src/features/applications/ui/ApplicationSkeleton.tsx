@@ -5,14 +5,14 @@ import { applicationMessages as m } from '../lib/messages'
 export function ApplicationSkeleton() {
   return (
     <div role="status" aria-label={m.loading} className="flex flex-col gap-4">
-      <Skeleton className="h-36 rounded-lg bg-surface-0" />
-      <Skeleton className="h-20 rounded-lg bg-surface-0" />
+      <Skeleton className="h-36 rounded-lg" />
+      <Skeleton className="h-20 rounded-lg" />
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex flex-col gap-4">
-          <Skeleton className="h-54 rounded-lg bg-surface-0" />
-          <Skeleton className="h-54 rounded-lg bg-surface-0" />
+          <Skeleton className="h-54 rounded-lg" />
+          <Skeleton className="h-54 rounded-lg" />
         </div>
-        <Skeleton className="h-58 rounded-lg bg-surface-0" />
+        <Skeleton className="h-58 rounded-lg" />
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-// Mbank mobile screen recipe for use_figma (Mobile KIT + Foundation + Icons).
+// Mbank mobile screen recipe for use_figma (Mobile KIT components + Icons; colours from the shadcn token variables).
 // Verified 2026-10-09 on a Full seat (devmd8) in file vVuM5uw3TsWo1xm3vJelXG; Section placement verified 2026-10-12 (Android 360).
 // Edit only SPEC; keep the helpers. Paste the whole file as the `code` of one use_figma call
 // with skillNames "resource:figma-use,resource:figma-generate-design".
@@ -31,13 +31,9 @@ const C = { // component sets, Mobile KIT
   cell: '561d137e2174b6b0b8f7dc6af482b607d78c4b0a', button: '8a0f638023ddb1a03daba6f5c644e0f74b8430fc',
   tabBar: '5546b31b33302a29ea0d8b4c50dc6dbe0b15e6e2',
 };
-const V = { // variables
-  bg: '597e34eb4635ee8b4625923be7f8b6496f987f1c',          // background/onsurface/0
-  p0: 'fb109a5072b402ff23bef536000e8e6b2c5ef8d5',          // paddings/default/none 0
-  p8: '6e80bc94476fe9fb8e18a2ecd1184d9cc31865df',          // paddings/default/s 8
-  p12: 'c44220317b3fa1713b480e666de7cd5fc2540446',         // paddings/default/s - 2 12
-  p16: '81a966b963f940ab223bdc6d0742e7222a85a39f',         // paddings/default/m - 2 16
-};
+// Colour variables: the standard shadcn token names (ds-tokens), looked up by name in the file. No other token layer exists.
+// Spacing is not a token: paddings and gaps are px on the 4 px grid (Tailwind spacing scale).
+const COLOR = { bg: 'background' };
 const ICON = {
   home: 'a78b8d74715500596284c5d5c85e37aeb7c3b498', wallet: '82c50e7fa879ad24f1836a01a79ec9d828f6dab8',
   'swap-arrow-horizontal': 'e461d58e04b90167d19a71bc8301e8ff3d655cd1', time: 'b3fba14b0ae7d05a7eadc0667465384df9342fe9',
@@ -78,15 +74,16 @@ function setText(root, layerName, value, nth = 0) {
   const t = root.findAllWithCriteria({ types: ['TEXT'] }).filter(n => n.name === layerName && n.visible)[nth];
   if (t) t.characters = value; else report.warnings.push(`no text layer "${layerName}" in ${root.name}`);
 }
-const bind = (n, map) => { for (const [p, key] of Object.entries(map)) n.setBoundVariable(p, VARS[key]); };
+const pad = (n, map) => { for (const [p, px] of Object.entries(map)) n[p] = px; };
 
 // ---- imports in parallel ----
-const [sets, varList] = await Promise.all([
+const [sets, colorVars] = await Promise.all([
   Promise.all(Object.values(C).map(k => figma.importComponentSetByKeyAsync(k))),
-  Promise.all(Object.values(V).map(k => figma.variables.importVariableByKeyAsync(k))),
+  figma.variables.getLocalVariablesAsync('COLOR'),
 ]);
 const S = Object.fromEntries(Object.keys(C).map((k, i) => [k, sets[i]]));
-const VARS = Object.fromEntries(Object.keys(V).map((k, i) => [k, varList[i]]));
+const VARS = Object.fromEntries(Object.entries(COLOR).map(([k, name]) => [k, colorVars.find(v => v.name === name || v.name.endsWith('/' + name)) || null]));
+for (const [k, v] of Object.entries(VARS)) if (!v) report.warnings.push(`no shadcn variable "${COLOR[k]}" in the file: create the token variables first (ds-tokens)`);
 
 // ---- page + screen frame ----
 if (SPEC.page) {
@@ -107,8 +104,8 @@ screen.resize(SPEC.width, SPEC.height);
 screen.primaryAxisSizingMode = 'FIXED'; screen.counterAxisSizingMode = 'FIXED';
 screen.x = maxX ? maxX + 80 : 80; screen.y = 80; screen.clipsContent = true;
 section.resizeWithoutConstraints(Math.max(section.width, screen.x + screen.width + 80), Math.max(section.height, screen.y + screen.height + 80));
-screen.fills = [figma.variables.setBoundVariableForPaint({ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }, 'color', VARS.bg)];
-bind(screen, { paddingTop: 'p0', paddingBottom: 'p0', paddingLeft: 'p0', paddingRight: 'p0', itemSpacing: 'p0' });
+screen.fills = VARS.bg ? [figma.variables.setBoundVariableForPaint({ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }, 'color', VARS.bg)] : [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+pad(screen, { paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, itemSpacing: 0 });
 report.created.push(screen.id);
 
 async function place(parent, inst, fill = true) {
@@ -144,7 +141,7 @@ async function place(parent, inst, fill = true) {
 // 3. Body: scrollable content, paddings 8/16, gap 12
 const body = figma.createAutoLayout('VERTICAL', { name: 'Body' }); body.fills = []; // createAutoLayout adds an unbound white fill
 screen.appendChild(body); body.layoutSizingHorizontal = 'FILL'; body.layoutSizingVertical = 'FILL';
-bind(body, { paddingTop: 'p8', paddingLeft: 'p16', paddingRight: 'p16', paddingBottom: 'p0', itemSpacing: 'p12' });
+pad(body, { paddingTop: 8, paddingLeft: 16, paddingRight: 16, paddingBottom: 0, itemSpacing: 12 });
 if (SPEC.search) {
   const s = await place(body, variant(S.search, { State: 'default' }).createInstance());
   if (s) setText(s, 'Text', SPEC.search);
@@ -154,7 +151,7 @@ for (const sec of SPEC.sections) {
   if (sh) setText(sh, 'Headline', sec.header);
   const list = figma.createAutoLayout('VERTICAL', { name: sec.header }); list.fills = [];
   body.appendChild(list); list.layoutSizingHorizontal = 'FILL';
-  bind(list, { itemSpacing: 'p0', paddingTop: 'p0', paddingBottom: 'p0', paddingLeft: 'p0', paddingRight: 'p0' });
+  pad(list, { itemSpacing: 0, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0 });
   for (const it of sec.items) {
     const leading = it.icon ? 'icon' : 'avatar';
     const cell = await place(list, variant(S.cell, { Leading: leading, Trailing: 'icon', Overline: 'false', Description: it.subtitle ? 'true' : 'false', Badge: 'False' }).createInstance());
@@ -175,7 +172,7 @@ for (const sec of SPEC.sections) {
 if (SPEC.primaryAction) {
   const footer = figma.createAutoLayout('VERTICAL', { name: 'Footer' }); footer.fills = [];
   screen.appendChild(footer); footer.layoutSizingHorizontal = 'FILL';
-  bind(footer, { paddingTop: 'p0', paddingLeft: 'p16', paddingRight: 'p16', paddingBottom: 'p12', itemSpacing: 'p0' });
+  pad(footer, { paddingTop: 0, paddingLeft: 16, paddingRight: 16, paddingBottom: 12, itemSpacing: 0 });
   const btn = await place(footer, variant(S.button, { size: 'xl', variant: 'primary', state: 'default' }).createInstance());
   if (btn) {
     const key = Object.keys(btn.componentProperties).find(k => k.startsWith('Button Content'));
@@ -197,12 +194,12 @@ if (SPEC.primaryAction) {
   }
 }
 
-// ---- audit: raw paddings / gaps / fills on our own frames must be 0 ----
+// ---- audit: off-grid paddings / gaps and unbound fills on our own frames must be 0 ----
 const raw = [];
 const inInstance = n => { for (let p = n.parent; p && p !== screen; p = p.parent) if (p.type === 'INSTANCE') return true; return false; };
 for (const f of [screen, ...screen.findAll(n => n.type === 'FRAME' && !inInstance(n))]) {
   for (const p of ['paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'itemSpacing']) {
-    if (f[p] !== 0 && !f.boundVariables?.[p]) raw.push(`${f.name}.${p}=${f[p]}`);
+    if (f[p] % 4 !== 0 && f[p] !== 2 && f[p] !== 6) raw.push(`${f.name}.${p}=${f[p]} (off the 4 px grid)`);
   }
   for (const paint of f.fills || []) if (paint.type === 'SOLID' && paint.visible !== false && !paint.boundVariables?.color) raw.push(`${f.name}.fill`);
 }

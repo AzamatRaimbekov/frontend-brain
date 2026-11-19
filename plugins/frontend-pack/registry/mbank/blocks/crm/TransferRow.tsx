@@ -18,7 +18,7 @@ export type Transfer = {
   amount: string
   /** "Приложение", "Интернет-банк". */
   channel: string
-  /** { label: "Успешно", tone: "success" } — Figma Badge-status S rounded. */
+  /** { label: "Успешно", tone: "accent" } — Figma Badge-status S rounded. */
   status: { label: string; tone: BadgeTone }
 }
 
@@ -49,7 +49,7 @@ export function TransferRow({ transfer: t, onOpen, className }: TransferRowProps
       tabIndex={onOpen ? 0 : undefined}
       onClick={onOpen && (() => onOpen(t.id))}
       onKeyDown={onOpen && onKeyDown}
-      className={cn("bg-background", onOpen && "cursor-pointer focus-visible:bg-surface-1 focus-visible:outline-none", className)}
+      className={cn("bg-background", onOpen && "cursor-pointer focus-visible:bg-muted/50 focus-visible:outline-none", className)}
     >
       <TableCell data-slot="transfer-row-id-cell" className={cell}>
         {t.id}

@@ -24,7 +24,7 @@
 ## Нет Inter Mbank (G03)
 
 - В Figma: web/CRM экраны Mbank агент собирает только как `[draft]` на Inter и только с согласия пользователя (`mbank-figma-patterns`, `references/crm-screen.md` §0). Такой черновик дизайнер переводит на Inter Mbank после загрузки шрифта (`crm-screen.md` §6), иначе он не проходит ворота A.
-- В коде: `--font-sans` с Inter Mbank первым и запасными шрифтами следом (`mbank-design-system/references/code-mapping.md` §4). Пока файлов шрифта нет, в отчёте и PR пишется «Inter Mbank не подключён, отрисовано запасным шрифтом».
+- В коде шрифт не зависит от G03: он берётся из токенов shadcn (`--font-sans`, `--font-heading` в `figma-pack/skills/ds-tokens/references/shadcn-tokens.json`), проект меняет только значение.
 
 ## Нет Code Connect (G15)
 

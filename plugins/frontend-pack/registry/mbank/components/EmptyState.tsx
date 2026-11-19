@@ -4,8 +4,7 @@ import { cn } from "@/shared/lib/utils"
 
 /*
  * Shared composite (react-ux: src/shared/components/EmptyState.tsx), same props as the react-ux
- * reference plus className. Mbank has no empty-state component in Web components yet (G12);
- * built from tokens only. Pass an Mbank icon via `icon`.
+ * reference plus className. Built from shadcn tokens only. Pass a kit icon via `icon`.
  */
 type EmptyStateProps = {
   title: string
@@ -21,7 +20,7 @@ export function EmptyState({ title, description, action, icon, className }: Empt
       data-slot="empty-state"
       className={cn(
         // @contract empty-state start
-        "flex flex-col items-center gap-3 rounded-lg border border-dashed border-border-secondary px-6 py-16 text-center",
+        "flex flex-col items-center gap-3 rounded-lg border border-dashed border-border px-6 py-16 text-center",
         // @contract empty-state end
         className,
       )}
@@ -29,7 +28,7 @@ export function EmptyState({ title, description, action, icon, className }: Empt
       {icon && (
         <div
           aria-hidden="true"
-          className="flex size-14 items-center justify-center rounded-full bg-surface-1 text-muted-foreground [&_svg]:size-7"
+          className="flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground [&_svg]:size-7"
         >
           {icon}
         </div>

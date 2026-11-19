@@ -1,8 +1,8 @@
 // «Код»: install the project's design system with the shadcn CLI, or take tokens.css directly.
 import { useState } from "react"
 
-import { Button, buttonVariants } from "@/generated/kit/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/generated/kit/ui/card"
+import { Button, buttonVariants } from "@/kit/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/kit/ui/card"
 import { copyText } from "@/lib/download"
 
 import { siteUrls, type ProjectDetail } from "../api"
@@ -11,7 +11,7 @@ function Command({ label, text }: { label: string; text: string }) {
   const [copied, setCopied] = useState(false)
   return (
     <div className="grid gap-1.5">
-      <span className="text-caption text-muted-foreground">{label}</span>
+      <span className="text-xs text-muted-foreground">{label}</span>
       <div className="flex items-start gap-2">
         <pre className="min-w-0 flex-1 overflow-x-auto rounded-md bg-muted px-3 py-2 font-mono text-xs">{text}</pre>
         <Button size="xs" variant="outline" onClick={async () => setCopied(await copyText(text))}>{copied ? "Скопировано" : "Копировать"}</Button>
@@ -33,17 +33,17 @@ export function CodeTab({ detail }: { detail: ProjectDetail }) {
         <CardContent className="grid gap-3 px-4">
           <Command label="Новый проект" text={`npx shadcn@latest init ${urls.registry}`} />
           <Command label="Обновить токены в существующем" text={`npx shadcn@latest add ${urls.registry}`} />
-          <p className="text-caption text-muted-foreground">После правок на сайте или из Figma повторите add — CLI перезапишет переменные.</p>
+          <p className="text-xs text-muted-foreground">После правок на сайте или из Figma повторите add — CLI перезапишет переменные.</p>
         </CardContent>
       </Card>
       <Card className="py-4">
         <CardHeader className="px-4">
           <CardTitle>tokens.css</CardTitle>
-          <CardDescription>Тот же генератор, что frontend-pack tokens.css: Mbank + правки проекта + свои токены.</CardDescription>
+          <CardDescription>Стандартные токены shadcn с правками проекта: :root, .dark, @theme inline.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 px-4">
           <div className="flex flex-wrap gap-2">
-            <a className={buttonVariants({ size: "sm", variant: "brand" })} href={urls.css} download={`${id}-tokens.css`}>Скачать tokens.css</a>
+            <a className={buttonVariants({ size: "sm", variant: "default" })} href={urls.css} download={`${id}-tokens.css`}>Скачать tokens.css</a>
             <a className={buttonVariants({ size: "sm", variant: "outline" })} href={urls.css} target="_blank" rel="noreferrer">Открыть</a>
             <a className={buttonVariants({ size: "sm", variant: "outline" })} href={urls.figma} target="_blank" rel="noreferrer">figma.json</a>
           </div>

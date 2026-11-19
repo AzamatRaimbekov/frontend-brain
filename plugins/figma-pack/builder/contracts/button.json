@@ -16,14 +16,10 @@
     "variant": {
       "values": [
         "primary",
-        "brand",
         "secondary",
         "destructive",
-        "success",
-        "soft",
-        "ghost",
         "outline",
-        "static",
+        "ghost",
         "link"
       ],
       "default": "primary"
@@ -61,78 +57,44 @@
         "root": {
           "bg": "primary",
           "fg": "primary-foreground",
-          "bg:hover": "primary-hover",
-          "bg:active": "primary-active"
-        }
-      },
-      "brand": {
-        "root": {
-          "bg": "brand",
-          "fg": "brand-foreground",
-          "bg:hover": "brand-hover",
-          "bg:active": "brand-active"
+          "bg:hover": "primary/90"
         }
       },
       "secondary": {
         "root": {
           "bg": "secondary",
           "fg": "secondary-foreground",
-          "bg:hover": "secondary-hover",
-          "bg:active": "secondary-active"
+          "bg:hover": "secondary/80"
         }
       },
       "destructive": {
         "root": {
-          "bg": "destructive",
-          "fg": "destructive-foreground",
-          "bg:hover": "destructive-hover",
-          "bg:active": "destructive-active"
-        }
-      },
-      "success": {
-        "root": {
-          "bg": "success",
-          "fg": "success-foreground",
-          "bg:hover": "success-hover",
-          "bg:active": "success-active"
-        }
-      },
-      "soft": {
-        "root": {
-          "bg": "soft",
-          "fg": "soft-foreground-strong",
-          "bg:hover": "soft-hover"
+          "bg": "destructive/10",
+          "fg": "destructive",
+          "bg:hover": "destructive/20"
         }
       },
       "ghost": {
         "root": {
-          "bg": "ghost",
-          "fg": "ghost-foreground",
-          "bg:hover": "ghost-hover"
+          "fg": "foreground",
+          "bg:hover": "accent",
+          "fg:hover": "accent-foreground"
         }
       },
       "outline": {
         "root": {
           "border-width": 1,
-          "border": "outline",
+          "border": "border",
           "bg": "background",
-          "fg": "outline-foreground",
-          "border:hover": "outline-hover",
-          "bg:hover": "muted"
-        }
-      },
-      "static": {
-        "root": {
-          "bg": "static",
-          "fg": "static-foreground",
-          "bg:hover": "static-hover",
-          "bg:active": "static-active"
+          "fg": "foreground",
+          "bg:hover": "accent",
+          "fg:hover": "accent-foreground"
         }
       },
       "link": {
         "root": {
           "px": 0,
-          "fg": "link"
+          "fg": "primary"
         }
       }
     },
@@ -209,7 +171,6 @@
   "states": [
     "default",
     "hover",
-    "active",
     "focus",
     "disabled"
   ],
@@ -220,7 +181,7 @@
     "parts": {
       "icon": "[&_svg:not([class*='size-'])]"
     },
-    "extra": "inline-flex shrink-0 justify-center whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 aria-invalid:ring-[3px] aria-invalid:ring-border-destructive/30",
+    "extra": "inline-flex shrink-0 justify-center whitespace-nowrap transition-colors outline-none select-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
     "extras": {
       "variant=link": "h-auto underline-offset-4 hover:underline"
     },

@@ -10,10 +10,10 @@
   "base": {
     "root": {
       "layout": "row", "align": "center", "radius": "md", "px": 3, "bg": "background", "fg": "foreground",
-      "border": "input", "border:hover": "input-hover", "border:focus": "ring", "focus-ring": "ring/30",
-      "border:disabled": "input-disabled", "bg:disabled": "muted"
+      "border": "input", "border:hover": "ring/50", "border:focus": "ring", "focus-ring": "ring/30",
+      "border:disabled": "input/50", "bg:disabled": "muted"
     },
-    "placeholder": { "fg": "muted-foreground", "fg:disabled": "disabled-foreground" }
+    "placeholder": { "fg": "muted-foreground", "fg:disabled": "muted-foreground/50" }
   },
   "variants": {
     "size": {

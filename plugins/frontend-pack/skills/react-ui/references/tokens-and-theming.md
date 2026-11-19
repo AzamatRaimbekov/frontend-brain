@@ -43,10 +43,10 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   /* ...one line per token */
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) * 1.4); /* ... up to 4xl */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -58,60 +58,38 @@
 
 Use what `shadcn init` generates; the snippet shows structure, not exact values.
 
-## Naming convention
+## The token set is fixed
 
-- Pairs: `<name>` is the surface, `<name>-foreground` is text/icons on it. Always use them together: `bg-primary text-primary-foreground`.
-- Semantic, never visual: `--success`, `--warning`, `--info`, `--brand` - not `--green`, `--blue-light`.
-- Values in `oklch()` (perceptually uniform, what shadcn and Tailwind v4 use).
+The design system uses **only the standard shadcn/ui tokens** with the shadcn neutral values. Canonical list: [`registry/mbank/shadcn-tokens.json`](../../../registry/mbank/shadcn-tokens.json) - 31 colours (`background`, `foreground`, `card(-foreground)`, `popover(-foreground)`, `primary(-foreground)`, `secondary(-foreground)`, `muted(-foreground)`, `accent(-foreground)`, `destructive`, `border`, `input`, `ring`, `chart-1..5`, `sidebar`, `sidebar-foreground`, `sidebar-primary(-foreground)`, `sidebar-accent(-foreground)`, `sidebar-border`, `sidebar-ring`), `--radius` with `radius-sm..4xl`, fonts `sans` / `heading`.
 
-## Adding a token (example: warning)
+- **No custom tokens.** No `--success`, `--warning`, `--info`, `--brand`, `--surface-*`, `*-hover`, `*-text`, `--z-*`, `--shadow-*`, custom `--text-*`. A project may only change the **values** of the names above (light and `.dark`).
+- Pairs: `<name>` is the surface, `<name>-foreground` is text/icons on it: `bg-primary text-primary-foreground`.
+- Values in `oklch()`.
 
-```css
-:root {
-  --warning: oklch(0.84 0.16 84);
-  --warning-foreground: oklch(0.28 0.07 46);
-}
-.dark {
-  --warning: oklch(0.41 0.11 46);
-  --warning-foreground: oklch(0.99 0.02 95);
-}
-@theme inline {
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-}
-```
+## Mapping meanings to the fixed set
 
-Same shape for success (used by `StatCard` tone `positive`: `border-success/40 bg-success/5`):
+| Need | Use |
+|---|---|
+| Hover / pressed | opacity of the same token: `hover:bg-primary/90`, `hover:bg-secondary/80`, `hover:bg-destructive/90`, ghost/outline `hover:bg-accent hover:text-accent-foreground` |
+| Disabled | `disabled:pointer-events-none disabled:opacity-50` (no disabled colours) |
+| Surfaces / layers | `bg-background`, `bg-card`, `bg-muted`, `bg-accent`, `bg-secondary`, `bg-popover` |
+| Borders | `border-border`, `border-input` |
+| Error | `destructive`: `text-destructive`, `bg-destructive/10`, fields `aria-invalid:border-destructive aria-invalid:ring-destructive/20` |
+| Success / warning / info status | neutral Badge `default` / `secondary` / `outline` + text and icon; never colour alone |
+| Charts, a truly distinct colour | `chart-1..5` |
 
-```css
-:root {
-  --success: oklch(0.6 0.15 150);
-  --success-foreground: oklch(0.98 0.02 150);
-}
-.dark {
-  --success: oklch(0.5 0.13 150);
-  --success-foreground: oklch(0.98 0.02 150);
-}
-@theme inline {
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-}
-```
-
-Now `bg-warning text-warning-foreground` works in both themes. Check contrast of the pair in both modes (4.5:1 for text).
+Plain Tailwind palette colours (`green-500`, `amber-100`, `slate-*`) are not allowed, including for statuses.
 
 ## Rules
 
-- Tokens are defined only in the global CSS file. No colors in `.tsx`, no per-feature CSS files with colors.
-- Add a token when a meaning is reused; do not add one per screen.
+- Tokens are defined only in the global CSS file (generated from `shadcn-tokens.json`). No colors in `.tsx`, no per-feature CSS files with colors.
 - Do not use `@theme` (non-inline) for values that reference other variables - use `@theme inline`, otherwise the variable resolves in the wrong scope.
-- Do not reset whole namespaces (`--color-*: initial`) unless the design system explicitly bans the default palette; if you do, lint for raw palette usage instead of fighting it.
-- Brand theme from design (Figma variables): map designer variables onto the shadcn token names, do not invent a parallel set.
+- Theme from design (Figma variables): the designer's variables bind to these shadcn names; a different look = different values, never a parallel set.
 
 ## Spacing, type, radius
 
 - Spacing derives from `--spacing` (default `0.25rem`): `p-4` = 1rem. Do not override `--spacing` per project without a design reason - it rescales everything.
-- Type scale: Tailwind defaults (`text-xs` .. `text-6xl`). Custom sizes go into `@theme` as `--text-*` with a name, never inline `text-[15px]`.
+- Type scale: Tailwind defaults (`text-xs` .. `text-6xl`). No custom `--text-*` tokens and no inline `text-[15px]`.
 - Fonts: load with `next/font` (Next.js) or `@fontsource-variable/*` (Vite), expose as a CSS variable, map to `--font-sans` in `@theme inline`.
 
 ## Dark mode
@@ -120,5 +98,5 @@ Now `bg-warning text-warning-foreground` works in both themes. Check contrast of
 - Next.js: `next-themes` `ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange`, plus `suppressHydrationWarning` on `<html>`.
 - Vite: shadcn's `ThemeProvider` (context + localStorage + `matchMedia`) in `src/app/providers`. Add the inline head script that sets the class before paint to avoid a flash.
 - Offer three options: light, dark, system.
-- Components should not contain `dark:bg-*` / `dark:text-*`. If a component needs a different color in dark, the token value is wrong, or a new token is needed.
+- Components should not contain `dark:bg-*` / `dark:text-*`. If a component needs a different color in dark, fix the token value (or pick another shadcn token), never add a token.
 - Images/illustrations that break in dark: provide a dark variant or use `currentColor` SVGs.

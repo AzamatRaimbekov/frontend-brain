@@ -1,7 +1,7 @@
 // Last versions of the project's tokens: who wrote them (site or Figma) and what changed.
-import { Badge } from "@/generated/kit/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/generated/kit/ui/card"
-import { Skeleton } from "@/generated/kit/ui/skeleton"
+import { Badge } from "@/kit/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/kit/ui/card"
+import { Skeleton } from "@/kit/ui/skeleton"
 
 import { ErrorAlert } from "../error-alert"
 import { useHistory } from "../queries"
@@ -12,7 +12,7 @@ const list = (label: string, names: string[]) => (names.length ? `${label}: ${na
 export function HistoryList({ id }: { id: string }) {
   const history = useHistory(id)
   return (
-    <Card className="py-4 lg:col-span-2">
+    <Card className="gap-3 py-4 lg:col-span-2">
       <CardHeader className="px-4">
         <CardTitle>История версий</CardTitle>
       </CardHeader>
@@ -23,8 +23,8 @@ export function HistoryList({ id }: { id: string }) {
               const parts = [list("изменены", h.changed), list("добавлены", h.added), list("удалены", h.removed)].filter(Boolean)
               return (
                 <li key={h.version} className="flex flex-wrap items-baseline gap-2">
-                  <Badge size="sm">v{h.version}</Badge>
-                  <Badge size="sm" tone={h.by === "figma" ? "accent" : "info"}>{h.by === "figma" ? "из Figma" : "сайт"}</Badge>
+                  <Badge variant="outline">v{h.version}</Badge>
+                  <Badge variant={h.by === "figma" ? "default" : "secondary"}>{h.by === "figma" ? "из Figma" : "сайт"}</Badge>
                   <span className="text-muted-foreground">{when(h.at)}</span>
                   <span className="min-w-0">{parts.length ? parts.join(" · ") : h.version === 1 ? "проект создан" : "без изменений токенов"}</span>
                 </li>

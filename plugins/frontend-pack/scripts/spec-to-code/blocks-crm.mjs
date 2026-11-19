@@ -4,8 +4,8 @@
 import { CRM_DATA, crmActions, decisionActions } from './crm-data.mjs';
 import { Imports, q } from './util.mjs';
 
-// Chart palette from tokens (brand + supportive), white text stays readable on each.
-const PALETTE = "const PALETTE = ['bg-brand', 'bg-supportive-6', 'bg-supportive-7', 'bg-supportive-3', 'bg-supportive-4']";
+// Multi-series palette (breakdown): the shadcn chart tokens chart-1..5.
+const PALETTE = "const PALETTE = ['bg-chart-1', 'bg-chart-2', 'bg-chart-3', 'bg-chart-4', 'bg-chart-5']";
 const GRID = { 1: '', 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-2 lg:grid-cols-3', 4: 'sm:grid-cols-2 lg:grid-cols-4', 5: 'sm:grid-cols-3 lg:grid-cols-5' };
 
 function head(ctx, b, extra = []) {
@@ -32,7 +32,7 @@ const cardHead = (b, pad = '      ') => `${pad}<div className="flex items-start 
 ${pad}  <div className="flex min-w-0 flex-col gap-1">
 ${pad}    <h2 className="text-base font-bold text-foreground">{t.title}</h2>
 ${b.spec.subtitle ? `${pad}    <p className="text-sm text-muted-foreground">{t.subtitle}</p>\n` : ''}${pad}  </div>
-${b.moreHref ? `${pad}  <Link to=${q(b.moreHref).replace(/^'|'$/g, '"')} className="shrink-0 text-sm font-medium text-link hover:underline">
+${b.moreHref ? `${pad}  <Link to=${q(b.moreHref).replace(/^'|'$/g, '"')} className="shrink-0 text-sm font-medium text-primary underline-offset-4 hover:underline">
 ${pad}    {t.more}
 ${pad}  </Link>
 ` : ''}${pad}</div>`;
@@ -67,14 +67,14 @@ const EMIT = {
     const imp = head(ctx, b, [['@/shared/ui/skeleton', 'Skeleton']]);
     return file(imp, b, ctx, 'Spec block "funnel": pipeline stages, bar length by value, conversion on the right.', card(b, `      <ol aria-label={t.label} className="flex flex-col gap-3">
         {data
-          ? data.map((stage, i) => (
+          ? data.map((stage) => (
               <li key={stage.id} className="grid gap-1.5 sm:grid-cols-[10rem_1fr_3.5rem] sm:items-center sm:gap-4">
                 <div className="flex min-w-0 flex-col">
                   <span className="text-sm font-medium text-foreground">{stage.label}</span>
-                  {stage.hint && <span className="text-caption text-muted-foreground">{stage.hint}</span>}
+                  {stage.hint && <span className="text-xs text-muted-foreground">{stage.hint}</span>}
                 </div>
                 <div
-                  className={\`flex h-8 min-w-12 items-center rounded-md px-3 text-sm font-semibold text-brand-foreground \${PALETTE[i % PALETTE.length]}\`}
+                  className="flex h-8 min-w-12 items-center rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground"
                   style={{ width: \`\${stage.share * 100}%\` }}
                 >
                   {stage.value}
@@ -83,13 +83,13 @@ const EMIT = {
               </li>
             ))
 ${skeletonRows(b.fixture.length, `                <Skeleton className="h-8" style={{ width: \`\${100 - i * 15}%\` }} />`)}
-      </ol>`), PALETTE);
+      </ol>`));
   },
 
   meters(b, ctx) {
     const imp = head(ctx, b, [['@/shared/ui/progress', 'Progress'], ['@/shared/ui/skeleton', 'Skeleton']]);
-    const consts = "const VALUE = { brand: 'text-foreground', success: 'text-success-text', warning: 'text-warning-text', error: 'text-destructive-text' } as const";
-    return file(imp, b, ctx, 'Spec block "meters": kit Progress per item (SLA by stage, load, limits), tone from the spec.', card(b, `      <ul className="flex flex-col gap-4">
+    const consts = "const VALUE = { default: 'text-foreground', error: 'text-destructive' } as const";
+    return file(imp, b, ctx, 'Spec block "meters": kit Progress per item (SLA by stage, load, limits), value colour from the spec tone.', card(b, `      <ul className="flex flex-col gap-4">
         {data
           ? data.map((meter) => (
               <li key={meter.id} className="flex flex-col gap-2">
@@ -97,8 +97,8 @@ ${skeletonRows(b.fixture.length, `                <Skeleton className="h-8" styl
                   <span className="truncate font-medium text-foreground">{meter.label}</span>
                   <span className={\`font-semibold tabular-nums \${VALUE[meter.tone]}\`}>{meter.value}</span>
                 </div>
-                <Progress value={meter.percent} tone={meter.tone} aria-label={meter.label} />
-                {meter.hint && <span className="text-caption text-muted-foreground">{meter.hint}</span>}
+                <Progress value={meter.percent} aria-label={meter.label} />
+                {meter.hint && <span className="text-xs text-muted-foreground">{meter.hint}</span>}
               </li>
             ))
 ${skeletonRows(b.fixture.length, '                <Skeleton className="h-8 w-full" />')}
@@ -107,7 +107,7 @@ ${skeletonRows(b.fixture.length, '                <Skeleton className="h-8 w-ful
 
   score(b, ctx) {
     const imp = head(ctx, b, [['@/shared/ui/badge', 'Badge'], ['@/shared/ui/skeleton', 'Skeleton'], ['../lib/status', 'statusTone']]);
-    const consts = "// Risk zones from high to low risk; the marker sits over the score.\nconst ZONES = ['bg-status-error', 'bg-status-warning', 'bg-supportive-2', 'bg-supportive-3', 'bg-status-success']";
+    const consts = "// Risk zones from high to low risk; the marker sits over the score.\nconst ZONES = ['bg-chart-1', 'bg-chart-2', 'bg-chart-3', 'bg-chart-4', 'bg-chart-5']";
     return file(imp, b, ctx, 'Spec block "score": score of max, grade badge, 5-zone risk scale with a marker, factors.', card(b, `      {!data ? (
         <div className="flex flex-col gap-3">
           <Skeleton className="h-10 w-32" />
@@ -137,7 +137,7 @@ ${skeletonRows(b.fixture.length, '                <Skeleton className="h-8 w-ful
                 <span key={zone} className={\`h-2 flex-1 rounded-full \${zone}\`} />
               ))}
             </div>
-            <div className="flex justify-between text-caption text-muted-foreground">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>{t.high}</span>
               <span>{t.low}</span>
             </div>
@@ -148,9 +148,9 @@ ${skeletonRows(b.fixture.length, '                <Skeleton className="h-8 w-ful
               <ul className="flex flex-col gap-2.5">
                 {data.factors.map((factor) => (
                   <li key={factor.id} className="flex items-center gap-2.5 text-sm">
-                    <span aria-hidden="true" className={\`size-2 shrink-0 rounded-full \${factor.good ? 'bg-status-success' : 'bg-status-error'}\`} />
+                    <span aria-hidden="true" className={\`size-2 shrink-0 rounded-full \${factor.good ? 'bg-primary' : 'bg-destructive'}\`} />
                     <span className="min-w-0 flex-1 text-foreground">{factor.label}</span>
-                    <span className={\`font-semibold tabular-nums \${factor.good ? 'text-success-text' : 'text-destructive-text'}\`}>{factor.impact}</span>
+                    <span className={\`font-semibold tabular-nums \${factor.good ? 'text-foreground' : 'text-destructive'}\`}>{factor.impact}</span>
                   </li>
                 ))}
               </ul>
@@ -172,7 +172,7 @@ ${skeletonRows(b.fixture.length, '                <Skeleton className="h-8 w-ful
                 </span>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-sm font-medium text-foreground">{doc.name}</span>
-                  {doc.meta && <span className="text-caption text-muted-foreground">{doc.meta}</span>}
+                  {doc.meta && <span className="text-xs text-muted-foreground">{doc.meta}</span>}
                 </div>
                 {doc.status && <Badge tone={statusTone(doc.status)}>{doc.status}</Badge>}
                 {/* TODO(spec-to-code): file menu (open, download, replace); the spec names no actions */}
@@ -188,9 +188,9 @@ ${skeletonRows(b.fixture.length, '                <Skeleton className="size-9 ro
   checks(b, ctx) {
     const imp = head(ctx, b, [['@/shared/ui/skeleton', 'Skeleton'], ['@/shared/ui/icons', 'CheckIcon', 'CloseIcon'], ['@/shared/components/crm/crm-icons', 'AlertIcon', 'ClockIcon']]);
     const consts = `const LOOK = {
-  ok: { Icon: CheckIcon, dot: 'bg-status-success-muted text-success-text', text: 'text-success-text' },
-  warn: { Icon: AlertIcon, dot: 'bg-status-warning-muted text-warning-text', text: 'text-warning-text' },
-  fail: { Icon: CloseIcon, dot: 'bg-status-error-muted text-destructive-text', text: 'text-destructive-text' },
+  ok: { Icon: CheckIcon, dot: 'bg-primary text-primary-foreground', text: 'text-foreground' },
+  warn: { Icon: AlertIcon, dot: 'bg-secondary text-foreground', text: 'text-foreground' },
+  fail: { Icon: CloseIcon, dot: 'bg-destructive/10 text-destructive', text: 'text-destructive' },
   wait: { Icon: ClockIcon, dot: 'bg-muted text-muted-foreground', text: 'text-muted-foreground' },
 } as const`;
     return file(imp, b, ctx, 'Spec block "checks": credit bureau, stop lists, verification; status ok | warn | fail | wait.', card(b, `      <ul className="flex flex-col divide-y divide-border">
@@ -204,7 +204,7 @@ ${skeletonRows(b.fixture.length, '                <Skeleton className="size-9 ro
                   </span>
                   <div className="flex min-w-0 flex-1 flex-col">
                     <span className="text-sm font-medium text-foreground">{check.label}</span>
-                    {check.hint && <span className="text-caption text-muted-foreground">{check.hint}</span>}
+                    {check.hint && <span className="text-xs text-muted-foreground">{check.hint}</span>}
                   </div>
                   <span className={\`text-sm font-medium \${text}\`}>{check.result ?? t.status[check.status]}</span>
                 </li>
@@ -239,7 +239,7 @@ ${card(b, `      <ul className="flex flex-col gap-4">
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <p className="flex flex-wrap items-baseline gap-2">
                     <span className="text-sm font-semibold text-foreground">{comment.who}</span>
-                    {comment.time && <span className="text-caption text-muted-foreground">{comment.time}</span>}
+                    {comment.time && <span className="text-xs text-muted-foreground">{comment.time}</span>}
                   </p>
                   <p className="rounded-lg bg-muted px-3 py-2.5 text-sm text-foreground">{comment.text}</p>
                 </div>
@@ -296,7 +296,7 @@ ${skeletonRows(b.fixture.length, '                <Skeleton className="size-8 ro
     return file(imp, b, ctx, 'Spec block "decision": offer terms grid, note and decision buttons ("Отказать"-like = destructive).', card(b, `      <dl className="grid gap-3 ${grid}">
         {t.terms.map((term) => (
           <div key={term.label} className="flex flex-col gap-1 rounded-lg bg-muted px-3.5 py-3">
-            <dt className="text-caption text-muted-foreground">{term.label}</dt>
+            <dt className="text-xs text-muted-foreground">{term.label}</dt>
             <dd className="text-base font-semibold text-foreground">{term.value}</dd>
           </div>
         ))}
@@ -338,7 +338,7 @@ ${buttons(acts, 't.actions', '          ')}
 ${facts ? `      <dl className="grid grid-cols-2 gap-4 border-t border-border pt-4 ${GRID[Math.min(5, facts)] ?? ''}">
         {t.facts.map((fact) => (
           <div key={fact.label} className="flex flex-col gap-1">
-            <dt className="text-caption text-muted-foreground">{fact.label}</dt>
+            <dt className="text-xs text-muted-foreground">{fact.label}</dt>
             <dd className="text-sm font-semibold text-foreground">{fact.value}</dd>
           </div>
         ))}

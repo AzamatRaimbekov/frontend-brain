@@ -28,14 +28,14 @@ export const formatTerm = (months: number | null) => (months === null ? null : `
 export const cardMeta = (card: Pick<ApplicationCard, 'product' | 'termMonths'>) =>
   [card.product, formatTerm(card.termMonths)].filter(Boolean).join(' · ')
 
-type Tone = 'info' | 'warning' | 'error' | 'neutral'
+type Tone = 'neutral' | 'accent' | 'error' | 'clear'
 
-/** SLA or status badge of a board card (Figma: blue SLA, orange at risk, red overdue, grey status). */
+/** SLA or status badge of a board card (shadcn tokens: neutral SLA, outline at risk, destructive overdue, neutral status). */
 export function cardBadge(card: Pick<ApplicationCard, 'sla' | 'status'>): { label: string; tone: Tone } | undefined {
   if (card.status) return { label: card.status, tone: 'neutral' }
   if (!card.sla) return undefined
   if (card.sla.state === 'overdue') return { label: `Просрочено ${formatDuration(card.sla.minutesLeft)}`, tone: 'error' }
-  return { label: `SLA ${formatDuration(card.sla.minutesLeft)}`, tone: card.sla.state === 'risk' ? 'warning' : 'info' }
+  return { label: `SLA ${formatDuration(card.sla.minutesLeft)}`, tone: card.sla.state === 'risk' ? 'clear' : 'neutral' }
 }
 
 const kpiConfig: Record<Kpi['id'], { label: string; value: (v: number) => string; delta: (d: number) => string; goodWhen: 'up' | 'down' }> = {

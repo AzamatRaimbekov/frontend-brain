@@ -16,6 +16,8 @@ Create the project with official tools only. Never scaffold over existing code.
 
 ## 2. Choose the stack
 
+First the kind of project. A WebView microservice for the Mbank app → [mbank-webview](../mbank-webview/SKILL.md) (`new-webview.mjs`). A CRM or admin panel on Mbank → [mbank-crm](../mbank-crm/SKILL.md) (`new-crm.mjs`). The kind is not named or the request is unclear → open the picker page (`node <plugin-root>/scripts/project-picker.mjs --parent .`) instead of asking in chat, then run the command it returns. Only other projects continue below.
+
 | Signal in the request | Stack |
 |---|---|
 | Admin panel, CRM, dashboard, internal tool, anything behind login | **Vite SPA** + TanStack Router + TanStack Query |
@@ -40,6 +42,8 @@ npx shadcn@latest init
 ```
 
 Configure the `@/*` path alias in `tsconfig.app.json` and `vite.config.ts` before `shadcn init` (the shadcn Vite guide shows both files).
+
+**A one-page project is still a project:** `shadcn init` and the components the page uses (`npx shadcn@latest add button card input …`) are never skipped, and the page is built from them. What a single page may skip: the router, TanStack Query, i18n and the app shell.
 
 **Next.js**
 
@@ -77,7 +81,7 @@ Create these files, taking the code from the owning skill. Do not invent alterna
 | `shared/lib/format.ts`, `shared/lib/safeUrl.ts`, `shared/components/SafeHtml.tsx` | `react-security-i18n` |
 | `src/test/setup.ts` (in `setupFiles`; inside `src/` so jest-dom types work), `src/test/server.ts`, `src/test/render.tsx`, `src/mocks/handlers.ts` + `src/mocks/browser.ts` (MSW, `onUnhandledFrame`) | `react-testing` sections 5-6 |
 | `pages/not-found` texts, crash fallback and offline banner copy in `shared/lib/messages.ts` (or `common.*` i18n keys) | `react-error-handling` references/app-shell.md |
-| Mbank product: tokens and UI kit via `node <frontend-pack>/scripts/add-ui.mjs all` (replaces the shadcn theme) | `mbank-ui` |
+| Mbank product: UI kit via `node <frontend-pack>/scripts/add-ui.mjs all` (its `tokens.css` replaces the generated shadcn theme blocks; same standard shadcn tokens, no custom ones) | `mbank-ui` |
 
 Remove the scaffold's demo code (counter, logos, default page content).
 

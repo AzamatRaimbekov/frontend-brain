@@ -36,7 +36,7 @@ function SelectTrigger({
       data-size={size}
       className={cn(
         // @contract select-trigger start
-        "flex w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-sm whitespace-nowrap text-foreground transition-colors outline-none hover:border-input-hover focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 disabled:pointer-events-none disabled:border-input-disabled disabled:bg-muted disabled:text-disabled-foreground aria-invalid:border-border-destructive data-[placeholder]:text-muted-foreground *:data-[slot=select-value]:truncate",
+        "flex w-full items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-sm whitespace-nowrap text-foreground transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none aria-invalid:border-destructive data-[placeholder]:text-muted-foreground *:data-[slot=select-value]:truncate disabled:opacity-50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
         // @contract select-trigger end
         triggerSizes[size],
         className,
@@ -63,7 +63,7 @@ function SelectContent({
         data-slot="select-content"
         position={position}
         className={cn(
-          "relative z-(--z-popover) max-h-(--radix-select-content-available-height) min-w-32 overflow-x-hidden overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-dropdown data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
+          "relative z-50 max-h-(--radix-select-content-available-height) min-w-32 overflow-x-hidden overflow-y-auto rounded-md border border-border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
           position === "popper" && "w-full min-w-(--radix-select-trigger-width) data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
           className,
         )}
@@ -90,13 +90,13 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-center gap-2 rounded-sm py-2 pr-9 pl-3 text-sm outline-none select-none focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:text-disabled-foreground",
+        "relative flex w-full cursor-default items-center gap-2 rounded-sm py-2 pr-9 pl-3 text-sm outline-none select-none focus:bg-accent data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className,
       )}
       {...props}
     >
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-      <span className="absolute right-3 flex size-4 items-center justify-center text-brand-text">
+      <span className="absolute right-3 flex size-4 items-center justify-center text-primary">
         <SelectPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </SelectPrimitive.ItemIndicator>

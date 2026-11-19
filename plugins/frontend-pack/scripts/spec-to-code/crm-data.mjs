@@ -11,8 +11,8 @@ export const CRM_TYPES = [...CRM_DATA, ...CRM_STATIC];
 export const num = (v) => Number(String(v ?? '').replace(/[\s ]/g, '').replace(',', '.').replace(/[^\d.]/g, '')) || 0;
 export const pairOf = (it) => (Array.isArray(it) ? it : typeof it === 'string' ? it.split(':') : [it?.label, it?.value]);
 const str = (v) => (v == null || v === '' ? undefined : String(v));
-// Spec tone (success | warning | danger | info) -> kit Progress tone (brand | success | warning | error).
-const METER_TONE = { success: 'success', warning: 'warning', danger: 'error', destructive: 'error', error: 'error', info: 'brand', default: 'brand' };
+// Spec tone -> meter value colour: danger-like -> error (text-destructive), everything else default (the kit Progress has no tone).
+const METER_TONE = { success: 'default', warning: 'default', danger: 'error', destructive: 'error', error: 'error', info: 'default', default: 'default' };
 const CHECK_STATUS = ['ok', 'warn', 'fail', 'wait'];
 const round = (x, d = 1) => Math.round(x * 10 ** d) / 10 ** d;
 
@@ -27,7 +27,7 @@ export function crmFixture(b) {
     case 'meters':
       return items.map((it, i) => {
         const percent = Math.min(100, num(it.percent ?? it.value));
-        const tone = METER_TONE[it.tone] || (percent >= 90 ? 'error' : percent >= 75 ? 'warning' : 'brand');
+        const tone = METER_TONE[it.tone] || (percent >= 90 ? 'error' : 'default');
         return { id: `meter${i + 1}`, label: String(it.label), value: String(it.value ?? `${percent}%`), percent, hint: str(it.hint), tone };
       });
     case 'score':
@@ -69,7 +69,7 @@ export function crmSchema(b) {
   const o = `${s}.optional()`;
   switch (b.type) {
     case 'funnel': return `z.array(z.object({ id: ${s}, label: ${s}, value: ${s}, rate: ${o}, hint: ${o}, share: z.number() }))`;
-    case 'meters': return `z.array(z.object({ id: ${s}, label: ${s}, value: ${s}, percent: z.number(), hint: ${o}, tone: z.enum(['brand', 'success', 'warning', 'error']) }))`;
+    case 'meters': return `z.array(z.object({ id: ${s}, label: ${s}, value: ${s}, percent: z.number(), hint: ${o}, tone: z.enum(['default', 'error']) }))`;
     case 'score': return `z.object({ value: z.number(), max: z.number(), grade: ${o}, factors: z.array(z.object({ id: ${s}, label: ${s}, impact: ${s}, good: z.boolean() })) })`;
     case 'files': return `z.array(z.object({ id: ${s}, name: ${s}, meta: ${o}, status: ${o} }))`;
     case 'checks': return `z.array(z.object({ id: ${s}, label: ${s}, hint: ${o}, result: ${o}, status: z.enum(['ok', 'warn', 'fail', 'wait']) }))`;

@@ -23,15 +23,13 @@ export function useCreateProject() {
 }
 
 /** Current editable document of a loaded project. */
-export const inputOf = (d: ProjectDetail): TokensInput => ({
-  brand: d.tokens.brand, prefix: d.tokens.prefix, overrides: d.tokens.overrides, custom: d.tokens.custom,
-})
+export const inputOf = (d: ProjectDetail): TokensInput => ({ overrides: d.tokens.overrides })
 
 export function useSaveTokens(id: string, key: string | null) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ version, tokens }: { version: number; tokens: TokensInput }) => {
-      if (!key) throw new ApiError(401, "Нет ключа записи проекта: вставьте его во вкладке Figma")
+      if (!key) throw new ApiError(401, "Нет ключа записи проекта: вставьте его во вкладке «Токены» или Figma")
       return api.putTokens(id, key, version, tokens)
     },
     onSettled: () => Promise.all([

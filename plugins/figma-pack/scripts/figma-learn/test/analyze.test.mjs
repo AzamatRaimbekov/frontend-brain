@@ -4,7 +4,7 @@ import { analyze } from '../analyze.mjs';
 import { renderReport } from '../report-md.mjs';
 import { parseFrameName, viewportOf } from '../walk.mjs';
 import { columnType } from '../archetypes.mjs';
-import { loadCatalog, loadTokens, nearestToken, libraryIndex, spacingToken } from '../library.mjs';
+import { loadCatalog, loadTokens, nearestToken, libraryIndex, spacingToken, toHex } from '../library.mjs';
 import { crawled } from './helpers.mjs';
 
 const group = (report, id) => report.files.flatMap((f) => f.groups).find((g) => g.id === id);
@@ -64,8 +64,10 @@ test('without the components map the code status comes from catalog.json', async
 test('token hygiene: raw hex with nearest token, unbound text, default names, raw spacing', async () => {
   const { report } = await crawled();
   const hex = Object.fromEntries(report.hygiene.rawHex.map((x) => [x.hex, x]));
-  assert.equal(hex['#16a34a'].token.name, 'brand/bank/default');
-  assert.equal(hex['#16a34a'].token.exact, true);
+  // The fixture green has no shadcn twin: the hint names the nearest standard token and says it is not exact.
+  assert.deepEqual(hex['#16a34a'].token, nearestToken('#16a34a', loadTokens()));
+  assert.ok(Object.keys(loadTokens().colors).includes(hex['#16a34a'].token.name));
+  assert.equal(hex['#16a34a'].token.exact, false);
   assert.equal(hex['#123456'].token.exact, false);
   const clients = file(report, 'CRM Клиенты').hygiene;
   assert.equal(clients.unstyledTexts, 1);
@@ -91,13 +93,17 @@ test('dev-readiness score ranks the clean file first and explains the parts', as
 test('report.md has the overall picture, the kit backlog and a block per file', async () => {
   const { report } = await crawled();
   const md = renderReport(report);
-  for (const s of ['## Типы экранов', '## Бэклог кита (топ)', '### CRM Клиенты', 'brand/bank/default', 'Дизайнеру поправить', 'нет секций Ready for dev']) assert.ok(md.includes(s), s);
+  for (const s of ['## Типы экранов', '## Бэклог кита (топ)', '### CRM Клиенты', nearestToken('#16a34a', loadTokens()).name, 'Дизайнеру поправить', 'нет секций Ready for dev']) assert.ok(md.includes(s), s);
 });
 
 test('library helpers: nearest token and spacing token', () => {
   const tokens = loadTokens();
-  assert.equal(nearestToken('#16A34A'.toLowerCase(), tokens).exact, true);
+  assert.equal(tokens.$schema, 'shadcn/tokens@1');
+  assert.deepEqual(nearestToken('#ffffff', tokens), { name: 'background', hex: '#ffffff', distance: 0, exact: true, far: false });
   assert.equal(nearestToken('#000000', null), null);
-  assert.equal(spacingToken(24, tokens), 'spacing/l-2');
+  assert.equal(toHex('oklch(0.145 0 0)'), '#0a0a0a');
+  assert.equal(toHex('oklch(0.577 0.245 27.325)'), '#e7000b');
+  assert.equal(toHex('var(--x)'), null);
+  assert.deepEqual([spacingToken(24), spacingToken(6), spacingToken(13)], ['spacing*6', 'spacing*1.5', null]);
   assert.equal(libraryIndex({}).status('x'), 'unknown');
 });

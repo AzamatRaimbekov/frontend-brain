@@ -3,7 +3,7 @@
 //   npx shadcn@latest registry add @mbank=<base-url>/{name}.json
 //   npx shadcn@latest add @mbank/mbank @mbank/button @mbank/crm-kpi-card
 // Output (default registry/mbank/r): registry.json + one <name>.json per item with file contents inline, plus the
-// design system item "mbank" (type registry:base): tokens.css as cssVars (light/dark/theme) and css (brands, scales).
+// design system item "mbank" (type registry:base): tokens.css as cssVars (light/dark/theme) and css (base layer).
 // Usage: node registry-build.mjs [--kit <registry dir>] [--out <dir>] [--namespace @mbank] [--check]   (--check: exit 1 if r/ is stale)
 // Pure Node 18+, no dependencies.
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -93,7 +93,7 @@ export function buildRegistry({ kit = KIT, namespace = '@mbank' } = {}) {
     name: 'mbank',
     type: 'registry:base',
     title: 'Mbank design system',
-    description: `${tokens.description}. Generated from tokens.css (Figma tokens.json + tokens.map.json).`,
+    description: `${tokens.description}. Generated from tokens.css (shadcn-tokens.json).`,
     dependencies: ['tw-animate-css', 'class-variance-authority', 'clsx', 'tailwind-merge', 'radix-ui'],
     registryDependencies: [`${namespace}/utils`],
     ...tokensToBase(readFileSync(join(kit, 'tokens.css'), 'utf8')),

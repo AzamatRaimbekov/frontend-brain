@@ -79,12 +79,12 @@
       "fg": "foreground"
     },
     "subtitle": {
-      "text": "caption",
+      "text": "xs",
       "weight": "regular",
       "fg": "muted-foreground"
     },
     "meta": {
-      "text": "caption",
+      "text": "xs",
       "weight": "regular",
       "fg": "muted-foreground"
     }

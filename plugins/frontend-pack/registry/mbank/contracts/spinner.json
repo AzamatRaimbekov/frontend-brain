@@ -24,7 +24,7 @@
     "root": {
       "radius": "full",
       "border-width": 2,
-      "border": "brand"
+      "border": "primary"
     }
   },
   "variants": {

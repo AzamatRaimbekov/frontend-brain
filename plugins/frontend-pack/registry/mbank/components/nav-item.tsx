@@ -11,7 +11,7 @@ import { cn } from "@/shared/lib/utils"
  */
 // @contract nav-item start
 const navItemVariants = cva(
-  "gap-3 px-3 h-11 rounded-md text-sm font-medium text-soft-foreground items-center hover:bg-accent aria-[current=page]:bg-muted aria-[current=page]:text-foreground aria-disabled:text-disabled-foreground focus-visible:ring-[3px] focus-visible:ring-ring/30 [&_svg]:size-5 [&_svg]:text-muted-foreground [&_svg]:aria-[current=page]:text-foreground [&_svg]:aria-disabled:text-disabled-foreground flex w-full min-w-0 transition-colors outline-none aria-disabled:pointer-events-none [&_svg]:shrink-0",
+  "gap-3 px-3 h-11 rounded-md text-sm font-medium text-muted-foreground items-center hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-5 [&_svg]:text-muted-foreground [&_svg]:aria-[current=page]:text-accent-foreground flex w-full min-w-0 transition-colors outline-none aria-disabled:pointer-events-none [&_svg]:shrink-0 aria-disabled:opacity-50 hover:text-accent-foreground",
 )
 // @contract nav-item end
 
@@ -38,7 +38,7 @@ function NavItem({ className, active = false, icon, count, children, ...props }:
         {children}
       </span>
       {count !== undefined && (
-        <span data-slot="nav-item-count" className="text-caption font-medium text-muted-foreground tabular-nums">
+        <span data-slot="nav-item-count" className="text-xs font-medium text-muted-foreground tabular-nums">
           {count}
         </span>
       )}

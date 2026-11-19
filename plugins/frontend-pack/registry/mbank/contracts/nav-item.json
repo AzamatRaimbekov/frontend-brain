@@ -42,22 +42,22 @@
       "radius": "md",
       "text": "sm",
       "weight": "medium",
-      "fg": "soft-foreground",
+      "fg": "muted-foreground",
       "align": "center",
       "bg:hover": "accent",
-      "bg:selected": "muted",
-      "fg:selected": "foreground",
-      "fg:disabled": "disabled-foreground",
-      "focus-ring": "ring/30"
+      "bg:selected": "accent",
+      "fg:selected": "accent-foreground",
+      "focus-ring": "ring/50",
+      "opacity:disabled": 50,
+      "fg:hover": "accent-foreground"
     },
     "icon": {
       "size": 5,
       "fg": "muted-foreground",
-      "fg:selected": "foreground",
-      "fg:disabled": "disabled-foreground"
+      "fg:selected": "accent-foreground"
     },
     "count": {
-      "text": "caption",
+      "text": "xs",
       "weight": "medium",
       "fg": "muted-foreground"
     }

@@ -2,3 +2,5 @@ node_modules/
 .DS_Store
 .claude/worktrees/
 plugins/figma-pack/builder/mcp/dist/
+.claude-flow/
+.claude/

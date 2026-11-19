@@ -4,7 +4,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { createFigma, seedKit } from './figma-mock.mjs';
-import { COLOR_TOKENS, EXTENSION_TOKENS } from '../core/tokens.js';
 
 const spec = JSON.parse(readFileSync(new URL('../examples/credit-crm.spec.json', import.meta.url)));
 const dir = new URL('../contracts/', import.meta.url);
@@ -14,9 +13,8 @@ const NAMES = new Set(BUNDLED.map((c) => c.name));
 async function fresh() {
   const m = createFigma();
   globalThis.figma = m.figma;
-  await seedKit(m.figma, COLOR_TOKENS.filter((t) => !EXTENSION_TOKENS.includes(t)));
-  const brand = await import('../plugin/src/brand.js');
-  await brand.setupBrand({ fixNames: true });
+  await seedKit(m.figma);
+  const brand = await import('../plugin/src/variables.js');
   const { vars, radius } = await brand.modeVars();
   const { buildSpec } = await import('../plugin/src/screens.js');
   const { ensureContracts, neededContracts } = await import('../plugin/src/assemble.js');

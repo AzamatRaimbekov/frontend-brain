@@ -39,10 +39,6 @@
     "tone": {
       "values": [
         "clear",
-        "accent",
-        "info",
-        "success",
-        "warning",
         "error"
       ],
       "default": "clear"
@@ -50,12 +46,14 @@
   },
   "base": {
     "root": {
-      "radius": "md",
+      "radius": "lg",
       "px": 4,
       "py": 3,
       "text": "sm",
       "align": "start",
-      "gap": 3
+      "gap": 3,
+      "border-width": 1,
+      "border": "border"
     },
     "icon": {
       "size": 5
@@ -75,38 +73,14 @@
     "tone": {
       "clear": {
         "root": {
-          "bg": "status-clear-muted",
-          "fg": "status-clear-foreground"
-        }
-      },
-      "accent": {
-        "root": {
-          "bg": "status-accent-muted",
-          "fg": "status-accent-foreground"
-        }
-      },
-      "info": {
-        "root": {
-          "bg": "status-info-muted",
-          "fg": "status-info-foreground"
-        }
-      },
-      "success": {
-        "root": {
-          "bg": "status-success-muted",
-          "fg": "status-success-foreground"
-        }
-      },
-      "warning": {
-        "root": {
-          "bg": "status-warning-muted",
-          "fg": "status-warning-foreground"
+          "bg": "card",
+          "fg": "card-foreground"
         }
       },
       "error": {
         "root": {
-          "bg": "status-error-muted",
-          "fg": "status-error-foreground"
+          "bg": "card",
+          "fg": "destructive"
         }
       }
     }

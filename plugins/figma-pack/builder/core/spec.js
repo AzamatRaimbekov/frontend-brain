@@ -2,7 +2,7 @@
 import { FIELD_TYPES, parseColumn } from './fake.js';
 import { PLATFORMS, VIEWPORTS } from './platforms.js';
 
-// Platforms and viewport widths come from the token platform files (tokens-platforms.mjs build).
+// Platforms and viewport widths: core/platforms.js (hand-edited).
 export { PLATFORMS, VIEWPORTS };
 export const STATES = ['default', 'loading', 'empty', 'error', 'no-access'];
 

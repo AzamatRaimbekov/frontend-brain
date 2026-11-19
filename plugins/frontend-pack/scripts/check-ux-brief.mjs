@@ -28,7 +28,7 @@ if (existsSync(brief)) process.exit(0);
 
 process.stderr.write(
   `Blocked: ${basename(file)} is a new page, but ${brief} does not exist. ` +
-    'Follow the react-page-ux skill: write the UX brief to that UX.md first (user goal, primary action, ' +
-    'hierarchy, every state, 375/1280 layout, accessibility, copy), show it to the user, then create the page.\n',
+    'Follow the react-page-ux skill: write that UX.md first. Pipeline vibe (default): 5 lines - goal, primary action, ' +
+    'blocks, states, mobile - and create the page right away without waiting. Team mode: the full brief, shown to the user.\n',
 );
 process.exit(2);

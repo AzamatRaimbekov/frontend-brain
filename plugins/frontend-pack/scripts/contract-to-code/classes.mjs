@@ -15,7 +15,7 @@ const WEIGHTS = { regular: 'normal', medium: 'medium', semibold: 'semibold', bol
 const ALIGN = ['start', 'center', 'end', 'between'];
 
 // Property -> kind of value. color = token from tokens.css; radius/text/shadow = scale key; number = 4 px grid step.
-// focus-ring = colour token with optional opacity ("ring/50"), always shown in the focus state.
+// A colour may carry an opacity ("primary/90", "ring/50"); focus-ring is always shown in the focus state.
 // hidden = Figma-only flag (an optional part switched off in a variant); code shows such parts when they are passed.
 export const PROPERTIES = {
   bg: 'color', fg: 'color', border: 'color', 'focus-ring': 'color',
@@ -24,15 +24,19 @@ export const PROPERTIES = {
   ...Object.fromEntries(Object.keys(SPACING).map((k) => [k, 'number'])),
 };
 
-// Scales from tokens.css: colours (--color-*), radius, text and shadow keys.
+// Tailwind v4 default scales: tokens.css holds only the shadcn tokens, the type and shadow scales stay Tailwind's.
+const TW_TEXT = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl'];
+const TW_SHADOW = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', 'none'];
+
+// Scales from tokens.css (colours --color-*, radius --radius-*) plus the Tailwind defaults.
 export function readTokens(cssPath) {
   const css = readFileSync(cssPath, 'utf8');
   const keys = (re) => new Set([...css.matchAll(re)].map((m) => m[1]).filter((k) => !k.includes('--')));
   return {
     color: keys(/--color-([\w-]+)\s*:/g),
     radius: new Set([...keys(/--radius-([\w-]+)\s*:/g), 'none', 'full']),
-    text: keys(/--text-([\w-]+)\s*:/g),
-    shadow: new Set([...keys(/--shadow-([\w-]+)\s*:/g), 'none']),
+    text: new Set([...keys(/--text-([\w-]+)\s*:/g), ...TW_TEXT]),
+    shadow: new Set([...keys(/--shadow-([\w-]+)\s*:/g), ...TW_SHADOW]),
   };
 }
 
@@ -41,7 +45,7 @@ export function validValue(prop, value, tokens) {
   const kind = PROPERTIES[prop];
   if (kind === 'color') {
     const [token, alpha] = String(value).split('/');
-    if (alpha !== undefined && (prop !== 'focus-ring' || !NUM.test(alpha))) return false;
+    if (alpha !== undefined && !NUM.test(alpha)) return false; // opacity: hover:bg-primary/90 as in upstream shadcn
     return tokens.color.has(token);
   }
   if (kind === 'number') return typeof value === 'number' && value >= 0;
@@ -89,9 +93,9 @@ export function parseUtility(util, tokens) {
     if (kind === 'text' && tokens.text.has(rest)) return { prop: 'text', value: rest };
     const [token, alpha] = rest.split('/');
     if (!tokens.color.has(token)) return null;
-    if (kind === 'ring') return alpha === undefined || NUM.test(alpha) ? { prop: '~ring', value: rest } : null;
-    if (alpha !== undefined) return null;
-    return { prop: { bg: 'bg', text: 'fg', border: 'border' }[kind], value: token };
+    if (alpha !== undefined && !NUM.test(alpha)) return null;
+    if (kind === 'ring') return { prop: '~ring', value: rest };
+    return { prop: { bg: 'bg', text: 'fg', border: 'border' }[kind], value: rest };
   }
   m = util.match(/^rounded-(.+)$/);
   if (m && tokens.radius.has(m[1])) return { prop: 'radius', value: m[1] };
@@ -168,7 +172,7 @@ export function renderScope(scope, contract, { direct = 'root' } = {}) {
 }
 
 // Classes -> { scope: { part: { prop[:state]: value } }, extra: [classes] }. Anything that is not exactly
-// a contract property (unknown modifier, two modifiers, a colour with opacity, half of a pair) stays extra.
+// a contract property (unknown modifier, two modifiers, half of a pair) stays extra.
 export function readClasses(classes, contract, tokens, { direct = 'root' } = {}) {
   const mods = Object.fromEntries(Object.entries(modifiersOf(contract)).map(([s, m]) => [m, s]));
   const parts = Object.fromEntries(Object.entries(contract.code?.parts ?? {}).map(([p, sel]) => [sel, p]));

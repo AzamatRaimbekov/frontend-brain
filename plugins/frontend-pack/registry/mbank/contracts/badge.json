@@ -17,20 +17,10 @@
       "values": [
         "neutral",
         "accent",
-        "success",
-        "warning",
         "error",
-        "info",
         "clear"
       ],
       "default": "neutral"
-    },
-    "fill": {
-      "values": [
-        "ghost",
-        "solid"
-      ],
-      "default": "ghost"
     },
     "shape": {
       "values": [
@@ -63,52 +53,27 @@
     "tone": {
       "neutral": {
         "root": {
-          "bg": "status-neutral-muted",
-          "fg": "status-neutral-foreground"
+          "bg": "secondary",
+          "fg": "secondary-foreground"
         }
       },
       "accent": {
         "root": {
-          "bg": "status-accent-muted",
-          "fg": "status-accent-foreground"
-        }
-      },
-      "success": {
-        "root": {
-          "bg": "status-success-muted",
-          "fg": "status-success-foreground"
-        }
-      },
-      "warning": {
-        "root": {
-          "bg": "status-warning-muted",
-          "fg": "status-warning-foreground"
+          "bg": "primary",
+          "fg": "primary-foreground"
         }
       },
       "error": {
         "root": {
-          "bg": "status-error-muted",
-          "fg": "status-error-foreground"
-        }
-      },
-      "info": {
-        "root": {
-          "bg": "status-info-muted",
-          "fg": "status-info-foreground"
+          "bg": "destructive/10",
+          "fg": "destructive"
         }
       },
       "clear": {
         "root": {
-          "bg": "status-clear-muted",
-          "fg": "status-clear-foreground"
-        }
-      }
-    },
-    "fill": {
-      "ghost": {},
-      "solid": {
-        "root": {
-          "fg": "status-filled-foreground"
+          "border-width": 1,
+          "border": "border",
+          "fg": "foreground"
         }
       }
     },
@@ -120,7 +85,7 @@
       },
       "square": {
         "root": {
-          "radius": "xs"
+          "radius": "sm"
         }
       }
     },
@@ -148,71 +113,6 @@
       }
     }
   },
-  "compound": [
-    {
-      "when": {
-        "fill": "solid",
-        "tone": "neutral"
-      },
-      "root": {
-        "bg": "status-neutral"
-      }
-    },
-    {
-      "when": {
-        "fill": "solid",
-        "tone": "accent"
-      },
-      "root": {
-        "bg": "status-accent"
-      }
-    },
-    {
-      "when": {
-        "fill": "solid",
-        "tone": "success"
-      },
-      "root": {
-        "bg": "status-success"
-      }
-    },
-    {
-      "when": {
-        "fill": "solid",
-        "tone": "warning"
-      },
-      "root": {
-        "bg": "status-warning"
-      }
-    },
-    {
-      "when": {
-        "fill": "solid",
-        "tone": "error"
-      },
-      "root": {
-        "bg": "status-error"
-      }
-    },
-    {
-      "when": {
-        "fill": "solid",
-        "tone": "info"
-      },
-      "root": {
-        "bg": "status-info"
-      }
-    },
-    {
-      "when": {
-        "fill": "solid",
-        "tone": "clear"
-      },
-      "root": {
-        "bg": "status-clear"
-      }
-    }
-  ],
   "states": [
     "default"
   ],

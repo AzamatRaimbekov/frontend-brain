@@ -76,7 +76,7 @@ Use `ColorPair` from the helpers. It measures contrast live and re-measures when
 
 ### Palette
 
-Swatches grouped the way the DESIGN.md groups them (brand, surfaces, text, status, accents). Label each with its DESIGN.md name and token, for example "Warm Stone · `surface-warm`". Show `border`, `input`, `ring`, `chart-1…5` and `sidebar-*` here too.
+Swatches grouped the way the DESIGN.md groups them (brand, surfaces, text, status, accents). Label each with its DESIGN.md name and token, for example "Warm Stone · `muted`". Show `border`, `input`, `ring`, `chart-1…5` and `sidebar-*` here too.
 
 ### Typography
 

@@ -7,9 +7,7 @@ const valueVariants = cva("min-w-0 break-words text-sm font-medium", {
   variants: {
     tone: {
       default: "text-foreground",
-      error: "text-destructive-text",
-      warning: "text-warning-text",
-      success: "text-success-text",
+      error: "text-destructive",
       muted: "text-muted-foreground",
     },
   },

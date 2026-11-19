@@ -86,3 +86,33 @@ export function contrast(fg, bg) {
 export function onColor(fill, dark = '#09090b', light = '#ffffff') {
   return contrast(light, fill) >= contrast(dark, fill) ? light : dark;
 }
+
+// CSS oklch() strings (the canonical shadcn tokens): "oklch(0.145 0 0)", "oklch(1 0 0 / 10%)".
+export function parseOklch(css) {
+  const m = /^\s*oklch\(\s*([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:deg)?\s*(?:\/\s*([\d.]+%?)\s*)?\)\s*$/i.exec(String(css));
+  if (!m) throw new Error(`Bad oklch color: ${css}`);
+  const num = (s, scale) => (s.endsWith('%') ? parseFloat(s) / 100 : parseFloat(s) * scale);
+  return { l: num(m[1], 1), c: parseFloat(m[2]), h: parseFloat(m[3]), a: m[4] == null ? 1 : num(m[4], 1) };
+}
+
+/**
+ * oklch() string -> Figma RGBA (0..1 float channels, alpha kept). Out-of-gamut colours are
+ * clipped per channel, like browsers and Tailwind (destructive oklch(0.577 0.245 27.325) = #e7000b);
+ * the same rule as the widget (widget/core/oklch.js parseColor), since both write the shadcn collection.
+ */
+export function oklchToRgba(css) {
+  const { l, c, h, a } = parseOklch(css);
+  const [r, g, b] = oklchToLinear({ l, c, h }).map((v) => toGamma(Math.min(1, Math.max(0, v))));
+  return { r, g, b, a };
+}
+
+const round3 = (x) => Math.round(x * 1000) / 1000;
+
+/** Figma RGBA -> oklch() string as the canonical file writes it (3 decimals, alpha as %). */
+export function rgbaToOklch({ r, g, b, a = 1 }) {
+  const o = hexToOklch(rgbToHex({ r, g, b }));
+  const c = o.c < 0.0005 ? 0 : round3(o.c);
+  const h = c === 0 ? 0 : round3(o.h);
+  const alpha = a < 1 ? ` / ${Math.round(a * 100)}%` : '';
+  return `oklch(${round3(o.l)} ${c} ${h}${alpha})`;
+}

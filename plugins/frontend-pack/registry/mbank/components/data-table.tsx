@@ -73,6 +73,8 @@ function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: initialPageSize })
 
+  // TanStack Table is not React Compiler-safe yet; the compiler skips this component, which is what we want
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

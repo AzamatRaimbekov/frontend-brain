@@ -2,19 +2,19 @@
 // theme vars into a <style> for :root/.dark): here [data-preview] and [data-preview].dark.
 import type { ReactNode } from "react"
 
-import { cn } from "@/generated/kit/lib/utils"
+import { cn } from "@/kit/lib/utils"
 import { buildPreviewCss, fontStylesheetUrl } from "@/lib/preview-css"
 import type { DesignSystem } from "@/lib/types"
 
-type PreviewFrameProps = { designSystem: DesignSystem; dark: boolean; children: ReactNode }
+type PreviewFrameProps = { designSystem: DesignSystem; dark: boolean; children: ReactNode; className?: string }
 
-export function PreviewFrame({ designSystem, dark, children }: PreviewFrameProps) {
+export function PreviewFrame({ designSystem, dark, children, className }: PreviewFrameProps) {
   const fontUrl = fontStylesheetUrl(designSystem)
   return (
     <section
       data-preview
-      aria-label="Живое превью"
-      className={cn("min-w-0 rounded-xl border border-border bg-background p-4 text-foreground shadow-sm md:p-6", dark && "dark")}
+      aria-label={`Живое превью, ${dark ? "тёмная" : "светлая"} тема`}
+      className={cn("min-w-0 rounded-xl border border-border bg-background p-4 text-foreground shadow-sm md:p-6", dark && "dark", className)}
     >
       <style>{buildPreviewCss(designSystem)}</style>
       {fontUrl ? <link rel="stylesheet" href={fontUrl} /> : null}

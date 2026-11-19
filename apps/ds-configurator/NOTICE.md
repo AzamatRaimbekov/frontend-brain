@@ -15,7 +15,7 @@ Upstream commit: `24a16429815cc4d691f38b49d0f4ffc11a9daef4` (2026-10-31).
 | `src/upstream/styles.ts` | `apps/v4/registry/styles.tsx` | SVG icons removed |
 | `src/upstream/config.ts` | `apps/v4/registry/config.ts` | subset: RADII, MENU_*, getThemesForBaseColor, buildRegistryTheme, buildRegistryBase; no zod; transforms split out; Radix base only |
 | `src/upstream/registry-item.schema.json` | `apps/v4/public/schema/registry-item.json` | none (used by tests) |
-| `src/components/picker.tsx` | `apps/v4/app/(app)/(create)/components/picker.tsx` | trimmed, Mbank token classes, kit CheckIcon |
+| `src/components/picker.tsx` | `apps/v4/app/(app)/(create)/components/picker.tsx` | trimmed, shadcn token classes, kit CheckIcon |
 
 Patterns (not copied verbatim) from `apps/v4/app/(app)/(create)/`: `components/customizer.tsx`
 (picker order), the individual `*-picker.tsx` files (generalised into `option-picker.tsx`),
@@ -25,4 +25,6 @@ project/template download, history, locks, randomizer.
 
 Own code also copies (with a comment in each file, not imported at runtime) from this repository:
 `plugins/figma-pack/builder/core/color.js` → `src/lib/color.ts`, `scopesFor` from
-`plugins/figma-pack/builder/core/tokens.js` → `src/lib/figma-scopes.ts`.
+`plugins/figma-pack/builder/core/tokens.js` → `src/lib/figma-scopes.ts`,
+`plugins/figma-pack/skills/ds-tokens/references/shadcn-tokens.json` → `src/data/shadcn-tokens.json`.
+`src/kit/ui/*` are the standard shadcn/ui (new-york-v4) components, used by the live preview and the site.

@@ -1,3 +1,4 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@fontsource-variable/geist";
 @import "./styles/mbank-tokens.css";

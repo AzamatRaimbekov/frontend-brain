@@ -1,10 +1,10 @@
-import { Badge } from "@/generated/kit/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/generated/kit/ui/table"
+import { Badge } from "@/kit/ui/badge"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/kit/ui/table"
 
 const ROWS = [
-  { id: "TX-1042", name: "Кафе Navat", amount: "−1 250 с", status: "success" as const, label: "Проведён" },
-  { id: "TX-1043", name: "Пополнение с карты", amount: "+15 000 с", status: "info" as const, label: "В обработке" },
-  { id: "TX-1044", name: "Оплата Megacom", amount: "−300 с", status: "error" as const, label: "Отклонён" },
+  { id: "TX-1042", name: "Кафе Navat", amount: "−1 250 с", variant: "secondary" as const, label: "Проведён" },
+  { id: "TX-1043", name: "Пополнение с карты", amount: "+15 000 с", variant: "outline" as const, label: "В обработке" },
+  { id: "TX-1044", name: "Оплата связи", amount: "−300 с", variant: "destructive" as const, label: "Отклонён" },
 ]
 
 export function PreviewTable() {
@@ -25,7 +25,7 @@ export function PreviewTable() {
             <TableCell>{r.name}</TableCell>
             <TableCell className="text-right tabular-nums">{r.amount}</TableCell>
             <TableCell>
-              <Badge tone={r.status}>{r.label}</Badge>
+              <Badge variant={r.variant}>{r.label}</Badge>
             </TableCell>
           </TableRow>
         ))}
