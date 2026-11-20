@@ -1,0 +1,29 @@
+.custom-upload.ant-upload-wrapper {
+  display: block !important;
+  width: 100% !important;
+}
+
+.custom-upload.ant-upload-wrapper .ant-upload.ant-upload-select {
+  display: block !important;
+  width: 100% !important;
+}
+
+.webcam-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 100% !important;
+  height: 100dvh;
+  max-width: none;
+}
+
+.webcam-modal .ant-modal-content {
+  background: #000;
+  height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+}

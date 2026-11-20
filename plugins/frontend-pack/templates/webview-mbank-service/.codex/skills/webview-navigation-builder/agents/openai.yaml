@@ -1,0 +1,4 @@
+interface:
+  display_name: 'WebView Navigation Builder'
+  short_description: 'Plan WebView route and back behavior.'
+  default_prompt: 'Use $webview-navigation-builder to design or review this WebView navigation flow.'

@@ -18,7 +18,7 @@ const TOKENS = join(SCRIPTS, '..', 'registry', 'mbank', 'tokens.css');
 
 /** Project kinds the page offers; `script` scaffolds the project in `dir`. */
 export const KINDS = {
-  webview: { script: 'new-webview.mjs', defaultName: 'mbank-webview' },
+  webview: { script: 'new-webview-service.mjs', defaultName: 'mbank-webview' },
   crm: { script: 'new-crm.mjs', defaultName: 'mbank-crm' },
 };
 const NAME = /^[a-z0-9][a-z0-9-]{0,47}$/;

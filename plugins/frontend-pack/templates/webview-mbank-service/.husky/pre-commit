@@ -1,0 +1,2 @@
+yarn run prepare:prod
+npx jscpd ./src

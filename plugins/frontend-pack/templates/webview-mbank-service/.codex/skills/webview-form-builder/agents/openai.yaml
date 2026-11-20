@@ -1,0 +1,5 @@
+interface:
+  display_name: 'WebView Form Builder'
+  short_description: 'Design optimized WebView forms.'
+  default_prompt: >-
+    Use $webview-form-builder to design or review this WebView form flow.

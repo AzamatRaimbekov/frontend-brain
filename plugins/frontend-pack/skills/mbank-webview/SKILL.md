@@ -3,6 +3,9 @@ name: mbank-webview
 description: Mbank WebView microservices - pages and mini-services opened inside the Mbank mobile app (payments, forms, promos, onboarding). Starts a project from a ready template (new-webview.mjs) with the app bridge (token, language ru/ky/en, theme, system back, return from background), every failure screen (opened outside the app, app not answering, session over, offline, crash, 404), a dev panel that plays the app and tests, then builds screens by the WebView rules. Use when creating or changing a WebView microservice for the Mbank app or when the person asks for a new project and the kind is unclear (run the project picker). Triggers - "webview", "вебвью", "веб вью", "микросервис мбанк", "микросервис для приложения", "мини-приложение", "плагин в приложении", "внутри приложения мбанк", "страница для мобилки", "new webview", "mini app", "новый проект".
 ---
 
+> **Новые WebView создаются только из шаблона команды:** `node $PLUGIN/scripts/new-webview-service.mjs <папка> --name "…"` (templates/webview-mbank-service — копия team-шаблона webview-mbank-service). Его `AGENTS.md`, `AGENT_FEEDBACK.md` и `docs/webview-app-builder/` главнее этого скилла. Ниже — старый собственный шаблон `new-webview.mjs`; использовать только по прямой просьбе.
+
+
 # Mbank WebView microservices
 
 When running in Codex, first read [Codex integration](../../references/codex.md).

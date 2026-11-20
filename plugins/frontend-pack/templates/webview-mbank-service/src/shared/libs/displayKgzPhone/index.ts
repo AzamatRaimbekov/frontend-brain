@@ -1,0 +1,1 @@
+export { displayKgzPhone } from './displayKgzPhone'

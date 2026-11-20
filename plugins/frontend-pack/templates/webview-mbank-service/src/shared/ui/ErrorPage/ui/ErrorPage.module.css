@@ -1,0 +1,82 @@
+.page {
+  --ep-bg: var(--background);
+  --ep-brand: var(--primary);
+  --ep-title: var(--foreground);
+  --ep-subtitle: var(--muted-foreground);
+  --ep-btn-text: var(--primary-foreground);
+  --ep-back: var(--primary);
+  --ep-icon-bg: var(--input);
+
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Nunito Mbank', sans-serif;
+  background-color: var(--ep-bg);
+}
+
+/* ── back button ── */
+.back {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ep-back);
+  flex-shrink: 0;
+}
+
+/* ── center content ── */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  text-align: center;
+  gap: 12px;
+}
+
+/* ── clock icon ── */
+.iconWrap {
+  margin-bottom: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ep-title);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ep-subtitle);
+}
+
+/* ── bottom button ── */
+.footer {
+  padding: 16px 16px 36px;
+  flex-shrink: 0;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Nunito Mbank', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ep-btn-text);
+  background-color: var(--ep-brand);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}

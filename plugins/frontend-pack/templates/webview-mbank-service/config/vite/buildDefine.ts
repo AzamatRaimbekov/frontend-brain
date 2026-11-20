@@ -1,0 +1,9 @@
+export function buildDefine(env: Record<string, string | boolean>) {
+  return Object.entries(env).reduce<Record<string, string>>(
+    (acc, [key, value]) => {
+      acc[`import.meta.env.${key}`] = JSON.stringify(value)
+      return acc
+    },
+    {},
+  )
+}

@@ -1,0 +1,5 @@
+export * from './hooks'
+export * from './ui'
+export * from './model/global-drawer-slice'
+export * from './model/types'
+export { createDrawerHandle } from '@shared/ui/base/drawer'

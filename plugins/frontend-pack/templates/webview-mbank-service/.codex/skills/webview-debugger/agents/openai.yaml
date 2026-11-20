@@ -1,0 +1,6 @@
+interface:
+  display_name: 'WebView Debugger'
+  short_description: 'Debug WebView bugs with structured reports.'
+  default_prompt: >-
+    Use $webview-debugger to analyze this WebView bug and produce a structured
+    bug report.

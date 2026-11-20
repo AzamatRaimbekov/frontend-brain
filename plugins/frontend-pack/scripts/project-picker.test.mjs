@@ -22,7 +22,7 @@ test('validateChoice accepts a kind and a clean folder, returns the create comma
   const parent = tmp();
   const choice = validateChoice({ type: 'webview', name: 'pay-qr' }, parent);
   assert.equal(choice.dir, join(parent, 'pay-qr'));
-  assert.match(choice.create[1], /new-webview\.mjs$/);
+  assert.match(choice.create[1], /new-webview-service\.mjs$/);
   assert.match(validateChoice({ type: 'crm', name: 'crm' }, parent).create[1], /new-crm\.mjs$/);
 });
 

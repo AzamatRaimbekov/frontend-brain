@@ -1,0 +1,1 @@
+export { useMbankToken } from './useMbankToken'

@@ -1,0 +1,1 @@
+export { useMbankLang } from './useMbankLang'

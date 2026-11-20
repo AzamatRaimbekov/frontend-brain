@@ -1,0 +1,58 @@
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  ENV_FILE_TAG: ${CI_COMMIT_REF_SLUG}_file
+
+stages: [build, deploy]
+
+build:dev:
+  stage: build
+  tags:
+    - dev-runner
+  only:
+    - dev
+  before_script:
+    - eval cp "\$$ENV_FILE_TAG" .env
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build -t "$IMAGE_TAG" --build-arg BUILD_ENV=prod .
+    - docker push "$IMAGE_TAG"
+
+build:prod:
+  stage: build
+  tags:
+    - prod-runner
+  only:
+    - main
+  before_script:
+    - eval cp "\$$ENV_FILE_TAG" .env
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build -t "$IMAGE_TAG" --build-arg BUILD_ENV=prod .
+    - docker push "$IMAGE_TAG"
+
+deploy:dev:
+  stage: deploy
+  tags:
+    - dev-runner
+  only:
+    - dev
+  needs:
+    - build:dev
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker stack deploy --detach=false -c infra/swarm-dev.yml --with-registry-auth taxi_licensing
+
+deploy:main:
+  stage: deploy
+  tags:
+    - prod-runner
+  only:
+    - main
+  when: manual
+  needs:
+    - build:prod
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker stack deploy --detach=false -c infra/swarm-prod.yml --with-registry-auth taxi_licensing

@@ -1,0 +1,149 @@
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss';
+
+@import './fonts.css';
+
+:root {
+  /* shadcn tokens with the Mbank WebView values (light) */
+  --background: #eff0f1;
+  --foreground: #111622;
+  --card: #ffffff;
+  --card-foreground: #111622;
+  --popover: #ffffff;
+  --popover-foreground: #111622;
+  --primary: #129958;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f5f6;
+  --secondary-foreground: #111622;
+  --muted: #e3e5e8;
+  --muted-foreground: #626975;
+  --accent: #ffdd2d;
+  --accent-foreground: #111622;
+  --destructive: #e02d3c;
+  --border: #dcdfe4;
+  --input: #a0a7b1;
+  --ring: #129958;
+  --radius: 16px;
+
+  /* Mbank extension: colours shadcn has no name for (shadcn docs: "Adding new colors") */
+  --overlay: #20202066;
+  --border-strong: #cad1d7;
+  --warning: #fabf00;
+  --info: #3b82f6;
+  --info-muted: #93c5fd4d;
+
+}
+
+:root[data-theme='dark'] {
+  --background: #050506;
+  --foreground: #ffffff;
+  --card: #1c1c1e;
+  --card-foreground: #ffffff;
+  --popover: #1c1c1e;
+  --popover-foreground: #ffffff;
+  --primary: #129958;
+  --primary-foreground: #ffffff;
+  --secondary: #27272a;
+  --secondary-foreground: #ffffff;
+  --muted: #2f2f32;
+  --muted-foreground: #939498;
+  --accent: #ffdd2d;
+  --accent-foreground: #ffffff;
+  --destructive: #e84a4a;
+  --border: #343437;
+  --input: #6b6c70;
+  --ring: #129958;
+
+  --overlay: #00000099;
+  --border-strong: #3f3f46;
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+html {
+  overscroll-behavior: none;
+}
+
+*:not(input, textarea) {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+button,
+select,
+a {
+  -webkit-touch-callout: none;
+  -webkit-text-size-adjust: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-overlay: var(--overlay);
+  --color-border-strong: var(--border-strong);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-info-muted: var(--info-muted);
+
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-caret-blink: caret-blink 1s steps(2, start) infinite;
+
+  @keyframes caret-blink {
+    0%,
+    45% {
+      opacity: 1;
+    }
+    46%,
+    100% {
+      opacity: 0;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: 'WebView UI Builder'
+  short_description: 'Build WebView pages and UI flows.'
+  default_prompt: >-
+    Use $webview-ui-builder to design and implement a WebView page in this
+    template.

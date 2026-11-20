@@ -52,11 +52,11 @@ function readMode(dir) {
 }
 const PROCESS = /(до mr|до мр|merge request|по процессу|с ревью|возьми задачу|как для прода|jira|тикет)/;
 const mode = readMode(cwd) === 'team' || PROCESS.test(prompt) ? 'team' : 'vibe';
-// A new project of an unnamed kind: the picker page, not a question in chat (skill mbank-webview).
-const NEW_PROJECT = /(нов[а-яё]* проект|new project|с нуля|from scratch|заведи проект|создай проект)/;
+// A new project: ask the four intake questions first (skill frontend, «Новый проект: сначала вопросы»).
+const NEW_PROJECT = /(нов[а-яё]*\s+(?:[а-яёa-z-]+\s+){0,2}(?:проект|срм|црм|crm|админк|вебвью|webview)|new (?:\w+ )?project|с нуля|from scratch|заведи проект|создай проект|запусти[а-яё]* (?:\S+ )?проект)/;
 const NAMED_KIND = /(вебвью|webview|мини-?приложен|срм|црм|crm|админк|лендинг|landing|next\.?js)/;
-const picker = NEW_PROJECT.test(prompt) && !NAMED_KIND.test(prompt)
-  ? 'New project of an unnamed kind: open the picker page (scripts/project-picker.mjs, WebView microservice or CRM) and wait for the click instead of asking in chat; then create, start and open the project. '
+const picker = NEW_PROJECT.test(prompt)
+  ? `New project: before creating anything ask the person in ONE AskUserQuestion call: ${NAMED_KIND.test(prompt) ? '' : 'kind (CRM/admin, Mbank WebView, other site), '}what it is about, which sections/screens first, data/API (backend, Swagger or mocks); skip what the message already says. Then create it from the team template (CRM: new-crm.mjs, WebView: new-webview-service.mjs), build the named screens, start and open it. `
   : '';
 const route =
   mode === 'vibe'

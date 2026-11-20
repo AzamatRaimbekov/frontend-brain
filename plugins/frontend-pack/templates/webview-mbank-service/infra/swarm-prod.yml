@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  web-view:
+    image: ${IMAGE_TAG}
+    ports:
+      - '3000:80'
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        monitor: 20s
+        failure_action: rollback
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -k -f http://localhost/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - project-net
+
+networks:
+  project-net:
+    external: true
