@@ -94,7 +94,7 @@
       "link": {
         "root": {
           "px": 0,
-          "fg": "primary"
+          "fg": "info"
         }
       }
     },

@@ -8,7 +8,7 @@ import { spawnSync } from 'node:child_process';
 import { cpSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkTarget, DEV_PACKAGES, pinTypescript } from './new-crm.mjs';
+import { checkTarget, DEV_PACKAGES, pinTypescript, shareEditorSettings } from './new-crm.mjs';
 
 const SCRIPTS = dirname(fileURLToPath(import.meta.url));
 const TEMPLATE = resolve(SCRIPTS, '..', 'templates', 'mbank-webview');
@@ -22,7 +22,7 @@ export const PACKAGES = [
   'radix-ui', 'class-variance-authority', 'clsx', 'tailwind-merge', 'tw-animate-css', '@fontsource-variable/geist',
 ];
 // Kit items the template uses, copied into src/shared (tokens → src/styles/mbank-tokens.css).
-export const KIT = ['tokens', 'utils', 'spinner', 'button', 'card', 'skeleton'];
+export const KIT = ['tokens', 'utils', 'spinner', 'button', 'card', 'skeleton', 'input'];
 const REMOVE = ['src/App.tsx', 'src/App.css', 'src/assets'];
 export const VIEWPORT = 'width=device-width, initial-scale=1, viewport-fit=cover';
 
@@ -60,6 +60,7 @@ export function planSteps(opts) {
     act('Copy templates/mbank-webview (bridge, i18n, screens, mocks, tests, configs)', () => copyTemplate(dir)),
     act('Set the name, lang, WebView viewport and npm scripts', () => patchProject(dir, opts.name)),
     cmd('Generate the MSW worker in public/', 'npx', ['-y', 'msw', 'init', 'public', '--save']),
+    cmd('Format the project with the team Prettier config', 'npm', ['run', 'format']),
   ];
 }
 
@@ -89,8 +90,11 @@ function patchProject(dir, name) {
     typecheck: 'tsc -b',
     test: 'vitest run',
     'test:watch': 'vitest',
+    format: 'prettier --write .',
+    'format:check': 'prettier --check .',
   };
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+  shareEditorSettings(dir);
 }
 
 export function run(opts, log = console.log) {

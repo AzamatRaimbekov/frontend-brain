@@ -21,17 +21,19 @@ Not for client-facing Mbank web (use `mbank-ui` directly), non-Mbank admin panel
 
 ## Start a new project
 
+**Every** Mbank CRM, admin panel, back-office or internal tool starts from this template — never from an empty Vite app or hand-written components. The template carries the whole design system: all kit components (`src/shared/ui`), all CRM blocks (`src/shared/components/crm`), the tokens (palette 31 shadcn + 6 status colours, text, radius, shadow from Figma) with the Inter Mbank font (`src/styles`), the dev widget «Дизайн-система» and the dev page `/design-system` (palette, scales, kit on the live tokens).
+
 ```bash
 # PLUGIN = path to plugins/frontend-pack; the directory must not exist or be empty
 node $PLUGIN/scripts/new-crm.mjs ../loans-crm --name "Mbank Кредиты"
 node $PLUGIN/scripts/new-crm.mjs ../loans-crm --dry-run   # print the plan only
-node $PLUGIN/scripts/new-crm.mjs ../loans-crm --kit copy  # kit sources copied into src/shared instead of the package
+node $PLUGIN/scripts/new-crm.mjs ../loans-crm --kit package  # only after @mdigital/mbank-ui is republished; default is copy
 ```
 
-The script runs: `create-vite` (react-ts, `--eslint`, no prompts) → `npm install` of the template packages (TanStack Router + Query, zod, react-error-boundary, Tailwind v4, MSW, Vitest + RTL) and the kit package `@mdigital/mbank-ui` (`mbank-ui` skill, "Install") → copies [`templates/mbank-crm`](../../templates/mbank-crm) over the scaffold (configs, `src/`) and points its imports at the package → sets `<title>`, `lang="ru"`, npm scripts → `npx msw init public`. With `--kit copy` it installs the kit's own packages and runs `add-ui.mjs all` instead of the package. The project is its own git repository: `git init`, then push it to a new GitLab/GitHub project. Then check it:
+The script runs: `create-vite` (react-ts, `--eslint`, no prompts) → `npm install` of the template packages (TanStack Router + Query, zod, react-error-boundary, Tailwind v4, MSW, Vitest + RTL) and the kit's own packages → `add-ui.mjs all` (every kit component, CRM block, tokens.css and fonts from `registry/mbank`, always the current design system) → copies [`templates/mbank-crm`](../../templates/mbank-crm) over the scaffold (configs, `src/`) → sets `<title>`, `lang="ru"`, npm scripts → `npx msw init public`. `--kit package` installs `@mdigital/mbank-ui` instead and rewrites the imports; v0.2.2 still ships the old styles, so use it only after a republish. The project is its own git repository: `git init`, then push it to a new GitLab/GitHub project. Then check it:
 
 ```bash
-npx tsc --noEmit -p tsconfig.app.json && npm run lint && npm test && npm run build
+npm run format:check && npx tsc --noEmit -p tsconfig.app.json && npm run lint && npm test && npm run build
 npm run dev    # mock API in the browser; ?mock=empty | error | action-error opens the other states
 ```
 
@@ -43,9 +45,12 @@ react-hook-form, sonner and i18n are not installed: add them with the first form
 src/app/            router.tsx (routes + staticData.header), navigation.ts (side menu config),
                     AppLayout (CrmLayout), AppSideMenu, AppHeader, AppErrorBoundary, RouteErrorFallback
 src/pages/          pipeline (board, KPI, period), application/$applicationId (summary, stages, sections,
-                    scoring, history, decision dialog), section (placeholder), not-found — each with UX.md
+                    scoring, history, decision dialog), section (placeholder), not-found, design-system
+                    (dev only: palette, text, radius, shadow, kit) — each with UX.md
 src/features/applications/  api (zod schemas, queryOptions, mutations), lib (format, messages), ui
 src/shared/ui/      kit;  src/shared/components/crm/  blocks;  src/mocks/  MSW handlers + seed = Figma data
+src/styles/         mbank-tokens.css (design system) + fonts/inter-mbank;  src/dev/design-system/  token widget (dev only)
+src/dev/design-system/  dev widget «Дизайн-система»: shadcn token values live, design-system.md export (VITE_DS_PANEL=off hides it)
 src/test/           setup.ts (jest-dom, MSW, window.scrollTo stub), server.ts, render.tsx (renderRoute)
 ```
 

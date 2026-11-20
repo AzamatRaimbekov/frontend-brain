@@ -17,6 +17,9 @@
       "values": [
         "neutral",
         "accent",
+        "success",
+        "warning",
+        "info",
         "error",
         "clear"
       ],
@@ -53,14 +56,32 @@
     "tone": {
       "neutral": {
         "root": {
-          "bg": "secondary",
-          "fg": "secondary-foreground"
+          "bg": "accent",
+          "fg": "accent-foreground"
         }
       },
       "accent": {
         "root": {
           "bg": "primary",
           "fg": "primary-foreground"
+        }
+      },
+      "success": {
+        "root": {
+          "bg": "success/10",
+          "fg": "success"
+        }
+      },
+      "warning": {
+        "root": {
+          "bg": "warning/10",
+          "fg": "warning"
+        }
+      },
+      "info": {
+        "root": {
+          "bg": "info/10",
+          "fg": "info"
         }
       },
       "error": {

@@ -86,9 +86,11 @@ test('«✨ Нарисовать» through dist/code.js on an empty file: the sh
   assert.equal(done.result.frames.length, 2);
   assert.equal(done.audit.ok, true, JSON.stringify(done.audit));
   assert.deepEqual([...m.cols.values()].map((c) => c.name), ['shadcn'], 'only the shadcn collection');
-  for (const v of m.vars.values()) assert.ok(!/^(success|warning|info|brand|surface-\d)/.test(v.name), v.name);
+  for (const v of m.vars.values()) assert.ok(!/^(brand|surface-\d|status-)/.test(v.name), v.name);
+  assert.ok([...m.vars.values()].some((v) => v.name === 'success-foreground'), 'shadcn-style status tokens are created');
   const status = await ask({ type: 'init' });
   assert.deepEqual(status.status.missing, []);
   const css = await ask({ type: 'export-css' });
-  assert.match(css.css, /--primary: oklch\(0\.205 0 0\);/);
+  assert.match(css.css, /--primary: oklch\(0\.894 0\.176 97\.008\);/, 'Mbank primary (light value of the canonical file)');
+  assert.match(css.css, /--success-foreground: /);
 });

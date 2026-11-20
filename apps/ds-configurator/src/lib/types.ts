@@ -10,7 +10,7 @@ export type ModeVars = Record<string, string>
 /** Resolved design system: what every exporter reads. Var keys have no leading "--". */
 export type DesignSystem = {
   name: string
-  /** The shadcn token values (31 colours, radius, fonts). */
+  /** The shadcn token values (37 colours, radius, fonts). */
   values: TokenValues
   light: ModeVars
   dark: ModeVars
@@ -21,13 +21,17 @@ export type DesignSystem = {
   googleFonts: boolean
 }
 
-// Defaults = the canonical shadcn tokens: neutral base colour and theme, Geist, radius default.
+/** Option value (base colour, theme, chart colour, font) meaning the canonical token values. */
+export const CANONICAL = "canonical"
+
+// Defaults = the canonical tokens (src/data/shadcn-tokens.json): the "canonical" base colour, theme,
+// charts and font, radius default (= canonical radius). Other /create options are alternatives.
 export const DEFAULT_STATE: ConfiguratorState = {
   ...DEFAULT_PRESET_CONFIG,
   style: "nova",
-  baseColor: "neutral",
-  theme: "neutral",
-  chartColor: "neutral",
-  font: "geist",
+  baseColor: "canonical",
+  theme: "canonical",
+  chartColor: "canonical",
+  font: "canonical",
   fontHeading: "inherit",
 }

@@ -75,7 +75,7 @@
           "bg": "primary/10"
         },
         "number": {
-          "fg": "primary"
+          "fg": "foreground"
         }
       },
       "current": {

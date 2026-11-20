@@ -60,7 +60,7 @@ export function TokensTab({ detail }: { detail: ProjectDetail }) {
         </div>
         <TokenTable rows={rows} canEdit={canEdit && !save.isPending} onEdit={edit} />
         <p className="text-xs text-muted-foreground">
-          Только стандартные токены shadcn: меняются значения, новые имена не добавляются. Радиусы radius-sm…4xl считаются от --radius.
+          Только стандартные токены shadcn: меняются значения, новые имена не добавляются. Шкала radius-sm…4xl задана дизайн-системой и не редактируется.
         </p>
       </section>
       <aside className="grid min-w-0 content-start gap-4">

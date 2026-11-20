@@ -1,6 +1,21 @@
+import canonical from "@/data/shadcn-tokens.json"
+
 import { type RegistryItem } from "./types"
 
-export const THEMES: RegistryItem[] = [
+// Local addition (not upstream): the design system's canonical tokens (src/data/shadcn-tokens.json,
+// owned by figma-pack ds-tokens) as a base colour + theme, so the configurator default is canonical.
+const modeVars = (mode: "light" | "dark") =>
+  Object.fromEntries(Object.entries(canonical.colors).map(([name, v]) => [name, v[mode]]))
+
+const CANONICAL_THEME: RegistryItem = {
+  name: "canonical",
+  title: "Canonical",
+  type: "registry:theme",
+  cssVars: { light: { ...modeVars("light"), radius: canonical.radius }, dark: modeVars("dark") },
+}
+
+const UPSTREAM_THEMES: RegistryItem[] = [
+  CANONICAL_THEME,
   {
     name: "neutral",
     title: "Neutral",
@@ -1082,5 +1097,41 @@ export const THEMES: RegistryItem[] = [
     },
   },
 ] as const satisfies RegistryItem[]
+
+// Local addition (not upstream): status colours (success/warning/info + foregrounds, the design
+// system's shadcn-style status tokens). Upstream base colours lack them, so each base colour gets
+// Tailwind-like defaults; the canonical theme already has its own values from the JSON.
+const STATUS_DEFAULTS = {
+  light: {
+    success: "oklch(0.627 0.194 149.214)", // #16a34a
+    "success-foreground": "oklch(0.985 0 0)",
+    warning: "oklch(0.705 0.213 47.604)", // #f97316
+    "warning-foreground": "oklch(0.145 0 0)",
+    info: "oklch(0.546 0.245 262.881)", // #2563eb
+    "info-foreground": "oklch(0.985 0 0)",
+  },
+  dark: {
+    success: "oklch(0.723 0.219 149.579)", // #22c55e
+    "success-foreground": "oklch(0.145 0 0)",
+    warning: "oklch(0.705 0.213 47.604)", // #f97316
+    "warning-foreground": "oklch(0.145 0 0)",
+    info: "oklch(0.623 0.214 259.815)", // #3b82f6
+    "info-foreground": "oklch(0.145 0 0)",
+  },
+}
+
+const withStatus = (t: RegistryItem): RegistryItem =>
+  t.cssVars?.light?.background === undefined
+    ? t
+    : {
+        ...t,
+        cssVars: {
+          ...t.cssVars,
+          light: { ...STATUS_DEFAULTS.light, ...t.cssVars.light },
+          dark: { ...STATUS_DEFAULTS.dark, ...t.cssVars.dark },
+        },
+      }
+
+export const THEMES: RegistryItem[] = UPSTREAM_THEMES.map(withStatus)
 
 export type Theme = (typeof THEMES)[number]

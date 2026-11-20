@@ -21,13 +21,13 @@ describe("figma plan", () => {
     ])
     const v = (n: string) => plan.variables.find((x) => x.name === n)!
     expect(v("primary")).toMatchObject({ type: "COLOR", editable: true, overridden: false, scopes: ["FRAME_FILL", "SHAPE_FILL"], codeSyntax: "var(--primary)" })
-    expect(v("primary").values.light).toEqual({ value: "#171717", css: "oklch(0.205 0 0)" })
-    expect(v("border").values.dark.value).toBe("#ffffff1a")
+    expect(v("primary").values.light).toEqual({ value: "#fddb2b", css: SHADCN_TOKENS.colors.primary.light })
+    expect(v("border").values.dark.value).toBe("#3a3c41")
     expect(v("primary-foreground").scopes).toContain("TEXT_FILL")
-    expect(v("radius")).toMatchObject({ type: "FLOAT", scopes: ["CORNER_RADIUS"], values: { light: { value: 10, css: "0.625rem" } } })
-    expect(v("radius-xl")).toMatchObject({ editable: false, derived: true, values: { light: { value: 14 } } })
-    expect(v("font-sans")).toMatchObject({ type: "STRING", scopes: ["FONT_FAMILY"], values: { light: { value: "Geist", css: "'Geist Variable', sans-serif" } } })
-    expect(v("font-heading").values.light).toEqual({ value: "Geist", css: "var(--font-sans)", ref: "font-sans" })
+    expect(v("radius")).toMatchObject({ type: "FLOAT", scopes: ["CORNER_RADIUS"], values: { light: { value: 12, css: SHADCN_TOKENS.radius } } })
+    expect(v("radius-xl")).toMatchObject({ editable: false, derived: true, values: { light: { value: 20, css: "20px" } } })
+    expect(v("font-sans")).toMatchObject({ type: "STRING", scopes: ["FONT_FAMILY"], values: { light: { value: "Inter Mbank", css: SHADCN_TOKENS.font.sans } } })
+    expect(v("font-heading").values.light).toEqual({ value: "Inter Mbank", css: "var(--font-sans)", ref: "font-sans" })
     expect(JSON.stringify(plan)).not.toMatch(/alias/)
   })
 
@@ -35,8 +35,8 @@ describe("figma plan", () => {
     const plan = buildFigmaPlan({ project: "p", name: "P", version: 2 }, applyOverrides(SHADCN_TOKENS, { ring: { dark: "var(--primary)" } }), SHADCN_TOKENS)
     const ring = plan.variables.find((x) => x.name === "ring")!
     expect(ring.overridden).toBe(true)
-    expect(ring.values.dark).toEqual({ value: "#e5e5e5", css: "var(--primary)", ref: "primary" })
-    expect(ring.base.dark.css).toBe("oklch(0.556 0 0)")
+    expect(ring.values.dark).toEqual({ value: "#f7c21c", css: "var(--primary)", ref: "primary" }) // dark primary
+    expect(ring.base.dark.css).toBe(SHADCN_TOKENS.colors.ring.dark)
   })
 })
 
@@ -48,11 +48,11 @@ describe("use_figma script", () => {
     expect(col.modes.map((m) => m.name)).toEqual(["Light", "Dark"])
     const [light, dark] = col.modes.map((m) => m.modeId)
     const primary = f.find("shadcn", "primary")!
-    expect(hex(primary.valuesByMode[light] as never)).toBe("#171717")
-    expect(hex(primary.valuesByMode[dark] as never)).toBe("#e5e5e5")
+    expect(hex(primary.valuesByMode[light] as never)).toBe("#fddb2b")
+    expect(hex(primary.valuesByMode[dark] as never)).toBe("#f7c21c")
     expect(primary.codeSyntax.WEB).toBe("var(--primary)")
-    expect(f.find("shadcn", "radius-lg")!.valuesByMode[light]).toBe(10)
-    expect(f.find("shadcn", "font-sans")!.valuesByMode[dark]).toBe("Geist")
+    expect(f.find("shadcn", "radius-lg")!.valuesByMode[light]).toBe(16)
+    expect(f.find("shadcn", "font-sans")!.valuesByMode[dark]).toBe("Inter Mbank")
     expect(report.created).toBe(report.written)
     expect(report.skipped).toEqual([])
 

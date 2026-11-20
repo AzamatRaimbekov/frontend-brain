@@ -31,6 +31,7 @@ test('button: tokens, states and icon part become properties, behaviour stays in
   assert.equal(button.base.root['focus-ring'], 'ring/50');
   assert.match(button.code.extra, /disabled:pointer-events-none/);
   assert.equal(button.code.extras['variant=link'], 'h-auto underline-offset-4 hover:underline');
+  assert.equal(button.variants.variant.link.root.fg, 'info');
   assert.deepEqual(button.states, ['default', 'hover', 'focus', 'disabled']);
 });
 

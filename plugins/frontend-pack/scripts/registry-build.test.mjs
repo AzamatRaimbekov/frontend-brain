@@ -25,8 +25,8 @@ test('the real kit builds: a registry:base item, inline file contents, namespace
   const { registry, items } = buildRegistry();
   const base = items.find((i) => i.name === 'mbank');
   assert.equal(base.type, 'registry:base');
-  assert.equal(Object.keys(base.cssVars.light).length, 32); // 31 shadcn colours + radius
-  assert.equal(Object.keys(base.cssVars.dark).length, 31);
+  assert.equal(Object.keys(base.cssVars.light).length, 38); // 37 colours (31 shadcn + 6 status) + radius
+  assert.equal(Object.keys(base.cssVars.dark).length, 37);
   const button = items.find((i) => i.name === 'button');
   assert.ok(button.files[0].content.includes('@/registry/mbank/lib/utils'));
   assert.ok(button.registryDependencies.every((d) => d.startsWith('@mbank/') && d !== '@mbank/tokens'));

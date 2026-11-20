@@ -36,8 +36,8 @@ export function parseTokens(css) {
   return out;
 }
 
-// shadcn-tokens.json (shadcn/tokens@1) -> flat list. Only standard shadcn names exist: a project changes values,
-// never adds names. The Figma variable has the token's own name (no alias layer).
+// shadcn-tokens.json (shadcn/tokens@1) -> flat list. Only standard shadcn names exist (31 + the six status tokens
+// success / warning / info and their -foreground): a project changes values, never adds names. The Figma variable has the token's own name (no alias layer).
 export function shadcnTokenList(data) {
   const colors = Object.entries(data.colors ?? {}).map(([name, v]) => ({
     name, kind: 'color', light: v.light ?? null, dark: v.dark ?? v.light ?? null, figma: name,

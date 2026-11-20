@@ -12,7 +12,7 @@ const str = (description) => ({ type: 'string', description });
 export const TOOLS = [
   {
     name: 'ds_tokens',
-    description: 'Design-system tokens: the standard shadcn/ui set only (31 colours, radius scale, fonts) - name (CSS var / Tailwind suffix), kind, light and dark value, Figma variable (same name). There are no other tokens: never invent one, use the closest standard name. Use before writing any colour, radius or font class.',
+    description: 'Design-system tokens: the standard shadcn/ui set plus the six status tokens success / warning / info and their -foreground (37 colours, radius scale, fonts) - name (CSS var / Tailwind suffix), kind, light and dark value, Figma variable (same name). There are no other tokens: never invent one, use the closest standard name. Use before writing any colour, radius or font class.',
     inputSchema: { type: 'object', properties: { query: str('filter by name or kind, e.g. "primary", "sidebar", "radius", "color"') } },
     run: (a) => tokens({ query: a.query }),
   },

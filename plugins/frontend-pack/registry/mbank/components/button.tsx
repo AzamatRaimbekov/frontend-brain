@@ -21,7 +21,7 @@ const buttonVariants = cva(
         destructive: "bg-destructive/10 text-destructive hover:bg-destructive/20",
         outline: "border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
         ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
-        link: "h-auto px-0 text-primary underline-offset-4 hover:underline",
+        link: "h-auto px-0 text-info underline-offset-4 hover:underline",
       },
       size: {
         xs: "h-8 px-3 text-xs [&_svg:not([class*='size-'])]:size-4",

@@ -4,11 +4,14 @@ import { buildRegistryTheme, getFontDefinition } from "@/upstream/config"
 import { DEFAULT_PRESET_CONFIG, type PresetConfig } from "@/upstream/preset"
 
 import { COLOR_NAMES, SHADCN_TOKENS, toVars, type TokenValues } from "./tokens"
-import { DEFAULT_STATE, type ConfiguratorState, type DesignSystem } from "./types"
+import { CANONICAL, DEFAULT_STATE, type ConfiguratorState, type DesignSystem } from "./types"
 
 export function fromValues(name: string, values: TokenValues, config: PresetConfig = DEFAULT_STATE, googleFonts = false): DesignSystem {
   return { name, values, ...toVars(values), config, googleFonts }
 }
+
+/** CSS stack of a /create font name; "canonical" is the canonical sans stack (not a Google font). */
+const fontStack = (name: string) => (name === CANONICAL ? SHADCN_TOKENS.font.sans : getFontDefinition(name)?.family)
 
 /** Token values of a /create configuration: upstream theme maps, kept to the canonical names. */
 export function stateValues(state: ConfiguratorState): TokenValues {
@@ -18,11 +21,11 @@ export function stateValues(state: ConfiguratorState): TokenValues {
     const base = SHADCN_TOKENS.colors[name]
     colors[name] = { light: light[name] ?? base.light, dark: dark[name] ?? light[name] ?? base.dark }
   }
-  const sans = getFontDefinition(state.font)?.family ?? SHADCN_TOKENS.font.sans
+  const sans = fontStack(state.font) ?? SHADCN_TOKENS.font.sans
   const heading =
     state.fontHeading === "inherit" || state.fontHeading === state.font
       ? "var(--font-sans)"
-      : (getFontDefinition(state.fontHeading)?.family ?? "var(--font-sans)")
+      : (fontStack(state.fontHeading) ?? "var(--font-sans)")
   return { radius: light.radius ?? SHADCN_TOKENS.radius, font: { sans, heading }, colors }
 }
 

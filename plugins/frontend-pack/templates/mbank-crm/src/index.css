@@ -2,3 +2,17 @@
 @import "tw-animate-css";
 @import "@fontsource-variable/geist";
 @import "./styles/mbank-tokens.css";
+
+/* Design-system page (pages/design-system): pin hover / focus / active with data-preview="…" (shadcn skill assets/showcase). */
+@custom-variant hover {
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+  &[data-preview~="hover"] {
+    @slot;
+  }
+}
+@custom-variant focus-visible (&:focus-visible, &[data-preview~="focus"]);
+@custom-variant active (&:active, &[data-preview~="active"]);

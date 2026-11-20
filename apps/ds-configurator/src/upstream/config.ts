@@ -122,8 +122,9 @@ export function buildRegistryBase({ name, config, cssVars, fontRegistryDependenc
     ...iconLibrary.packages,
   ]
   const registryDependencies = ["utils"]
-  if (fontRegistryDependency) registryDependencies.push(`font-${config.font}`)
-  if (fontRegistryDependency && fontHeading !== "inherit") registryDependencies.push(`font-heading-${fontHeading}`)
+  // Local change: only fonts with an upstream definition have a registry font item (not "canonical").
+  if (fontRegistryDependency && getFontDefinition(config.font)) registryDependencies.push(`font-${config.font}`)
+  if (fontRegistryDependency && getFontDefinition(fontHeading)) registryDependencies.push(`font-heading-${fontHeading}`)
 
   return {
     name,

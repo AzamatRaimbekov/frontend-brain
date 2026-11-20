@@ -37,28 +37,32 @@ test('oklch() strings parse, convert to Figma RGBA with alpha, and back', () => 
   assert.equal(rgbaToOklch({ r: 1, g: 1, b: 1 }), 'oklch(1 0 0)');
 });
 
-test('the token set is exactly the canonical shadcn file: 31 colours, radius scale in px', () => {
+test('the token set is exactly the canonical shadcn file: 37 colours (31 + 6 status), radius scale in px', () => {
   assert.equal(SHADCN_TOKENS.$schema, 'shadcn/tokens@1');
   assert.deepEqual(COLOR_TOKENS, Object.keys(CANON.colors));
-  assert.equal(COLOR_TOKENS.length, 31);
-  for (const gone of ['success', 'warning', 'info', 'destructive-foreground', 'brand', 'status-muted']) assert.ok(!COLOR_TOKENS.includes(gone), gone);
-  assert.equal(RADIUS, 10);
-  assert.deepEqual(radiusScale(), { sm: 6, md: 8, lg: 10, xl: 14, '2xl': 18, '3xl': 22, '4xl': 26 });
+  assert.equal(COLOR_TOKENS.length, 37);
+  const status = ['success', 'success-foreground', 'warning', 'warning-foreground', 'info', 'info-foreground'];
+  assert.deepEqual(COLOR_TOKENS.slice(COLOR_TOKENS.indexOf('destructive') + 1, COLOR_TOKENS.indexOf('destructive') + 7), status);
+  for (const gone of ['destructive-foreground', 'brand', 'status-muted', 'success-muted']) assert.ok(!COLOR_TOKENS.includes(gone), gone);
+  assert.equal(RADIUS, 12); // Mbank radius/m
+  assert.deepEqual(radiusScale(), { sm: 8, md: 12, lg: 16, xl: 20, '2xl': 24, '3xl': 32, '4xl': 40 }); // Figma radius/*
   assert.deepEqual(RADIUS_TOKENS, ['radius', 'radius-sm', 'radius-md', 'radius-lg', 'radius-xl', 'radius-2xl', 'radius-3xl', 'radius-4xl']);
   for (const k of COLOR_TOKENS) for (const th of ['light', 'dark']) assert.ok(rgbaOf(k, th).a > 0, `${k} ${th}`);
   assert.equal(hexOf('background', 'light'), '#ffffff');
-  assert.equal(rgbaOf('border', 'dark').a, 0.1);
+  assert.equal(rgbaOf('border', 'dark').a, 1); // Mbank borders are opaque
 });
 
 test('canonical tokens validate and read in both themes', () => {
   assert.deepEqual(validateTokens(CANON), []);
-  assert.deepEqual(contrastReport().filter((r) => !r.ok), []);
+  // Known exception: green sidebar-primary (#16a34a, Mbank Figma) with white text is 3.3:1 in both modes.
+  assert.deepEqual(contrastReport().filter((r) => !r.ok).map((r) => [r.fg, r.bg, r.mode]),
+    [['sidebar-primary-foreground', 'sidebar-primary', 'light'], ['sidebar-primary-foreground', 'sidebar-primary', 'dark']]);
   const extra = JSON.parse(JSON.stringify(CANON));
-  extra.colors.success = { light: 'oklch(0.6 0.1 150)', dark: 'oklch(0.6 0.1 150)' };
+  extra.colors.brand = { light: 'oklch(0.6 0.1 150)', dark: 'oklch(0.6 0.1 150)' };
   delete extra.colors.ring;
   extra.colors.border.dark = 'nope';
   const errors = validateTokens(extra);
-  assert.ok(errors.includes('colors.success: not a shadcn token'));
+  assert.ok(errors.includes('colors.brand: not a shadcn token'));
   assert.ok(errors.includes('colors.ring.light: missing'));
   assert.ok(errors.some((e) => e.startsWith('colors.border.dark: bad value')));
 });
@@ -76,10 +80,11 @@ test('globals.css: every shadcn colour in :root and .dark as oklch, theme mappin
     assert.ok(css.includes(`  --${k}: ${CANON.colors[k].dark};`), k);
     assert.match(css, new RegExp(`--color-${k}: var\\(--${k}\\)`));
   }
-  assert.match(css, /--radius: 0\.625rem;/);
-  assert.match(css, /--radius-xl: calc\(var\(--radius\) \* 1\.4\);/);
-  assert.match(css, /--font-sans: 'Geist Variable', sans-serif;/);
-  assert.ok(!/--(success|warning|info|brand)\b/.test(css), 'shadcn names only');
+  assert.match(css, /--radius: 12px;/);
+  assert.match(css, /--radius-xl: 20px;/); // Figma radius/xl
+  assert.match(css, /--font-sans: 'Inter Mbank', 'Inter', 'Geist Variable', ui-sans-serif, system-ui, sans-serif;/);
+  assert.ok(!/--(brand|status-muted|destructive-foreground)\b/.test(css), 'shadcn names only');
+  for (const k of ['success', 'warning', 'info']) assert.match(css, new RegExp(`--color-${k}-foreground: var\\(--${k}-foreground\\)`));
 });
 
 test('variable scopes by role (same set as the widget)', () => {
@@ -89,6 +94,8 @@ test('variable scopes by role (same set as the widget)', () => {
   assert.deepEqual(scopesFor('sidebar-ring'), ['STROKE_COLOR']);
   assert.deepEqual(scopesFor('input'), ['STROKE_COLOR', 'FRAME_FILL', 'SHAPE_FILL']);
   assert.deepEqual(scopesFor('destructive'), ['FRAME_FILL', 'SHAPE_FILL', 'TEXT_FILL', 'STROKE_COLOR']);
+  assert.deepEqual(scopesFor('success'), ['FRAME_FILL', 'SHAPE_FILL', 'TEXT_FILL', 'STROKE_COLOR']);
+  assert.deepEqual(scopesFor('info-foreground'), ['TEXT_FILL']);
   assert.deepEqual(scopesFor('chart-3'), ['FRAME_FILL', 'SHAPE_FILL', 'STROKE_COLOR']);
 });
 

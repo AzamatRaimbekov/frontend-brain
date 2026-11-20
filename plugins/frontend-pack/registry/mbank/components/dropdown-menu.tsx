@@ -76,7 +76,7 @@ function DropdownMenuCheckboxItem({
       {...props}
     >
       {children}
-      <span className="absolute right-3 flex size-4 items-center justify-center text-primary">
+      <span className="absolute right-3 flex size-4 items-center justify-center text-foreground">
         <DropdownMenuPrimitive.ItemIndicator>
           <CheckIcon />
         </DropdownMenuPrimitive.ItemIndicator>

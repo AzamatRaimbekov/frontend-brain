@@ -126,16 +126,16 @@
     onPrimary: "primary-foreground",
     accentSoft: "accent",
     accentText: "accent-foreground",
-    successBg: "secondary",
-    successFg: "secondary-foreground",
-    warningBg: "accent",
-    warningFg: "destructive",
+    successBg: "success",
+    successFg: "success-foreground",
+    warningBg: "warning",
+    warningFg: "warning-foreground",
     errorBg: "destructive",
     errorFg: "primary-foreground",
     neutralBg: "muted",
     neutralFg: "muted-foreground",
-    infoBg: "secondary",
-    infoFg: "foreground"
+    infoBg: "info",
+    infoFg: "info-foreground"
   };
   var paint = (value) => parseColor(value) || { r: 0, g: 0, b: 0, a: 0 };
   function chromeColors(tokens) {
@@ -166,6 +166,7 @@
   var GROUPS = [
     { id: "base", label: "\u0424\u043E\u043D \u0438 \u0442\u0435\u043A\u0441\u0442" },
     { id: "action", label: "\u0410\u043A\u0446\u0435\u043D\u0442\u044B" },
+    { id: "status", label: "\u0421\u0442\u0430\u0442\u0443\u0441\u044B" },
     { id: "border", label: "\u0413\u0440\u0430\u043D\u0438\u0446\u044B" },
     { id: "chart", label: "\u0413\u0440\u0430\u0444\u0438\u043A\u0438" },
     { id: "sidebar", label: "\u0421\u0430\u0439\u0434\u0431\u0430\u0440" },
@@ -176,6 +177,7 @@
     if (/^chart-/.test(name)) return "chart";
     if (/^sidebar/.test(name)) return "sidebar";
     if (/^(border|input|ring)$/.test(name)) return "border";
+    if (/^(success|warning|info)(-foreground)?$/.test(name)) return "status";
     if (/^(primary|secondary|muted|accent|destructive)/.test(name)) return "action";
     return "base";
   }
@@ -252,7 +254,7 @@
     if (/-foreground$/.test(name)) return ["TEXT_FILL"];
     if (/^(sidebar-)?(border|ring)$/.test(name)) return [...STROKES];
     if (name === "input") return [...STROKES, ...FILLS];
-    if (name === "destructive") return [...FILLS, "TEXT_FILL", ...STROKES];
+    if (/^(destructive|success|warning|info)$/.test(name)) return [...FILLS, "TEXT_FILL", ...STROKES];
     if (/^chart-/.test(name)) return [...FILLS, ...STROKES];
     return [...FILLS];
   }
@@ -371,146 +373,256 @@
   // ../skills/ds-tokens/references/shadcn-tokens.json
   var shadcn_tokens_default = {
     $schema: "shadcn/tokens@1",
-    $comment: "\u0415\u0434\u0438\u043D\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439 \u043D\u0430\u0431\u043E\u0440 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u0434\u0438\u0437\u0430\u0439\u043D-\u0441\u0438\u0441\u0442\u0435\u043C\u044B: \u0447\u0438\u0441\u0442\u044B\u0439 shadcn/ui (Tailwind v4, oklch). \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441\u043D\u044F\u0442\u044B \u0441 shadcn init (style radix-nova, baseColor neutral) 2026-11-11. \u0412\u043B\u0430\u0434\u0435\u043B\u0435\u0446: figma-pack skills/ds-tokens/references/shadcn-tokens.json; \u043A\u043E\u043F\u0438\u044E \u0443 frontend-pack \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442 design-engine sync-contracts. \u0421\u0432\u043E\u0438 \u0442\u043E\u043A\u0435\u043D\u044B \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u044F\u044E\u0442\u0441\u044F: \u043F\u0440\u043E\u0435\u043A\u0442 \u043C\u0435\u043D\u044F\u0435\u0442 \u0442\u043E\u043B\u044C\u043A\u043E \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u044D\u0442\u0438\u0445 \u0438\u043C\u0451\u043D (\u043F\u0440\u0435\u0441\u0435\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 ds-configurator).",
-    radius: "0.625rem",
+    $comment: "\u0415\u0434\u0438\u043D\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439 \u043D\u0430\u0431\u043E\u0440 \u0442\u043E\u043A\u0435\u043D\u043E\u0432 \u0434\u0438\u0437\u0430\u0439\u043D-\u0441\u0438\u0441\u0442\u0435\u043C\u044B: \u0438\u043C\u0435\u043D\u0430 \u2014 \u0447\u0438\u0441\u0442\u044B\u0439 shadcn/ui (Tailwind v4), \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u2014 Mbank (2.theme / Foundation \u0438\u0437 Figma, \u0441\u043D\u044F\u0442\u044B \u0432 registry/mbank/tokens.css \u0434\u043E 2026-11-11; \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0435\u043D\u044B \u043D\u0430 \u0438\u043C\u0435\u043D\u0430 shadcn 2026-11-19). radius = Mbank radius/m 12px. \u0412\u043B\u0430\u0434\u0435\u043B\u0435\u0446: figma-pack skills/ds-tokens/references/shadcn-tokens.json; \u043A\u043E\u043F\u0438\u044E \u0443 frontend-pack \u043E\u0431\u043D\u043E\u0432\u043B\u044F\u0435\u0442 design-engine sync-contracts. \u0421\u0432\u043E\u0438 \u0442\u043E\u043A\u0435\u043D\u044B \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u044F\u044E\u0442\u0441\u044F, \u043A\u0440\u043E\u043C\u0435 \u0441\u0442\u0430\u0442\u0443\u0441\u043E\u0432 success / warning / info (+ -foreground) \u0432 \u0441\u0442\u0438\u043B\u0435 shadcn \u2014 \u0440\u0435\u0448\u0435\u043D\u0438\u0435 2026-11-20: \u0432 Figma \u0446\u0432\u0435\u0442\u043D\u044B\u0435 \u0441\u0442\u0430\u0442\u0443\u0441\u044B, \u0432 shadcn \u0438\u043C\u0451\u043D \u043D\u0435\u0442. \u0417\u043D\u0430\u0447\u0435\u043D\u0438\u044F: success = accent/positive (#0fa976 / #10b981), warning = text/warning orange (#f97316), info = text/link blue (#3b82f6 / #60a5fa), sidebar-primary = brand/bank green #16a34a (\u043B\u043E\u0433\u043E\u0442\u0438\u043F). muted-foreground light = #5d6c79 (Mbank status-neutral) \u0432\u043C\u0435\u0441\u0442\u043E #768793: \u043A\u043E\u043D\u0442\u0440\u0430\u0441\u0442 3.71 < 4.5. 2026-11-20: radiusScale = Figma 1.brand radius/* web (s 8, m 12, l 16, xl 20, xl-2 24, xl-3 32, xl-4 40); text = Web components font/* \u043D\u0430 \u0441\u0442\u0430\u043D\u0434\u0430\u0440\u0442\u043D\u044B\u0445 \u0438\u043C\u0435\u043D\u0430\u0445 Tailwind; shadow = Web components shadow/bottom/controls,s,m,l,xl (rgb(81 92 105), \u043F\u0440\u043E\u0447\u0438\u0442\u0430\u043D\u043E \u0438\u0437 Figma REST 2026-11-20; \u0446\u0432\u0435\u0442\u0430 2.theme \u0441\u0432\u0435\u0440\u0435\u043D\u044B \u0441 Figma 2026-11-20 \u2014 \u0441\u043E\u0432\u043F\u0430\u0434\u0430\u044E\u0442); \u0448\u0440\u0438\u0444\u0442 Inter Mbank \u0438\u0437 \u0448\u0430\u0431\u043B\u043E\u043D\u0430 \u043A\u043E\u043C\u0430\u043D\u0434\u044B (registry/mbank/fonts).",
+    radius: "12px",
     radiusScale: {
-      sm: "calc(var(--radius) * 0.6)",
-      md: "calc(var(--radius) * 0.8)",
-      lg: "var(--radius)",
-      xl: "calc(var(--radius) * 1.4)",
-      "2xl": "calc(var(--radius) * 1.8)",
-      "3xl": "calc(var(--radius) * 2.2)",
-      "4xl": "calc(var(--radius) * 2.6)"
+      sm: "8px",
+      md: "12px",
+      lg: "16px",
+      xl: "20px",
+      "2xl": "24px",
+      "3xl": "32px",
+      "4xl": "40px"
     },
     font: {
-      sans: "'Geist Variable', sans-serif",
+      sans: "'Inter Mbank', 'Inter', 'Geist Variable', ui-sans-serif, system-ui, sans-serif",
       heading: "var(--font-sans)"
     },
     colors: {
       background: {
         light: "oklch(1 0 0)",
-        dark: "oklch(0.145 0 0)"
+        dark: "oklch(0.1682 0.0045 264.447)"
       },
       foreground: {
-        light: "oklch(0.145 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.9622 0.0035 219.533)"
       },
       card: {
         light: "oklch(1 0 0)",
-        dark: "oklch(0.205 0 0)"
+        dark: "oklch(0.2800 0.0102 260.705)"
       },
       "card-foreground": {
-        light: "oklch(0.145 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.9622 0.0035 219.533)"
       },
       popover: {
         light: "oklch(1 0 0)",
-        dark: "oklch(0.205 0 0)"
+        dark: "oklch(0.2800 0.0102 260.705)"
       },
       "popover-foreground": {
-        light: "oklch(0.145 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.9622 0.0035 219.533)"
       },
       primary: {
-        light: "oklch(0.205 0 0)",
-        dark: "oklch(0.922 0 0)"
+        light: "oklch(0.8938 0.1756 97.008)",
+        dark: "oklch(0.8382 0.1666 87.978)"
       },
       "primary-foreground": {
-        light: "oklch(0.985 0 0)",
-        dark: "oklch(0.205 0 0)"
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.1682 0.0045 264.447)"
       },
       secondary: {
-        light: "oklch(0.97 0 0)",
-        dark: "oklch(0.269 0 0)"
+        light: "oklch(0.2130 0.0085 264.379)",
+        dark: "oklch(0.2800 0.0102 260.705)"
       },
       "secondary-foreground": {
-        light: "oklch(0.205 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(1 0 0)",
+        dark: "oklch(1 0 0)"
       },
       muted: {
-        light: "oklch(0.97 0 0)",
-        dark: "oklch(0.269 0 0)"
+        light: "oklch(0.9719 0.0025 228.784)",
+        dark: "oklch(0.2130 0.0085 264.379)"
       },
       "muted-foreground": {
-        light: "oklch(0.556 0 0)",
-        dark: "oklch(0.708 0 0)"
+        light: "oklch(0.5235 0.0274 244.486)",
+        dark: "oklch(0.6138 0.0269 238.688)"
       },
       accent: {
-        light: "oklch(0.97 0 0)",
-        dark: "oklch(0.269 0 0)"
+        light: "oklch(0.9466 0.0051 228.820)",
+        dark: "oklch(0.3946 0.0164 251.758)"
       },
       "accent-foreground": {
-        light: "oklch(0.205 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.9622 0.0035 219.533)"
       },
       destructive: {
-        light: "oklch(0.577 0.245 27.325)",
-        dark: "oklch(0.704 0.191 22.216)"
+        light: "oklch(0.6368 0.2078 25.331)",
+        dark: "oklch(0.5054 0.1905 27.518)"
+      },
+      success: {
+        light: "oklch(0.651 0.1388 162.662)",
+        dark: "oklch(0.6959 0.1491 162.48)"
+      },
+      "success-foreground": {
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.1682 0.0045 264.447)"
+      },
+      warning: {
+        light: "oklch(0.7049 0.1867 47.604)",
+        dark: "oklch(0.7049 0.1867 47.604)"
+      },
+      "warning-foreground": {
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.1682 0.0045 264.447)"
+      },
+      info: {
+        light: "oklch(0.6231 0.188 259.815)",
+        dark: "oklch(0.7137 0.1434 254.624)"
+      },
+      "info-foreground": {
+        light: "oklch(1 0 0)",
+        dark: "oklch(1 0 0)"
       },
       border: {
-        light: "oklch(0.922 0 0)",
-        dark: "oklch(1 0 0 / 10%)"
+        light: "oklch(0.9189 0.0068 233.647)",
+        dark: "oklch(0.3561 0.0090 268.407)"
       },
       input: {
-        light: "oklch(0.922 0 0)",
-        dark: "oklch(1 0 0 / 15%)"
+        light: "oklch(0.8921 0.0087 247.924)",
+        dark: "oklch(0.4493 0.0214 253.497)"
       },
       ring: {
-        light: "oklch(0.708 0 0)",
-        dark: "oklch(0.556 0 0)"
+        light: "oklch(0.8382 0.1666 87.978)",
+        dark: "oklch(0.8938 0.1756 97.008)"
       },
       "chart-1": {
-        light: "oklch(0.87 0 0)",
-        dark: "oklch(0.87 0 0)"
+        light: "oklch(0.8382 0.1666 87.978)",
+        dark: "oklch(0.8382 0.1666 87.978)"
       },
       "chart-2": {
-        light: "oklch(0.556 0 0)",
-        dark: "oklch(0.556 0 0)"
+        light: "oklch(0.5461 0.2152 262.881)",
+        dark: "oklch(0.5461 0.2152 262.881)"
       },
       "chart-3": {
-        light: "oklch(0.439 0 0)",
-        dark: "oklch(0.439 0 0)"
+        light: "oklch(0.6959 0.1491 162.480)",
+        dark: "oklch(0.5960 0.1274 163.225)"
       },
       "chart-4": {
-        light: "oklch(0.371 0 0)",
-        dark: "oklch(0.371 0 0)"
+        light: "oklch(0.6461 0.1943 41.116)",
+        dark: "oklch(0.6461 0.1943 41.116)"
       },
       "chart-5": {
-        light: "oklch(0.269 0 0)",
-        dark: "oklch(0.269 0 0)"
+        light: "oklch(0.5413 0.2466 293.009)",
+        dark: "oklch(0.5413 0.2466 293.009)"
       },
       sidebar: {
-        light: "oklch(0.985 0 0)",
-        dark: "oklch(0.205 0 0)"
+        light: "oklch(1 0 0)",
+        dark: "oklch(0.2130 0.0085 264.379)"
       },
       "sidebar-foreground": {
-        light: "oklch(0.145 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.9622 0.0035 219.533)"
       },
       "sidebar-primary": {
-        light: "oklch(0.205 0 0)",
-        dark: "oklch(0.488 0.243 264.376)"
+        light: "oklch(0.6271 0.1699 149.214)",
+        dark: "oklch(0.6271 0.1699 149.214)"
       },
       "sidebar-primary-foreground": {
-        light: "oklch(0.985 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(1 0 0)",
+        dark: "oklch(1 0 0)"
       },
       "sidebar-accent": {
-        light: "oklch(0.97 0 0)",
-        dark: "oklch(0.269 0 0)"
+        light: "oklch(0.9719 0.0025 228.784)",
+        dark: "oklch(0.2800 0.0102 260.705)"
       },
       "sidebar-accent-foreground": {
-        light: "oklch(0.205 0 0)",
-        dark: "oklch(0.985 0 0)"
+        light: "oklch(0.1682 0.0045 264.447)",
+        dark: "oklch(0.9622 0.0035 219.533)"
       },
       "sidebar-border": {
-        light: "oklch(0.922 0 0)",
-        dark: "oklch(1 0 0 / 10%)"
+        light: "oklch(0.9189 0.0068 233.647)",
+        dark: "oklch(0.3561 0.0090 268.407)"
       },
       "sidebar-ring": {
-        light: "oklch(0.708 0 0)",
-        dark: "oklch(0.556 0 0)"
+        light: "oklch(0.8382 0.1666 87.978)",
+        dark: "oklch(0.8938 0.1756 97.008)"
       }
+    },
+    fontFaces: {
+      family: "Inter Mbank",
+      dir: "fonts/inter-mbank",
+      faces: [
+        {
+          weight: 400,
+          file: "Inter-Regular-Mbank.woff2"
+        },
+        {
+          weight: 500,
+          file: "Inter-Medium-Mbank.woff2"
+        },
+        {
+          weight: 600,
+          file: "Inter-SemiBold-Mbank.woff2"
+        },
+        {
+          weight: 700,
+          file: "Inter-Bold-Mbank.woff2"
+        }
+      ]
+    },
+    text: {
+      xs: {
+        size: "13px",
+        lineHeight: "16px",
+        figma: "font/Body/xs"
+      },
+      sm: {
+        size: "14px",
+        lineHeight: "20px",
+        figma: "font/Body/s"
+      },
+      base: {
+        size: "16px",
+        lineHeight: "24px",
+        figma: "font/Body/l, Heading/h6"
+      },
+      lg: {
+        size: "18px",
+        lineHeight: "26px",
+        figma: "font/Body/xl"
+      },
+      xl: {
+        size: "20px",
+        lineHeight: "28px",
+        figma: "font/Heading/h5"
+      },
+      "2xl": {
+        size: "24px",
+        lineHeight: "32px",
+        figma: "font/Heading/h4"
+      },
+      "3xl": {
+        size: "32px",
+        lineHeight: "40px",
+        figma: "font/Heading/h3"
+      },
+      "4xl": {
+        size: "44px",
+        lineHeight: "52px",
+        figma: "font/Heading/h1, h2"
+      },
+      "5xl": {
+        size: "48px",
+        lineHeight: "56px",
+        figma: "font/Display/s"
+      },
+      "6xl": {
+        size: "56px",
+        lineHeight: "68px",
+        figma: "font/Display/m"
+      },
+      "7xl": {
+        size: "72px",
+        lineHeight: "88px",
+        figma: "font/Display/l"
+      }
+    },
+    shadow: {
+      xs: "0 2px 2px rgb(81 92 105 / 0.2), 0 0 1px rgb(81 92 105 / 0.1)",
+      sm: "0 2px 4px rgb(81 92 105 / 0.05), 0 0 8px rgb(81 92 105 / 0.1)",
+      md: "0 4px 8px rgb(81 92 105 / 0.05), 0 0 16px rgb(81 92 105 / 0.1)",
+      lg: "0 12px 20px rgb(81 92 105 / 0.05), 0 0 20px rgb(81 92 105 / 0.1)",
+      xl: "0 32px 32px rgb(81 92 105 / 0.05), 0 0 32px rgb(81 92 105 / 0.1)"
     }
   };
 

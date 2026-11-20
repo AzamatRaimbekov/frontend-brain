@@ -7,7 +7,7 @@ import { Skeleton } from "@/shared/ui/skeleton"
 /* Delta colour is about meaning, not sign: "−18 мин" to decision time is good (positive). Only the bad one is coloured. */
 const deltaVariants = cva("text-sm font-medium", {
   variants: {
-    tone: { positive: "text-foreground", negative: "text-destructive", neutral: "text-muted-foreground" },
+    tone: { positive: "text-success", negative: "text-destructive", neutral: "text-muted-foreground" },
   },
   defaultVariants: { tone: "neutral" },
 })

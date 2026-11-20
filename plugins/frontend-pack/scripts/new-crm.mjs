@@ -2,8 +2,9 @@
 // Scaffolds a new Mbank CRM / admin panel: Vite + React + TS, the Mbank kit, all CRM blocks and
 // templates/mbank-crm (layout, navigation, two Figma pages, MSW mocks, tests).
 // Usage: node new-crm.mjs <dir> [--name "Mbank CRM"] [--kit package|copy] [--dry-run]
-//   --kit package (default): the kit and widgets come from the @mdigital/mbank-ui package (KIT_PACKAGE)
-//   --kit copy: kit sources are copied into src/shared with add-ui.mjs (to change them in the project)
+//   --kit copy (default): the whole kit, all CRM blocks, tokens (palette, text, radius, shadow) and the Inter Mbank
+//     font are copied into src/ from registry/mbank with add-ui.mjs — always the current design system
+//   --kit package: the kit comes from the @mdigital/mbank-ui package (KIT_PACKAGE); only when the package is republished
 // Refuses a non-empty <dir>. Needs network for npm. Pure Node 18+, no dependencies.
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -32,12 +33,14 @@ const COPY_ONLY = ['radix-ui', 'class-variance-authority', 'clsx', 'tailwind-mer
 export const DEV_PACKAGES = [
   '@tanstack/react-query-devtools', '@tanstack/eslint-plugin-query', '@types/node',
   'vitest', '@testing-library/react', '@testing-library/user-event', '@testing-library/jest-dom', 'jsdom', 'msw',
+  // Team code style (templates/*/.prettierrc.json): Prettier 3 + import order.
+  'prettier', '@trivago/prettier-plugin-sort-imports',
 ];
 // Vite scaffold files the template replaces or makes useless.
 const REMOVE = ['src/App.tsx', 'src/App.css', 'src/assets'];
 
 export function parseArgs(argv) {
-  const opts = { dir: null, name: 'Mbank CRM', kit: 'package', dryRun: false, help: false };
+  const opts = { dir: null, name: 'Mbank CRM', kit: 'copy', dryRun: false, help: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--dry-run') opts.dryRun = true;
@@ -91,6 +94,7 @@ export function planSteps(opts) {
     asPackage ? act('Point the template at @mdigital/mbank-ui', () => usePackage(dir)) : null,
     act('Set the name, lang="ru" and npm scripts', () => patchProject(dir, opts.name)),
     cmd('Generate the MSW worker in public/', 'npx', ['-y', 'msw', 'init', 'public', '--save']),
+    cmd('Format the project with the team Prettier config', 'npm', ['run', 'format']),
   ].filter(Boolean);
 }
 
@@ -137,8 +141,16 @@ function patchProject(dir, name) {
     .replace(/<title>[^<]*<\/title>/, `<title>${name.replace(/[<&]/g, '')}</title>`));
   const pkgPath = join(dir, 'package.json');
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-  pkg.scripts = { ...pkg.scripts, typecheck: 'tsc -b', test: 'vitest run', 'test:watch': 'vitest' };
+  pkg.scripts = {
+    ...pkg.scripts,
+    typecheck: 'tsc -b',
+    test: 'vitest run',
+    'test:watch': 'vitest',
+    format: 'prettier --write .',
+    'format:check': 'prettier --check .',
+  };
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+  shareEditorSettings(dir);
 }
 
 export function run(opts, log = console.log) {
@@ -169,4 +181,14 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.error(`new-crm: ${error.message}`);
     process.exit(1);
   }
+}
+
+/** Vite's .gitignore hides .vscode/* except extensions.json: share settings.json too (format on save). */
+export function shareEditorSettings(dir) {
+  const path = join(dir, '.gitignore');
+  if (!existsSync(path)) return false;
+  const text = readFileSync(path, 'utf8');
+  if (!/^\.vscode\/\*$/m.test(text) || /^!\.vscode\/settings\.json$/m.test(text)) return false;
+  writeFileSync(path, text.replace(/^!\.vscode\/extensions\.json$/m, '$&\n!.vscode/settings.json'));
+  return true;
 }

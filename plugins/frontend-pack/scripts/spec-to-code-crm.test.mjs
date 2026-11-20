@@ -82,7 +82,7 @@ test('data blocks: schemas, fixtures from the spec items, status tones', () => {
   const { model, file } = generate(SPEC);
   const by = Object.fromEntries(model.screens[0].flat.map((b) => [b.type, b]));
   assert.deepEqual(by.funnel.fixture.map((x) => x.share), [1, 0.378]);
-  assert.deepEqual(by.meters.fixture.map((x) => [x.tone, x.value]), [['default', '98%'], ['error', '71%']]);
+  assert.deepEqual(by.meters.fixture.map((x) => [x.tone, x.value]), [['success', '98%'], ['error', '71%']]);
   assert.deepEqual(by.score.fixture.factors.map((x) => x.good), [true, false]);
   assert.equal(by.files.fixture[1].name, 'Договор залога');
   assert.deepEqual(by.checks.fixture.map((x) => x.status), ['ok', 'wait']);
@@ -95,7 +95,7 @@ test('data blocks: schemas, fixtures from the spec items, status tones', () => {
   assert.match(schemas, /chart: z\.array\(z\.object\(\{ label: z\.string\(\), values: z\.array\(z\.number\(\)\) \}\)\)/);
   assert.doesNotMatch(schemas, /decision|profile/, 'decision and profile are static copy, not payload');
   const status = file('src/features/app/lib/status.ts');
-  for (const [label, tone] of [['Низкий риск', 'accent'], ['Проверен', 'accent'], ['Активный', 'accent']]) assert.match(status, new RegExp(`'${label}': '${tone}'`));
+  for (const [label, tone] of [['Низкий риск', 'success'], ['Проверен', 'success'], ['Активный', 'success']]) assert.match(status, new RegExp(`'${label}': '${tone}'`));
 });
 
 test('each CRM block renders sensible markup', () => {

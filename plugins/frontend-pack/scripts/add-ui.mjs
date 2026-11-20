@@ -5,7 +5,7 @@
 //        [--cwd .] [--dry-run] [--force]
 //        node add-ui.mjs --list   ("all" = every kit item and block, "blocks" = every block)
 // Never overwrites an existing file without --force. Pure Node 18+, no dependencies.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -140,6 +140,22 @@ export function run(opts, log = console.log) {
       if (!opts.dryRun) {
         mkdirSync(dirname(dest), { recursive: true });
         writeFileSync(dest, readFileSync(join(REGISTRY_DIR, file.path)));
+      }
+      // tokens.css loads the Mbank font with @font-face url('./fonts/…'): the files go next to it (binary,
+      // so they are not in registry.json / r/).
+      if (file.target === 'tokens') {
+        const fonts = join(REGISTRY_DIR, 'fonts');
+        for (const rel of existsSync(fonts) ? readdirSync(fonts, { recursive: true }) : []) {
+          const src = join(fonts, rel);
+          if (!statSync(src).isFile()) continue;
+          const out = join(dirname(dest), 'fonts', rel);
+          if (existsSync(out) && !opts.force) continue;
+          written.push(relative(root, out));
+          if (!opts.dryRun) {
+            mkdirSync(dirname(out), { recursive: true });
+            writeFileSync(out, readFileSync(src));
+          }
+        }
       }
     }
   }

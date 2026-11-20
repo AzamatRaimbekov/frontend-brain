@@ -32,7 +32,7 @@ const cardHead = (b, pad = '      ') => `${pad}<div className="flex items-start 
 ${pad}  <div className="flex min-w-0 flex-col gap-1">
 ${pad}    <h2 className="text-base font-bold text-foreground">{t.title}</h2>
 ${b.spec.subtitle ? `${pad}    <p className="text-sm text-muted-foreground">{t.subtitle}</p>\n` : ''}${pad}  </div>
-${b.moreHref ? `${pad}  <Link to=${q(b.moreHref).replace(/^'|'$/g, '"')} className="shrink-0 text-sm font-medium text-primary underline-offset-4 hover:underline">
+${b.moreHref ? `${pad}  <Link to=${q(b.moreHref).replace(/^'|'$/g, '"')} className="shrink-0 text-sm font-medium text-foreground underline underline-offset-4 hover:no-underline">
 ${pad}    {t.more}
 ${pad}  </Link>
 ` : ''}${pad}</div>`;
@@ -88,7 +88,7 @@ ${skeletonRows(b.fixture.length, `                <Skeleton className="h-8" styl
 
   meters(b, ctx) {
     const imp = head(ctx, b, [['@/shared/ui/progress', 'Progress'], ['@/shared/ui/skeleton', 'Skeleton']]);
-    const consts = "const VALUE = { default: 'text-foreground', error: 'text-destructive' } as const";
+    const consts = "const VALUE = { default: 'text-foreground', success: 'text-success', warning: 'text-warning', info: 'text-info', error: 'text-destructive' } as const";
     return file(imp, b, ctx, 'Spec block "meters": kit Progress per item (SLA by stage, load, limits), value colour from the spec tone.', card(b, `      <ul className="flex flex-col gap-4">
         {data
           ? data.map((meter) => (

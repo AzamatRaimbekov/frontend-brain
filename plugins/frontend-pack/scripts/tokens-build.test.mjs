@@ -26,16 +26,17 @@ test('the committed tokens.css is generated from shadcn-tokens.json (--check pas
   assert.equal(render(TOKENS), CSS);
 });
 
-test('the token set is exactly the 31 shadcn colours, light on :root and dark on .dark', () => {
+test('the token set is exactly the 31 shadcn colours + 6 status colours, light on :root and dark on .dark', () => {
   assert.deepEqual(validate(TOKENS), []);
-  assert.equal(COLORS.length, 31);
+  assert.equal(COLORS.length, 37);
   const css = parseCss(CSS);
   assert.equal(css.get(':root').get('--primary'), TOKENS.colors.primary.light);
   assert.equal(css.get('.dark').get('--primary'), TOKENS.colors.primary.dark);
   assert.equal(css.get(':root').get('--radius'), TOKENS.radius);
   const theme = css.get('@theme inline');
   for (const c of COLORS) assert.equal(theme.get(`--color-${c}`), `var(--${c})`);
-  assert.equal(theme.get('--radius-lg'), 'var(--radius)');
+  assert.equal(css.get('@theme').get('--radius-lg'), '16px'); // Figma radius/l, overridable (plain @theme)
+  assert.equal(css.get('@theme').get('--text-sm'), TOKENS.text.sm.size);
   assert.equal(theme.get('--font-sans'), TOKENS.font.sans);
   const custom = [...css.get(':root').keys()].filter((k) => k !== '--radius' && !COLORS.includes(k.slice(2)));
   assert.deepEqual(custom, [], 'no custom tokens in :root');
@@ -45,8 +46,8 @@ test('the token set is exactly the 31 shadcn colours, light on :root and dark on
 
 test('custom or missing tokens are rejected', () => {
   const extra = clone(TOKENS);
-  extra.colors.success = { light: 'green', dark: 'green' };
-  assert.match(validate(extra).join('\n'), /colors\.success: not a shadcn token/);
+  extra.colors.brand = { light: 'green', dark: 'green' };
+  assert.match(validate(extra).join('\n'), /colors\.brand: not a shadcn token/);
   const missing = clone(TOKENS);
   delete missing.colors.ring;
   delete missing.colors.card.dark;

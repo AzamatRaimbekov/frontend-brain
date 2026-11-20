@@ -17,10 +17,11 @@ export const DEFAULTS = {
   out: join(PLUGIN, 'registry', 'mbank', 'tokens.css'),
 };
 export const SCHEMA = 'shadcn/tokens@1';
-// The shadcn init colour set, in the order shadcn writes it.
+// The shadcn init colour set, in the order shadcn writes it, plus status colours success / warning / info (2026-11-20, Figma).
 export const COLORS = [
   'background', 'foreground', 'card', 'card-foreground', 'popover', 'popover-foreground', 'primary', 'primary-foreground',
   'secondary', 'secondary-foreground', 'muted', 'muted-foreground', 'accent', 'accent-foreground', 'destructive',
+  'success', 'success-foreground', 'warning', 'warning-foreground', 'info', 'info-foreground',
   'border', 'input', 'ring', 'chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5', 'sidebar', 'sidebar-foreground',
   'sidebar-primary', 'sidebar-primary-foreground', 'sidebar-accent', 'sidebar-accent-foreground', 'sidebar-border', 'sidebar-ring',
 ];
@@ -48,6 +49,7 @@ export function render(tokens) {
   const errors = validate(tokens);
   if (errors.length) throw new Error(`shadcn-tokens.json is invalid:\n  ${errors.join('\n  ')}`);
   const fonts = Object.entries(tokens.font);
+  const faces = tokens.fontFaces;
   const lines = [
     '/*',
     ' * Design tokens: the standard shadcn/ui set (Tailwind CSS v4), nothing custom.',
@@ -61,12 +63,38 @@ export function render(tokens) {
     ' * Theme: light on :root, dark on .dark (class on <html>).',
     ' */',
     '',
+    ...(faces
+      ? faces.faces.flatMap((f) => [
+          '@font-face {',
+          `  font-family: '${faces.family}';`,
+          `  src: url('./${faces.dir}/${f.file}') format('woff2');`,
+          `  font-weight: ${f.weight};`,
+          '  font-style: normal;',
+          '  font-display: swap;',
+          '}',
+          '',
+        ])
+      : []),
     '@custom-variant dark (&:is(.dark *));',
     '',
     '@theme inline {',
     ...fonts.map(([k, v]) => `  --font-${k}: ${v};`),
     ...COLORS.map((c) => `  --color-${c}: var(--${c});`),
+    '}',
+    '',
+    // Radius, text and shadow scales on the standard Tailwind names. Plain @theme (not inline): utilities read
+    // var(--radius-md) / var(--text-sm), so a project (or the design-system widget) can override them.
+    '@theme {',
     ...RADII.map((r) => `  --radius-${r}: ${tokens.radiusScale[r]};`),
+    ...(tokens.text || tokens.shadow
+      ? [
+          ...Object.entries(tokens.text ?? {}).flatMap(([k, t]) => [
+            `  --text-${k}: ${t.size}; /* ${t.figma ?? ''} */`.replace(' /*  */', ''),
+            `  --text-${k}--line-height: ${t.lineHeight};`,
+          ]),
+          ...Object.entries(tokens.shadow ?? {}).map(([k, v]) => `  --shadow-${k}: ${v};`),
+        ]
+      : []),
     '}',
     '',
     ':root {',

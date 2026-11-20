@@ -174,6 +174,39 @@ const tests = {
       rmSync(dir, { recursive: true, force: true });
     }
   },
+  'format-on-edit writes the file in the project Prettier style before ESLint'() {
+    const dir = mkdtempSync(join(tmpdir(), 'frontend-brain-'));
+    const hook = (file, env = {}) =>
+      spawnSync(process.execPath, [join(PLUGIN, 'scripts', 'lint-on-edit.mjs')], {
+        encoding: 'utf8', env: { ...process.env, ...env },
+        input: JSON.stringify({ tool_name: 'Edit', tool_input: { file_path: file } }),
+      });
+    try {
+      const src = join(dir, 'src');
+      mkdirSync(join(dir, 'node_modules', '.bin'), { recursive: true });
+      mkdirSync(src);
+      const file = join(src, 'App.tsx');
+      const raw = 'export const App = () => null;\n';
+      writeFileSync(file, raw);
+      // Fake prettier: --write rewrites the last argument (the file) to a marker.
+      const bin = join(dir, 'node_modules', '.bin', 'prettier');
+      writeFileSync(bin, '#!/bin/sh\nfor f; do :; done\necho "// formatted" > "$f"\n');
+      chmodSync(bin, 0o755);
+      assert.equal(hook(file).status, 0);
+      assert.equal(readFileSync(file, 'utf8'), raw, 'no Prettier config: the file stays as written');
+      writeFileSync(join(dir, '.prettierrc.json'), '{ "semi": false }\n');
+      assert.equal(hook(file, { MDIGITAL_FORMAT_HOOK: 'off' }).status, 0);
+      assert.equal(readFileSync(file, 'utf8'), raw, 'MDIGITAL_FORMAT_HOOK=off skips formatting');
+      assert.equal(hook(file).status, 0);
+      assert.equal(readFileSync(file, 'utf8'), '// formatted\n', 'formatted with the project prettier');
+      const css = join(src, 'index.css');
+      writeFileSync(css, 'a{}\n');
+      hook(css);
+      assert.equal(readFileSync(css, 'utf8'), '// formatted\n', 'CSS, JSON and Markdown are formatted too');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  },
   'frontend-autostart fires on frontend tasks only'() {
     const dir = mkdtempSync(join(tmpdir(), 'frontend-brain-'));
     const hook = (prompt, cwd = dir) =>

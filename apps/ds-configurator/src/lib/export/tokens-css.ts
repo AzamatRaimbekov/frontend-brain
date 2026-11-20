@@ -1,5 +1,5 @@
 // tokens.css for Tailwind v4 + shadcn/ui: :root (light), .dark, @theme inline, @layer base.
-// Only the standard shadcn names: 31 colours, --radius (+ derived radius-*), --font-sans/--font-heading.
+// Only the standard shadcn names: 37 colours, --radius (+ the radius-* scale), --font-sans/--font-heading.
 import { COLOR_NAMES } from "../tokens"
 import type { DesignSystem, ModeVars } from "../types"
 

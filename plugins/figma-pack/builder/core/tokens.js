@@ -23,7 +23,10 @@ const factor = (expr) => { const m = /\*\s*([\d.]+)/.exec(expr); return m ? pars
 export function radiusScale(radius = RADIUS) {
   const r = Number(radius);
   const out = {};
-  for (const [k, expr] of Object.entries(CANON.radiusScale)) out[k] = Math.round(r * factor(expr) * 100) / 100;
+  // A step is either a fixed length (Figma radius/*: "8px", "0.5rem") or a formula of --radius.
+  for (const [k, expr] of Object.entries(CANON.radiusScale)) {
+    out[k] = /^[\d.]+(px|rem)$/.test(String(expr).trim()) ? remToPx(expr) : Math.round(r * factor(expr) * 100) / 100;
+  }
   return out;
 }
 export const RADIUS_KEYS = Object.keys(CANON.radiusScale);
@@ -44,7 +47,7 @@ export function scopesFor(token) {
   if (/-foreground$/.test(token)) return ['TEXT_FILL'];
   if (/^(sidebar-)?(border|ring)$/.test(token)) return ['STROKE_COLOR'];
   if (token === 'input') return ['STROKE_COLOR', ...FILLS];
-  if (token === 'destructive') return [...FILLS, 'TEXT_FILL', 'STROKE_COLOR'];
+  if (/^(destructive|success|warning|info)$/.test(token)) return [...FILLS, 'TEXT_FILL', 'STROKE_COLOR'];
   if (/^chart-/.test(token)) return [...FILLS, 'STROKE_COLOR'];
   return [...FILLS];
 }

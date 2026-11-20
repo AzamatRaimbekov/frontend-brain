@@ -1,6 +1,6 @@
 // Site <-> Figma sync logic of the widget (pure, node:test). The design-system site (apps/ds-configurator)
 // serves figma.json (ds-configurator/figma-plan@2): the plan of the `shadcn` collection (modes Light/Dark,
-// variables named as the shadcn CSS tokens: 31 colours, radius + derived radius-*, font-sans / font-heading;
+// variables named as the shadcn CSS tokens: 37 colours (31 shadcn + 6 status), radius + derived radius-*, font-sans / font-heading;
 // values = { value: #hex | px | family, css, ref? }). Derived (editable: false) variables are never pushed.
 // Here: comparable signatures, the sync status and the token document a push sends back. A project changes
 // values of the shadcn names only: names the site does not know are never sent.

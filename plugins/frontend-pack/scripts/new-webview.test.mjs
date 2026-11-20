@@ -39,7 +39,7 @@ test('--dry-run prints the plan and touches nothing', () => {
   const lines = [];
   const steps = run({ dir, name: 'X', dryRun: true }, (l) => lines.push(l));
   assert.equal(existsSync(dir), false);
-  assert.equal(steps.length, 8);
+  assert.equal(steps.length, 9);
   assert.match(lines.join('\n'), /add-ui\.mjs tokens utils spinner button card skeleton/);
 });
 
@@ -79,7 +79,11 @@ test('template: the token never goes to storage or the URL', () => {
   const src = join(TEMPLATE, 'src');
   for (const file of readdirSync(src, { recursive: true })) {
     if (!/\.tsx?$/.test(file) || /\.test\./.test(file)) continue;
+    // The design-system widget keeps token colours (no secrets) in localStorage and exists only in dev builds.
+    if (file.startsWith(join('dev', 'design-system'))) continue;
     const text = readFileSync(join(src, file), 'utf8');
     assert.doesNotMatch(text, /\b(localStorage|sessionStorage)\.|document\.cookie/, file);
   }
+  const main = readFileSync(join(src, 'main.tsx'), 'utf8');
+  assert.match(main, /if \(import\.meta\.env\.DEV[^)]*\) \{\n\s+void import\('\.\/dev\/design-system'\)/, 'widget loads only in dev');
 });

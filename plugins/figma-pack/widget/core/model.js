@@ -14,6 +14,7 @@ export const RADIUS = 'radius';
 export const GROUPS = [
   { id: 'base', label: 'Фон и текст' },
   { id: 'action', label: 'Акценты' },
+  { id: 'status', label: 'Статусы' },
   { id: 'border', label: 'Границы' },
   { id: 'chart', label: 'Графики' },
   { id: 'sidebar', label: 'Сайдбар' },
@@ -26,6 +27,7 @@ export function groupOf(name) {
   if (/^chart-/.test(name)) return 'chart';
   if (/^sidebar/.test(name)) return 'sidebar';
   if (/^(border|input|ring)$/.test(name)) return 'border';
+  if (/^(success|warning|info)(-foreground)?$/.test(name)) return 'status';
   if (/^(primary|secondary|muted|accent|destructive)/.test(name)) return 'action';
   return 'base';
 }

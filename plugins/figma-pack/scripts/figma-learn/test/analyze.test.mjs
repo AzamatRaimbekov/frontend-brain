@@ -64,10 +64,10 @@ test('without the components map the code status comes from catalog.json', async
 test('token hygiene: raw hex with nearest token, unbound text, default names, raw spacing', async () => {
   const { report } = await crawled();
   const hex = Object.fromEntries(report.hygiene.rawHex.map((x) => [x.hex, x]));
-  // The fixture green has no shadcn twin: the hint names the nearest standard token and says it is not exact.
+  // The fixture green is Mbank brand/bank = sidebar-primary since 2026-11-20: the hint names that token as exact.
   assert.deepEqual(hex['#16a34a'].token, nearestToken('#16a34a', loadTokens()));
   assert.ok(Object.keys(loadTokens().colors).includes(hex['#16a34a'].token.name));
-  assert.equal(hex['#16a34a'].token.exact, false);
+  assert.equal(hex['#16a34a'].token.exact, true);
   assert.equal(hex['#123456'].token.exact, false);
   const clients = file(report, 'CRM Клиенты').hygiene;
   assert.equal(clients.unstyledTexts, 1);

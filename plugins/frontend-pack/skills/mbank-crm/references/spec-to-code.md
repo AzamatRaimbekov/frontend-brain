@@ -8,7 +8,7 @@ node $PLUGIN/scripts/new-crm.mjs ../loans-crm --name "Mbank Кредиты"     
 node $PLUGIN/scripts/spec-to-code.mjs loans.spec.json --project ../loans-crm --dry-run   # plan only
 node $PLUGIN/scripts/spec-to-code.mjs loans.spec.json --project ../loans-crm
 node $PLUGIN/scripts/spec-to-code.mjs loans.spec.json --project ../loans-crm --only app-card   # one screen
-cd ../loans-crm && npx tsc --noEmit -p tsconfig.app.json && npm run lint && npm test && npm run build
+cd ../loans-crm && npm run format:check && npx tsc --noEmit -p tsconfig.app.json && npm run lint && npm test && npm run build
 ```
 
 Works in both kit modes of `new-crm.mjs`: package (`@mdigital/mbank-ui`, `@mdigital/mbank-ui/crm`) or `--kit copy` (`@/shared/ui/*`, `@/shared/components/crm/*`); the mode is read from the project's `package.json`.

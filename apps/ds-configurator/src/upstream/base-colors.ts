@@ -1,7 +1,7 @@
 import { THEMES } from "./themes"
 
 export const BASE_COLORS = THEMES.filter((theme) =>
-  ["neutral", "stone", "zinc", "mauve", "olive", "mist", "taupe"].includes(
+  ["canonical", "neutral", "stone", "zinc", "mauve", "olive", "mist", "taupe"].includes(
     theme.name
   )
 )

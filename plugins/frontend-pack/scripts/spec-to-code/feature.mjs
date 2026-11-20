@@ -34,7 +34,7 @@ export const ${ctx.m} = ${lit(m)}
 }
 
 function status(s) {
-  return `type StatusTone = 'neutral' | 'accent' | 'error' | 'clear'
+  return `type StatusTone = 'neutral' | 'accent' | 'success' | 'warning' | 'info' | 'error' | 'clear'
 
 // Badge tone per status label of this screen (spec statuses); unknown labels are neutral.
 const tones: Record<string, StatusTone> = ${lit(s.statuses)}

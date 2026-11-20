@@ -18,7 +18,7 @@ test('a one-mode plan: variables are written in Light, the limit is one line, no
   globalThis.figma = figma;
   const plan = planWrites(buildModel(TOKENS), { all: true });
   const r = await applyWrites(plan.writes);
-  assert.equal(r.created.length, 32, 'variables still created');
+  assert.equal(r.created.length, 38, 'variables still created');
   assert.equal(r.errors.length, 1, r.errors.join('\n'));
   assert.match(r.errors[0], /разрешает 1 режим/);
   assert.deepEqual(r.modesAdded, []);

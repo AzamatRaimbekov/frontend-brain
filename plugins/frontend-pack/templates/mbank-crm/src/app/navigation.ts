@@ -46,6 +46,8 @@ export const helpSection: SideMenuSectionData = {
     item('settings', 'Настройки', '/settings', SettingsIcon),
     item('knowledge', 'База знаний', '/knowledge', BookIcon),
     item('support', 'Служба поддержки', '/support', LifeBuoyIcon),
+    // Dev only: palette, scales and kit of the project (pages/design-system).
+    ...(import.meta.env.DEV ? [item('design-system', 'Дизайн-система', '/design-system', LayersIcon)] : []),
   ],
 }
 
@@ -53,7 +55,7 @@ export const helpSection: SideMenuSectionData = {
 export const newApplicationHref: string = '/applications/new'
 
 /** Pages that exist in router.tsx; everything else in the menu is a placeholder route. */
-const implemented = new Set(['pipeline'])
+const implemented = new Set(['pipeline', 'design-system'])
 
 export const placeholderItems = [...mainSections, helpSection]
   .flatMap((section) => section.items)

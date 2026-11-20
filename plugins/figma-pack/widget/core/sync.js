@@ -24,7 +24,7 @@ export function scopesOf(name, kind = 'color') {
   if (/-foreground$/.test(name)) return ['TEXT_FILL'];
   if (/^(sidebar-)?(border|ring)$/.test(name)) return [...STROKES];
   if (name === 'input') return [...STROKES, ...FILLS];
-  if (name === 'destructive') return [...FILLS, 'TEXT_FILL', ...STROKES];
+  if (/^(destructive|success|warning|info)$/.test(name)) return [...FILLS, 'TEXT_FILL', ...STROKES];
   if (/^chart-/.test(name)) return [...FILLS, ...STROKES];
   return [...FILLS];
 }

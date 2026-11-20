@@ -83,13 +83,13 @@ Or edit CSS variables directly in `globals.css`.
 
 ---
 
-## Custom Colors (not in Mdigital projects)
+## Custom Colors (Mdigital: only the status colours)
 
-Mdigital projects use only the shadcn variables above; adding `--warning`, `--success`, `--brand` and the like is not allowed. Change the **values** of the existing variables in the file at `tailwindCssFile` instead, and map meanings onto them:
+Mdigital projects use the shadcn variables above **plus exactly six status variables** (decision 2026-11-20, values from Mbank Figma): `--success`, `--success-foreground`, `--warning`, `--warning-foreground`, `--info`, `--info-foreground` (37 colours in total, canonical file `registry/mbank/shadcn-tokens.json`). Anything else (`--brand`, `--surface-*`, `--primary-active`, …) is not allowed: change the **values** of the existing variables instead, and map meanings onto them:
 
 - hover: `hover:bg-primary/90`, `hover:bg-secondary/80`, ghost/outline `hover:bg-accent`; disabled: `disabled:opacity-50`;
 - error: `destructive` (`aria-invalid:border-destructive aria-invalid:ring-destructive/20`);
-- success / warning / info: neutral Badge `default` / `secondary` / `outline` with text, never raw palette colours;
+- success / warning / info: Badge `tone="success" | "warning" | "info"` (= `bg-success/10 text-success`), text colour `text-success`, link `text-info`; never raw palette colours;
 - a truly distinct colour (charts): `chart-1..5`.
 
 ---

@@ -27,7 +27,10 @@ test('ds_tokens serves the shadcn set from the kit: standard names, light/dark v
   const all = call('ds_tokens', {}).data;
   assert.deepEqual(all.filter((t) => t.kind === 'color').map((t) => t.name), Object.keys(source.colors));
   assert.ok(all.some((t) => t.name === 'radius-lg') && all.some((t) => t.name === 'font-sans'));
-  assert.equal(all.filter((t) => /brand|surface|success|warning/.test(t.name)).length, 0, 'no Mbank or extra tokens');
+  const status = ['success', 'success-foreground', 'warning', 'warning-foreground', 'info', 'info-foreground'];
+  assert.deepEqual(all.filter((t) => /success|warning|info/.test(t.name)).map((t) => t.name), status, 'the six shadcn-style status tokens');
+  assert.deepEqual(all.find((t) => t.name === 'success').light, source.colors.success.light);
+  assert.equal(all.filter((t) => /brand|surface/.test(t.name)).length, 0, 'no Mbank or extra tokens');
   assert.deepEqual(parseTokens(':root {\n  --a: #fff; /* x */\n}\n.dark {\n  --a: #000;\n}'), { a: { light: '#fff', dark: '#000' } });
 });
 

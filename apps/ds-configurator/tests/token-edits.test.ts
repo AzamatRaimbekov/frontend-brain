@@ -13,7 +13,7 @@ const base: TokensInput = { overrides: { primary: { light: "#7c3aed" } } }
 
 describe("token edits", () => {
   it("typing the default value back drops the override", () => {
-    expect(applyEdit(base, { type: "set", row: row("primary"), mode: "light", value: "oklch(0.205 0 0)" }).overrides).toEqual({})
+    expect(applyEdit(base, { type: "set", row: row("primary"), mode: "light", value: SHADCN_TOKENS.colors.primary.light }).overrides).toEqual({})
     expect(applyEdit(base, { type: "set", row: row("primary"), mode: "dark", value: "#000" }).overrides.primary).toEqual({ light: "#7c3aed", dark: "#000" })
   })
   it("reset and single-value tokens", () => {

@@ -234,6 +234,12 @@
       "name": "@testing-library/react + @testing-library/user-event + @testing-library/jest-dom + jsdom",
       "use_for": "Component and page tests through the user's eyes",
       "reason": "Tests behaviour, not implementation; pairs with MSW for every UI state"
+    },
+    {
+      "category": "tooling",
+      "name": "prettier + @trivago/prettier-plugin-sort-imports",
+      "use_for": "Code formatting and import order in every project: the team config templates/mbank-crm/.prettierrc.json (no semicolons, single quotes, trailing commas, one JSX attribute per line, react → app → shared → relative → css). Scripts format / format:check.",
+      "reason": "One code style across the team, set by the frontend lead 2026-11-20"
     }
   ],
   "conditional": [

@@ -16,6 +16,8 @@ the Mdigital standards, `react-brain/SKILL.md` («Mdigital overrides of Vercel r
 
 `plugins/frontend-pack/skills/shadcn/` is the shadcn/ui agent skill, © 2023 shadcn, MIT License
 (see `plugins/frontend-pack/skills/shadcn/LICENSE.md`).
+`plugins/frontend-pack/skills/migrate-radix-to-base/` is the shadcn/ui Radix → Base UI migration skill,
+© 2023 shadcn, MIT License (see its `LICENSE.md`); a "Mdigital" section is added at the end.
 
 ## UI/UX Pro Max
 

@@ -21,7 +21,8 @@ test('screen variables are the shadcn collection; nothing else is borrowed', asy
   ({ vars } = await screenVars(await modeVars()));
   assert.equal(vars.background.name, 'background');
   assert.equal(vars['chart-2'].name, 'chart-2');
-  assert.equal(vars.success, undefined, 'no status tokens');
+  assert.equal(vars.success.name, 'success', 'shadcn-style status tokens');
+  assert.equal(vars.brand, undefined, 'no custom tokens');
 });
 
 const esbuild = ['node_modules/esbuild', '../widget/node_modules/esbuild'].map((p) => new URL(`../${p}`, import.meta.url)).find((u) => existsSync(u));
@@ -43,7 +44,7 @@ test('MCP bundle: chunks under the use_figma limit, hashes match, engine builds 
   const pre = readFileSync(join(out, 'run.js'), 'utf8');
   const tok = await run(`${pre}return DS.tokens()`);
   assert.equal(tok.collection, true);
-  assert.equal(tok.created, 31 + 8, '31 colours + radius and radius-sm..4xl');
+  assert.equal(tok.created, 37 + 8, '37 colours + radius and radius-sm..4xl');
   assert.equal((await run(`${pre}return DS.tokens()`)).created, 0, 'a second run creates nothing');
   const comps = await run(`${pre}return DS.components(['badge','input'])`);
   assert.ok(comps.every((c) => c.setId && !c.errors));

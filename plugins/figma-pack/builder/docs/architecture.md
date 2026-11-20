@@ -4,7 +4,7 @@
 
 ## 1. Токены: только shadcn/ui
 
-Единственный источник — `plugins/figma-pack/skills/ds-tokens/references/shadcn-tokens.json` (схема `shadcn/tokens@1`): `radius`, `radiusScale`, `font`, `colors{имя:{light,dark}}` — 31 цвет shadcn в oklch, стандартные значения neutral. Файл вшивается при сборке (`core/tokens.js` импортирует его как JSON) и не правится из builder.
+Единственный источник — `plugins/figma-pack/skills/ds-tokens/references/shadcn-tokens.json` (схема `shadcn/tokens@1`): `radius`, `radiusScale`, `font`, `colors{имя:{light,dark}}` — 37 цветов в oklch (31 shadcn + 6 статусных `success` / `warning` / `info` и их `-foreground`), значения Mbank. Файл вшивается при сборке (`core/tokens.js` импортирует его как JSON) и не правится из builder.
 
 | Слой | Что | Где |
 |---|---|---|

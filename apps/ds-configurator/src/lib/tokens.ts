@@ -1,4 +1,4 @@
-// The one token set of the design system: standard shadcn/ui (31 colours light/dark, radius, two
+// The one token set of the design system: standard shadcn/ui (37 colours light/dark, radius, two
 // font vars). Values come from src/data/shadcn-tokens.json, the app's copy of the canonical file
 // owned by plugins/figma-pack/skills/ds-tokens/references/shadcn-tokens.json. A project changes only
 // the values of these names (overrides); there are no other tokens.
@@ -24,9 +24,9 @@ export const SHADCN_TOKENS: TokenValues = {
   colors: Object.fromEntries(Object.entries(canonical.colors).map(([k, v]) => [k, { ...v }])),
 }
 
-/** The 31 colour names in canonical order. */
+/** The 37 colour names (31 shadcn + success/warning/info with foregrounds) in canonical order. */
 export const COLOR_NAMES = Object.keys(canonical.colors)
-/** radius-sm..4xl: derived from --radius, not editable. */
+/** radius-sm..4xl, not editable: each step is a fixed length (px/rem) or a formula of --radius. */
 export const RADIUS_SCALE: Record<string, string> = { ...canonical.radiusScale }
 export const FONT_NAMES = ["font-sans", "font-heading"] as const
 
@@ -75,14 +75,22 @@ export function toVars(values: TokenValues) {
 
 export const toPx = (value: string) => (value.endsWith("rem") ? parseFloat(value) * 16 : parseFloat(value))
 
-/** px of `--radius` and of every derived radius (calc(var(--radius) * k) or var(--radius)). */
-export function radiusPx(values: TokenValues): Record<string, number | null> {
-  const r = /^(0|\d+(\.\d+)?(px|rem))$/.test(values.radius) ? toPx(values.radius) : null
+const LENGTH = /^(0|\d+(\.\d+)?(px|rem))$/
+
+/** px of one radius step: a fixed length, var(--radius) or calc(var(--radius) * k); null otherwise. */
+function stepPx(step: string, r: number | null): number | null {
+  if (LENGTH.test(step)) return toPx(step) // fixed: does not follow --radius
+  if (r === null) return null
+  if (step === "var(--radius)") return r
+  const m = /^calc\(var\(--radius\) \* ([\d.]+)\)$/.exec(step)
+  return m ? Math.round(r * parseFloat(m[1]) * 100) / 100 : null
+}
+
+/** px of `--radius` and of every radius step of the scale (the canonical one by default). */
+export function radiusPx(values: TokenValues, scale: Record<string, string> = RADIUS_SCALE): Record<string, number | null> {
+  const r = LENGTH.test(values.radius) ? toPx(values.radius) : null
   const out: Record<string, number | null> = { radius: r }
-  for (const [k, v] of Object.entries(RADIUS_SCALE)) {
-    const m = /^calc\(var\(--radius\) \* ([\d.]+)\)$/.exec(v)
-    out[`radius-${k}`] = r === null ? null : v === "var(--radius)" ? r : m ? Math.round(r * parseFloat(m[1]) * 100) / 100 : null
-  }
+  for (const [k, v] of Object.entries(scale)) out[`radius-${k}`] = stepPx(v, r)
   return out
 }
 

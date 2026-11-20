@@ -35,7 +35,7 @@
       "text": "xs",
       "weight": "medium",
       "fg": "muted-foreground",
-      "fg:selected": "primary",
+      "fg:selected": "foreground",
       "focus-ring": "ring/50"
     },
     "icon": {

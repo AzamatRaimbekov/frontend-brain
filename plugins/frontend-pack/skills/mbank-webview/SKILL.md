@@ -34,7 +34,7 @@ The project directory must not exist or be empty. Then **start it and show it** 
 
 1. `npm run dev` in the background (Bash `run_in_background`), wait for `Local:` in its output.
 2. Open `http://localhost:5173/` in the browser at phone size (390×844, mobile, touch) and take a screenshot.
-3. Run the checks: `npx tsc --noEmit -p tsconfig.app.json && npm run lint && npm test && npm run build`.
+3. Run the checks: `npm run format:check && npx tsc --noEmit -p tsconfig.app.json && npm run lint && npm test && npm run build`.
 4. Report the address, the dev panel (⚙ bottom right) and the `?bridge=` / `?mock=` cases below.
 
 `npm run dev` listens on the network (`vite --host`): a phone on the same Wi-Fi opens `http://<computer-ip>:5173/` in the app's test build.

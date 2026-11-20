@@ -8,7 +8,8 @@ import { iconLibraries } from "@/upstream/icon-libraries"
 import { STYLES } from "@/upstream/styles"
 import { THEMES } from "@/upstream/themes"
 
-import type { ConfiguratorState } from "./types"
+import { fontFamily, SHADCN_TOKENS } from "./tokens"
+import { CANONICAL, type ConfiguratorState } from "./types"
 
 export type PickerOption = { value: string; label: string; description?: string; swatch?: string; disabled?: boolean }
 export type PickerKey = "style" | "baseColor" | "theme" | "chartColor" | "fontHeading" | "font" | "iconLibrary" | "radius" | "menuColor" | "menuAccent"
@@ -34,7 +35,10 @@ export function pickerPatch(key: PickerKey, value: string): Partial<Configurator
 
 export function pickerSpecs(state: ConfiguratorState): PickerSpec[] {
   const radiusLocked = state.style === "lyra" || state.style === "sera"
-  const fonts = FONT_DEFINITIONS.map((f) => ({ value: f.name, label: f.title, description: f.type }))
+  const fonts = [
+    { value: CANONICAL, label: fontFamily(SHADCN_TOKENS.font.sans), description: "canonical" },
+    ...FONT_DEFINITIONS.map((f) => ({ value: f.name, label: f.title, description: f.type })),
+  ]
   return [
     { key: "baseColor", label: "Base Color", options: BASE_COLORS.map((t) => themeOption(t, "muted-foreground")) },
     { key: "style", label: "Style", separatorBefore: true, options: STYLES.map((s) => ({ value: s.name, label: s.title, description: s.description })) },

@@ -1,4 +1,4 @@
-import { createRootRoute, createRoute, createRouter, type RouterHistory } from '@tanstack/react-router'
+import { createRootRoute, createRoute, createRouter, lazyRouteComponent, type RouterHistory } from '@tanstack/react-router'
 import { z } from 'zod'
 import { periods, stages } from '@/features/applications'
 import { ApplicationPage } from '@/pages/application/ApplicationPage'
@@ -37,6 +37,19 @@ const applicationRoute = createRoute({
   component: ApplicationPage,
 })
 
+// Dev only: the design-system showcase (palette, scales, kit). import.meta.env.DEV is false in the build,
+// so the branch and its lazy chunk are dropped from production.
+const devRoutes = import.meta.env.DEV
+  ? [
+      createRoute({
+        getParentRoute: () => rootRoute,
+        path: '/design-system',
+        staticData: { header: { navId: 'design-system', title: 'Дизайн-система' } },
+        component: lazyRouteComponent(() => import('@/pages/design-system/DesignSystemPage'), 'DesignSystemPage'),
+      }),
+    ]
+  : []
+
 // Menu items without a page yet: one placeholder route each, so links work and 404 stays real.
 const sectionSearch = z.object({ stage: z.enum(stages).optional().catch(undefined) })
 const placeholderRoutes = [...placeholderItems, { id: 'new-application', label: 'Новая заявка', href: newApplicationHref }].map(
@@ -50,7 +63,12 @@ const placeholderRoutes = [...placeholderItems, { id: 'new-application', label: 
     }),
 )
 
-export const routeTree = rootRoute.addChildren([pipelineRoute, applicationRoute, ...placeholderRoutes])
+export const routeTree = rootRoute.addChildren([
+  pipelineRoute,
+  applicationRoute,
+  ...devRoutes,
+  ...placeholderRoutes,
+])
 
 export const createAppRouter = (history?: RouterHistory) =>
   createRouter({

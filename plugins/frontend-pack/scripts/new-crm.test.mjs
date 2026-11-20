@@ -7,15 +7,16 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { DEV_PACKAGES, KIT_PACKAGE, PACKAGES, TYPESCRIPT, parseArgs, pinTypescript, planSteps, run, toPackageImports } from './new-crm.mjs';
+import { DEV_PACKAGES, KIT_PACKAGE, PACKAGES, TYPESCRIPT, parseArgs, pinTypescript, planSteps, run, shareEditorSettings, toPackageImports } from './new-crm.mjs';
 
 const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), 'new-crm.mjs');
 const TEMPLATE = join(dirname(SCRIPT), '..', 'templates', 'mbank-crm');
 const cli = (...args) => spawnSync(process.execPath, [SCRIPT, ...args], { encoding: 'utf8' });
 
 test('parseArgs: directory, --name, --dry-run; rejects bad input', () => {
-  assert.deepEqual(parseArgs(['crm', '--name', 'Back office', '--dry-run']), { dir: 'crm', name: 'Back office', kit: 'package', dryRun: true, help: false });
+  assert.deepEqual(parseArgs(['crm', '--name', 'Back office', '--dry-run']), { dir: 'crm', name: 'Back office', kit: 'copy', dryRun: true, help: false });
   assert.equal(parseArgs(['crm', '--kit', 'copy']).kit, 'copy');
+  assert.equal(parseArgs(['crm', '--kit', 'package']).kit, 'package');
   assert.throws(() => parseArgs(['crm', '--kit', 'npm']), /package or copy/);
   assert.equal(parseArgs(['crm', '--name=Админка']).name, 'Админка');
   assert.throws(() => parseArgs([]), /project directory/);
@@ -42,7 +43,7 @@ test('--dry-run prints the plan and touches nothing', () => {
   const dir = join(parent, 'crm');
   try {
     const out = [];
-    const steps = run(parseArgs([dir, '--dry-run']), (line) => out.push(line));
+    const steps = run(parseArgs([dir, '--kit', 'package', '--dry-run']), (line) => out.push(line));
     const text = out.join('\n');
     assert.equal(existsSync(dir), false);
     assert.deepEqual(readdirSync(parent), []);
@@ -50,9 +51,10 @@ test('--dry-run prints the plan and touches nothing', () => {
     assert.ok(text.includes(KIT_PACKAGE));
     assert.doesNotMatch(text, /add-ui\.mjs/);
     assert.match(text, /msw init public --save/);
-    assert.equal(steps.length, 8);
-    const copy = run(parseArgs([dir, '--kit', 'copy', '--dry-run']), () => {});
-    assert.ok(copy.some((s) => s.kind === 'cmd' && s.args.includes('all')), 'copy mode runs add-ui all');
+    assert.equal(steps.length, 9);
+    const copy = run(parseArgs([dir, '--dry-run']), () => {});
+    assert.ok(copy.some((s) => s.kind === 'cmd' && s.args.includes('all')), 'the default (copy) mode runs add-ui all');
+    assert.ok(!copy.some((s) => s.kind === 'cmd' && s.args.includes(KIT_PACKAGE)), 'the default mode does not install the stale package');
   } finally {
     rmSync(parent, { recursive: true, force: true });
   }
@@ -87,6 +89,13 @@ test('installs only allowed packages: kit + MSW, no Lucide', () => {
   for (const pkg of ['radix-ui', 'tw-animate-css', 'class-variance-authority', '@tanstack/react-router', 'zod']) assert.ok(all.includes(pkg), pkg);
   for (const pkg of ['msw', 'vitest', 'jsdom', '@testing-library/react']) assert.ok(DEV_PACKAGES.includes(pkg), pkg);
   assert.ok(!PACKAGES.includes('lucide-react'));
+  for (const pkg of ['prettier', '@trivago/prettier-plugin-sort-imports']) assert.ok(DEV_PACKAGES.includes(pkg), pkg);
+});
+
+test('both templates carry the same team Prettier config', () => {
+  const crm = readFileSync(join(TEMPLATE, '.prettierrc.json'), 'utf8');
+  assert.equal(readFileSync(join(TEMPLATE, '..', 'mbank-webview', '.prettierrc.json'), 'utf8'), crm);
+  assert.equal(JSON.parse(crm).semi, false);
 });
 
 test('template has a UX.md and a test next to every page with data', () => {
@@ -112,6 +121,22 @@ test('pinTypescript: typescript 7+ from create-vite goes back to the typescript-
     write('~5.9.3');
     assert.equal(pinTypescript(dir), false);
     assert.equal(read(), '~5.9.3');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('the scaffold shares .vscode/settings.json (format on save) through git', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'new-crm-'));
+  try {
+    writeFileSync(join(dir, '.gitignore'), 'dist\n.vscode/*\n!.vscode/extensions.json\n')
+    assert.equal(shareEditorSettings(dir), true);
+    assert.match(readFileSync(join(dir, '.gitignore'), 'utf8'), /^!\.vscode\/settings\.json$/m);
+    assert.equal(shareEditorSettings(dir), false, 'idempotent');
+    for (const t of ['mbank-crm', 'mbank-webview']) {
+      const settings = JSON.parse(readFileSync(join(TEMPLATE, '..', t, '.vscode', 'settings.json'), 'utf8'));
+      assert.equal(settings['editor.formatOnSave'], true, t);
+    }
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

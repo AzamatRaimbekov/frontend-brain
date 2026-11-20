@@ -5,8 +5,8 @@ import { cn } from "@/shared/lib/utils"
 
 /*
  * Status dot of the CRM drafts (stage stepper 12px, timeline 12px, scoring reasons 6px).
- * Same tone names as the kit Badge, shadcn tokens only: accent = primary (done, positive), error = destructive,
- * neutral = muted-foreground (in progress, attention), clear = input (upcoming, inactive).
+ * Same tone names as the kit Badge: accent = primary, success / warning / info = status tokens, error = destructive,
+ * neutral = muted-foreground (in progress), clear = input (upcoming, inactive).
  * Decorative: the meaning must also be in the text next to it.
  */
 const statusDotVariants = cva("inline-block shrink-0 rounded-full", {
@@ -14,6 +14,9 @@ const statusDotVariants = cva("inline-block shrink-0 rounded-full", {
     tone: {
       neutral: "bg-muted-foreground",
       accent: "bg-primary",
+      success: "bg-success",
+      warning: "bg-warning",
+      info: "bg-info",
       error: "bg-destructive",
       clear: "bg-input",
     },

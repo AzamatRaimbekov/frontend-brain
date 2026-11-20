@@ -19,11 +19,14 @@ export function buildPreviewCss(ds: DesignSystem) {
 
 const GOOGLE = new Set(["Geist", "Geist Mono", "Inter"])
 
+/** First Geist/Inter family of a CSS stack (the canonical stack starts with the local 'Inter Mbank'). */
+const googleIn = (stack: string) => stack.split(",").map(fontFamily).find((t) => GOOGLE.has(t))
+
 /** Google Fonts stylesheet for the preview: the /create fonts, or Geist/Inter named in a project stack. */
 export function fontStylesheetUrl(ds: DesignSystem) {
   const titles = ds.googleFonts
-    ? [ds.config.font, ds.config.fontHeading].filter((n) => n !== "inherit").map((n) => getFontDefinition(n)?.title)
-    : [fontFamily(ds.values.font.sans), fontFamily(ds.values.font.heading)].filter((t) => GOOGLE.has(t))
+    ? [ds.config.font, ds.config.fontHeading].filter((n) => n !== "inherit").map((n) => getFontDefinition(n)?.title ?? googleIn(ds.values.font.sans))
+    : [googleIn(ds.values.font.sans), googleIn(ds.values.font.heading)]
   const families = [...new Set(titles.filter((t): t is string => Boolean(t)))]
   if (!families.length) return null
   return `https://fonts.googleapis.com/css2?${families.map((t) => `family=${t.replaceAll(" ", "+")}:wght@400;500;600;700`).join("&")}&display=swap`

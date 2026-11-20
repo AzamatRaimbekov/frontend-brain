@@ -30,7 +30,7 @@ export function CreateProjectForm() {
     <Card className="self-start">
       <CardHeader>
         <CardTitle>Новый проект</CardTitle>
-        <CardDescription>Старт — стандартные токены shadcn (neutral). Дальше меняете их значения.</CardDescription>
+        <CardDescription>Старт — канонические токены дизайн-системы (имена shadcn, значения Mbank). Дальше меняете их значения.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="grid gap-3" noValidate>

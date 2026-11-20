@@ -5,8 +5,8 @@ import { Slot } from "radix-ui"
 import { cn } from "@/shared/lib/utils"
 
 /*
- * Figma `Badge-status` on shadcn tokens only: tone neutral (secondary), accent (primary), error (destructive),
- * clear (outline). Other statuses (success, warning, info) use neutral or clear; the text carries the meaning.
+ * Figma `Badge-status` ghost tones: neutral (accent), accent (primary), success / warning / info / error
+ * (status token at 10% + its colour as text), clear (outline).
  */
 // @contract badge start
 const badgeVariants = cva(
@@ -14,8 +14,11 @@ const badgeVariants = cva(
   {
     variants: {
       tone: {
-        neutral: "bg-secondary text-secondary-foreground",
+        neutral: "bg-accent text-accent-foreground",
         accent: "bg-primary text-primary-foreground",
+        success: "bg-success/10 text-success",
+        warning: "bg-warning/10 text-warning",
+        info: "bg-info/10 text-info",
         error: "bg-destructive/10 text-destructive",
         clear: "text-foreground border border-border",
       },

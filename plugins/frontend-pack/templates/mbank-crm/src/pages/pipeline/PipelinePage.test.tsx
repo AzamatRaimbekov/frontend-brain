@@ -28,7 +28,7 @@ describe('PipelinePage', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Конвейер на 12 октября' })).toBeInTheDocument()
     const kpis = screen.getByRole('list', { name: 'Показатели' })
     expect(within(kpis).getByText('2 ч 14 мин')).toBeInTheDocument()
-    expect(within(kpis).getByText('−18 мин')).toHaveClass('text-foreground')
+    expect(within(kpis).getByText('−18 мин')).toHaveClass('text-success')
     expect(within(kpis).getByText('+4')).toHaveClass('text-destructive')
 
     const fresh = columns[0]

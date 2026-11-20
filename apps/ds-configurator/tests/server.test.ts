@@ -8,7 +8,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
-import { COLOR_NAMES } from "@/lib/tokens"
+import { COLOR_NAMES, SHADCN_TOKENS } from "@/lib/tokens"
 import schema from "@/upstream/registry-item.schema.json"
 
 import { createApp } from "../server/app"
@@ -24,7 +24,7 @@ function seedLegacy(dir: string) {
   writeFileSync(join(p, "project.json"), JSON.stringify({ id: "legacy", name: "Legacy", base: "old", createdAt: "2026-11-01T00:00:00.000Z", writeKeyHash: "0".repeat(64), figma: null }))
   writeFileSync(join(p, "tokens.json"), JSON.stringify({
     version: 4, updatedAt: "2026-11-02T00:00:00.000Z", updatedBy: "figma", brand: "x", prefix: "lg",
-    overrides: { primary: { light: "#7c3aed", dark: "var(--brand)" }, "status-ok": { light: "#fff" }, radius: { light: "12px", dark: "12px" }, "radius-lg": { light: "20px" } },
+    overrides: { primary: { light: "#7c3aed", dark: "var(--brand)" }, "status-ok": { light: "#fff" }, radius: { light: "10px", dark: "10px" }, "radius-lg": { light: "20px" } },
     custom: [{ name: "lg-promo", kind: "color", light: "#fff", dark: "#000" }],
   }))
 }
@@ -58,7 +58,7 @@ describe("site API", () => {
 
   it("migrates stored projects: unknown tokens and invalid values dropped, valid values kept", async () => {
     const tokens = JSON.parse(readFileSync(join(data, "projects", "legacy", "tokens.json"), "utf8"))
-    expect(tokens).toEqual({ version: 4, updatedAt: "2026-11-02T00:00:00.000Z", updatedBy: "figma", overrides: { radius: { light: "12px" } } })
+    expect(tokens).toEqual({ version: 4, updatedAt: "2026-11-02T00:00:00.000Z", updatedBy: "figma", overrides: { radius: { light: "10px" } } })
     expect(JSON.parse(readFileSync(join(data, "projects", "legacy", "project.json"), "utf8")).base).toBe("shadcn")
   })
 
@@ -95,17 +95,22 @@ describe("site API", () => {
     expect(r.status).toBe(200)
     expect(r.headers.get("etag")).toBe('"1"')
     const names = r.body.rows.map((x: { name: string }) => x.name)
-    expect(names.slice(0, 31)).toEqual(COLOR_NAMES)
-    expect(names.slice(31)).toEqual(["radius", "radius-sm", "radius-md", "radius-lg", "radius-xl", "radius-2xl", "radius-3xl", "radius-4xl", "font-sans", "font-heading"])
+    expect(names.slice(0, COLOR_NAMES.length)).toEqual(COLOR_NAMES)
+    expect(names.slice(COLOR_NAMES.length)).toEqual(["radius", "radius-sm", "radius-md", "radius-lg", "radius-xl", "radius-2xl", "radius-3xl", "radius-4xl", "font-sans", "font-heading"])
     const row = (n: string) => r.body.rows.find((x: { name: string }) => x.name === n)
-    expect(row("primary")).toMatchObject({ kind: "color", editable: true, overridden: false, values: { light: { value: "#171717", css: "oklch(0.205 0 0)" } } })
+    expect(row("primary")).toMatchObject({ kind: "color", editable: true, overridden: false, values: { light: { value: "#fddb2b", css: SHADCN_TOKENS.colors.primary.light } } })
     expect(r.body.contrast.some((c: { fg: string; bg: string }) => c.fg === "primary-foreground" && c.bg === "primary")).toBe(true)
-    // Stock shadcn neutral: muted-foreground on muted is 4.35:1 in light, the only pair below AA.
-    expect(r.body.contrast.filter((c: { ok: boolean }) => !c.ok)).toEqual([{ fg: "muted-foreground", bg: "muted", mode: "light", ratio: 4.35, ok: false }])
+    // Canonical (Mbank) tokens pass AA on every pair, both modes, EXCEPT sidebar-primary-foreground on
+    // sidebar-primary: logo-only, Figma white M on green #16a34a (lead decision 2026-11-20). Any other
+    // failing pair is a regression.
+    const KNOWN_LOW = ["sidebar-primary-foreground/sidebar-primary/light", "sidebar-primary-foreground/sidebar-primary/dark"]
+    expect(r.body.contrast.length).toBeGreaterThan(0)
+    const failing = r.body.contrast.filter((c: { ok: boolean }) => !c.ok).map((c: { fg: string; bg: string; mode: string }) => `${c.fg}/${c.bg}/${c.mode}`)
+    expect(failing.filter((k: string) => !KNOWN_LOW.includes(k))).toEqual([])
   })
 
   it("PUT tokens needs the key and If-Match; a stale version is a 409 conflict", async () => {
-    const body = { overrides: { primary: { light: "#7c3aed", dark: "oklch(0.7 0.2 290)" }, ring: { light: "var(--primary)" }, radius: { light: "0.5rem" }, "font-sans": { light: "'Inter', sans-serif" }, muted: { light: "oklch(0.97 0 0)" } } }
+    const body = { overrides: { primary: { light: "#7c3aed", dark: "oklch(0.7 0.2 290)" }, ring: { light: "var(--primary)" }, radius: { light: "0.5rem" }, "font-sans": { light: "'Inter', sans-serif" }, muted: { light: SHADCN_TOKENS.colors.muted.light } } }
     expect((await api("/api/projects/credit/tokens", { method: "PUT", json: body, headers: { "If-Match": '"1"' } })).status).toBe(401)
     expect((await api("/api/projects/credit/tokens", { method: "PUT", json: body, headers: { "If-Match": '"1"', "X-Write-Key": "dsk_wrong" } })).status).toBe(403)
     expect((await api("/api/projects/credit/tokens", { method: "PUT", json: body, headers: { "X-Write-Key": key } })).status).toBe(428)
@@ -152,7 +157,7 @@ describe("site API", () => {
     expect(css.body).toContain("--ring: var(--primary);")
     expect(css.body).toContain("--radius: 0.5rem;")
     expect(css.body).toContain("--font-sans: 'Inter', sans-serif;")
-    expect(css.body.match(/--color-[\w-]+:/g)).toHaveLength(31)
+    expect(css.body.match(/--color-[\w-]+:/g)).toHaveLength(37)
     expect(css.body).toContain("@layer base")
 
     const item = await api("/r/credit.json")
@@ -168,10 +173,10 @@ describe("site API", () => {
     expect(plan.body.brand).toBeUndefined()
     expect(plan.body.prefix).toBeUndefined()
     const v = (n: string) => plan.body.variables.find((x: { name: string }) => x.name === n)
-    expect(v("primary")).toMatchObject({ overridden: true, values: { light: { value: "#7c3aed", css: "#7c3aed" } }, base: { light: { css: "oklch(0.205 0 0)" } } })
+    expect(v("primary")).toMatchObject({ overridden: true, values: { light: { value: "#7c3aed", css: "#7c3aed" } }, base: { light: { css: SHADCN_TOKENS.colors.primary.light } } })
     expect(v("ring").values.light).toEqual({ value: "#7c3aed", css: "var(--primary)", ref: "primary" })
     expect(v("radius").values.light.value).toBe(8)
-    expect(v("radius-lg").values.light.value).toBe(8)
+    expect(v("radius-lg").values.light.value).toBe(16) // fixed step: does not follow --radius 0.5rem
     expect(v("font-sans").values.light.value).toBe("Inter")
     expect(JSON.stringify(plan.body)).not.toContain("alias")
   })

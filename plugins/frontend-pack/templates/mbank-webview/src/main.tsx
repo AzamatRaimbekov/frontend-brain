@@ -18,6 +18,11 @@ async function boot() {
   initI18n()
 }
 
+// Dev: the design-system widget (src/dev/design-system) edits token values live and exports design-system.md.
+if (import.meta.env.DEV && import.meta.env.VITE_DS_PANEL !== 'off') {
+  void import('./dev/design-system').then((m) => m.mountDesignSystemPanel({ corner: 'left-raised' }))
+}
+
 boot().then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>

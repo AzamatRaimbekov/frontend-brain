@@ -15,7 +15,7 @@ const stepperStepVariants = cva(
   {
     variants: {
       status: {
-        done: "*:data-[slot=stepper-step-marker]:bg-primary/10 **:data-[slot=stepper-step-number]:text-primary",
+        done: "*:data-[slot=stepper-step-marker]:bg-primary/10 **:data-[slot=stepper-step-number]:text-foreground",
         current: "font-medium *:data-[slot=stepper-step-marker]:bg-primary **:data-[slot=stepper-step-number]:text-primary-foreground",
         upcoming: "text-muted-foreground *:data-[slot=stepper-step-marker]:bg-muted **:data-[slot=stepper-step-number]:text-muted-foreground",
       },

@@ -2,7 +2,7 @@
 
 Виджет живёт прямо на холсте файла: доска токенов shadcn/ui (Tailwind v4, oklch), общая для всей команды (состояние синхронизировано через Figma). Отсюда значения токенов правят, проверяют контраст, записывают в переменные Figma, синхронизируют с сайтом дизайн-системы и выгружают для кода.
 
-**Набор токенов фиксирован.** Это только стандартные токены shadcn/ui со значениями shadcn neutral: 31 цвет (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1…5`, `sidebar-*` и их `*-foreground`) и `radius`. Проект меняет **только значения** этих имён; новые имена не добавляются нигде — ни в окне, ни при импорте, ни при отправке на сайт.
+**Набор токенов фиксирован.** Это только стандартные токены shadcn/ui со значениями shadcn neutral: 37 цветов (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, статусы `success` / `warning` / `info`, `border`, `input`, `ring`, `chart-1…5`, `sidebar-*` и их `*-foreground`) и `radius`. Проект меняет **только значения** этих имён; новые имена не добавляются нигде — ни в окне, ни при импорте, ни при отправке на сайт.
 
 Источник: `plugins/figma-pack/skills/ds-tokens/references/shadcn-tokens.json` (schema `shadcn/tokens@1`), вшивается в виджет при сборке.
 
@@ -43,7 +43,7 @@
 
 - Пишет в коллекцию `shadcn` с режимами **Light / Dark**. Имена переменных — как CSS-переменные shadcn (`background`, `primary`, `chart-1`, `sidebar-primary-foreground`…), плюс `radius` (FLOAT, px). Нет коллекции или режима Dark — создаются; всё созданное есть в отчёте. Ничего не удаляется.
 - Значения — цвет Figma, переведённый из oklch (OKLab → sRGB, точная формула CSS Color 4; прозрачность `oklch(1 0 0 / 10%)` сохраняется как альфа). Цвета за пределами sRGB обрезаются по каналам, как в браузере.
-- Scopes: фоны — заливки (`FRAME_FILL`, `SHAPE_FILL`), `*-foreground` — `TEXT_FILL`, `border` / `input` / `ring` (и `sidebar-border` / `sidebar-ring`) — `STROKE_COLOR` (`input` ещё и заливка), `destructive` — заливка, текст и обводка, `chart-*` — заливка и обводка, `radius` — `CORNER_RADIUS`. Code syntax — `var(--имя)`.
+- Scopes: фоны — заливки (`FRAME_FILL`, `SHAPE_FILL`), `*-foreground` — `TEXT_FILL`, `border` / `input` / `ring` (и `sidebar-border` / `sidebar-ring`) — `STROKE_COLOR` (`input` ещё и заливка), `destructive`, `success`, `warning`, `info` — заливка, текст и обводка, `chart-*` — заливка и обводка, `radius` — `CORNER_RADIUS`. Code syntax — `var(--имя)`.
 - По умолчанию пишет изменённые токены и те, что в файле расходятся или отсутствуют (по последней проверке); галочка «все токены» — для пустого файла.
 - «Что изменится (без записи)» показывает тот же отчёт, ничего не меняя.
 - Тариф с одним режимом переменных: записывается только Light, в отчёте одна строка об ограничении.

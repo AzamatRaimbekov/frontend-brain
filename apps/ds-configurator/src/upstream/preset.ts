@@ -49,6 +49,7 @@ export const PRESET_BASE_COLORS = [
   "olive",
   "mist",
   "taupe",
+  "canonical",
 ] as const
 
 export const PRESET_THEMES = [
@@ -77,6 +78,7 @@ export const PRESET_THEMES = [
   "olive",
   "mist",
   "taupe",
+  "canonical",
 ] as const
 
 export const PRESET_CHART_COLORS = PRESET_THEMES
@@ -129,6 +131,7 @@ export const PRESET_FONTS = [
   "instrument-sans",
   "eb-garamond",
   "instrument-serif",
+  "canonical",
 ] as const
 export const PRESET_FONT_HEADINGS = ["inherit", ...PRESET_FONTS] as const
 

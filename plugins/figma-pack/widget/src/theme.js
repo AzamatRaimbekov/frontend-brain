@@ -6,11 +6,11 @@ import { parseColor, rgbaToHex } from '../core/oklch.js';
 const ROLES = {
   page: 'background', card: 'card', soft: 'muted', text: 'foreground', muted: 'muted-foreground', border: 'border',
   primary: 'primary', onPrimary: 'primary-foreground', accentSoft: 'accent', accentText: 'accent-foreground',
-  successBg: 'secondary', successFg: 'secondary-foreground',
-  warningBg: 'accent', warningFg: 'destructive',
+  successBg: 'success', successFg: 'success-foreground',
+  warningBg: 'warning', warningFg: 'warning-foreground',
   errorBg: 'destructive', errorFg: 'primary-foreground',
   neutralBg: 'muted', neutralFg: 'muted-foreground',
-  infoBg: 'secondary', infoFg: 'foreground',
+  infoBg: 'info', infoFg: 'info-foreground',
 };
 
 export const paint = (value) => parseColor(value) || { r: 0, g: 0, b: 0, a: 0 };

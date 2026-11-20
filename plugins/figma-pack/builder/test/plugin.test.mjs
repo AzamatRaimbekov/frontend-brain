@@ -29,15 +29,15 @@ test('ensureShadcn: one collection «shadcn» with Light/Dark, every shadcn name
   const primary = ix.named.shadcn.get('primary');
   assert.deepEqual(primary.valuesByMode[light], rgbaOf('primary', 'light'));
   assert.deepEqual(primary.valuesByMode[dark], rgbaOf('primary', 'dark'));
-  assert.equal(ix.named.shadcn.get('border').valuesByMode[dark].a, 0.1, 'alpha from oklch(1 0 0 / 10%)');
+  assert.equal(ix.named.shadcn.get('border').valuesByMode[dark].a, 1, 'Mbank border is opaque');
   assert.equal(primary.codeSyntax.WEB, 'var(--primary)');
   assert.deepEqual(primary.scopes, ['FRAME_FILL', 'SHAPE_FILL']);
-  assert.equal(ix.named.shadcn.get('radius').valuesByMode[light], 10);
+  assert.equal(ix.named.shadcn.get('radius').valuesByMode[light], 12);
   assert.equal(ix.named.shadcn.get('radius-xl').valuesByMode[dark], radiusScale().xl);
   assert.deepEqual(ix.named.shadcn.get('radius-md').scopes, ['CORNER_RADIUS']);
   const after = await m.variables.inspect();
   assert.deepEqual(after.missing, []);
-  assert.equal(after.colors, 31);
+  assert.equal(after.colors, 37);
 
   // a designer edits a value: a plain re-run keeps it, reset restores the canonical one
   primary.setValueForMode(light, { r: 1, g: 0, b: 0, a: 1 });
@@ -46,8 +46,8 @@ test('ensureShadcn: one collection «shadcn» with Light/Dark, every shadcn name
   assert.deepEqual(primary.valuesByMode[light], { r: 1, g: 0, b: 0, a: 1 });
   const read = await m.variables.readShadcn();
   assert.equal(read.colors.primary.light, 'oklch(0.628 0.258 29.234)', 'export reads the edited value as oklch');
-  assert.equal(read.colors.primary.dark, 'oklch(0.922 0 0)');
-  assert.equal(read.radius, '0.625rem');
+  assert.equal(read.colors.primary.dark, 'oklch(0.838 0.167 87.978)');
+  assert.equal(read.radius, '0.75rem');
   assert.deepEqual(read.missing, []);
   const reset = await m.variables.ensureShadcn({ reset: true });
   assert.equal(reset.reset, COLOR_TOKENS.length);

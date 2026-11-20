@@ -3,15 +3,16 @@
 // the errors back, so the rules in eslint.config.* are enforced on every edit, not only in CI.
 // Runs only when the project has eslint.config.* and a local node_modules/.bin/eslint.
 // Reports errors only (warnings stay quiet). Disable per project with MDIGITAL_LINT_HOOK=off.
+// First formats the file with the project's Prettier (format-on-edit.mjs, MDIGITAL_FORMAT_HOOK=off to skip),
+// so the agent always writes in the team code style and ESLint checks the formatted file.
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join, relative, extname } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { formatFile } from './format-on-edit.mjs';
 
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
 const SKIP = [/[\\/]node_modules[\\/]/, /[\\/](dist|build|\.next|coverage)[\\/]/, /routeTree\.gen\.ts$/, /\.d\.ts$/];
 const TIMEOUT_MS = 45_000;
-
-if (process.env.MDIGITAL_LINT_HOOK === 'off') process.exit(0);
 
 let payload;
 try {
@@ -20,6 +21,8 @@ try {
   process.exit(0);
 }
 const file = payload?.tool_input?.file_path;
+formatFile(file);
+if (process.env.MDIGITAL_LINT_HOOK === 'off') process.exit(0);
 if (!file || !EXTENSIONS.has(extname(file)) || SKIP.some((re) => re.test(file)) || !existsSync(file)) process.exit(0);
 
 // The project root is the nearest folder with an ESLint flat config.
